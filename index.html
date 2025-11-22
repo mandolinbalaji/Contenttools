@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anytune to LRC Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            color: #999;
+            font-size: 13px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .info-section {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .info-section.visible {
+            display: block;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            width: 120px;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .output-area {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .output-area.visible {
+            display: block;
+        }
+
+        .output-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            background: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error.visible {
+            display: block;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Anytune to LRC Converter</h1>
+        <p class="subtitle">Convert .atcfg files to LRC lyrics format</p>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Click to select or drag & drop .atcfg file</div>
+            <div class="upload-hint">Anytune configuration files only</div>
+            <input type="file" id="fileInput" accept=".atcfg">
+        </div>
+
+        <div class="info-section" id="infoSection">
+            <div class="info-row">
+                <span class="info-label">File:</span>
+                <span class="info-value" id="fileName"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Title:</span>
+                <span class="info-value" id="songTitle"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Artist:</span>
+                <span class="info-value" id="songArtist"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Album:</span>
+                <span class="info-value" id="songAlbum"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Markers Found:</span>
+                <span class="info-value" id="markerCount"></span>
+            </div>
+        </div>
+
+        <div class="output-area" id="outputArea">
+            <div class="output-label">LRC Output (editable)</div>
+            <textarea id="lrcOutput" placeholder="LRC content will appear here..."></textarea>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-secondary" id="copyBtn" disabled>📋 Copy to Clipboard</button>
+            <button class="btn-primary" id="downloadBtn" disabled>💾 Download LRC File</button>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const infoSection = document.getElementById('infoSection');
+        const outputArea = document.getElementById('outputArea');
+        const lrcOutput = document.getElementById('lrcOutput');
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let currentFileName = '';
+        let currentLrcContent = '';
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Handle file processing
+        function handleFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.atcfg')) {
+                showError('Please select a valid .atcfg file');
+                return;
+            }
+
+            currentFileName = file.name.replace('.atcfg', '');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    const data = JSON.parse(content);
+                    processAtcfgData(data);
+                } catch (error) {
+                    showError('Failed to parse .atcfg file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Process .atcfg data
+        function processAtcfgData(data) {
+            try {
+                // Extract track data
+                const trackData = data.trackData?.[0];
+                if (!trackData) {
+                    throw new Error('No track data found in file');
+                }
+
+                // Extract metadata
+                const title = trackData.title || currentFileName;
+                const artist = trackData.artist || '';
+                const album = trackData.albumTitle || '';
+
+                // Extract audio marks
+                const audioMarks = trackData.audioMarks || [];
+                
+                if (audioMarks.length === 0) {
+                    showError('No audio markers found in file');
+                    return;
+                }
+
+                // Sort by time
+                audioMarks.sort((a, b) => a.time - b.time);
+
+                // Display file info
+                document.getElementById('fileName').textContent = currentFileName + '.atcfg';
+                document.getElementById('songTitle').textContent = title || 'N/A';
+                document.getElementById('songArtist').textContent = artist || 'N/A';
+                document.getElementById('songAlbum').textContent = album || 'N/A';
+                document.getElementById('markerCount').textContent = audioMarks.length;
+
+                // Generate LRC content
+                currentLrcContent = generateLrcContent(audioMarks, title, artist, album);
+                lrcOutput.value = currentLrcContent;
+
+                // Show results
+                infoSection.classList.add('visible');
+                outputArea.classList.add('visible');
+                copyBtn.disabled = false;
+                downloadBtn.disabled = false;
+
+                showSuccess(`Successfully extracted ${audioMarks.length} markers!`);
+            } catch (error) {
+                showError('Error processing file: ' + error.message);
+            }
+        }
+
+        // Generate LRC content
+        function generateLrcContent(audioMarks, title, artist, album) {
+            let lrc = '';
+
+            // Add metadata headers
+            lrc += `[file:${currentFileName}.atcfg]\n`;
+            if (artist) lrc += `[ar:${artist}]\n`;
+            if (title) lrc += `[ti:${title}]\n`;
+            if (album) lrc += `[al:${album}]\n`;
+            lrc += '[by:AnytuneToLRC]\n\n';
+
+            // Add time markers
+            audioMarks.forEach(mark => {
+                const timestamp = formatTimestamp(mark.time);
+                lrc += `${timestamp}\n`;
+            });
+
+            return lrc;
+        }
+
+        // Format timestamp to LRC format [mm:ss.xxx]
+        function formatTimestamp(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const mm = String(minutes).padStart(2, '0');
+            const ss = secs.toFixed(3).padStart(6, '0');
+            return `[${mm}:${ss}]`;
+        }
+
+        // Copy to clipboard
+        copyBtn.addEventListener('click', async () => {
+            try {
+                const textToCopy = lrcOutput.value;
+                await navigator.clipboard.writeText(textToCopy);
+                showSuccess('LRC content copied to clipboard!');
+            } catch (error) {
+                showError('Failed to copy to clipboard');
+            }
+        });
+
+        // Download LRC file
+        downloadBtn.addEventListener('click', () => {
+            const textToDownload = lrcOutput.value;
+            const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFileName + '.lrc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess('LRC file downloaded!');
+        });
+
+        // Message helpers
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+            successDiv.classList.remove('visible');
+        }
+
+        function showSuccess(message) {
+            successDiv.textContent = message;
+            successDiv.classList.add('visible');
+            errorDiv.classList.remove('visible');
+        }
+
+        function hideMessages() {
+            errorDiv.classList.remove('visible');
+            successDiv.classList.remove('visible');
+        }
+    </script>
+</body>
+</html>
