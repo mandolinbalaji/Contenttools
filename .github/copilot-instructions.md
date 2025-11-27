@@ -2,13 +2,14 @@
 
 ## Project Architecture
 
-This is a browser-based HTML/JavaScript tool that converts Anytune `.atcfg` files to LRC (lyrics) format with optional lyrics file support. The architecture is client-side only:
+This is a browser-based HTML/JavaScript tool that converts Anytune `.atcfg` files to LRC (lyrics) format with embedded lyrics processing. The architecture is client-side only:
 
 1. **Dual File Upload Layer**: Handles separate loading of `.atcfg` and `.txt` lyrics files
 2. **Lyrics Parser Layer**: Processes lyrics files with tag-based format (PL1:, AL1:, etc.)
 3. **Text Processing Layer**: Applies normalization (lowercase, remove special characters)
-4. **Converter Layer**: Matches lyrics tags with audioMarks and formats to LRC
-5. **Output Layer**: Displays editable LRC with copy/download functionality
+4. **JSON Modification Layer**: Replaces tag occurrences in .atcfg JSON structure with actual lyrics text
+5. **Converter Layer**: Generates LRC from modified .atcfg with embedded lyrics
+6. **Output Layer**: Displays editable LRC with separate download options for both modified .atcfg and LRC files
 
 Key design decision: Pure client-side implementation - no server, no build process, no dependencies. Single HTML file with embedded CSS and JavaScript.
 
@@ -82,22 +83,36 @@ Lyrics files use tag-based format with colon separators:
 const normalizedLyrics = lyrics.toLowerCase().replace(/[^a-z0-9\s]/g, '');
 ```
 
-### Tag Matching Logic
-Lyrics tags are matched to audioMarks by index:
+### Tag Replacement Logic
+Lyrics tags are replaced in the .atcfg JSON structure with actual lyrics text:
 ```javascript
-const possibleTags = [
-    `PL${index + 1}`,  // PL1, PL2, PL3...
-    `AL${index + 1}`,  // AL1, AL2, AL3...
-    `L${index + 1}`,   // L1, L2, L3...
-    `${index + 1}`,    // 1, 2, 3...
-];
+// Function replaces tags in audioMarks with lyrics
+function replaceTagsInAtcfg(audioMarks, lyricsMap) {
+    audioMarks.forEach((mark, index) => {
+        const possibleTags = [
+            `PL${index + 1}`,  // PL1, PL2, PL3...
+            `AL${index + 1}`,  // AL1, AL2, AL3...
+            `L${index + 1}`,   // L1, L2, L3...
+            `${index + 1}`,    // 1, 2, 3...
+        ];
+
+        for (const tag of possibleTags) {
+            if (lyricsMap[tag]) {
+                mark.lyrics = lyricsMap[tag];  // Embed lyrics in JSON
+                break;
+            }
+        }
+    });
+}
 ```
 
 ## Integration Points
 
 - **Input**: `.atcfg` files (Anytune config files) - JSON format only
-- **Lyrics**: `.txt` files with tag-based format (PL1:, AL1:, etc.) - optional
-- **Output**: Standard LRC files (.lrc) with UTF-8 encoding
+- **Lyrics**: `.txt` files with tag-based format (PL1:, AL1:, etc.) - required for lyrics embedding
+- **Output**: 
+  - Modified `.atcfg` files with embedded lyrics (JSON format)
+  - Standard LRC files (.lrc) with UTF-8 encoding
 - **Metadata**: Extracts `title`, `artist`, `albumTitle` from `trackData[0]`
 - **Browser APIs**: FileReader (file loading), Clipboard API (copy), Blob/URL (download)
 

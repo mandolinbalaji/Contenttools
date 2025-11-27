@@ -313,6 +313,7 @@
 
         <div class="button-group">
             <button class="btn-secondary" id="copyBtn" disabled>📋 Copy to Clipboard</button>
+            <button class="btn-secondary" id="downloadAtcfgBtn" disabled>💾 Download Modified .atcfg</button>
             <button class="btn-primary" id="downloadBtn" disabled>💾 Download LRC File</button>
         </div>
     </div>
@@ -333,11 +334,13 @@
         const successDiv = document.getElementById('success');
         const copyBtn = document.getElementById('copyBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const downloadAtcfgBtn = document.getElementById('downloadAtcfgBtn');
 
         let currentFileName = '';
         let currentLrcContent = '';
         let atcfgData = null;
         let lyricsData = null;
+        let modifiedAtcfgData = null;
 
         // File input group click handlers
         atcfgGroup.addEventListener('click', () => {
@@ -437,20 +440,47 @@
             return lyricsMap;
         }
 
-        // Check if we have both files and process
-        function checkAndProcess() {
-            if (atcfgData) {
-                processAtcfgData(atcfgData, lyricsData);
-            }
+        // Replace tags in .atcfg JSON with lyrics
+        function replaceTagsInAtcfg(audioMarks, lyricsMap) {
+            audioMarks.forEach((mark, index) => {
+                // Try different tag patterns to find matching lyrics
+                const possibleTags = [
+                    `PL${index + 1}`,  // PL1, PL2, PL3...
+                    `AL${index + 1}`,  // AL1, AL2, AL3...
+                    `L${index + 1}`,   // L1, L2, L3...
+                    `${index + 1}`,    // 1, 2, 3...
+                ];
+
+                let lyrics = '';
+                for (const tag of possibleTags) {
+                    if (lyricsMap[tag]) {
+                        lyrics = lyricsMap[tag];
+                        break;
+                    }
+                }
+
+                // Add lyrics to the audioMark if found
+                if (lyrics) {
+                    mark.lyrics = lyrics;
+                }
+            });
         }
 
         // Process .atcfg data with optional lyrics
         function processAtcfgData(data, lyricsMap) {
             try {
+                // Create a deep copy of the data to modify
+                modifiedAtcfgData = JSON.parse(JSON.stringify(data));
+
                 // Extract track data
-                const trackData = data.trackData?.[0];
+                const trackData = modifiedAtcfgData.trackData?.[0];
                 if (!trackData) {
                     throw new Error('No track data found in file');
+                }
+
+                // Replace tags in the .atcfg JSON with lyrics
+                if (lyricsMap && trackData.audioMarks) {
+                    replaceTagsInAtcfg(trackData.audioMarks, lyricsMap);
                 }
 
                 // Extract metadata
@@ -476,8 +506,8 @@
                 document.getElementById('songAlbum').textContent = album || 'N/A';
                 document.getElementById('markerCount').textContent = audioMarks.length;
 
-                // Generate LRC content
-                currentLrcContent = generateLrcContent(audioMarks, title, artist, album, lyricsMap);
+                // Generate LRC content from modified data
+                currentLrcContent = generateLrcContent(audioMarks, title, artist, album);
                 lrcOutput.value = currentLrcContent;
 
                 // Show results
@@ -485,16 +515,17 @@
                 outputArea.classList.add('visible');
                 copyBtn.disabled = false;
                 downloadBtn.disabled = false;
+                downloadAtcfgBtn.disabled = false;
 
                 const lyricsCount = lyricsMap ? Object.keys(lyricsMap).length : 0;
-                showSuccess(`Successfully processed ${audioMarks.length} markers${lyricsMap ? ` with ${lyricsCount} lyrics` : ''}!`);
+                showSuccess(`Successfully processed ${audioMarks.length} markers${lyricsMap ? ` with ${lyricsCount} lyrics embedded` : ''}!`);
             } catch (error) {
                 showError('Error processing file: ' + error.message);
             }
         }
 
         // Generate LRC content with optional lyrics
-        function generateLrcContent(audioMarks, title, artist, album, lyricsMap) {
+        function generateLrcContent(audioMarks, title, artist, album) {
             let lrc = '';
 
             // Add metadata headers
@@ -505,28 +536,9 @@
             lrc += '[by:AnytuneToLRC]\n\n';
 
             // Add time markers with lyrics if available
-            audioMarks.forEach((mark, index) => {
+            audioMarks.forEach((mark) => {
                 const timestamp = formatTimestamp(mark.time);
-                let lyrics = '';
-
-                // Try to find matching lyrics by index (PL1, PL2, etc.) or other patterns
-                if (lyricsMap) {
-                    // Try different tag patterns
-                    const possibleTags = [
-                        `PL${index + 1}`,  // PL1, PL2, PL3...
-                        `AL${index + 1}`,  // AL1, AL2, AL3...
-                        `L${index + 1}`,   // L1, L2, L3...
-                        `${index + 1}`,    // 1, 2, 3...
-                    ];
-
-                    for (const tag of possibleTags) {
-                        if (lyricsMap[tag]) {
-                            lyrics = lyricsMap[tag];
-                            break;
-                        }
-                    }
-                }
-
+                const lyrics = mark.lyrics || '';
                 lrc += `${timestamp}${lyrics ? '$' + lyrics : ''}\n`;
             });
 
@@ -567,6 +579,26 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             showSuccess('LRC file downloaded!');
+        });
+
+        // Download modified .atcfg file
+        downloadAtcfgBtn.addEventListener('click', () => {
+            if (!modifiedAtcfgData) {
+                showError('No modified .atcfg data available');
+                return;
+            }
+
+            const jsonToDownload = JSON.stringify(modifiedAtcfgData, null, 2);
+            const blob = new Blob([jsonToDownload], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFileName + '_with_lyrics.atcfg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess('Modified .atcfg file downloaded!');
         });
 
         // Message helpers

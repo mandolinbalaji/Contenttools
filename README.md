@@ -4,19 +4,22 @@ Convert Anytune practice session files (.atcfg) to LRC (lyrics) format for use i
 
 ## Overview
 
-Anytune is a popular music practice app that allows musicians to add markers and annotations to songs. This tool extracts timing markers from `.atcfg` configuration files and converts them to the standard LRC lyrics format.
+Anytune is a popular music practice app that allows musicians to add markers and annotations to songs. This tool extracts timing markers from `.atcfg` configuration files, embeds lyrics from text files directly into the JSON structure, and converts them to the standard LRC lyrics format.
 
 ## Usage
 
 Simply open `index.html` in your web browser:
 
 1. **Load Anytune file**: Click the left area to select your `.atcfg` file
-2. **Load lyrics file (optional)**: Click the right area to select a `.txt` lyrics file
-3. The tool will extract timing markers from the `audioMarks` array
-4. If a lyrics file is provided, it will match lyrics to timestamps
-5. View the generated LRC content with metadata (title, artist, album)
-6. Edit the LRC content if needed
-7. Copy to clipboard or download the `.lrc` file
+2. **Load lyrics file**: Click the right area to select a `.txt` lyrics file with tag-based format
+3. The tool will:
+   - Parse lyrics tags (PL1, AL1, etc.) from the text file
+   - Replace tag occurrences in the `.atcfg` JSON structure with actual lyrics text
+   - Generate a modified `.atcfg` file with embedded lyrics
+   - Convert timing markers to LRC format using the embedded lyrics
+4. View the generated LRC content with metadata (title, artist, album)
+5. Edit the LRC content if needed
+6. Download both the modified `.atcfg` file (with embedded lyrics) and the `.lrc` file
 
 **No installation required!** Works completely in the browser using JavaScript.
 
@@ -73,21 +76,25 @@ The tool extracts `time` values from the `audioMarks` array and converts them to
 Generated LRC files include metadata headers and timestamp markers:
 
 ```
-[ar:Artist Name]
-[ti:Song Title]
-[al:Album Name]
+[file:Adamodi_Galade_Charukesi.atcfg]
+[ar:ost]
+[ti:Adamodi_Galade_Charukesi]
+[al:Charukesi]
 [by:AnytuneToLRC]
 
-[00:03.44]
-[00:07.12]
-[01:22.92]
+[00:03.4398639455782312]$bantu riti koluviya vayya rama
+[00:07.1202721088435377]$tunta vinti vani modalaina
+[01:22.922743764172338]$romanchamanu ghana kanchukamu
 ```
 
 ## Features
 
 - ✅ Browser-based - no installation needed
 - ✅ Drag & drop file upload
+- ✅ Automatic lyrics tag parsing and embedding in .atcfg JSON
+- ✅ Generates modified .atcfg files with embedded lyrics
 - ✅ Automatic metadata extraction (title, artist, album)
 - ✅ Editable LRC output before download
-- ✅ Copy to clipboard or download as .lrc file
+- ✅ Download both modified .atcfg and .lrc files separately
+- ✅ Copy to clipboard functionality
 - ✅ Sorts markers by timestamp automatically
