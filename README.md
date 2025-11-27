@@ -41,6 +41,12 @@ AL2: rama namamane vara khadgamivi
 - All lyrics are converted to lowercase
 - Special characters are removed (keeping only letters, numbers, and spaces)
 
+## Example Files
+
+- `Adamodi_Galade_Charukesi.atcfg` - Sample Anytune configuration file
+- `Adamodi_Galade_Charukesi.lrc` - Expected LRC output
+- `sample-lyrics.txt` - Example lyrics file with tag format
+
 ## .atcfg File Structure
 
 Anytune configuration files are JSON files with this structure:
