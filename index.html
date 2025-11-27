@@ -466,6 +466,13 @@
             });
         }
 
+        // Check if we have both files and process
+        function checkAndProcess() {
+            if (atcfgData) {
+                processAtcfgData(atcfgData, lyricsData);
+            }
+        }
+
         // Process .atcfg data with optional lyrics
         function processAtcfgData(data, lyricsMap) {
             try {
