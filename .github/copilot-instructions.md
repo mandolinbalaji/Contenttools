@@ -2,12 +2,13 @@
 
 ## Project Architecture
 
-This is a browser-based HTML/JavaScript tool that converts Anytune `.atcfg` files to LRC (lyrics) format. The architecture is client-side only:
+This is a browser-based HTML/JavaScript tool that converts Anytune `.atcfg` files to LRC (lyrics) format with optional lyrics file support. The architecture is client-side only:
 
-1. **File Upload Layer**: Handles drag-and-drop and file selection with validation
-2. **Parser Layer**: JavaScript JSON parsing of `.atcfg` structure
-3. **Converter Layer**: Extracts `time` values from `audioMarks` array and formats to LRC
-4. **Output Layer**: Displays editable LRC with copy/download functionality
+1. **Dual File Upload Layer**: Handles separate loading of `.atcfg` and `.txt` lyrics files
+2. **Lyrics Parser Layer**: Processes lyrics files with tag-based format (PL1:, AL1:, etc.)
+3. **Text Processing Layer**: Applies normalization (lowercase, remove special characters)
+4. **Converter Layer**: Matches lyrics tags with audioMarks and formats to LRC
+5. **Output Layer**: Displays editable LRC with copy/download functionality
 
 Key design decision: Pure client-side implementation - no server, no build process, no dependencies. Single HTML file with embedded CSS and JavaScript.
 
@@ -15,8 +16,10 @@ Key design decision: Pure client-side implementation - no server, no build proce
 
 ```
 index.html              # Complete converter (HTML + CSS + JS)
+edit-notes.html         # Notation editor with dot accent transformations
 *.atcfg                 # Example Anytune config files
 *.lrc                   # Example LRC output files
+*.txt                   # Example lyrics files with PL1:, AL1: tags
 anytune_to_lrc.py       # Legacy Python version (not actively used)
 tests/                  # Python tests (legacy)
 ```
@@ -71,20 +74,29 @@ Always sort `audioMarks` by `time` before generating LRC:
 audioMarks.sort((a, b) => a.time - b.time);
 ```
 
-### File Handling
-Use `FileReader.readAsText()` to load `.atcfg` files client-side:
+### Lyrics File Processing
+Lyrics files use tag-based format with colon separators:
 ```javascript
-const reader = new FileReader();
-reader.onload = (e) => {
-    const data = JSON.parse(e.target.result);
-    // process data
-};
-reader.readAsText(file);
+// Input format: "PL1: bantu riti koluviya vayya rama"
+// Output: lowercase + special chars removed → "bantu riti koluviya vayya rama"
+const normalizedLyrics = lyrics.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+```
+
+### Tag Matching Logic
+Lyrics tags are matched to audioMarks by index:
+```javascript
+const possibleTags = [
+    `PL${index + 1}`,  // PL1, PL2, PL3...
+    `AL${index + 1}`,  // AL1, AL2, AL3...
+    `L${index + 1}`,   // L1, L2, L3...
+    `${index + 1}`,    // 1, 2, 3...
+];
 ```
 
 ## Integration Points
 
 - **Input**: `.atcfg` files (Anytune config files) - JSON format only
+- **Lyrics**: `.txt` files with tag-based format (PL1:, AL1:, etc.) - optional
 - **Output**: Standard LRC files (.lrc) with UTF-8 encoding
 - **Metadata**: Extracts `title`, `artist`, `albumTitle` from `trackData[0]`
 - **Browser APIs**: FileReader (file loading), Clipboard API (copy), Blob/URL (download)

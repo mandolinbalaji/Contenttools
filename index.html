@@ -80,6 +80,44 @@
             font-size: 13px;
         }
 
+        .file-inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .file-input-group {
+            flex: 1;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-group:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .file-input-group.loaded {
+            border-color: #4CAF50;
+            background: #f0fff0;
+        }
+
+        .file-input-group .file-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-input-group .file-status {
+            color: #666;
+            font-size: 12px;
+        }
+
         input[type="file"] {
             display: none;
         }
@@ -221,16 +259,28 @@
             <h1>🎵 Anytune to LRC Converter</h1>
             <a href="edit-notes.html" style="color: #667eea; text-decoration: none; font-weight: 600;">📝 Edit Notes →</a>
         </div>
-        <p class="subtitle">Convert .atcfg files to LRC lyrics format</p>
+        <p class="subtitle">Convert .atcfg files to LRC lyrics format with optional lyrics file support</p>
 
         <div class="error" id="error"></div>
         <div class="success" id="success"></div>
 
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📁</div>
-            <div class="upload-text">Click to select or drag & drop .atcfg file</div>
-            <div class="upload-hint">Anytune configuration files only</div>
-            <input type="file" id="fileInput" accept=".atcfg">
+        <div class="file-inputs">
+            <div class="file-input-group" id="atcfgGroup">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Anytune .atcfg file</div>
+                <div class="upload-hint">Required</div>
+                <div class="file-name" id="atcfgFileName">No file selected</div>
+                <div class="file-status" id="atcfgStatus">Click to select</div>
+                <input type="file" id="atcfgInput" accept=".atcfg">
+            </div>
+            <div class="file-input-group" id="lyricsGroup">
+                <div class="upload-icon">📝</div>
+                <div class="upload-text">Lyrics .txt file</div>
+                <div class="upload-hint">Optional</div>
+                <div class="file-name" id="lyricsFileName">No file selected</div>
+                <div class="file-status" id="lyricsStatus">Click to select</div>
+                <input type="file" id="lyricsInput" accept=".txt">
+            </div>
         </div>
 
         <div class="info-section" id="infoSection">
@@ -268,8 +318,14 @@
     </div>
 
     <script>
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
+        const atcfgGroup = document.getElementById('atcfgGroup');
+        const lyricsGroup = document.getElementById('lyricsGroup');
+        const atcfgInput = document.getElementById('atcfgInput');
+        const lyricsInput = document.getElementById('lyricsInput');
+        const atcfgFileName = document.getElementById('atcfgFileName');
+        const lyricsFileName = document.getElementById('lyricsFileName');
+        const atcfgStatus = document.getElementById('atcfgStatus');
+        const lyricsStatus = document.getElementById('lyricsStatus');
         const infoSection = document.getElementById('infoSection');
         const outputArea = document.getElementById('outputArea');
         const lrcOutput = document.getElementById('lrcOutput');
@@ -280,41 +336,33 @@
 
         let currentFileName = '';
         let currentLrcContent = '';
+        let atcfgData = null;
+        let lyricsData = null;
 
-        // Upload area click handler
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
+        // File input group click handlers
+        atcfgGroup.addEventListener('click', () => {
+            atcfgInput.click();
         });
 
-        // Drag and drop handlers
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
+        lyricsGroup.addEventListener('click', () => {
+            lyricsInput.click();
         });
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
-        });
-
-        // File input change handler
-        fileInput.addEventListener('change', (e) => {
+        // File input change handlers
+        atcfgInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
+                handleAtcfgFile(e.target.files[0]);
             }
         });
 
-        // Handle file processing
-        function handleFile(file) {
+        lyricsInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleLyricsFile(e.target.files[0]);
+            }
+        });
+
+        // Handle .atcfg file
+        function handleAtcfgFile(file) {
             hideMessages();
 
             if (!file.name.endsWith('.atcfg')) {
@@ -323,13 +371,16 @@
             }
 
             currentFileName = file.name.replace('.atcfg', '');
+            atcfgFileName.textContent = file.name;
+            atcfgStatus.textContent = 'Loaded ✓';
+            atcfgGroup.classList.add('loaded');
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const content = e.target.result;
-                    const data = JSON.parse(content);
-                    processAtcfgData(data);
+                    atcfgData = JSON.parse(content);
+                    checkAndProcess();
                 } catch (error) {
                     showError('Failed to parse .atcfg file: ' + error.message);
                 }
@@ -337,8 +388,64 @@
             reader.readAsText(file);
         }
 
-        // Process .atcfg data
-        function processAtcfgData(data) {
+        // Handle lyrics file
+        function handleLyricsFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.txt')) {
+                showError('Please select a valid .txt lyrics file');
+                return;
+            }
+
+            lyricsFileName.textContent = file.name;
+            lyricsStatus.textContent = 'Loaded ✓';
+            lyricsGroup.classList.add('loaded');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    lyricsData = parseLyricsFile(content);
+                    checkAndProcess();
+                } catch (error) {
+                    showError('Failed to parse lyrics file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Parse lyrics file with tags like "PL1: lyrics here"
+        function parseLyricsFile(content) {
+            const lyricsMap = {};
+            const lines = content.split('\n');
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed && trimmed.includes(':')) {
+                    const colonIndex = trimmed.indexOf(':');
+                    const tag = trimmed.substring(0, colonIndex).trim();
+                    const lyrics = trimmed.substring(colonIndex + 1).trim();
+
+                    if (tag && lyrics) {
+                        // Normalize text: lowercase and remove special characters
+                        const normalizedLyrics = lyrics.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+                        lyricsMap[tag] = normalizedLyrics;
+                    }
+                }
+            });
+
+            return lyricsMap;
+        }
+
+        // Check if we have both files and process
+        function checkAndProcess() {
+            if (atcfgData) {
+                processAtcfgData(atcfgData, lyricsData);
+            }
+        }
+
+        // Process .atcfg data with optional lyrics
+        function processAtcfgData(data, lyricsMap) {
             try {
                 // Extract track data
                 const trackData = data.trackData?.[0];
@@ -353,7 +460,7 @@
 
                 // Extract audio marks
                 const audioMarks = trackData.audioMarks || [];
-                
+
                 if (audioMarks.length === 0) {
                     showError('No audio markers found in file');
                     return;
@@ -370,7 +477,7 @@
                 document.getElementById('markerCount').textContent = audioMarks.length;
 
                 // Generate LRC content
-                currentLrcContent = generateLrcContent(audioMarks, title, artist, album);
+                currentLrcContent = generateLrcContent(audioMarks, title, artist, album, lyricsMap);
                 lrcOutput.value = currentLrcContent;
 
                 // Show results
@@ -379,14 +486,15 @@
                 copyBtn.disabled = false;
                 downloadBtn.disabled = false;
 
-                showSuccess(`Successfully extracted ${audioMarks.length} markers!`);
+                const lyricsCount = lyricsMap ? Object.keys(lyricsMap).length : 0;
+                showSuccess(`Successfully processed ${audioMarks.length} markers${lyricsMap ? ` with ${lyricsCount} lyrics` : ''}!`);
             } catch (error) {
                 showError('Error processing file: ' + error.message);
             }
         }
 
-        // Generate LRC content
-        function generateLrcContent(audioMarks, title, artist, album) {
+        // Generate LRC content with optional lyrics
+        function generateLrcContent(audioMarks, title, artist, album, lyricsMap) {
             let lrc = '';
 
             // Add metadata headers
@@ -396,10 +504,30 @@
             if (album) lrc += `[al:${album}]\n`;
             lrc += '[by:AnytuneToLRC]\n\n';
 
-            // Add time markers
-            audioMarks.forEach(mark => {
+            // Add time markers with lyrics if available
+            audioMarks.forEach((mark, index) => {
                 const timestamp = formatTimestamp(mark.time);
-                lrc += `${timestamp}\n`;
+                let lyrics = '';
+
+                // Try to find matching lyrics by index (PL1, PL2, etc.) or other patterns
+                if (lyricsMap) {
+                    // Try different tag patterns
+                    const possibleTags = [
+                        `PL${index + 1}`,  // PL1, PL2, PL3...
+                        `AL${index + 1}`,  // AL1, AL2, AL3...
+                        `L${index + 1}`,   // L1, L2, L3...
+                        `${index + 1}`,    // 1, 2, 3...
+                    ];
+
+                    for (const tag of possibleTags) {
+                        if (lyricsMap[tag]) {
+                            lyrics = lyricsMap[tag];
+                            break;
+                        }
+                    }
+                }
+
+                lrc += `${timestamp}${lyrics ? lyrics : ''}\n`;
             });
 
             return lrc;

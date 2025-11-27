@@ -10,13 +10,36 @@ Anytune is a popular music practice app that allows musicians to add markers and
 
 Simply open `index.html` in your web browser:
 
-1. Click the upload area or drag & drop your `.atcfg` file
-2. The tool will extract timing markers from the `audioMarks` array
-3. View the generated LRC content with metadata (title, artist, album)
-4. Edit the LRC content if needed
-5. Copy to clipboard or download the `.lrc` file
+1. **Load Anytune file**: Click the left area to select your `.atcfg` file
+2. **Load lyrics file (optional)**: Click the right area to select a `.txt` lyrics file
+3. The tool will extract timing markers from the `audioMarks` array
+4. If a lyrics file is provided, it will match lyrics to timestamps
+5. View the generated LRC content with metadata (title, artist, album)
+6. Edit the LRC content if needed
+7. Copy to clipboard or download the `.lrc` file
 
 **No installation required!** Works completely in the browser using JavaScript.
+
+## Lyrics File Format
+
+The lyrics file should be a `.txt` file with lines in this format:
+
+```
+PL1: bantu riti koluviya vayya rama
+AL1: tunta vinti vani modalaina
+PL2: romanchamanu ghana kanchukamu
+AL2: rama namamane vara khadgamivi
+```
+
+**Tag patterns supported:**
+- `PL1`, `PL2`, `PL3`... (Primary Lyrics)
+- `AL1`, `AL2`, `AL3`... (Alternate Lyrics)
+- `L1`, `L2`, `L3`... (Generic Lyrics)
+- `1`, `2`, `3`... (Numeric only)
+
+**Text processing:**
+- All lyrics are converted to lowercase
+- Special characters are removed (keeping only letters, numbers, and spaces)
 
 ## .atcfg File Structure
 
