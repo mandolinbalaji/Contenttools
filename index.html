@@ -217,7 +217,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎵 Anytune to LRC Converter</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h1>🎵 Anytune to LRC Converter</h1>
+            <a href="edit-notes.html" style="color: #667eea; text-decoration: none; font-weight: 600;">📝 Edit Notes →</a>
+        </div>
         <p class="subtitle">Convert .atcfg files to LRC lyrics format</p>
 
         <div class="error" id="error"></div>
@@ -402,12 +405,13 @@
             return lrc;
         }
 
-        // Format timestamp to LRC format [mm:ss.xxx]
+        // Format timestamp to LRC format [mm:ss.xxx...] with full precision
         function formatTimestamp(seconds) {
             const minutes = Math.floor(seconds / 60);
             const secs = seconds % 60;
             const mm = String(minutes).padStart(2, '0');
-            const ss = secs.toFixed(3).padStart(6, '0');
+            // Preserve all significant digits from the original time value
+            const ss = secs.toString().padStart(5, '0');
             return `[${mm}:${ss}]`;
         }
 

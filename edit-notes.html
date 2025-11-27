@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Notes - Notation Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            color: #999;
+            font-size: 13px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .toolbar {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar.visible {
+            display: flex;
+        }
+
+        .tool-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 0 10px;
+            border-right: 2px solid #ddd;
+        }
+
+        .tool-group:last-child {
+            border-right: none;
+        }
+
+        .tool-group label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .tool-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+            min-width: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-btn:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .tool-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .tool-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .editor-area {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .editor-area.visible {
+            display: block;
+        }
+
+        .editor-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        #noteEditor {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: vertical;
+            background: white;
+            cursor: text;
+        }
+
+        #noteEditor.active-mode {
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error.visible {
+            display: block;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success.visible {
+            display: block;
+        }
+
+        .info-text {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Edit Notes</h1>
+            <a href="index.html" class="back-link">← Back to Converter</a>
+        </div>
+        <p class="subtitle">Edit notation files with diacritic marks</p>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Click to select or drag & drop .not file</div>
+            <div class="upload-hint">Notation files (.not or .txt)</div>
+            <input type="file" id="fileInput" accept=".not,.txt">
+        </div>
+
+        <div class="info-text">
+            <strong>How to use:</strong><br>
+            1. Load a .not or .txt notation file<br>
+            2. Select dot position (up ↑ for Ṡ, down ↓ for Ṣ)<br>
+            3. Click on any character to add the dot mark<br>
+            4. Use Undo/Redo to fix mistakes<br>
+            5. Download the edited file when done
+        </div>
+
+        <div class="toolbar" id="toolbar">
+            <div class="tool-group">
+                <label>Dot:</label>
+                <button class="tool-btn" id="dotUpBtn" title="Dot above (Ṡ)">↑</button>
+                <button class="tool-btn" id="dotDownBtn" title="Dot below (Ṣ)">↓</button>
+            </div>
+            <div class="tool-group">
+                <label>Edit:</label>
+                <button class="tool-btn" id="undoBtn" title="Undo" disabled>↶</button>
+                <button class="tool-btn" id="redoBtn" title="Redo" disabled>↷</button>
+            </div>
+        </div>
+
+        <div class="editor-area" id="editorArea">
+            <div class="editor-label">Notation Editor</div>
+            <textarea id="noteEditor" placeholder="Notation content will appear here..."></textarea>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-secondary" id="copyBtn" disabled>📋 Copy to Clipboard</button>
+            <button class="btn-primary" id="downloadBtn" disabled>💾 Download File</button>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const toolbar = document.getElementById('toolbar');
+        const editorArea = document.getElementById('editorArea');
+        const noteEditor = document.getElementById('noteEditor');
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const dotUpBtn = document.getElementById('dotUpBtn');
+        const dotDownBtn = document.getElementById('dotDownBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+
+        let currentFileName = '';
+        let dotMode = null; // 'up' or 'down'
+        let undoStack = [];
+        let redoStack = [];
+        const MAX_HISTORY = 100;
+
+        // Character mappings for dot marks
+        const dotAbove = {
+            'A': 'Ȧ', 'B': 'Ḃ', 'C': 'Ċ', 'D': 'Ḋ', 'E': 'Ė', 'F': 'Ḟ', 'G': 'Ġ', 'H': 'Ḣ',
+            'I': 'İ', 'J': 'J̇', 'K': 'K̇', 'L': 'L̇', 'M': 'Ṁ', 'N': 'Ṅ', 'O': 'Ȯ', 'P': 'Ṗ',
+            'Q': 'Q̇', 'R': 'Ṙ', 'S': 'Ṡ', 'T': 'Ṫ', 'U': 'U̇', 'V': 'V̇', 'W': 'Ẇ', 'X': 'Ẋ',
+            'Y': 'Ẏ', 'Z': 'Ż',
+            'a': 'ȧ', 'b': 'ḃ', 'c': 'ċ', 'd': 'ḋ', 'e': 'ė', 'f': 'ḟ', 'g': 'ġ', 'h': 'ḣ',
+            'i': 'i', 'j': 'j̇', 'k': 'k̇', 'l': 'l̇', 'm': 'ṁ', 'n': 'ṅ', 'o': 'ȯ', 'p': 'ṗ',
+            'q': 'q̇', 'r': 'ṙ', 's': 'ṡ', 't': 'ṫ', 'u': 'u̇', 'v': 'v̇', 'w': 'ẇ', 'x': 'ẋ',
+            'y': 'ẏ', 'z': 'ż'
+        };
+
+        const dotBelow = {
+            'A': 'Ạ', 'B': 'Ḅ', 'C': 'C̣', 'D': 'Ḍ', 'E': 'Ẹ', 'F': 'F̣', 'G': 'G̣', 'H': 'Ḥ',
+            'I': 'Ị', 'J': 'J̣', 'K': 'Ḳ', 'L': 'Ḷ', 'M': 'Ṃ', 'N': 'Ṇ', 'O': 'Ọ', 'P': 'P̣',
+            'Q': 'Q̣', 'R': 'Ṛ', 'S': 'Ṣ', 'T': 'Ṭ', 'U': 'Ụ', 'V': 'Ṿ', 'W': 'Ẉ', 'X': 'X̣',
+            'Y': 'Ỵ', 'Z': 'Ẓ',
+            'a': 'ạ', 'b': 'ḅ', 'c': 'c̣', 'd': 'ḍ', 'e': 'ẹ', 'f': 'f̣', 'g': 'g̣', 'h': 'ḥ',
+            'i': 'ị', 'j': 'j̣', 'k': 'ḳ', 'l': 'ḷ', 'm': 'ṃ', 'n': 'ṇ', 'o': 'ọ', 'p': 'p̣',
+            'q': 'q̣', 'r': 'ṛ', 's': 'ṣ', 't': 'ṭ', 'u': 'ụ', 'v': 'ṿ', 'w': 'ẉ', 'x': 'x̣',
+            'y': 'ỵ', 'z': 'ẓ'
+        };
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Handle file processing
+        function handleFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.not') && !file.name.endsWith('.txt')) {
+                showError('Please select a .not or .txt file');
+                return;
+            }
+
+            currentFileName = file.name.replace(/\.(not|txt)$/, '');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    loadContent(content);
+                    showSuccess(`File "${file.name}" loaded successfully!`);
+                } catch (error) {
+                    showError('Failed to load file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Load content into editor
+        function loadContent(content) {
+            noteEditor.value = content;
+            toolbar.classList.add('visible');
+            editorArea.classList.add('visible');
+            copyBtn.disabled = false;
+            downloadBtn.disabled = false;
+            
+            // Reset history
+            undoStack = [];
+            redoStack = [];
+            updateHistoryButtons();
+        }
+
+        // Dot mode buttons
+        dotUpBtn.addEventListener('click', () => {
+            if (dotMode === 'up') {
+                dotMode = null;
+                dotUpBtn.classList.remove('active');
+                noteEditor.classList.remove('active-mode');
+            } else {
+                dotMode = 'up';
+                dotUpBtn.classList.add('active');
+                dotDownBtn.classList.remove('active');
+                noteEditor.classList.add('active-mode');
+            }
+        });
+
+        dotDownBtn.addEventListener('click', () => {
+            if (dotMode === 'down') {
+                dotMode = null;
+                dotDownBtn.classList.remove('active');
+                noteEditor.classList.remove('active-mode');
+            } else {
+                dotMode = 'down';
+                dotDownBtn.classList.add('active');
+                dotUpBtn.classList.remove('active');
+                noteEditor.classList.add('active-mode');
+            }
+        });
+
+        // Editor click handler for character transformation
+        noteEditor.addEventListener('click', (e) => {
+            if (!dotMode) return;
+
+            const pos = noteEditor.selectionStart;
+            const text = noteEditor.value;
+            
+            if (pos >= text.length) return;
+
+            const char = text[pos];
+            const mapping = dotMode === 'up' ? dotAbove : dotBelow;
+            
+            if (mapping[char]) {
+                // Save to undo stack
+                saveToHistory();
+                
+                // Replace character
+                const newText = text.substring(0, pos) + mapping[char] + text.substring(pos + 1);
+                noteEditor.value = newText;
+                
+                // Keep cursor position
+                noteEditor.setSelectionRange(pos + 1, pos + 1);
+                noteEditor.focus();
+                
+                // Clear redo stack
+                redoStack = [];
+                updateHistoryButtons();
+            }
+        });
+
+        // History management
+        function saveToHistory() {
+            undoStack.push(noteEditor.value);
+            if (undoStack.length > MAX_HISTORY) {
+                undoStack.shift();
+            }
+        }
+
+        function updateHistoryButtons() {
+            undoBtn.disabled = undoStack.length === 0;
+            redoBtn.disabled = redoStack.length === 0;
+        }
+
+        // Undo button
+        undoBtn.addEventListener('click', () => {
+            if (undoStack.length > 0) {
+                redoStack.push(noteEditor.value);
+                noteEditor.value = undoStack.pop();
+                updateHistoryButtons();
+            }
+        });
+
+        // Redo button
+        redoBtn.addEventListener('click', () => {
+            if (redoStack.length > 0) {
+                undoStack.push(noteEditor.value);
+                noteEditor.value = redoStack.pop();
+                updateHistoryButtons();
+            }
+        });
+
+        // Keyboard shortcuts
+        noteEditor.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undoBtn.click();
+                } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
+                    e.preventDefault();
+                    redoBtn.click();
+                }
+            }
+        });
+
+        // Track manual edits for undo
+        let typingTimer;
+        noteEditor.addEventListener('input', () => {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                if (!dotMode) {
+                    saveToHistory();
+                    redoStack = [];
+                    updateHistoryButtons();
+                }
+            }, 500);
+        });
+
+        // Copy to clipboard
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(noteEditor.value);
+                showSuccess('Content copied to clipboard!');
+            } catch (error) {
+                showError('Failed to copy to clipboard');
+            }
+        });
+
+        // Download file
+        downloadBtn.addEventListener('click', () => {
+            const content = noteEditor.value;
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFileName + '.not';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess('File downloaded!');
+        });
+
+        // Message helpers
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+            successDiv.classList.remove('visible');
+        }
+
+        function showSuccess(message) {
+            successDiv.textContent = message;
+            successDiv.classList.add('visible');
+            errorDiv.classList.remove('visible');
+        }
+
+        function hideMessages() {
+            errorDiv.classList.remove('visible');
+            successDiv.classList.remove('visible');
+        }
+    </script>
+</body>
+</html>
