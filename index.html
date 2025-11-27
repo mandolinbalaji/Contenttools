@@ -527,7 +527,7 @@
                     }
                 }
 
-                lrc += `${timestamp}${lyrics ? lyrics : ''}\n`;
+                lrc += `${timestamp}${lyrics ? '$' + lyrics : ''}\n`;
             });
 
             return lrc;
