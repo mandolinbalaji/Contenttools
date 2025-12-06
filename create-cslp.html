@@ -511,7 +511,9 @@
             lines.forEach((line, index) => {
                 const trimmed = line.trim();
                 if (trimmed) {
-                    notationMap[index] = trimmed;
+                    // Remove timestamp in square brackets [mm:ss.xxx]
+                    const notation = trimmed.replace(/^\[\d{2}:\d{1,2}\.\d+\]\s*/, '').trim();
+                    notationMap[index] = notation;
                 }
             });
 
