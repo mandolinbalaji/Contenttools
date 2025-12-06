@@ -225,6 +225,12 @@
             align-items: center;
         }
 
+        .timestamp-item.drag-over {
+            background: #e3f2fd;
+            border-left: 3px solid #2196F3;
+            padding-left: 7px;
+        }
+
         .timestamp-checkbox {
             width: 18px;
             height: 18px;
@@ -886,6 +892,17 @@
                 item.className = 'lyrics-item';
                 item.textContent = lyric;
                 item.dataset.index = index;
+                item.draggable = true;
+
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = { type: 'lyric', index: index, text: lyric };
+                    item.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'copy';
+                });
+
+                item.addEventListener('dragend', (e) => {
+                    item.classList.remove('dragging');
+                });
 
                 item.addEventListener('click', () => {
                     // Deselect previous
@@ -937,7 +954,6 @@
                     if (audioPlayer) {
                         const wasPlaying = !audioPlayer.paused;
                         const seconds = parseTime(item.time);
-                        console.log('Seeking to:', item.time, 'parsed as:', seconds, 'audio duration:', audioPlayer.duration);
                         audioPlayer.currentTime = seconds;
                         // Resume playing if it was playing before
                         if (wasPlaying) {
@@ -962,6 +978,26 @@
                 removeBtn.addEventListener('click', () => {
                     matchedData[index].lyrics = '';
                     lyricsEl.value = '';
+                });
+
+                // Drag and drop handlers for assigning lyrics
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'copy';
+                    container.classList.add('drag-over');
+                });
+
+                container.addEventListener('dragleave', (e) => {
+                    container.classList.remove('drag-over');
+                });
+
+                container.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    container.classList.remove('drag-over');
+                    if (draggedItem && draggedItem.type === 'lyric') {
+                        matchedData[index].lyrics = draggedItem.text;
+                        lyricsEl.value = draggedItem.text;
+                    }
                 });
 
                 container.appendChild(checkbox);
