@@ -663,15 +663,16 @@
 
             audioPlayer.addEventListener('ended', () => {
                 progressFill.style.width = '0%';
-                currentTimeEl.textContent = '0:00';
+                currentTimeEl.textContent = '0:00.000';
             });
         }
 
         function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00';
+            if (isNaN(seconds)) return '0:00.000';
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
+            const ms = Math.floor((seconds % 1) * 1000);
+            return `${mins}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
         }
 
         playBtn.addEventListener('click', () => {
@@ -691,7 +692,7 @@
                 audioPlayer.pause();
                 audioPlayer.currentTime = 0;
                 progressFill.style.width = '0%';
-                currentTimeEl.textContent = '0:00';
+                currentTimeEl.textContent = '0:00.000';
             }
         });
 
