@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Lyrics - Anytune to LRC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .file-upload-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .file-group {
+            flex: 1;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-group:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .file-group.loaded {
+            border-color: #4CAF50;
+            background: #f0fff0;
+        }
+
+        .file-group-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-name {
+            color: #666;
+            font-size: 13px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .process-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .btn-process {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-process:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-process:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .panes-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .panes-section.visible {
+            display: grid;
+        }
+
+        .pane {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f8f9ff;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pane-header {
+            background: #667eea;
+            color: white;
+            padding: 12px 15px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .pane-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            max-height: 400px;
+        }
+
+        .lyrics-item {
+            background: white;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+            cursor: move;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .lyrics-item:hover {
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .lyrics-item.dragging {
+            opacity: 0.5;
+        }
+
+        .timestamp-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .timestamp {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #764ba2;
+            min-width: 80px;
+            font-weight: 600;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .matched-lyrics {
+            flex: 1;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .matched-lyrics:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .remove-btn {
+            background: #fee;
+            color: #c33;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .remove-btn:hover {
+            background: #fdd;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #d0d0d0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error.visible {
+            display: block;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Process Lyrics</h1>
+            <a href="index.html" class="back-link">← Back to Converter</a>
+        </div>
+        <p class="subtitle">Load LRC and lyrics files, match and edit lyrics to timestamps, then download merged LRC</p>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="file-upload-section">
+            <div class="file-group" id="lrcGroup">
+                <div class="file-group-label">LRC File</div>
+                <div class="file-name" id="lrcFileName">No file selected</div>
+                <input type="file" id="lrcInput" accept=".lrc">
+            </div>
+            <div class="file-group" id="lyricsGroup">
+                <div class="file-group-label">Lyrics .txt File</div>
+                <div class="file-name" id="lyricsFileName">No file selected</div>
+                <input type="file" id="lyricsInput" accept=".txt">
+            </div>
+        </div>
+
+        <div class="process-section">
+            <button class="btn-process" id="processBtn" disabled>Process Files</button>
+        </div>
+
+        <div class="panes-section" id="panesSection">
+            <div class="pane">
+                <div class="pane-header">📝 Lyrics Lines</div>
+                <div class="pane-content" id="lyricsPane"></div>
+            </div>
+            <div class="pane">
+                <div class="pane-header">⏱️ Timestamps (drag lyrics here or edit)</div>
+                <div class="pane-content" id="timestampsPane"></div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-secondary" id="resetBtn" disabled>🔄 Reset</button>
+            <button class="btn-primary" id="downloadBtn" disabled>💾 Download Merged LRC</button>
+        </div>
+    </div>
+
+    <script>
+        const lrcGroup = document.getElementById('lrcGroup');
+        const lyricsGroup = document.getElementById('lyricsGroup');
+        const lrcInput = document.getElementById('lrcInput');
+        const lyricsInput = document.getElementById('lyricsInput');
+        const lrcFileName = document.getElementById('lrcFileName');
+        const lyricsFileName = document.getElementById('lyricsFileName');
+        const processBtn = document.getElementById('processBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const panesSection = document.getElementById('panesSection');
+        const lyricsPane = document.getElementById('lyricsPane');
+        const timestampsPane = document.getElementById('timestampsPane');
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+
+        let lrcData = null;
+        let lyricsData = [];
+        let timestampsData = [];
+        let matchedData = [];
+        let draggedItem = null;
+
+        // File upload handlers
+        lrcGroup.addEventListener('click', () => lrcInput.click());
+        lyricsGroup.addEventListener('click', () => lyricsInput.click());
+
+        lrcInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleLrcFile(e.target.files[0]);
+            }
+        });
+
+        lyricsInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleLyricsFile(e.target.files[0]);
+            }
+        });
+
+        function handleLrcFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.lrc')) {
+                showError('Please select a valid .lrc file');
+                return;
+            }
+
+            lrcFileName.textContent = file.name;
+            lrcGroup.classList.add('loaded');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    lrcData = parseLrcFile(content);
+                    checkFilesReady();
+                } catch (error) {
+                    showError('Failed to parse LRC file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function handleLyricsFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.txt')) {
+                showError('Please select a valid .txt file');
+                return;
+            }
+
+            lyricsFileName.textContent = file.name;
+            lyricsGroup.classList.add('loaded');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    lyricsData = parseLyricsFile(content);
+                    checkFilesReady();
+                } catch (error) {
+                    showError('Failed to parse lyrics file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseLrcFile(content) {
+            const timestamps = [];
+            const lines = content.split('\n');
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                // Match LRC format: [mm:ss.xx]lyrics
+                const match = trimmed.match(/^\[(\d{2}):(\d{2}\.\d+)\](.*)/);
+                if (match) {
+                    timestamps.push({
+                        time: `${match[1]}:${match[2]}`,
+                        lyrics: match[3] || ''
+                    });
+                }
+            });
+
+            return timestamps;
+        }
+
+        function parseLyricsFile(content) {
+            const lyrics = [];
+            const lines = content.split('\n');
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed && !trimmed.includes(':')) {
+                    lyrics.push(trimmed);
+                } else if (trimmed && trimmed.includes(':')) {
+                    const colonIndex = trimmed.indexOf(':');
+                    const text = trimmed.substring(colonIndex + 1).trim();
+                    if (text) {
+                        lyrics.push(text);
+                    }
+                }
+            });
+
+            return lyrics;
+        }
+
+        function checkFilesReady() {
+            if (lrcData && lrcData.length > 0 && lyricsData && lyricsData.length > 0) {
+                processBtn.disabled = false;
+            }
+        }
+
+        processBtn.addEventListener('click', () => {
+            processFiles();
+        });
+
+        function processFiles() {
+            hideMessages();
+
+            // Initialize matched data with timestamps and empty lyrics
+            matchedData = lrcData.map(item => ({
+                time: item.time,
+                lyrics: item.lyrics || ''
+            }));
+
+            renderPanes();
+            panesSection.classList.add('visible');
+            resetBtn.disabled = false;
+            downloadBtn.disabled = false;
+            showSuccess(`Loaded ${lrcData.length} timestamps and ${lyricsData.length} lyrics lines`);
+        }
+
+        function renderPanes() {
+            // Render lyrics pane
+            lyricsPane.innerHTML = '';
+            lyricsData.forEach((lyric, index) => {
+                const item = document.createElement('div');
+                item.className = 'lyrics-item';
+                item.draggable = true;
+                item.textContent = lyric;
+                item.dataset.index = index;
+
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = {
+                        type: 'lyric',
+                        index: index,
+                        text: lyric
+                    };
+                    item.classList.add('dragging');
+                });
+
+                item.addEventListener('dragend', (e) => {
+                    item.classList.remove('dragging');
+                });
+
+                lyricsPane.appendChild(item);
+            });
+
+            // Render timestamps pane
+            timestampsPane.innerHTML = '';
+            matchedData.forEach((item, index) => {
+                const container = document.createElement('div');
+                container.className = 'timestamp-item';
+                container.dataset.index = index;
+
+                const timestampEl = document.createElement('div');
+                timestampEl.className = 'timestamp';
+                timestampEl.textContent = item.time;
+
+                const lyricsEl = document.createElement('input');
+                lyricsEl.type = 'text';
+                lyricsEl.className = 'matched-lyrics';
+                lyricsEl.value = item.lyrics;
+                lyricsEl.placeholder = 'Drag lyrics here or type...';
+
+                lyricsEl.addEventListener('change', (e) => {
+                    matchedData[index].lyrics = e.target.value;
+                });
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = 'Clear';
+                removeBtn.addEventListener('click', () => {
+                    matchedData[index].lyrics = '';
+                    lyricsEl.value = '';
+                });
+
+                container.appendChild(timestampEl);
+                container.appendChild(lyricsEl);
+                container.appendChild(removeBtn);
+
+                // Drag and drop support
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    container.style.backgroundColor = '#e8ebff';
+                });
+
+                container.addEventListener('dragleave', (e) => {
+                    container.style.backgroundColor = '';
+                });
+
+                container.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    container.style.backgroundColor = '';
+
+                    if (draggedItem && draggedItem.type === 'lyric') {
+                        matchedData[index].lyrics = draggedItem.text;
+                        lyricsEl.value = draggedItem.text;
+                        draggedItem = null;
+                    }
+                });
+
+                timestampsPane.appendChild(container);
+            });
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            downloadMergedLrc();
+        });
+
+        function downloadMergedLrc() {
+            let lrcContent = '';
+
+            matchedData.forEach(item => {
+                lrcContent += `[${item.time}]${item.lyrics}\n`;
+            });
+
+            const blob = new Blob([lrcContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'merged.lrc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess('Merged LRC file downloaded!');
+        }
+
+        resetBtn.addEventListener('click', () => {
+            lrcData = null;
+            lyricsData = [];
+            matchedData = [];
+            lrcFileName.textContent = 'No file selected';
+            lyricsFileName.textContent = 'No file selected';
+            lrcGroup.classList.remove('loaded');
+            lyricsGroup.classList.remove('loaded');
+            panesSection.classList.remove('visible');
+            processBtn.disabled = true;
+            resetBtn.disabled = true;
+            downloadBtn.disabled = true;
+            hideMessages();
+            showSuccess('Reset complete');
+        });
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+            successDiv.classList.remove('visible');
+        }
+
+        function showSuccess(message) {
+            successDiv.textContent = message;
+            successDiv.classList.add('visible');
+            errorDiv.classList.remove('visible');
+        }
+
+        function hideMessages() {
+            errorDiv.classList.remove('visible');
+            successDiv.classList.remove('visible');
+        }
+    </script>
+</body>
+</html>
