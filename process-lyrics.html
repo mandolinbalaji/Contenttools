@@ -712,8 +712,9 @@
                 document.querySelectorAll('.timestamp').forEach((el, index) => {
                     const timestampText = el.textContent;
                     const timestampSeconds = parseTime(timestampText);
-                    if (audioPlayer.currentTime >= timestampSeconds && 
-                        audioPlayer.currentTime < timestampSeconds + 0.1) {
+                    // Highlight from 0.05s before to 0.2s after the timestamp
+                    if (audioPlayer.currentTime >= timestampSeconds - 0.05 && 
+                        audioPlayer.currentTime < timestampSeconds + 0.2) {
                         el.classList.add('active');
                     } else {
                         el.classList.remove('active');
