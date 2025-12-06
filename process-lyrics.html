@@ -343,6 +343,106 @@
             background: #ffcdd2;
         }
 
+        .player-section {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .player-section.visible {
+            display: block;
+        }
+
+        .player-file-input {
+            margin-bottom: 15px;
+        }
+
+        .player-file-input input[type="file"] {
+            display: none;
+        }
+
+        .player-file-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .player-file-btn:hover {
+            background: #764ba2;
+        }
+
+        .player-file-name {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .player-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .player-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            min-width: 50px;
+        }
+
+        .player-btn:hover {
+            background: #764ba2;
+        }
+
+        .player-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .player-time {
+            font-size: 12px;
+            color: #aaa;
+            min-width: 80px;
+        }
+
+        .player-progress-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .player-progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #555;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .player-progress-fill {
+            height: 100%;
+            background: #667eea;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
         .button-group {
             display: flex;
             gap: 10px;
@@ -442,6 +542,29 @@
             <button class="btn-process" id="processBtn" disabled>Process Files</button>
         </div>
 
+        <div class="player-section" id="playerSection">
+            <div class="player-file-input">
+                <button class="player-file-btn" id="playerFileBtn">📁 Load Audio File</button>
+                <div class="player-file-name" id="playerFileName">No audio loaded</div>
+                <input type="file" id="playerInput" accept="audio/*">
+            </div>
+
+            <div class="player-controls">
+                <button class="player-btn" id="rewindBtn">⏮ Rewind</button>
+                <button class="player-btn" id="playBtn">▶ Play</button>
+                <button class="player-btn" id="pauseBtn">⏸ Pause</button>
+                <button class="player-btn" id="stopBtn">⏹ Stop</button>
+                <button class="player-btn" id="forwardBtn">⏭ Forward</button>
+                <span class="player-time"><span id="currentTime">0:00</span> / <span id="duration">0:00</span></span>
+            </div>
+
+            <div class="player-progress-container">
+                <div class="player-progress-bar" id="progressBar">
+                    <div class="player-progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="panes-section" id="panesSection">
             <div class="pane">
                 <div class="pane-header">📝 Lyrics Lines (click to select)</div>
@@ -489,6 +612,107 @@
         let lyricsBaseName = 'merged';
         let selectedLyricIndex = -1;
         let selectedTimestampIndices = new Set();
+
+        // Audio player elements
+        const playerSection = document.getElementById('playerSection');
+        const playerInput = document.getElementById('playerInput');
+        const playerFileBtn = document.getElementById('playerFileBtn');
+        const playerFileName = document.getElementById('playerFileName');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const rewindBtn = document.getElementById('rewindBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+
+        let audioPlayer = null;
+
+        // Audio player handlers
+        playerFileBtn.addEventListener('click', () => playerInput.click());
+
+        playerInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                loadAudioFile(e.target.files[0]);
+            }
+        });
+
+        function loadAudioFile(file) {
+            playerFileName.textContent = file.name;
+            
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+            }
+
+            const url = URL.createObjectURL(file);
+            audioPlayer = new Audio(url);
+
+            audioPlayer.addEventListener('loadedmetadata', () => {
+                durationEl.textContent = formatTime(audioPlayer.duration);
+                playerSection.classList.add('visible');
+            });
+
+            audioPlayer.addEventListener('timeupdate', () => {
+                const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progressFill.style.width = percent + '%';
+                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+            });
+
+            audioPlayer.addEventListener('ended', () => {
+                progressFill.style.width = '0%';
+                currentTimeEl.textContent = '0:00';
+            });
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (audioPlayer) {
+                audioPlayer.play();
+            }
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            if (audioPlayer) {
+                audioPlayer.pause();
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+                progressFill.style.width = '0%';
+                currentTimeEl.textContent = '0:00';
+            }
+        });
+
+        rewindBtn.addEventListener('click', () => {
+            if (audioPlayer) {
+                audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 5);
+            }
+        });
+
+        forwardBtn.addEventListener('click', () => {
+            if (audioPlayer) {
+                audioPlayer.currentTime = Math.min(audioPlayer.duration, audioPlayer.currentTime + 5);
+            }
+        });
+
+        progressBar.addEventListener('click', (e) => {
+            if (!audioPlayer) return;
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audioPlayer.currentTime = percent * audioPlayer.duration;
+        });
 
         // File upload handlers
         lrcGroup.addEventListener('click', () => lrcInput.click());
