@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create CSLP File</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border: 1px solid #667eea;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error.visible {
+            display: block;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success.visible {
+            display: block;
+        }
+
+        .file-upload-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .file-group {
+            flex: 1;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-group:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .file-group.drag-over {
+            border-color: #00ff00;
+            background: #f0fff0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .file-group.loaded {
+            border-color: #4CAF50;
+            background: #f0fff0;
+        }
+
+        .file-group-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .file-name {
+            color: #999;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-group.loaded .file-name {
+            color: #3c3;
+        }
+
+        .file-group input[type="file"] {
+            display: none;
+        }
+
+        .metadata-section {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metadata-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .button-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .preview-section {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            display: none;
+        }
+
+        .preview-section.visible {
+            display: block;
+        }
+
+        .preview-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .preview-textarea {
+            width: 100%;
+            height: 300px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Create CSLP File</h1>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+        <p class="subtitle">Load LRC and notation files, add metadata, and create CSLP file</p>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="file-upload-section">
+            <div class="file-group" id="lrcGroup" data-drop-zone="lrc">
+                <div class="file-group-label">LRC File</div>
+                <div class="file-name" id="lrcFileName">No file selected</div>
+                <input type="file" id="lrcInput" accept=".lrc">
+            </div>
+            <div class="file-group" id="notGroup" data-drop-zone="notation">
+                <div class="file-group-label">Notation .not File (Optional)</div>
+                <div class="file-name" id="notFileName">No file selected</div>
+                <input type="file" id="notInput" accept=".not">
+            </div>
+        </div>
+
+        <div class="metadata-section">
+            <h3>Metadata</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="title" placeholder="e.g., DeviNeeyeThunai-Db">
+                </div>
+                <div class="form-group">
+                    <label>Artist</label>
+                    <input type="text" id="artist" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Ragam</label>
+                    <input type="text" id="ragam" placeholder="e.g., Keeravani">
+                </div>
+                <div class="form-group">
+                    <label>Talam</label>
+                    <input type="text" id="talam" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Shruti</label>
+                    <input type="text" id="shruti" placeholder="e.g., Db">
+                </div>
+                <div class="form-group">
+                    <label>Aarohanam</label>
+                    <input type="text" id="aarohanam" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Avarohanam</label>
+                    <input type="text" id="avarohanam" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Edupu (BPM)</label>
+                    <input type="number" id="edupu" placeholder="e.g., 60" value="60">
+                </div>
+                <div class="form-group">
+                    <label>MP3 Filename</label>
+                    <input type="text" id="mp3FileName" placeholder="e.g., song.m4a">
+                </div>
+            </div>
+        </div>
+
+        <div class="button-section">
+            <button class="btn btn-primary" id="createBtn" disabled>📄 Create CSLP File</button>
+        </div>
+
+        <div class="preview-section" id="previewSection">
+            <h3>Preview</h3>
+            <textarea class="preview-textarea" id="previewTextarea" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        const lrcGroup = document.getElementById('lrcGroup');
+        const notGroup = document.getElementById('notGroup');
+        const lrcInput = document.getElementById('lrcInput');
+        const notInput = document.getElementById('notInput');
+        const lrcFileName = document.getElementById('lrcFileName');
+        const notFileName = document.getElementById('notFileName');
+        const createBtn = document.getElementById('createBtn');
+        const error = document.getElementById('error');
+        const success = document.getElementById('success');
+        const previewSection = document.getElementById('previewSection');
+        const previewTextarea = document.getElementById('previewTextarea');
+
+        let lrcData = [];
+        let notationMap = {};
+        let lrcBaseName = '';
+
+        // File group click handlers
+        lrcGroup.addEventListener('click', () => lrcInput.click());
+        notGroup.addEventListener('click', () => notInput.click());
+
+        // Drag and drop handlers
+        document.querySelectorAll('[data-drop-zone]').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length === 0) return;
+
+                const dropZoneType = zone.dataset.dropZone;
+                if (dropZoneType === 'lrc') {
+                    handleLrcFile(files[0]);
+                } else if (dropZoneType === 'notation') {
+                    handleNotationFile(files[0]);
+                }
+            });
+        });
+
+        // File input change handlers
+        lrcInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleLrcFile(e.target.files[0]);
+            }
+        });
+
+        notInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleNotationFile(e.target.files[0]);
+            }
+        });
+
+        function hideMessages() {
+            error.classList.remove('visible');
+            success.classList.remove('visible');
+            previewSection.classList.remove('visible');
+        }
+
+        function showError(msg) {
+            hideMessages();
+            error.textContent = msg;
+            error.classList.add('visible');
+        }
+
+        function showSuccess(msg) {
+            hideMessages();
+            success.textContent = msg;
+            success.classList.add('visible');
+        }
+
+        function handleLrcFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.lrc')) {
+                showError('Please select a valid .lrc file');
+                return;
+            }
+
+            lrcFileName.textContent = file.name;
+            lrcGroup.classList.add('loaded');
+            lrcBaseName = file.name.replace(/\.lrc$/, '');
+            document.getElementById('title').value = lrcBaseName;
+            document.getElementById('mp3FileName').value = lrcBaseName + '.m4a';
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    lrcData = parseLrcFile(content);
+                    checkFilesReady();
+                    showSuccess(`✓ LRC file loaded: ${lrcData.length} lines`);
+                } catch (error) {
+                    showError('Failed to parse LRC file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function handleNotationFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.not')) {
+                showError('Please select a valid .not file');
+                return;
+            }
+
+            notFileName.textContent = file.name;
+            notGroup.classList.add('loaded');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    notationMap = parseNotationFile(content);
+                    checkFilesReady();
+                    showSuccess(`✓ Notation file loaded: ${Object.keys(notationMap).length} notations`);
+                } catch (error) {
+                    showError('Failed to parse notation file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseLrcFile(content) {
+            const timestamps = [];
+            const lines = content.split('\n');
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                // Match LRC format: [mm:ss.xx]lyrics or [m:s.xx]lyrics
+                const match = trimmed.match(/^\[(\d+):(\d{1,2})\.(\d+)\](.*)/);
+                if (match) {
+                    const mins = parseInt(match[1]);
+                    const secs = parseInt(match[2]);
+                    const msStr = match[3];
+                    const lyrics = match[4] || '';
+                    const msFraction = parseFloat('0.' + msStr);
+                    const timeInSeconds = mins * 60 + secs + msFraction;
+
+                    timestamps.push({
+                        time: timeInSeconds,
+                        text: lyrics,
+                        notation: '',
+                        lineNumber: timestamps.length
+                    });
+                }
+            });
+
+            return timestamps;
+        }
+
+        function parseNotationFile(content) {
+            const notationMap = {};
+            const lines = content.split('\n');
+
+            lines.forEach((line, index) => {
+                const trimmed = line.trim();
+                if (trimmed) {
+                    notationMap[index] = trimmed;
+                }
+            });
+
+            return notationMap;
+        }
+
+        function checkFilesReady() {
+            if (lrcData.length > 0) {
+                createBtn.disabled = false;
+            }
+        }
+
+        createBtn.addEventListener('click', createCslpFile);
+
+        function createCslpFile() {
+            try {
+                const metadata = {
+                    title: document.getElementById('title').value || lrcBaseName,
+                    artist: document.getElementById('artist').value,
+                    ragam: document.getElementById('ragam').value,
+                    talam: document.getElementById('talam').value,
+                    shruti: document.getElementById('shruti').value,
+                    aarohanam: document.getElementById('aarohanam').value,
+                    avarohanam: document.getElementById('avarohanam').value,
+                    edupu: parseInt(document.getElementById('edupu').value) || 60
+                };
+
+                const timeline = lrcData.map((item, index) => ({
+                    id: Date.now() + index,
+                    time: item.time,
+                    text: item.text,
+                    notation: notationMap[index] || '',
+                    lineNumber: index
+                }));
+
+                const cslpContent = {
+                    data: {
+                        metadata,
+                        mp3FileName: document.getElementById('mp3FileName').value,
+                        config: {
+                            offset: 0.25,
+                            lastPosition: lrcData[lrcData.length - 1]?.time || 0
+                        },
+                        ulpLines: lrcData.map(item => item.text),
+                        rawText: lrcData.map(item => item.text).join('\n'),
+                        timeline
+                    },
+                    integrityHash: generateHash()
+                };
+
+                // Show preview
+                previewTextarea.value = JSON.stringify(cslpContent, null, 2);
+                previewSection.classList.add('visible');
+
+                // Download the file
+                downloadCslpFile(cslpContent);
+            } catch (error) {
+                showError('Failed to create CSLP file: ' + error.message);
+            }
+        }
+
+        function downloadCslpFile(cslpContent) {
+            const blob = new Blob([JSON.stringify(cslpContent, null, 2)], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = lrcBaseName + '.cslp';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess(`✓ CSLP file downloaded: ${lrcBaseName}.cslp`);
+        }
+
+        function generateHash() {
+            // Simple hash generation - in production, use a proper hashing function
+            return 'hash' + Math.random().toString(36).substring(7);
+        }
+    </script>
+</body>
+</html>
