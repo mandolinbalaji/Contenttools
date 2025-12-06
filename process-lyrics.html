@@ -367,6 +367,7 @@
         let timestampsData = [];
         let matchedData = [];
         let draggedItem = null;
+        let lyricsBaseName = 'merged';
 
         // File upload handlers
         lrcGroup.addEventListener('click', () => lrcInput.click());
@@ -417,6 +418,8 @@
             }
 
             lyricsFileName.textContent = file.name;
+            // Extract basename without extension for merged file naming
+            lyricsBaseName = file.name.replace(/\.txt$/, '');
             lyricsGroup.classList.add('loaded');
 
             const reader = new FileReader();
@@ -596,7 +599,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'merged.lrc';
+            a.download = lyricsBaseName + '.lrc';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -608,6 +611,7 @@
             lrcData = null;
             lyricsData = [];
             matchedData = [];
+            lyricsBaseName = 'merged';
             lrcFileName.textContent = 'No file selected';
             lyricsFileName.textContent = 'No file selected';
             lrcGroup.classList.remove('loaded');
