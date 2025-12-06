@@ -692,13 +692,15 @@
         }
 
         function parseTime(timeStr) {
-            // Parse timestamp strings like "1:45.320" or "01:45.320"
+            // Parse timestamp strings like "0:17.867" or "00:17.867097505668934"
             const match = timeStr.match(/(\d+):(\d{2})\.(\d+)/);
             if (!match) return 0;
             const mins = parseInt(match[1]);
             const secs = parseInt(match[2]);
-            const ms = parseInt(match[3]);
-            return mins * 60 + secs + (ms / 1000);
+            const msStr = match[3];
+            // Convert millisecond string to fraction (e.g., "867" -> 0.867, "867097505668934" -> 0.867097505668934)
+            const msFraction = parseFloat('0.' + msStr);
+            return mins * 60 + secs + msFraction;
         }
 
         playBtn.addEventListener('click', () => {
@@ -935,6 +937,7 @@
                     if (audioPlayer) {
                         const wasPlaying = !audioPlayer.paused;
                         const seconds = parseTime(item.time);
+                        console.log('Seeking to:', item.time, 'parsed as:', seconds, 'audio duration:', audioPlayer.duration);
                         audioPlayer.currentTime = seconds;
                         // Resume playing if it was playing before
                         if (wasPlaying) {
