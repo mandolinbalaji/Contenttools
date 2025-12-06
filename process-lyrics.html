@@ -892,11 +892,14 @@
 
             lines.forEach(line => {
                 const trimmed = line.trim();
-                // Match LRC format: [mm:ss.xx]lyrics
-                const match = trimmed.match(/^\[(\d{2}):(\d{2}\.\d+)\](.*)/);
+                // Match LRC format: [mm:ss.xx]lyrics or [m:s.xx]lyrics
+                // Flexible to handle both mm:ss and m:s formats
+                const match = trimmed.match(/^\[(\d{1,2}):(\d{1,2}\.\d+)\](.*)/);
                 if (match) {
+                    const mins = match[1].padStart(2, '0');
+                    const secs = match[2].padStart(5, '0'); // Ensure SS.mmm format
                     timestamps.push({
-                        time: `${match[1]}:${match[2]}`,
+                        time: `${mins}:${secs}`,
                         lyrics: match[3] || ''
                     });
                 }
