@@ -264,6 +264,22 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .seek-btn {
+            background: #e8f4f8;
+            color: #0066cc;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 30px;
+        }
+
+        .seek-btn:hover {
+            background: #d0e8f0;
+        }
+
         .remove-btn {
             background: #fee;
             color: #c33;
@@ -910,10 +926,12 @@
                 const timestampEl = document.createElement('div');
                 timestampEl.className = 'timestamp';
                 timestampEl.textContent = item.time;
-                timestampEl.style.cursor = 'pointer';
-                timestampEl.title = 'Click to seek audio to this time';
-                timestampEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
+
+                const seekBtn = document.createElement('button');
+                seekBtn.className = 'seek-btn';
+                seekBtn.textContent = '▶';
+                seekBtn.title = 'Seek to this timestamp';
+                seekBtn.addEventListener('click', () => {
                     if (audioPlayer) {
                         const wasPlaying = !audioPlayer.paused;
                         const seconds = parseTime(item.time);
@@ -945,6 +963,7 @@
 
                 container.appendChild(checkbox);
                 container.appendChild(timestampEl);
+                container.appendChild(seekBtn);
                 container.appendChild(lyricsEl);
                 container.appendChild(removeBtn);
 
