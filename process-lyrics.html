@@ -713,7 +713,7 @@
                     const timestampText = el.textContent;
                     const timestampSeconds = parseTime(timestampText);
                     if (audioPlayer.currentTime >= timestampSeconds && 
-                        audioPlayer.currentTime < timestampSeconds + 0.5) {
+                        audioPlayer.currentTime < timestampSeconds + 0.1) {
                         el.classList.add('active');
                     } else {
                         el.classList.remove('active');
