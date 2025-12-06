@@ -77,6 +77,12 @@
             background: #f0f2ff;
         }
 
+        .file-group.drag-over {
+            border-color: #00ff00;
+            background: #f0fff0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
         .file-group.loaded {
             border-color: #4CAF50;
             background: #f0fff0;
@@ -389,6 +395,17 @@
 
         .player-file-input {
             margin-bottom: 15px;
+            padding: 15px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            background: #f8f9ff;
+            transition: all 0.3s;
+        }
+
+        .player-file-input.drag-over {
+            border-color: #00ff00;
+            background: #f0fff0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
         }
 
         .player-file-input input[type="file"] {
@@ -557,12 +574,12 @@
         <div class="success" id="success"></div>
 
         <div class="file-upload-section">
-            <div class="file-group" id="lrcGroup">
+            <div class="file-group" id="lrcGroup" data-drop-zone="lrc">
                 <div class="file-group-label">LRC File</div>
                 <div class="file-name" id="lrcFileName">No file selected</div>
                 <input type="file" id="lrcInput" accept=".lrc">
             </div>
-            <div class="file-group" id="lyricsGroup">
+            <div class="file-group" id="lyricsGroup" data-drop-zone="lyrics">
                 <div class="file-group-label">Lyrics .txt File</div>
                 <div class="file-name" id="lyricsFileName">No file selected</div>
                 <input type="file" id="lyricsInput" accept=".txt">
@@ -574,7 +591,7 @@
         </div>
 
         <div class="player-section" id="playerSection">
-            <div class="player-file-input">
+            <div class="player-file-input" data-drop-zone="audio">
                 <button class="player-file-btn" id="playerFileBtn">📁 Load Audio File</button>
                 <div class="player-file-name" id="playerFileName">No audio loaded</div>
                 <input type="file" id="playerInput" accept="audio/*">
@@ -777,6 +794,35 @@
         // File upload handlers
         lrcGroup.addEventListener('click', () => lrcInput.click());
         lyricsGroup.addEventListener('click', () => lyricsInput.click());
+
+        // Drag and drop handlers for file groups
+        document.querySelectorAll('[data-drop-zone]').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length === 0) return;
+
+                const dropZoneType = zone.dataset.dropZone;
+                if (dropZoneType === 'lrc') {
+                    handleLrcFile(files[0]);
+                } else if (dropZoneType === 'lyrics') {
+                    handleLyricsFile(files[0]);
+                } else if (dropZoneType === 'audio') {
+                    loadAudioFile(files[0]);
+                }
+            });
+        });
 
         lrcInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
