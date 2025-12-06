@@ -1135,7 +1135,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = lyricsBaseName + '.lrc';
+            a.download = lyricsBaseName + '_merged.lrc';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
