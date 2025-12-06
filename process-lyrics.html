@@ -716,10 +716,6 @@
                     const isInRange = currentTime >= timestampSeconds - 0.05 && 
                                       currentTime < timestampSeconds + 0.2;
                     
-                    if (index === 0 && Math.floor(currentTime * 10) % 10 === 0) {
-                        console.log(`Current: ${currentTime.toFixed(2)}s, Timestamp: ${timestampText} (${timestampSeconds.toFixed(2)}s), Range: [${(timestampSeconds - 0.05).toFixed(2)}, ${(timestampSeconds + 0.2).toFixed(2)}], In Range: ${isInRange}`);
-                    }
-                    
                     if (isInRange) {
                         el.classList.add('active');
                     } else {
@@ -743,9 +739,12 @@
         }
 
         function parseTime(timeStr) {
-            // Parse timestamp strings like "0:17.867" or "00:17.867097505668934"
-            const match = timeStr.match(/(\d+):(\d{2})\.(\d+)/);
-            if (!match) return 0;
+            // Parse timestamp strings like "0:17.867" or "00:17.867097505668934" or "01:3.923"
+            const match = timeStr.match(/(\d+):(\d{1,2})\.(\d+)/);
+            if (!match) {
+                console.warn('Failed to parse timestamp:', timeStr);
+                return 0;
+            }
             const mins = parseInt(match[1]);
             const secs = parseInt(match[2]);
             const msStr = match[3];
