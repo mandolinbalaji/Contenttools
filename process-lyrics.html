@@ -675,6 +675,16 @@
             return `${mins}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
         }
 
+        function parseTime(timeStr) {
+            // Parse timestamp strings like "1:45.320" or "01:45.320"
+            const match = timeStr.match(/(\d+):(\d{2})\.(\d+)/);
+            if (!match) return 0;
+            const mins = parseInt(match[1]);
+            const secs = parseInt(match[2]);
+            const ms = parseInt(match[3]);
+            return mins * 60 + secs + (ms / 1000);
+        }
+
         playBtn.addEventListener('click', () => {
             if (audioPlayer) {
                 audioPlayer.play();
@@ -896,6 +906,14 @@
                 const timestampEl = document.createElement('div');
                 timestampEl.className = 'timestamp';
                 timestampEl.textContent = item.time;
+                timestampEl.style.cursor = 'pointer';
+                timestampEl.title = 'Click to seek audio to this time';
+                timestampEl.addEventListener('click', () => {
+                    if (audioPlayer) {
+                        const seconds = parseTime(item.time);
+                        audioPlayer.currentTime = seconds;
+                    }
+                });
 
                 const lyricsEl = document.createElement('input');
                 lyricsEl.type = 'text';
