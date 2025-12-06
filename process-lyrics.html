@@ -712,9 +712,15 @@
                 document.querySelectorAll('.timestamp').forEach((el, index) => {
                     const timestampText = el.textContent;
                     const timestampSeconds = parseTime(timestampText);
-                    // Highlight from 0.05s before to 0.2s after the timestamp
-                    if (audioPlayer.currentTime >= timestampSeconds - 0.05 && 
-                        audioPlayer.currentTime < timestampSeconds + 0.2) {
+                    const currentTime = audioPlayer.currentTime;
+                    const isInRange = currentTime >= timestampSeconds - 0.05 && 
+                                      currentTime < timestampSeconds + 0.2;
+                    
+                    if (index === 0 && Math.floor(currentTime * 10) % 10 === 0) {
+                        console.log(`Current: ${currentTime.toFixed(2)}s, Timestamp: ${timestampText} (${timestampSeconds.toFixed(2)}s), Range: [${(timestampSeconds - 0.05).toFixed(2)}, ${(timestampSeconds + 0.2).toFixed(2)}], In Range: ${isInRange}`);
+                    }
+                    
+                    if (isInRange) {
                         el.classList.add('active');
                     } else {
                         el.classList.remove('active');
