@@ -912,7 +912,8 @@
                 timestampEl.textContent = item.time;
                 timestampEl.style.cursor = 'pointer';
                 timestampEl.title = 'Click to seek audio to this time';
-                timestampEl.addEventListener('click', () => {
+                timestampEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     if (audioPlayer) {
                         const wasPlaying = !audioPlayer.paused;
                         const seconds = parseTime(item.time);
