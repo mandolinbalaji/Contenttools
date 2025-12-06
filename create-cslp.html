@@ -434,8 +434,12 @@
             lrcFileName.textContent = file.name;
             lrcGroup.classList.add('loaded');
             lrcBaseName = file.name.replace(/\.lrc$/, '');
-            document.getElementById('title').value = lrcBaseName;
-            document.getElementById('mp3FileName').value = lrcBaseName + '.m4a';
+            
+            // Strip _merged suffix from basename for title and mp3 filename
+            const cleanBaseName = lrcBaseName.replace(/_merged$/, '');
+            
+            document.getElementById('title').value = cleanBaseName;
+            document.getElementById('mp3FileName').value = cleanBaseName + '.m4a';
 
             const reader = new FileReader();
             reader.onload = (e) => {
