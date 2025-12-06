@@ -230,6 +230,43 @@
             background: #fdd;
         }
 
+        .apply-to-multiple-btn {
+            background: #eff;
+            color: #039;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .apply-to-multiple-btn:hover {
+            background: #dff;
+        }
+
+        .timestamp-item.selected {
+            background: #e8f5ff;
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .multi-select-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .multi-select-info.visible {
+            display: block;
+        }
+
         .button-group {
             display: flex;
             gap: 10px;
@@ -336,6 +373,7 @@
             </div>
             <div class="pane">
                 <div class="pane-header">⏱️ Timestamps (drag lyrics here or edit)</div>
+                <div class="multi-select-info" id="multiSelectInfo">Click timestamps to select multiple, then use "Apply" button</div>
                 <div class="pane-content" id="timestampsPane"></div>
             </div>
         </div>
@@ -359,6 +397,7 @@
         const panesSection = document.getElementById('panesSection');
         const lyricsPane = document.getElementById('lyricsPane');
         const timestampsPane = document.getElementById('timestampsPane');
+        const multiSelectInfo = document.getElementById('multiSelectInfo');
         const errorDiv = document.getElementById('error');
         const successDiv = document.getElementById('success');
 
@@ -368,6 +407,8 @@
         let matchedData = [];
         let draggedItem = null;
         let lyricsBaseName = 'merged';
+        let selectedIndices = new Set();
+        let isMultiSelectMode = false;
 
         // File upload handlers
         lrcGroup.addEventListener('click', () => lrcInput.click());
@@ -553,11 +594,56 @@
                 removeBtn.addEventListener('click', () => {
                     matchedData[index].lyrics = '';
                     lyricsEl.value = '';
+                    selectedIndices.delete(index);
+                    renderPanes();
+                });
+
+                const applyBtn = document.createElement('button');
+                applyBtn.className = 'apply-to-multiple-btn';
+                applyBtn.textContent = 'Apply to Selected';
+                applyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (selectedIndices.size === 0) {
+                        showError('Select multiple timestamps first by clicking them');
+                        return;
+                    }
+                    const lyricsText = lyricsEl.value;
+                    selectedIndices.forEach(idx => {
+                        matchedData[idx].lyrics = lyricsText;
+                    });
+                    renderPanes();
+                    selectedIndices.clear();
+                    isMultiSelectMode = false;
+                    multiSelectInfo.classList.remove('visible');
+                    showSuccess(`Applied "${lyricsText}" to ${selectedIndices.size} timestamps`);
                 });
 
                 container.appendChild(timestampEl);
                 container.appendChild(lyricsEl);
                 container.appendChild(removeBtn);
+                container.appendChild(applyBtn);
+
+                // Click to select/deselect for multi-select
+                container.addEventListener('click', (e) => {
+                    if (e.target === lyricsEl || e.target === removeBtn || e.target === applyBtn) {
+                        return; // Don't select if clicking buttons or input
+                    }
+                    
+                    if (selectedIndices.has(index)) {
+                        selectedIndices.delete(index);
+                    } else {
+                        selectedIndices.add(index);
+                        isMultiSelectMode = true;
+                    }
+                    
+                    if (selectedIndices.size > 0) {
+                        multiSelectInfo.classList.add('visible');
+                    } else {
+                        multiSelectInfo.classList.remove('visible');
+                    }
+                    
+                    renderPanesHighlight();
+                });
 
                 // Drag and drop support
                 container.addEventListener('dragover', (e) => {
@@ -580,7 +666,23 @@
                     }
                 });
 
+                // Highlight selected items
+                if (selectedIndices.has(index)) {
+                    container.classList.add('selected');
+                }
+
                 timestampsPane.appendChild(container);
+            });
+        }
+
+        function renderPanesHighlight() {
+            const containers = document.querySelectorAll('.timestamp-item');
+            containers.forEach((container, index) => {
+                if (selectedIndices.has(index)) {
+                    container.classList.add('selected');
+                } else {
+                    container.classList.remove('selected');
+                }
             });
         }
 
@@ -612,11 +714,14 @@
             lyricsData = [];
             matchedData = [];
             lyricsBaseName = 'merged';
+            selectedIndices.clear();
+            isMultiSelectMode = false;
             lrcFileName.textContent = 'No file selected';
             lyricsFileName.textContent = 'No file selected';
             lrcGroup.classList.remove('loaded');
             lyricsGroup.classList.remove('loaded');
             panesSection.classList.remove('visible');
+            multiSelectInfo.classList.remove('visible');
             processBtn.disabled = true;
             resetBtn.disabled = true;
             downloadBtn.disabled = true;
