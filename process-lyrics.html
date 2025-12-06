@@ -723,6 +723,10 @@
             const rect = progressBar.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
             audioPlayer.currentTime = percent * audioPlayer.duration;
+            // Resume playing if it was playing before
+            if (!audioPlayer.paused) {
+                audioPlayer.play();
+            }
         });
 
         // File upload handlers
@@ -910,8 +914,13 @@
                 timestampEl.title = 'Click to seek audio to this time';
                 timestampEl.addEventListener('click', () => {
                     if (audioPlayer) {
+                        const wasPlaying = !audioPlayer.paused;
                         const seconds = parseTime(item.time);
                         audioPlayer.currentTime = seconds;
+                        // Resume playing if it was playing before
+                        if (wasPlaying) {
+                            audioPlayer.play();
+                        }
                     }
                 });
 
