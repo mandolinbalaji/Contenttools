@@ -301,15 +301,49 @@
             </div>
         </div>
 
-        <div class="title-section" style="margin-bottom: 20px;">
+        <div class="path-section" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px dashed #ccc;">
+            <p style="margin: 0 0 10px 0; font-size: 13px; color: #666;">📂 <strong>For MP4 Generation:</strong> Enter full file paths (browsers can't access paths directly)</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label for="audioPath" style="display: block; font-size: 12px; color: #555; margin-bottom: 4px;">Audio Path</label>
+                    <input type="text" id="audioPath" placeholder="C:\Music\song.mp3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-family: Consolas, monospace;">
+                </div>
+                <div>
+                    <label for="cslpPath" style="display: block; font-size: 12px; color: #555; margin-bottom: 4px;">CSLP Path</label>
+                    <input type="text" id="cslpPath" placeholder="C:\Projects\song.cslp" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-family: Consolas, monospace;">
+                </div>
+            </div>
+        </div>
+
+        <div class="title-section" style="margin-bottom: 20px; margin-top: 20px;">
             <label for="videoTitle" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Video Title</label>
             <input type="text" id="videoTitle" placeholder="Enter title (auto-filled from CSLP)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; font-family: inherit;">
         </div>
 
+        <div class="title-section" style="margin-bottom: 20px;">
+            <label for="infoText" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Info Text (optional - displays above lyrics)</label>
+            <input type="text" id="infoText" placeholder="e.g. Raga: Shankarabharanam | Tala: Adi" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; font-family: inherit;">
+        </div>
+
         <div class="button-section">
             <button class="btn btn-secondary" id="previewBtn" disabled>👁️ Preview Frame</button>
-            <button class="btn btn-primary" id="renderBtn" disabled>🎬 Render Video</button>
+            <button class="btn btn-primary" id="renderBtn" disabled>🎬 Render Video (Browser)</button>
             <button class="btn btn-secondary" id="downloadBtn" disabled>💾 Download Video</button>
+            <button class="btn btn-primary" id="generateCmdBtn" disabled>📋 Generate Command (MP4)</button>
+        </div>
+
+        <div class="command-section" id="commandSection" style="display: none; margin-top: 20px; padding: 20px; background: #1e1e1e; border-radius: 8px;">
+            <h4 style="color: #4ec9b0; margin: 0 0 10px 0;">🎬 Python Command for MP4 Generation</h4>
+            <p style="color: #9cdcfe; font-size: 14px; margin-bottom: 10px;">Copy and run this command in your terminal (requires Python + Pillow + FFmpeg):</p>
+            <div style="position: relative;">
+                <pre id="commandOutput" style="background: #2d2d2d; color: #ce9178; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; margin: 0; white-space: pre-wrap; word-break: break-all;"></pre>
+                <button id="copyCommandBtn" style="position: absolute; top: 8px; right: 8px; padding: 5px 10px; background: #0e639c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Copy</button>
+            </div>
+            <div style="margin-top: 15px; padding: 15px; background: #2d2d2d; border-radius: 4px;">
+                <p style="color: #6a9955; margin: 0 0 8px 0; font-size: 13px;">📦 First-time setup:</p>
+                <code style="color: #dcdcaa; font-size: 12px;">pip install pillow</code>
+                <p style="color: #6a9955; margin: 10px 0 5px 0; font-size: 13px;">📥 FFmpeg: <a href="https://ffmpeg.org/download.html" target="_blank" style="color: #4ec9b0;">Download here</a></p>
+            </div>
         </div>
 
         <div class="progress-section" id="progressSection">
@@ -338,6 +372,10 @@
         const previewBtn = document.getElementById('previewBtn');
         const renderBtn = document.getElementById('renderBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const generateCmdBtn = document.getElementById('generateCmdBtn');
+        const commandSection = document.getElementById('commandSection');
+        const commandOutput = document.getElementById('commandOutput');
+        const copyCommandBtn = document.getElementById('copyCommandBtn');
         const progressSection = document.getElementById('progressSection');
         const progressFill = document.getElementById('progressFill');
         const progressText = document.getElementById('progressText');
@@ -349,6 +387,8 @@
 
         // State
         let audioFile = null;
+        let audioFileName_stored = null;
+        let cslpFileName_stored = null;
         let audioElement = null;
         let cslpData = null;
         let renderedBlob = null;
@@ -358,6 +398,7 @@
         const HEIGHT = 1920;
         const TITLE_HEIGHT = 150;
         const STRIP_HEIGHT = 400;
+        const INFO_HEIGHT = 60;
         const GREEN_HEIGHT = HEIGHT - TITLE_HEIGHT - STRIP_HEIGHT;
         const CHROMA_KEY = '#00FF00';
 
@@ -425,6 +466,7 @@
         function handleAudioFile(file) {
             hideMessages();
             audioFile = file;
+            audioFileName_stored = file.name;
             audioFileName.textContent = file.name;
             audioGroup.classList.add('loaded');
 
@@ -447,6 +489,7 @@
                 return;
             }
 
+            cslpFileName_stored = file.name;
             cslpFileName.textContent = file.name;
             cslpGroup.classList.add('loaded');
 
@@ -481,7 +524,59 @@
             const ready = audioFile && cslpData;
             previewBtn.disabled = !ready;
             renderBtn.disabled = !ready;
+            // Command can be generated with paths OR loaded files
+            checkCommandReady();
         }
+
+        function checkCommandReady() {
+            const audioPath = document.getElementById('audioPath').value.trim();
+            const cslpPath = document.getElementById('cslpPath').value.trim();
+            const hasFiles = audioFileName_stored && cslpFileName_stored;
+            const hasPaths = audioPath && cslpPath;
+            generateCmdBtn.disabled = !(hasFiles || hasPaths);
+        }
+
+        // Listen to path input changes
+        document.getElementById('audioPath').addEventListener('input', checkCommandReady);
+        document.getElementById('cslpPath').addEventListener('input', checkCommandReady);
+
+        // Generate Command button
+        generateCmdBtn.addEventListener('click', () => {
+            // Get paths from input fields, fallback to filenames
+            const audioPath = document.getElementById('audioPath').value.trim() || audioFileName_stored;
+            const cslpPath = document.getElementById('cslpPath').value.trim() || cslpFileName_stored;
+            
+            if (!audioPath || !cslpPath) {
+                showError('Please load files or enter file paths');
+                return;
+            }
+            
+            const title = document.getElementById('videoTitle').value.trim();
+            const info = document.getElementById('infoText').value.trim();
+            
+            let cmd = `python generate_video.py "${audioPath}" "${cslpPath}"`;
+            
+            if (title) {
+                cmd += ` --title "${title}"`;
+            }
+            if (info) {
+                cmd += ` --info "${info}"`;
+            }
+            
+            commandOutput.textContent = cmd;
+            commandSection.style.display = 'block';
+            showSuccess('Command generated! Copy and run in your terminal.');
+        });
+
+        // Copy command button
+        copyCommandBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(commandOutput.textContent).then(() => {
+                copyCommandBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyCommandBtn.textContent = 'Copy';
+                }, 2000);
+            });
+        });
 
         // Preview button
         previewBtn.addEventListener('click', () => {
@@ -511,19 +606,64 @@
 
             // Green screen area (middle) - already filled with CHROMA_KEY
 
-            // Find current timeline entry
-            const timeline = cslpData.data?.timeline || [];
+            // Find current timeline entry with null checks
+            const timeline = cslpData?.data?.timeline || [];
             let currentEntry = { text: '', notation: '' };
             
             for (let i = timeline.length - 1; i >= 0; i--) {
-                if (currentTime >= timeline[i].time) {
-                    currentEntry = timeline[i];
+                const entry = timeline[i];
+                if (entry && typeof entry.time === 'number' && currentTime >= entry.time) {
+                    currentEntry = {
+                        text: (entry.text || '').toString().trim(),
+                        notation: (entry.notation || '').toString().trim()
+                    };
                     break;
                 }
             }
 
             // Draw bottom strip
             const stripY = HEIGHT - STRIP_HEIGHT;
+            
+            // Get info text
+            const infoText = document.getElementById('infoText').value.trim();
+            
+            // Draw info bar if text provided (just above the strip)
+            if (infoText) {
+                const infoY = stripY - INFO_HEIGHT;
+                ctx.fillStyle = '#F5F5F5';
+                ctx.fillRect(0, infoY, WIDTH, INFO_HEIGHT);
+                ctx.fillStyle = '#666666';
+                ctx.font = '28px Arial, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                
+                // Marquee scrolling - always scroll, loops continuously
+                const textWidth = ctx.measureText(infoText).width;
+                const gap = 100; // gap between repeated text
+                const totalWidth = textWidth + gap;
+                const scrollSpeed = 80; // pixels per second
+                const scrollOffset = (currentTime * scrollSpeed) % totalWidth;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(0, infoY, WIDTH, INFO_HEIGHT);
+                ctx.clip();
+                
+                // Draw text multiple times to create seamless loop
+                let x = WIDTH - scrollOffset;
+                while (x < WIDTH) {
+                    ctx.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x += totalWidth;
+                }
+                // Also draw before start for seamless entry
+                x = WIDTH - scrollOffset - totalWidth;
+                while (x + textWidth > 0) {
+                    ctx.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x -= totalWidth;
+                }
+                
+                ctx.restore();
+            }
             
             // White background for strip
             ctx.fillStyle = '#FFFFFF';
@@ -586,7 +726,7 @@
             stream.addTrack(dest.stream.getAudioTracks()[0]);
 
             const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'video/mp4',
+                mimeType: 'video/webm;codecs=vp9',
                 videoBitsPerSecond: 8000000
             });
 
@@ -599,7 +739,7 @@
 
             return new Promise((resolve, reject) => {
                 mediaRecorder.onstop = () => {
-                    renderedBlob = new Blob(chunks, { type: 'video/mp4' });
+                    renderedBlob = new Blob(chunks, { type: 'video/webm' });
                     resolve();
                 };
 
@@ -660,19 +800,64 @@
                 context.fillText(title.toUpperCase(), WIDTH / 2, TITLE_HEIGHT / 2);
             }
 
-            // Find current timeline entry
-            const timeline = cslpData.data?.timeline || [];
+            // Find current timeline entry with null checks
+            const timeline = cslpData?.data?.timeline || [];
             let currentEntry = { text: '', notation: '' };
             
             for (let i = timeline.length - 1; i >= 0; i--) {
-                if (currentTime >= timeline[i].time) {
-                    currentEntry = timeline[i];
+                const entry = timeline[i];
+                if (entry && typeof entry.time === 'number' && currentTime >= entry.time) {
+                    currentEntry = {
+                        text: (entry.text || '').toString().trim(),
+                        notation: (entry.notation || '').toString().trim()
+                    };
                     break;
                 }
             }
 
             // Draw bottom strip
             const stripY = HEIGHT - STRIP_HEIGHT;
+            
+            // Get info text
+            const infoText = document.getElementById('infoText').value.trim();
+            
+            // Draw info bar if text provided (just above the strip)
+            if (infoText) {
+                const infoY = stripY - INFO_HEIGHT;
+                context.fillStyle = '#F5F5F5';
+                context.fillRect(0, infoY, WIDTH, INFO_HEIGHT);
+                context.fillStyle = '#666666';
+                context.font = '28px Arial, sans-serif';
+                context.textAlign = 'left';
+                context.textBaseline = 'middle';
+                
+                // Marquee scrolling - always scroll, loops continuously
+                const textWidth = context.measureText(infoText).width;
+                const gap = 100; // gap between repeated text
+                const totalWidth = textWidth + gap;
+                const scrollSpeed = 80; // pixels per second
+                const scrollOffset = (currentTime * scrollSpeed) % totalWidth;
+                
+                context.save();
+                context.beginPath();
+                context.rect(0, infoY, WIDTH, INFO_HEIGHT);
+                context.clip();
+                
+                // Draw text multiple times to create seamless loop
+                let x = WIDTH - scrollOffset;
+                while (x < WIDTH) {
+                    context.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x += totalWidth;
+                }
+                // Also draw before start for seamless entry
+                x = WIDTH - scrollOffset - totalWidth;
+                while (x + textWidth > 0) {
+                    context.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x -= totalWidth;
+                }
+                
+                context.restore();
+            }
             
             // White background for strip
             context.fillStyle = '#FFFFFF';
@@ -697,16 +882,17 @@
         downloadBtn.addEventListener('click', () => {
             if (!renderedBlob) return;
 
-            const title = document.getElementById('videoTitle').value.trim() || cslpData.data?.metadata?.title || 'video';
+            const title = document.getElementById('videoTitle').value.trim() || cslpData?.data?.metadata?.title || 'video';
+            const safeTitle = title.replace(/[^a-zA-Z0-9_-]/g, '_');
             const url = URL.createObjectURL(renderedBlob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = title + '_shorts.mp4';
+            a.download = safeTitle + '_shorts.webm';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showSuccess(`✓ Downloaded: ${title}_shorts.mp4`);
+            showSuccess(`✓ Downloaded: ${safeTitle}_shorts.webm (Upload directly to YouTube, or convert to MP4 for other players)`);
         });
     </script>
 </body>
