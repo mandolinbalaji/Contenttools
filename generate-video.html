@@ -301,6 +301,11 @@
             </div>
         </div>
 
+        <div class="title-section" style="margin-bottom: 20px;">
+            <label for="videoTitle" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Video Title</label>
+            <input type="text" id="videoTitle" placeholder="Enter title (auto-filled from CSLP)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; font-family: inherit;">
+        </div>
+
         <div class="button-section">
             <button class="btn btn-secondary" id="previewBtn" disabled>👁️ Preview Frame</button>
             <button class="btn btn-primary" id="renderBtn" disabled>🎬 Render Video</button>
@@ -450,6 +455,13 @@
                 try {
                     cslpData = JSON.parse(e.target.result);
                     const timelineCount = cslpData.data?.timeline?.length || 0;
+                    
+                    // Auto-fill title from CSLP metadata
+                    const titleFromCslp = cslpData.metadata?.title || '';
+                    if (titleFromCslp) {
+                        document.getElementById('videoTitle').value = titleFromCslp;
+                    }
+                    
                     showSuccess(`✓ CSLP loaded: ${timelineCount} timeline entries`);
                     checkFilesReady();
                 } catch (err) {
@@ -483,17 +495,19 @@
             ctx.fillStyle = CHROMA_KEY;
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-            // Get title from CSLP
-            const title = cslpData.data?.metadata?.title || 'Untitled';
+            // Get title from input field
+            const title = document.getElementById('videoTitle').value.trim();
 
-            // Draw title area (top)
-            ctx.fillStyle = '#333333';
-            ctx.fillRect(0, 0, WIDTH, TITLE_HEIGHT);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 64px Impact, Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(title.toUpperCase(), WIDTH / 2, TITLE_HEIGHT / 2);
+            // Draw title area (top) - only if title is not blank
+            if (title) {
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(0, 0, WIDTH, TITLE_HEIGHT);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 64px Impact, Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(title.toUpperCase(), WIDTH / 2, TITLE_HEIGHT / 2);
+            }
 
             // Green screen area (middle) - already filled with CHROMA_KEY
 
@@ -572,7 +586,7 @@
             stream.addTrack(dest.stream.getAudioTracks()[0]);
 
             const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'video/webm;codecs=vp9',
+                mimeType: 'video/mp4',
                 videoBitsPerSecond: 8000000
             });
 
@@ -585,7 +599,7 @@
 
             return new Promise((resolve, reject) => {
                 mediaRecorder.onstop = () => {
-                    renderedBlob = new Blob(chunks, { type: 'video/webm' });
+                    renderedBlob = new Blob(chunks, { type: 'video/mp4' });
                     resolve();
                 };
 
@@ -632,17 +646,19 @@
             context.fillStyle = CHROMA_KEY;
             context.fillRect(0, 0, WIDTH, HEIGHT);
 
-            // Get title from CSLP
-            const title = cslpData.data?.metadata?.title || 'Untitled';
+            // Get title from input field
+            const title = document.getElementById('videoTitle').value.trim();
 
-            // Draw title area (top)
-            context.fillStyle = '#333333';
-            context.fillRect(0, 0, WIDTH, TITLE_HEIGHT);
-            context.fillStyle = '#FFFFFF';
-            context.font = 'bold 64px Impact, Arial, sans-serif';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText(title.toUpperCase(), WIDTH / 2, TITLE_HEIGHT / 2);
+            // Draw title area (top) - only if title is not blank
+            if (title) {
+                context.fillStyle = '#333333';
+                context.fillRect(0, 0, WIDTH, TITLE_HEIGHT);
+                context.fillStyle = '#FFFFFF';
+                context.font = 'bold 64px Impact, Arial, sans-serif';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(title.toUpperCase(), WIDTH / 2, TITLE_HEIGHT / 2);
+            }
 
             // Find current timeline entry
             const timeline = cslpData.data?.timeline || [];
@@ -681,16 +697,16 @@
         downloadBtn.addEventListener('click', () => {
             if (!renderedBlob) return;
 
-            const title = cslpData.data?.metadata?.title || 'video';
+            const title = document.getElementById('videoTitle').value.trim() || cslpData.data?.metadata?.title || 'video';
             const url = URL.createObjectURL(renderedBlob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = title + '_shorts.webm';
+            a.download = title + '_shorts.mp4';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showSuccess(`✓ Downloaded: ${title}_shorts.webm`);
+            showSuccess(`✓ Downloaded: ${title}_shorts.mp4`);
         });
     </script>
 </body>
