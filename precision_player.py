@@ -26,7 +26,7 @@ from pathlib import Path
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QComboBox, QFileDialog, QSlider, QFrame,
-    QSplitter, QGroupBox, QScrollArea
+    QSplitter, QGroupBox, QScrollArea, QCheckBox
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject
 from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QKeySequence, QShortcut, QFont
@@ -124,21 +124,50 @@ class AudioEngine(QObject):
             end_pos = self.position + frames
             
             # Handle looping
-            if self.loop_enabled and end_pos >= self.loop_end:
-                # Need to wrap around
+            if self.loop_enabled:
+                # Ensure position is within loop bounds
+                if self.position >= self.loop_end or self.position < self.loop_start:
+                    self.position = self.loop_start
+                
+                # Calculate how many samples until loop end
                 samples_before_loop = self.loop_end - self.position
-                samples_after_loop = frames - samples_before_loop
                 
-                if samples_before_loop > 0:
-                    outdata[:samples_before_loop] = self.audio_data[self.position:self.loop_end]
+                if samples_before_loop <= 0:
+                    # Already at or past loop end, jump to start
+                    self.position = self.loop_start
+                    samples_before_loop = self.loop_end - self.position
                 
-                # Wrap to loop start
-                self.position = self.loop_start
-                
-                if samples_after_loop > 0:
-                    end_after = self.position + samples_after_loop
-                    outdata[samples_before_loop:] = self.audio_data[self.position:end_after]
-                    self.position = end_after
+                if samples_before_loop >= frames:
+                    # Entire buffer fits before loop end
+                    end_pos = self.position + frames
+                    outdata[:] = self.audio_data[self.position:end_pos]
+                    self.position = end_pos
+                else:
+                    # Need to wrap around
+                    samples_after_loop = frames - samples_before_loop
+                    
+                    if samples_before_loop > 0:
+                        outdata[:samples_before_loop] = self.audio_data[self.position:self.loop_end]
+                    
+                    # Wrap to loop start
+                    self.position = self.loop_start
+                    
+                    # Fill remaining samples, possibly multiple loops if loop is tiny
+                    loop_length = self.loop_end - self.loop_start
+                    if loop_length > 0 and samples_after_loop > 0:
+                        remaining = samples_after_loop
+                        write_pos = samples_before_loop
+                        
+                        while remaining > 0:
+                            chunk = min(remaining, loop_length)
+                            outdata[write_pos:write_pos + chunk] = self.audio_data[self.loop_start:self.loop_start + chunk]
+                            write_pos += chunk
+                            remaining -= chunk
+                        
+                        self.position = self.loop_start + (samples_after_loop % loop_length)
+                    else:
+                        # Loop is invalid, just fill with zeros
+                        outdata[samples_before_loop:] = 0
             else:
                 # Normal playback
                 if end_pos <= len(self.audio_data):
@@ -448,6 +477,29 @@ class WaveformWidget(QWidget):
         self.dragging = None  # None, 'start', 'end', or 'seek'
         self.drag_threshold = 10  # pixels
         
+        # Snap to markers
+        self.marker_ratios = []  # List of marker positions as ratios (0-1)
+        self.snap_enabled = False
+        self.snap_threshold = 0.02  # 2% of track width for snapping
+    
+    def set_marker_ratios(self, ratios):
+        """Set marker positions for snapping."""
+        self.marker_ratios = sorted(ratios)
+    
+    def set_snap_enabled(self, enabled):
+        """Enable/disable snap to markers."""
+        self.snap_enabled = enabled
+    
+    def _snap_to_marker(self, ratio):
+        """Snap ratio to nearest marker if within threshold."""
+        if not self.snap_enabled or not self.marker_ratios:
+            return ratio
+        
+        for marker_ratio in self.marker_ratios:
+            if abs(ratio - marker_ratio) < self.snap_threshold:
+                return marker_ratio
+        return ratio
+        
     def set_audio_data(self, audio_data, downsample_factor=500):
         """Set audio data and create waveform for display."""
         if audio_data is None:
@@ -585,13 +637,17 @@ class WaveformWidget(QWidget):
         
         # Handle dragging
         if self.dragging == 'start':
+            # Snap to marker if enabled
+            snapped_ratio = self._snap_to_marker(ratio)
             # Don't let start go past end
-            self.loop_start_ratio = min(ratio, self.loop_end_ratio - 0.01)
+            self.loop_start_ratio = min(snapped_ratio, self.loop_end_ratio - 0.01)
             self.update()
             self.loop_changed.emit(self.loop_start_ratio, self.loop_end_ratio)
         elif self.dragging == 'end':
+            # Snap to marker if enabled
+            snapped_ratio = self._snap_to_marker(ratio)
             # Don't let end go before start
-            self.loop_end_ratio = max(ratio, self.loop_start_ratio + 0.01)
+            self.loop_end_ratio = max(snapped_ratio, self.loop_start_ratio + 0.01)
             self.update()
             self.loop_changed.emit(self.loop_start_ratio, self.loop_end_ratio)
     
@@ -731,6 +787,11 @@ class PrecisionPlayer(QMainWindow):
         self.loop_btn.clicked.connect(self.on_loop_toggle)
         time_layout.addWidget(self.loop_btn)
         
+        self.snap_checkbox = QCheckBox("Snap")
+        self.snap_checkbox.setToolTip("Snap loop markers to CSLP markers")
+        self.snap_checkbox.stateChanged.connect(self.on_snap_changed)
+        time_layout.addWidget(self.snap_checkbox)
+        
         layout.addLayout(time_layout)
         
         # Transport controls
@@ -836,6 +897,13 @@ class PrecisionPlayer(QMainWindow):
                 self.stop_btn.setEnabled(True)
                 self.status_label.setText(message)
                 
+                # Update markers if CSLP already loaded
+                if self.cslp_data and self.cslp_data.timeline:
+                    self.markers_widget.set_markers(
+                        self.cslp_data.timeline,
+                        self.engine.get_duration()
+                    )
+                
                 # Auto-load CSLP if exists with same name
                 cslp_path = self.current_file.with_suffix('.cslp')
                 if cslp_path.exists():
@@ -862,15 +930,26 @@ class PrecisionPlayer(QMainWindow):
         
         if success and self.cslp_data.timeline:
             # Pass markers to markers widget
+            duration = self.engine.get_duration() if self.engine.audio_data is not None else 0
             self.markers_widget.set_markers(
                 self.cslp_data.timeline,
-                self.engine.get_duration() if self.engine.audio_data is not None else 0
+                duration
             )
+            
+            # Set marker ratios for waveform snapping
+            if duration > 0:
+                marker_ratios = [entry.get('time', 0) / duration for entry in self.cslp_data.timeline]
+                self.waveform.set_marker_ratios(marker_ratios)
+            
             self.status_label.setText(
                 f"Loaded CSLP: {len(self.cslp_data.timeline)} markers"
             )
         else:
             self.status_label.setText("CSLP file has no markers")
+    
+    def on_snap_changed(self, state):
+        """Handle snap checkbox toggle."""
+        self.waveform.set_snap_enabled(state == Qt.CheckState.Checked.value)
     
     def on_marker_clicked(self, time_seconds):
         """Handle click on a marker - jump to that position."""
