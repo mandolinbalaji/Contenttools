@@ -245,6 +245,258 @@ class AudioEngine(QObject):
         self.stop()
 
 
+class Track:
+    """Represents a single audio track with its own settings."""
+    
+    def __init__(self, track_id, name="Track"):
+        self.id = track_id
+        self.name = name
+        self.audio_data = None
+        self.sample_rate = 44100
+        self.channels = 2
+        self.volume = 1.0  # 0.0 to 1.0
+        self.muted = False
+        self.solo = False
+        self.device = None  # None = default/master
+        self.filepath = None
+    
+    def load_file(self, filepath):
+        """Load audio file for this track."""
+        try:
+            data, sr = sf.read(filepath, dtype='float32')
+            
+            # Convert mono to stereo
+            if len(data.shape) == 1:
+                data = np.column_stack((data, data))
+            
+            self.audio_data = data
+            self.sample_rate = sr
+            self.channels = data.shape[1] if len(data.shape) > 1 else 1
+            self.filepath = filepath
+            self.name = Path(filepath).stem
+            
+            return True, f"Loaded: {len(data)} samples"
+        except Exception as e:
+            return False, str(e)
+    
+    def get_samples(self, start, count):
+        """Get audio samples with volume applied."""
+        if self.audio_data is None:
+            return np.zeros((count, 2), dtype='float32')
+        
+        end = min(start + count, len(self.audio_data))
+        if start >= len(self.audio_data):
+            return np.zeros((count, 2), dtype='float32')
+        
+        samples = self.audio_data[start:end].copy()
+        
+        # Apply volume
+        if not self.muted:
+            samples *= self.volume
+        else:
+            samples *= 0
+        
+        # Pad if needed
+        if len(samples) < count:
+            padding = np.zeros((count - len(samples), samples.shape[1]), dtype='float32')
+            samples = np.vstack((samples, padding))
+        
+        return samples
+
+
+class MultiTrackEngine(QObject):
+    """Engine that manages multiple synchronized tracks."""
+    
+    position_changed = pyqtSignal(int)
+    playback_finished = pyqtSignal()
+    
+    def __init__(self):
+        super().__init__()
+        self.tracks = []  # List of Track objects
+        self.sample_rate = 44100
+        self.position = 0
+        self.is_playing = False
+        self.stream = None
+        self.master_device = None
+        
+        # Loop
+        self.loop_enabled = False
+        self.loop_start = 0
+        self.loop_end = 0
+        
+        self.lock = threading.Lock()
+    
+    def add_track(self, filepath=None):
+        """Add a new track."""
+        track_id = len(self.tracks) + 1
+        track = Track(track_id, f"Track {track_id}")
+        
+        if filepath:
+            success, msg = track.load_file(filepath)
+            if success:
+                # Update engine sample rate from first track
+                if not self.tracks:
+                    self.sample_rate = track.sample_rate
+                    self.loop_end = len(track.audio_data)
+        
+        self.tracks.append(track)
+        return track
+    
+    def remove_track(self, track_id):
+        """Remove a track by ID."""
+        self.tracks = [t for t in self.tracks if t.id != track_id]
+    
+    def get_duration(self):
+        """Get max duration across all tracks."""
+        if not self.tracks:
+            return 0
+        max_samples = max((len(t.audio_data) if t.audio_data is not None else 0) for t in self.tracks)
+        return max_samples / self.sample_rate
+    
+    def get_position_seconds(self):
+        """Get current position in seconds."""
+        return self.position / self.sample_rate
+    
+    def set_position_samples(self, samples):
+        """Set position in samples."""
+        with self.lock:
+            self.position = int(samples)
+    
+    def _has_solo(self):
+        """Check if any track is soloed."""
+        return any(t.solo for t in self.tracks)
+    
+    def _audio_callback(self, outdata, frames, time, status):
+        """Mix all tracks and output."""
+        with self.lock:
+            if not self.tracks or not self.is_playing:
+                outdata.fill(0)
+                return
+            
+            # Handle looping
+            if self.loop_enabled:
+                if self.position >= self.loop_end or self.position < self.loop_start:
+                    self.position = self.loop_start
+            
+            # Check for solo
+            has_solo = self._has_solo()
+            
+            # Mix tracks
+            mixed = np.zeros((frames, 2), dtype='float32')
+            
+            for track in self.tracks:
+                if track.audio_data is None:
+                    continue
+                
+                # Skip if muted, or if there's a solo and this track isn't it
+                if track.muted:
+                    continue
+                if has_solo and not track.solo:
+                    continue
+                
+                # Get samples from track
+                samples = track.get_samples(self.position, frames)
+                mixed += samples
+            
+            # Handle loop wrap
+            samples_before_loop = self.loop_end - self.position if self.loop_enabled else frames
+            
+            if self.loop_enabled and samples_before_loop < frames:
+                # We need to wrap
+                self.position = self.loop_start
+                outdata[:samples_before_loop] = mixed[:samples_before_loop]
+                
+                # Get remaining samples from loop start
+                remaining = frames - samples_before_loop
+                mixed2 = np.zeros((remaining, 2), dtype='float32')
+                
+                for track in self.tracks:
+                    if track.audio_data is None or track.muted:
+                        continue
+                    if has_solo and not track.solo:
+                        continue
+                    samples = track.get_samples(self.position, remaining)
+                    mixed2 += samples
+                
+                outdata[samples_before_loop:] = mixed2
+                self.position = self.loop_start + remaining
+            else:
+                outdata[:] = np.clip(mixed, -1.0, 1.0)
+                self.position += frames
+                
+                # Check end of all tracks
+                max_len = max((len(t.audio_data) if t.audio_data is not None else 0) for t in self.tracks)
+                if self.position >= max_len and not self.loop_enabled:
+                    self.is_playing = False
+    
+    def play(self):
+        """Start playback."""
+        if not self.tracks:
+            return False
+        
+        if self.is_playing:
+            return True
+        
+        try:
+            self.is_playing = True
+            self.stream = sd.OutputStream(
+                samplerate=self.sample_rate,
+                channels=2,
+                callback=self._audio_callback,
+                device=self.master_device,
+                blocksize=512,
+                latency='low'
+            )
+            self.stream.start()
+            return True
+        except Exception as e:
+            print(f"Playback error: {e}")
+            self.is_playing = False
+            return False
+    
+    def pause(self):
+        """Pause playback."""
+        self.is_playing = False
+        if self.stream:
+            self.stream.stop()
+            self.stream.close()
+            self.stream = None
+    
+    def stop(self):
+        """Stop and reset."""
+        self.pause()
+        with self.lock:
+            self.position = self.loop_start if self.loop_enabled else 0
+    
+    def toggle_play(self):
+        """Toggle play/pause."""
+        if self.is_playing:
+            self.pause()
+        else:
+            self.play()
+        return self.is_playing
+    
+    def set_loop(self, enabled, start_samples=None, end_samples=None):
+        """Set loop points."""
+        with self.lock:
+            self.loop_enabled = enabled
+            if start_samples is not None:
+                self.loop_start = int(start_samples)
+            if end_samples is not None:
+                self.loop_end = int(end_samples)
+    
+    def set_device(self, device_index):
+        """Set master output device."""
+        self.master_device = device_index
+        if self.is_playing:
+            self.pause()
+            self.play()
+    
+    def cleanup(self):
+        """Clean up."""
+        self.stop()
+
+
 class CSLPData:
     """Container for CSLP file data."""
     
@@ -656,15 +908,249 @@ class WaveformWidget(QWidget):
         self.dragging = None
 
 
+class MiniWaveformWidget(QWidget):
+    """Smaller waveform for track display (no interaction)."""
+    
+    def __init__(self):
+        super().__init__()
+        self.waveform_data = None
+        self.position_ratio = 0
+        self.loop_enabled = False
+        self.loop_start_ratio = 0
+        self.loop_end_ratio = 1
+        self.setMinimumHeight(60)
+    
+    def set_audio_data(self, audio_data):
+        """Set audio data and create waveform."""
+        if audio_data is None:
+            self.waveform_data = None
+            self.update()
+            return
+        
+        if len(audio_data.shape) > 1:
+            mono = np.mean(audio_data, axis=1)
+        else:
+            mono = audio_data
+        
+        chunk_size = max(1, len(mono) // 500)
+        chunks = len(mono) // chunk_size
+        reshaped = mono[:chunks * chunk_size].reshape(chunks, chunk_size)
+        self.waveform_data = np.max(np.abs(reshaped), axis=1)
+        self.update()
+    
+    def set_position(self, ratio):
+        self.position_ratio = max(0, min(1, ratio))
+        self.update()
+    
+    def set_loop(self, enabled, start_ratio=0, end_ratio=1):
+        self.loop_enabled = enabled
+        self.loop_start_ratio = start_ratio
+        self.loop_end_ratio = end_ratio
+        self.update()
+    
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        
+        painter.fillRect(self.rect(), QColor(35, 35, 40))
+        
+        w = self.width()
+        h = self.height()
+        center_y = h // 2
+        
+        # Loop region
+        if self.loop_enabled:
+            x1 = int(self.loop_start_ratio * w)
+            x2 = int(self.loop_end_ratio * w)
+            painter.fillRect(x1, 0, x2 - x1, h, QColor(50, 70, 50))
+        
+        # Waveform
+        if self.waveform_data is not None and len(self.waveform_data) > 0:
+            painter.setPen(QPen(QColor(80, 140, 200)))
+            points_per_pixel = len(self.waveform_data) / w
+            for x in range(w):
+                idx = int(x * points_per_pixel)
+                if idx < len(self.waveform_data):
+                    amp = self.waveform_data[idx]
+                    bar_h = int(amp * center_y * 0.8)
+                    painter.drawLine(x, center_y - bar_h, x, center_y + bar_h)
+        
+        # Playhead
+        if self.position_ratio > 0:
+            x = int(self.position_ratio * w)
+            painter.setPen(QPen(QColor(255, 100, 100), 2))
+            painter.drawLine(x, 0, x, h)
+
+
+class TrackWidget(QFrame):
+    """Widget for a single track with controls."""
+    
+    track_removed = pyqtSignal(int)  # Emits track ID
+    track_changed = pyqtSignal(int)  # Emits track ID when settings change
+    
+    def __init__(self, track, devices):
+        super().__init__()
+        self.track = track
+        self.devices = devices
+        self.init_ui()
+    
+    def init_ui(self):
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(8)
+        
+        # Left side: controls
+        controls = QVBoxLayout()
+        controls.setSpacing(4)
+        
+        # Track name
+        self.name_label = QLabel(self.track.name)
+        self.name_label.setStyleSheet("font-weight: bold; color: #ffffff;")
+        self.name_label.setMaximumWidth(150)
+        controls.addWidget(self.name_label)
+        
+        # Mute/Solo buttons
+        btn_layout = QHBoxLayout()
+        btn_layout.setSpacing(4)
+        
+        self.mute_btn = QPushButton("M")
+        self.mute_btn.setCheckable(True)
+        self.mute_btn.setFixedSize(28, 28)
+        self.mute_btn.setToolTip("Mute")
+        self.mute_btn.setStyleSheet("""
+            QPushButton { 
+                background-color: #555555; 
+                color: #cccccc;
+                border: 1px solid #666666;
+                border-radius: 3px;
+                font-weight: bold;
+            }
+            QPushButton:checked { 
+                background-color: #cc4444; 
+                color: white; 
+                border: 1px solid #ff6666;
+            }
+            QPushButton:hover {
+                background-color: #666666;
+            }
+        """)
+        self.mute_btn.clicked.connect(self.on_mute_toggle)
+        btn_layout.addWidget(self.mute_btn)
+        
+        self.solo_btn = QPushButton("S")
+        self.solo_btn.setCheckable(True)
+        self.solo_btn.setFixedSize(28, 28)
+        self.solo_btn.setToolTip("Solo")
+        self.solo_btn.setStyleSheet("""
+            QPushButton { 
+                background-color: #555555; 
+                color: #cccccc;
+                border: 1px solid #666666;
+                border-radius: 3px;
+                font-weight: bold;
+            }
+            QPushButton:checked { 
+                background-color: #44aa44; 
+                color: white; 
+                border: 1px solid #66cc66;
+            }
+            QPushButton:hover {
+                background-color: #666666;
+            }
+        """)
+        self.solo_btn.clicked.connect(self.on_solo_toggle)
+        btn_layout.addWidget(self.solo_btn)
+        
+        btn_layout.addStretch()
+        controls.addLayout(btn_layout)
+        
+        # Volume slider
+        vol_layout = QHBoxLayout()
+        vol_layout.addWidget(QLabel("Vol"))
+        self.volume_slider = QSlider(Qt.Orientation.Horizontal)
+        self.volume_slider.setRange(0, 100)
+        self.volume_slider.setValue(100)
+        self.volume_slider.setMaximumWidth(80)
+        self.volume_slider.valueChanged.connect(self.on_volume_changed)
+        vol_layout.addWidget(self.volume_slider)
+        controls.addLayout(vol_layout)
+        
+        controls.addStretch()
+        
+        controls_widget = QWidget()
+        controls_widget.setLayout(controls)
+        controls_widget.setMaximumWidth(120)
+        controls_widget.setMinimumWidth(120)
+        layout.addWidget(controls_widget)
+        
+        # Mini waveform (right side, expandable)
+        self.waveform = MiniWaveformWidget()
+        if self.track.audio_data is not None:
+            self.waveform.set_audio_data(self.track.audio_data)
+        layout.addWidget(self.waveform, 1)
+        
+        # Remove button
+        self.remove_btn = QPushButton("✕")
+        self.remove_btn.setFixedSize(28, 28)
+        self.remove_btn.setToolTip("Remove track")
+        self.remove_btn.setStyleSheet("""
+            QPushButton { 
+                background-color: #553333; 
+                color: #ff8888;
+                border: 1px solid #664444;
+                border-radius: 3px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #774444;
+                color: #ffaaaa;
+            }
+        """)
+        self.remove_btn.clicked.connect(lambda: self.track_removed.emit(self.track.id))
+        layout.addWidget(self.remove_btn)
+        
+        self.setStyleSheet("""
+            TrackWidget {
+                background-color: #2a2a2a;
+                border: 1px solid #444;
+                border-radius: 4px;
+            }
+        """)
+        self.setMinimumHeight(100)
+        self.setMaximumHeight(120)
+    
+    def on_mute_toggle(self):
+        self.track.muted = self.mute_btn.isChecked()
+        self.track_changed.emit(self.track.id)
+    
+    def on_solo_toggle(self):
+        self.track.solo = self.solo_btn.isChecked()
+        self.track_changed.emit(self.track.id)
+    
+    def on_volume_changed(self, value):
+        self.track.volume = value / 100.0
+        self.track_changed.emit(self.track.id)
+    
+    def set_position(self, ratio):
+        """Update waveform playhead position."""
+        self.waveform.set_position(ratio)
+    
+    def set_loop(self, enabled, start_ratio, end_ratio):
+        """Update loop markers on waveform."""
+        self.waveform.set_loop(enabled, start_ratio, end_ratio)
+
+
 class PrecisionPlayer(QMainWindow):
     """Main application window."""
     
     def __init__(self):
         super().__init__()
-        self.engine = AudioEngine()
+        self.engine = MultiTrackEngine()  # Use multi-track engine
         self.cslp_data = CSLPData()
         self.current_file = None
         self.current_cslp = None
+        self.track_widgets = []  # List of TrackWidget
+        self.available_devices = []  # List of (name, index) tuples
         
         self.init_ui()
         self.setup_shortcuts()
@@ -739,19 +1225,19 @@ class PrecisionPlayer(QMainWindow):
         # Top bar - File and device selection
         top_bar = QHBoxLayout()
         
-        self.load_btn = QPushButton("📂 Audio")
-        self.load_btn.clicked.connect(self.load_file)
+        self.load_btn = QPushButton("📂 Add Track")
+        self.load_btn.clicked.connect(self.add_track)
         top_bar.addWidget(self.load_btn)
         
         self.load_cslp_btn = QPushButton("📄 CSLP")
         self.load_cslp_btn.clicked.connect(self.load_cslp_file)
         top_bar.addWidget(self.load_cslp_btn)
         
-        self.file_label = QLabel("No file loaded")
+        self.file_label = QLabel("No tracks loaded")
         self.file_label.setStyleSheet("color: #888888;")
         top_bar.addWidget(self.file_label, 1)
         
-        top_bar.addWidget(QLabel("Output:"))
+        top_bar.addWidget(QLabel("Master:"))
         self.device_combo = QComboBox()
         self.device_combo.setMinimumWidth(200)
         self.populate_devices()
@@ -764,7 +1250,29 @@ class PrecisionPlayer(QMainWindow):
         self.lyrics_display = LyricsDisplayWidget()
         layout.addWidget(self.lyrics_display)
         
-        # Waveform display
+        # Tracks scroll area
+        tracks_group = QGroupBox("Tracks")
+        tracks_layout = QVBoxLayout(tracks_group)
+        tracks_layout.setContentsMargins(5, 15, 5, 5)
+        
+        self.tracks_scroll = QScrollArea()
+        self.tracks_scroll.setWidgetResizable(True)
+        self.tracks_scroll.setMinimumHeight(100)
+        self.tracks_scroll.setMaximumHeight(250)
+        self.tracks_scroll.setStyleSheet("QScrollArea { border: none; }")
+        
+        self.tracks_container = QWidget()
+        self.tracks_container_layout = QVBoxLayout(self.tracks_container)
+        self.tracks_container_layout.setContentsMargins(0, 0, 0, 0)
+        self.tracks_container_layout.setSpacing(5)
+        self.tracks_container_layout.addStretch()
+        
+        self.tracks_scroll.setWidget(self.tracks_container)
+        tracks_layout.addWidget(self.tracks_scroll)
+        
+        layout.addWidget(tracks_group)
+        
+        # Main waveform display (first track)
         self.waveform = WaveformWidget()
         self.waveform.position_clicked.connect(self.on_waveform_click)
         self.waveform.loop_changed.connect(self.on_loop_changed)
@@ -833,6 +1341,7 @@ class PrecisionPlayer(QMainWindow):
     def populate_devices(self):
         """Populate device dropdown with available output devices."""
         self.device_combo.clear()
+        self.available_devices = []  # Store for track widgets
         devices = sd.query_devices()
         hostapis = sd.query_hostapis()
         
@@ -857,6 +1366,7 @@ class PrecisionPlayer(QMainWindow):
                 # Prefer WASAPI or ASIO, show host API
                 name = f"{dev['name']} [{hostapi_name}]"
                 self.device_combo.addItem(name, i)
+                self.available_devices.append((name, i))
                 
                 if i == default_output:
                     self.device_combo.setCurrentIndex(self.device_combo.count() - 1)
@@ -865,7 +1375,7 @@ class PrecisionPlayer(QMainWindow):
         """Setup keyboard shortcuts."""
         QShortcut(QKeySequence(Qt.Key.Key_Space), self, self.on_play_pause)
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self, self.on_stop)
-        QShortcut(QKeySequence("Ctrl+O"), self, self.load_file)
+        QShortcut(QKeySequence("Ctrl+O"), self, self.add_track)
         QShortcut(QKeySequence(Qt.Key.Key_L), self, lambda: self.loop_btn.click())
     
     def setup_timer(self):
@@ -874,11 +1384,11 @@ class PrecisionPlayer(QMainWindow):
         self.update_timer.timeout.connect(self.update_ui)
         self.update_timer.start(30)  # ~33fps update
     
-    def load_file(self):
-        """Open file dialog and load audio."""
+    def add_track(self):
+        """Add a new track from file."""
         filepath, _ = QFileDialog.getOpenFileName(
             self,
-            "Open Audio File",
+            "Add Audio Track",
             "",
             "Audio Files (*.mp3 *.wav *.flac *.ogg *.m4a *.aac);;All Files (*.*)"
         )
@@ -887,29 +1397,71 @@ class PrecisionPlayer(QMainWindow):
             self.status_label.setText(f"Loading: {filepath}")
             QApplication.processEvents()
             
-            success, message = self.engine.load_file(filepath)
+            # Add track to engine
+            track = self.engine.add_track(filepath)
             
-            if success:
-                self.current_file = Path(filepath)
-                self.file_label.setText(self.current_file.name)
-                self.waveform.set_audio_data(self.engine.audio_data)
+            if track.audio_data is not None:
+                # Create track widget
+                track_widget = TrackWidget(track, self.available_devices)
+                track_widget.track_removed.connect(self.remove_track)
+                track_widget.track_changed.connect(self.on_track_changed)
+                
+                # Insert before the stretch
+                self.tracks_container_layout.insertWidget(
+                    self.tracks_container_layout.count() - 1, track_widget
+                )
+                self.track_widgets.append(track_widget)
+                
+                # Update main waveform with first track
+                if len(self.engine.tracks) == 1:
+                    self.waveform.set_audio_data(track.audio_data)
+                    self.current_file = Path(filepath)
+                    
+                    # Auto-load CSLP if exists
+                    cslp_path = self.current_file.with_suffix('.cslp')
+                    if cslp_path.exists():
+                        self.load_cslp_from_path(str(cslp_path))
+                
                 self.play_btn.setEnabled(True)
                 self.stop_btn.setEnabled(True)
-                self.status_label.setText(message)
-                
-                # Update markers if CSLP already loaded
-                if self.cslp_data and self.cslp_data.timeline:
-                    self.markers_widget.set_markers(
-                        self.cslp_data.timeline,
-                        self.engine.get_duration()
-                    )
-                
-                # Auto-load CSLP if exists with same name
-                cslp_path = self.current_file.with_suffix('.cslp')
-                if cslp_path.exists():
-                    self.load_cslp_from_path(str(cslp_path))
+                self.file_label.setText(f"{len(self.engine.tracks)} track(s)")
+                self.status_label.setText(f"Added: {track.name}")
             else:
-                self.status_label.setText(f"Error: {message}")
+                self.status_label.setText(f"Error loading track")
+    
+    def remove_track(self, track_id):
+        """Remove a track by ID."""
+        # Remove widget
+        for widget in self.track_widgets:
+            if widget.track.id == track_id:
+                self.tracks_container_layout.removeWidget(widget)
+                widget.deleteLater()
+                self.track_widgets.remove(widget)
+                break
+        
+        # Remove from engine
+        self.engine.remove_track(track_id)
+        
+        # Update UI
+        if not self.engine.tracks:
+            self.play_btn.setEnabled(False)
+            self.stop_btn.setEnabled(False)
+            self.waveform.set_audio_data(None)
+            self.file_label.setText("No tracks loaded")
+        else:
+            self.file_label.setText(f"{len(self.engine.tracks)} track(s)")
+            # Update waveform with first remaining track
+            self.waveform.set_audio_data(self.engine.tracks[0].audio_data)
+        
+        self.status_label.setText(f"Removed track {track_id}")
+    
+    def on_track_changed(self, track_id):
+        """Handle track settings changed (mute/solo/volume)."""
+        pass  # Settings already applied to track object
+    
+    def load_file(self):
+        """Alias for add_track for compatibility."""
+        self.add_track()
     
     def load_cslp_file(self):
         """Open file dialog and load CSLP markers."""
@@ -930,7 +1482,7 @@ class PrecisionPlayer(QMainWindow):
         
         if success and self.cslp_data.timeline:
             # Pass markers to markers widget
-            duration = self.engine.get_duration() if self.engine.audio_data is not None else 0
+            duration = self.engine.get_duration()
             self.markers_widget.set_markers(
                 self.cslp_data.timeline,
                 duration
@@ -953,7 +1505,7 @@ class PrecisionPlayer(QMainWindow):
     
     def on_marker_clicked(self, time_seconds):
         """Handle click on a marker - jump to that position."""
-        if self.engine.audio_data is not None:
+        if self.engine.tracks:
             sample_position = int(time_seconds * self.engine.sample_rate)
             self.engine.set_position_samples(sample_position)
             self.status_label.setText(
@@ -970,7 +1522,7 @@ class PrecisionPlayer(QMainWindow):
     
     def on_play_pause(self):
         """Handle play/pause button."""
-        if self.engine.audio_data is None:
+        if not self.engine.tracks:
             return
         
         is_playing = self.engine.toggle_play()
@@ -985,9 +1537,10 @@ class PrecisionPlayer(QMainWindow):
         """Handle loop toggle."""
         enabled = self.loop_btn.isChecked()
         
-        if enabled and self.engine.audio_data is not None:
-            # Set loop to full track for now
-            self.engine.set_loop(True, 0, len(self.engine.audio_data))
+        if enabled and self.engine.tracks:
+            # Set loop to full track for now (use first track's length)
+            total_samples = self.engine.get_total_samples()
+            self.engine.set_loop(True, 0, total_samples)
             self.waveform.set_loop(True, 0, 1)
             self.status_label.setText("Loop enabled (full track)")
         else:
@@ -997,14 +1550,14 @@ class PrecisionPlayer(QMainWindow):
     
     def on_waveform_click(self, ratio):
         """Handle click on waveform to seek."""
-        if self.engine.audio_data is not None:
-            total_samples = len(self.engine.audio_data)
-            self.engine.set_position_samples(ratio * total_samples)
+        if self.engine.tracks:
+            total_samples = self.engine.get_total_samples()
+            self.engine.set_position_samples(int(ratio * total_samples))
     
     def on_loop_changed(self, start_ratio, end_ratio):
         """Handle loop markers being dragged."""
-        if self.engine.audio_data is not None:
-            total_samples = len(self.engine.audio_data)
+        if self.engine.tracks:
+            total_samples = self.engine.get_total_samples()
             start_samples = int(start_ratio * total_samples)
             end_samples = int(end_ratio * total_samples)
             self.engine.set_loop(True, start_samples, end_samples)
@@ -1019,7 +1572,7 @@ class PrecisionPlayer(QMainWindow):
     
     def update_ui(self):
         """Update UI elements (called by timer)."""
-        if self.engine.audio_data is not None:
+        if self.engine.tracks:
             # Update time display
             current = self.engine.get_position_seconds()
             total = self.engine.get_duration()
