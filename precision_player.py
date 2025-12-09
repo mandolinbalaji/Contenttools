@@ -246,7 +246,7 @@ class AudioEngine(QObject):
 
 
 class Track:
-    """Represents a single audio track with its own settings."""
+    """Represents a single audio track with its own output device."""
     
     def __init__(self, track_id, name="Track"):
         self.id = track_id
@@ -257,8 +257,9 @@ class Track:
         self.volume = 1.0  # 0.0 to 1.0
         self.muted = False
         self.solo = False
-        self.device = None  # None = default/master
+        self.device = None  # Output device index
         self.filepath = None
+        self.stream = None  # Each track has its own output stream
     
     def load_file(self, filepath):
         """Load audio file for this track."""
@@ -279,7 +280,7 @@ class Track:
         except Exception as e:
             return False, str(e)
     
-    def get_samples(self, start, count):
+    def get_samples(self, start, count, has_solo=False):
         """Get audio samples with volume applied."""
         if self.audio_data is None:
             return np.zeros((count, 2), dtype='float32')
@@ -290,11 +291,11 @@ class Track:
         
         samples = self.audio_data[start:end].copy()
         
-        # Apply volume
-        if not self.muted:
-            samples *= self.volume
-        else:
+        # Check if should be silent
+        if self.muted or (has_solo and not self.solo):
             samples *= 0
+        else:
+            samples *= self.volume
         
         # Pad if needed
         if len(samples) < count:
@@ -302,10 +303,27 @@ class Track:
             samples = np.vstack((samples, padding))
         
         return samples
+    
+    def set_device(self, device_index):
+        """Set output device for this track."""
+        self.device = device_index
+    
+    def cleanup(self):
+        """Clean up stream."""
+        if self.stream:
+            try:
+                self.stream.stop()
+                self.stream.close()
+            except:
+                pass
+            self.stream = None
 
 
 class MultiTrackEngine(QObject):
-    """Engine that manages multiple synchronized tracks."""
+    """Engine that manages multiple tracks with per-track output devices.
+    
+    Uses blocking write approach for cleaner multi-device output.
+    """
     
     position_changed = pyqtSignal(int)
     playback_finished = pyqtSignal()
@@ -314,10 +332,11 @@ class MultiTrackEngine(QObject):
         super().__init__()
         self.tracks = []  # List of Track objects
         self.sample_rate = 44100
-        self.position = 0
+        self.position = 0  # Current position in samples
         self.is_playing = False
-        self.stream = None
-        self.master_device = None
+        self.streams = {}  # device_index -> stream
+        self._playback_thread = None
+        self._stop_event = threading.Event()
         
         # Loop
         self.loop_enabled = False
@@ -325,10 +344,12 @@ class MultiTrackEngine(QObject):
         self.loop_end = 0
         
         self.lock = threading.Lock()
+        self._next_track_id = 1
     
     def add_track(self, filepath=None):
         """Add a new track."""
-        track_id = len(self.tracks) + 1
+        track_id = self._next_track_id
+        self._next_track_id += 1
         track = Track(track_id, f"Track {track_id}")
         
         if filepath:
@@ -344,14 +365,26 @@ class MultiTrackEngine(QObject):
     
     def remove_track(self, track_id):
         """Remove a track by ID."""
+        # Find and cleanup the track
+        for t in self.tracks:
+            if t.id == track_id:
+                t.cleanup()
+                break
         self.tracks = [t for t in self.tracks if t.id != track_id]
+        
+        # Rebuild streams if playing
+        if self.is_playing:
+            self._rebuild_streams()
+    
+    def get_total_samples(self):
+        """Get max samples across all tracks."""
+        if not self.tracks:
+            return 0
+        return max((len(t.audio_data) if t.audio_data is not None else 0) for t in self.tracks)
     
     def get_duration(self):
         """Get max duration across all tracks."""
-        if not self.tracks:
-            return 0
-        max_samples = max((len(t.audio_data) if t.audio_data is not None else 0) for t in self.tracks)
-        return max_samples / self.sample_rate
+        return self.get_total_samples() / self.sample_rate
     
     def get_position_seconds(self):
         """Get current position in seconds."""
@@ -366,71 +399,64 @@ class MultiTrackEngine(QObject):
         """Check if any track is soloed."""
         return any(t.solo for t in self.tracks)
     
-    def _audio_callback(self, outdata, frames, time, status):
-        """Mix all tracks and output."""
-        with self.lock:
-            if not self.tracks or not self.is_playing:
-                outdata.fill(0)
-                return
-            
-            # Handle looping
-            if self.loop_enabled:
-                if self.position >= self.loop_end or self.position < self.loop_start:
-                    self.position = self.loop_start
-            
-            # Check for solo
-            has_solo = self._has_solo()
-            
-            # Mix tracks
-            mixed = np.zeros((frames, 2), dtype='float32')
-            
-            for track in self.tracks:
-                if track.audio_data is None:
-                    continue
+    def _get_tracks_by_device(self):
+        """Group tracks by their output device."""
+        device_tracks = {}
+        for track in self.tracks:
+            device = track.device  # None means default device
+            if device not in device_tracks:
+                device_tracks[device] = []
+            device_tracks[device].append(track)
+        return device_tracks
+    
+    def _playback_loop(self):
+        """Main playback loop running in separate thread - blocking writes."""
+        BLOCK_SIZE = 1024  # Samples per write
+        
+        while not self._stop_event.is_set() and self.is_playing:
+            with self.lock:
+                current_pos = self.position
                 
-                # Skip if muted, or if there's a solo and this track isn't it
-                if track.muted:
-                    continue
-                if has_solo and not track.solo:
-                    continue
+                # Handle looping
+                if self.loop_enabled:
+                    if current_pos >= self.loop_end:
+                        current_pos = self.loop_start
+                        self.position = current_pos
+                    elif current_pos < self.loop_start:
+                        current_pos = self.loop_start
+                        self.position = current_pos
                 
-                # Get samples from track
-                samples = track.get_samples(self.position, frames)
-                mixed += samples
-            
-            # Handle loop wrap
-            samples_before_loop = self.loop_end - self.position if self.loop_enabled else frames
-            
-            if self.loop_enabled and samples_before_loop < frames:
-                # We need to wrap
-                self.position = self.loop_start
-                outdata[:samples_before_loop] = mixed[:samples_before_loop]
-                
-                # Get remaining samples from loop start
-                remaining = frames - samples_before_loop
-                mixed2 = np.zeros((remaining, 2), dtype='float32')
-                
-                for track in self.tracks:
-                    if track.audio_data is None or track.muted:
-                        continue
-                    if has_solo and not track.solo:
-                        continue
-                    samples = track.get_samples(self.position, remaining)
-                    mixed2 += samples
-                
-                outdata[samples_before_loop:] = mixed2
-                self.position = self.loop_start + remaining
-            else:
-                outdata[:] = np.clip(mixed, -1.0, 1.0)
-                self.position += frames
-                
-                # Check end of all tracks
-                max_len = max((len(t.audio_data) if t.audio_data is not None else 0) for t in self.tracks)
-                if self.position >= max_len and not self.loop_enabled:
+                # Check for end of tracks
+                max_len = self.get_total_samples()
+                if current_pos >= max_len and not self.loop_enabled:
                     self.is_playing = False
+                    break
+                
+                has_solo = self._has_solo()
+                
+                # Generate audio for each device
+                for device_index, stream in list(self.streams.items()):
+                    device_tracks = [t for t in self.tracks if t.device == device_index]
+                    
+                    # Mix tracks for this device
+                    mixed = np.zeros((BLOCK_SIZE, 2), dtype='float32')
+                    for track in device_tracks:
+                        if track.audio_data is None:
+                            continue
+                        samples = track.get_samples(current_pos, BLOCK_SIZE, has_solo)
+                        mixed += samples
+                    
+                    # Clip and write to stream
+                    try:
+                        stream.write(np.clip(mixed, -1.0, 1.0))
+                    except Exception as e:
+                        print(f"Write error: {e}")
+                
+                # Advance position
+                self.position = current_pos + BLOCK_SIZE
     
     def play(self):
-        """Start playback."""
+        """Start playback using blocking writes in a thread."""
         if not self.tracks:
             return False
         
@@ -438,16 +464,32 @@ class MultiTrackEngine(QObject):
             return True
         
         try:
+            # Get unique devices
+            device_tracks = self._get_tracks_by_device()
+            
+            # Create blocking output streams for each device
+            for device_index in device_tracks.keys():
+                try:
+                    stream = sd.OutputStream(
+                        samplerate=self.sample_rate,
+                        channels=2,
+                        device=device_index,
+                        blocksize=1024,
+                        latency='low'
+                    )
+                    stream.start()
+                    self.streams[device_index] = stream
+                except Exception as e:
+                    print(f"Error creating stream for device {device_index}: {e}")
+            
+            # Start playback
+            self._stop_event.clear()
             self.is_playing = True
-            self.stream = sd.OutputStream(
-                samplerate=self.sample_rate,
-                channels=2,
-                callback=self._audio_callback,
-                device=self.master_device,
-                blocksize=512,
-                latency='low'
-            )
-            self.stream.start()
+            
+            # Start playback thread
+            self._playback_thread = threading.Thread(target=self._playback_loop, daemon=True)
+            self._playback_thread.start()
+            
             return True
         except Exception as e:
             print(f"Playback error: {e}")
@@ -456,11 +498,21 @@ class MultiTrackEngine(QObject):
     
     def pause(self):
         """Pause playback."""
+        self._stop_event.set()
         self.is_playing = False
-        if self.stream:
-            self.stream.stop()
-            self.stream.close()
-            self.stream = None
+        
+        # Wait for thread to finish
+        if self._playback_thread and self._playback_thread.is_alive():
+            self._playback_thread.join(timeout=0.5)
+        
+        # Close streams
+        for stream in self.streams.values():
+            try:
+                stream.stop()
+                stream.close()
+            except:
+                pass
+        self.streams.clear()
     
     def stop(self):
         """Stop and reset."""
@@ -485,16 +537,27 @@ class MultiTrackEngine(QObject):
             if end_samples is not None:
                 self.loop_end = int(end_samples)
     
-    def set_device(self, device_index):
-        """Set master output device."""
-        self.master_device = device_index
-        if self.is_playing:
-            self.pause()
-            self.play()
+    def set_track_device(self, track_id, device_index):
+        """Set output device for a specific track."""
+        for track in self.tracks:
+            if track.id == track_id:
+                old_device = track.device
+                track.device = device_index
+                
+                # Rebuild streams if device changed while playing
+                if old_device != device_index and self.is_playing:
+                    saved_position = self.position
+                    self.pause()
+                    self.position = saved_position
+                    self.play()
+                break
     
     def cleanup(self):
-        """Clean up."""
+        """Clean up all resources."""
         self.stop()
+        for track in self.tracks:
+            track.cleanup()
+            track.cleanup()
 
 
 class CSLPData:
@@ -983,15 +1046,16 @@ class MiniWaveformWidget(QWidget):
 
 
 class TrackWidget(QFrame):
-    """Widget for a single track with controls."""
+    """Widget for a single track with controls and output device selector."""
     
     track_removed = pyqtSignal(int)  # Emits track ID
     track_changed = pyqtSignal(int)  # Emits track ID when settings change
+    device_changed = pyqtSignal(int, object)  # Emits (track_id, device_index)
     
     def __init__(self, track, devices):
         super().__init__()
         self.track = track
-        self.devices = devices
+        self.devices = devices  # List of (name, index) tuples
         self.init_ui()
     
     def init_ui(self):
@@ -1006,10 +1070,33 @@ class TrackWidget(QFrame):
         # Track name
         self.name_label = QLabel(self.track.name)
         self.name_label.setStyleSheet("font-weight: bold; color: #ffffff;")
-        self.name_label.setMaximumWidth(150)
+        self.name_label.setMaximumWidth(180)
         controls.addWidget(self.name_label)
         
-        # Mute/Solo buttons
+        # Output device selector
+        device_layout = QHBoxLayout()
+        device_layout.addWidget(QLabel("Out:"))
+        self.device_combo = QComboBox()
+        self.device_combo.setMaximumWidth(150)
+        self.device_combo.setToolTip("Output device for this track")
+        self.device_combo.setStyleSheet("""
+            QComboBox {
+                background-color: #3a3a3a;
+                color: #ffffff;
+                border: 1px solid #555555;
+                padding: 2px 5px;
+                border-radius: 3px;
+                font-size: 10px;
+            }
+        """)
+        # Populate devices
+        for name, idx in self.devices:
+            self.device_combo.addItem(name, idx)
+        self.device_combo.currentIndexChanged.connect(self.on_device_changed)
+        device_layout.addWidget(self.device_combo, 1)
+        controls.addLayout(device_layout)
+        
+        # Mute/Solo buttons row
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(4)
         
@@ -1061,26 +1148,22 @@ class TrackWidget(QFrame):
         self.solo_btn.clicked.connect(self.on_solo_toggle)
         btn_layout.addWidget(self.solo_btn)
         
-        btn_layout.addStretch()
-        controls.addLayout(btn_layout)
-        
-        # Volume slider
-        vol_layout = QHBoxLayout()
-        vol_layout.addWidget(QLabel("Vol"))
+        # Volume slider inline with M/S
+        btn_layout.addWidget(QLabel("Vol"))
         self.volume_slider = QSlider(Qt.Orientation.Horizontal)
         self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(100)
-        self.volume_slider.setMaximumWidth(80)
+        self.volume_slider.setMaximumWidth(60)
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
-        vol_layout.addWidget(self.volume_slider)
-        controls.addLayout(vol_layout)
+        btn_layout.addWidget(self.volume_slider)
         
-        controls.addStretch()
+        btn_layout.addStretch()
+        controls.addLayout(btn_layout)
         
         controls_widget = QWidget()
         controls_widget.setLayout(controls)
-        controls_widget.setMaximumWidth(120)
-        controls_widget.setMinimumWidth(120)
+        controls_widget.setMaximumWidth(200)
+        controls_widget.setMinimumWidth(200)
         layout.addWidget(controls_widget)
         
         # Mini waveform (right side, expandable)
@@ -1116,8 +1199,14 @@ class TrackWidget(QFrame):
                 border-radius: 4px;
             }
         """)
-        self.setMinimumHeight(100)
-        self.setMaximumHeight(120)
+        self.setMinimumHeight(90)
+        self.setMaximumHeight(100)
+    
+    def on_device_changed(self, index):
+        """Handle device selection change."""
+        device_index = self.device_combo.currentData()
+        self.track.device = device_index
+        self.device_changed.emit(self.track.id, device_index)
     
     def on_mute_toggle(self):
         self.track.muted = self.mute_btn.isChecked()
@@ -1152,6 +1241,7 @@ class PrecisionPlayer(QMainWindow):
         self.track_widgets = []  # List of TrackWidget
         self.available_devices = []  # List of (name, index) tuples
         
+        self.populate_devices()  # Populate devices before UI setup
         self.init_ui()
         self.setup_shortcuts()
         self.setup_timer()
@@ -1222,7 +1312,7 @@ class PrecisionPlayer(QMainWindow):
         layout.setSpacing(10)
         layout.setContentsMargins(20, 15, 20, 15)
         
-        # Top bar - File and device selection
+        # Top bar - File controls
         top_bar = QHBoxLayout()
         
         self.load_btn = QPushButton("📂 Add Track")
@@ -1236,13 +1326,6 @@ class PrecisionPlayer(QMainWindow):
         self.file_label = QLabel("No tracks loaded")
         self.file_label.setStyleSheet("color: #888888;")
         top_bar.addWidget(self.file_label, 1)
-        
-        top_bar.addWidget(QLabel("Master:"))
-        self.device_combo = QComboBox()
-        self.device_combo.setMinimumWidth(200)
-        self.populate_devices()
-        self.device_combo.currentIndexChanged.connect(self.on_device_changed)
-        top_bar.addWidget(self.device_combo)
         
         layout.addLayout(top_bar)
         
@@ -1339,8 +1422,7 @@ class PrecisionPlayer(QMainWindow):
         layout.addWidget(self.status_label)
     
     def populate_devices(self):
-        """Populate device dropdown with available output devices."""
-        self.device_combo.clear()
+        """Populate available devices list for track widgets."""
         self.available_devices = []  # Store for track widgets
         devices = sd.query_devices()
         hostapis = sd.query_hostapis()
@@ -1365,11 +1447,7 @@ class PrecisionPlayer(QMainWindow):
                 
                 # Prefer WASAPI or ASIO, show host API
                 name = f"{dev['name']} [{hostapi_name}]"
-                self.device_combo.addItem(name, i)
                 self.available_devices.append((name, i))
-                
-                if i == default_output:
-                    self.device_combo.setCurrentIndex(self.device_combo.count() - 1)
     
     def setup_shortcuts(self):
         """Setup keyboard shortcuts."""
@@ -1405,6 +1483,7 @@ class PrecisionPlayer(QMainWindow):
                 track_widget = TrackWidget(track, self.available_devices)
                 track_widget.track_removed.connect(self.remove_track)
                 track_widget.track_changed.connect(self.on_track_changed)
+                track_widget.device_changed.connect(self.on_track_device_changed)
                 
                 # Insert before the stretch
                 self.tracks_container_layout.insertWidget(
@@ -1512,13 +1591,15 @@ class PrecisionPlayer(QMainWindow):
                 f"Jumped to marker at {int(time_seconds//60):02d}:{time_seconds%60:05.2f}"
             )
     
-    def on_device_changed(self, index):
-        """Handle device selection change."""
-        device_index = self.device_combo.currentData()
-        if device_index is not None:
-            self.engine.set_device(device_index)
-            device_name = self.device_combo.currentText()
-            self.status_label.setText(f"Output: {device_name}")
+    def on_track_device_changed(self, track_id, device_index):
+        """Handle per-track device selection change."""
+        self.engine.set_track_device(track_id, device_index)
+        # Find the track name for status
+        for widget in self.track_widgets:
+            if widget.track.id == track_id:
+                device_name = widget.device_combo.currentText()
+                self.status_label.setText(f"{widget.track.name} → {device_name}")
+                break
     
     def on_play_pause(self):
         """Handle play/pause button."""
