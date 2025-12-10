@@ -457,13 +457,14 @@ class MultiTrackEngine(QObject):
     
     def _generate_metronome_click(self):
         """Generate a single metronome click sound."""
-        # Create a short click sound (10ms at 44.1kHz)
-        duration_samples = int(0.01 * self.sample_rate)
-        t = np.linspace(0, 0.01, duration_samples, False)
+        # Create a click sound exactly BLOCK_SIZE long
+        block_size = 1024
+        duration_seconds = block_size / self.sample_rate
+        t = np.linspace(0, duration_seconds, block_size, False)
         
         # Simple sine wave click with exponential decay
         frequency = 1000  # 1kHz click
-        click = np.sin(2 * np.pi * frequency * t) * np.exp(-t * 200)  # Decay over 10ms
+        click = np.sin(2 * np.pi * frequency * t) * np.exp(-t * 200)  # Fast decay
         
         # Convert to stereo
         return np.column_stack((click, click)).astype('float32')
@@ -481,6 +482,7 @@ class MultiTrackEngine(QObject):
             self.countin_bpm = bpm
             self.countin_beats = beats
             self.countin_click_samples = self._generate_metronome_click()
+            self.countin_silence_samples = np.zeros((1024, 2), dtype='float32')  # Silence block
             self.countin_current_beat = 0
             self.countin_next_click_time = 0  # Will be set when playback starts
             
@@ -541,8 +543,15 @@ class MultiTrackEngine(QObject):
                         
                         # Signal UI to update beat counter
                         self.position_changed.emit(self.countin_current_beat)
+                    else:
+                        # Write silence on all devices
+                        for device_index, stream in list(self.streams.items()):
+                            try:
+                                stream.write(self.countin_silence_samples)
+                            except Exception as e:
+                                print(f"Count-in silence write error: {e}")
                     
-                    # Advance position for count-in timing
+                    # Advance position
                     self.position = current_pos + BLOCK_SIZE
                     continue
                 
