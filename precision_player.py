@@ -1503,16 +1503,30 @@ class PrecisionPlayer(QMainWindow):
         
         layout.addWidget(tracks_group)
         
+        # Container for waveform and markers
+        bottom_container = QWidget()
+        bottom_layout = QVBoxLayout(bottom_container)
+        bottom_layout.setContentsMargins(0, 0, 0, 0)
+        bottom_layout.setSpacing(0)
+        
         # Main waveform display (first track)
         self.waveform = WaveformWidget()
         self.waveform.position_clicked.connect(self.on_waveform_click)
         self.waveform.loop_changed.connect(self.on_loop_changed)
-        layout.addWidget(self.waveform, 1)
+        bottom_layout.addWidget(self.waveform)
         
         # Markers display
         self.markers_widget = MarkersWidget()
         self.markers_widget.marker_clicked.connect(self.on_marker_clicked)
-        layout.addWidget(self.markers_widget)
+        bottom_layout.addWidget(self.markers_widget)
+        
+        # Create splitter for resizable tracks and waveform areas
+        splitter = QSplitter(Qt.Orientation.Vertical)
+        splitter.addWidget(tracks_group)
+        splitter.addWidget(bottom_container)
+        splitter.setSizes([200, 400])  # Initial sizes
+        
+        layout.addWidget(splitter, 1)
         
         # Time display
         time_layout = QHBoxLayout()
