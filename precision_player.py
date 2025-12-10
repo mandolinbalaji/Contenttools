@@ -1013,7 +1013,7 @@ class WaveformWidget(QWidget):
         if self.loop_enabled:
             loop_x1 = int(self.loop_start_ratio * w)
             loop_x2 = int(self.loop_end_ratio * w)
-            painter.fillRect(loop_x1, 0, loop_x2 - loop_x1, h, QColor(50, 80, 50))
+            painter.fillRect(loop_x1, 0, loop_x2 - loop_x1, h, QColor(50, 80, 50, 40))
         
         # Draw waveform
         if self.waveform_data is not None and len(self.waveform_data) > 0:
