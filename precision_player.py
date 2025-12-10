@@ -1728,6 +1728,16 @@ class PrecisionPlayer(QMainWindow):
         """Handle track settings changed (mute/solo/volume)."""
         pass  # Settings already applied to track object
     
+    def on_track_device_changed(self, track_id, device_index):
+        """Handle per-track device selection change."""
+        self.engine.set_track_device(track_id, device_index)
+        # Find the track name for status
+        for widget in self.track_widgets:
+            if widget.track.id == track_id:
+                device_name = widget.device_combo.currentText()
+                self.status_label.setText(f"{widget.track.name} → {device_name}")
+                break
+    
     def load_file(self):
         """Alias for add_track for compatibility."""
         self.add_track()
