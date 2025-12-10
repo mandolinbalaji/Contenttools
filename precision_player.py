@@ -26,7 +26,7 @@ from pathlib import Path
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QComboBox, QFileDialog, QSlider, QFrame,
-    QSplitter, QGroupBox, QScrollArea, QCheckBox
+    QSplitter, QGroupBox, QScrollArea, QCheckBox, QSpinBox
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject
 from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QKeySequence, QShortcut, QFont
@@ -445,6 +445,142 @@ class MultiTrackEngine(QObject):
                             continue
                         samples = track.get_samples(current_pos, BLOCK_SIZE, has_solo)
                         mixed += samples
+                    
+                    # Clip and write to stream
+                    try:
+                        stream.write(np.clip(mixed, -1.0, 1.0))
+                    except Exception as e:
+                        print(f"Write error: {e}")
+                
+                # Advance position
+                self.position = current_pos + BLOCK_SIZE
+    
+    def _generate_metronome_click(self):
+        """Generate a single metronome click sound."""
+        # Create a short click sound (100ms at 44.1kHz)
+        duration_samples = int(0.1 * self.sample_rate)
+        t = np.linspace(0, 0.1, duration_samples, False)
+        
+        # Simple sine wave click with exponential decay
+        frequency = 1000  # 1kHz click
+        click = np.sin(2 * np.pi * frequency * t) * np.exp(-t * 20)  # Decay over 100ms
+        
+        # Convert to stereo
+        return np.column_stack((click, click)).astype('float32')
+    
+    def play_with_countin(self, bpm, beats):
+        """Start playback with metronome count-in."""
+        if not self.tracks:
+            return False
+        
+        if self.is_playing:
+            return True
+        
+        try:
+            # Store count-in settings
+            self.countin_bpm = bpm
+            self.countin_beats = beats
+            self.countin_click_samples = self._generate_metronome_click()
+            self.countin_current_beat = 0
+            self.countin_next_click_time = 0  # Will be set when playback starts
+            
+            # Get unique devices
+            device_tracks = self._get_tracks_by_device()
+            
+            # Create blocking output streams for each device
+            for device_index in device_tracks.keys():
+                try:
+                    stream = sd.OutputStream(
+                        samplerate=self.sample_rate,
+                        channels=2,
+                        device=device_index,
+                        blocksize=1024,
+                        latency='low'
+                    )
+                    stream.start()
+                    self.streams[device_index] = stream
+                except Exception as e:
+                    print(f"Error creating stream for device {device_index}: {e}")
+            
+            # Start playback
+            self._stop_event.clear()
+            self.is_playing = True
+            
+            # Start playback thread with count-in
+            self._playback_thread = threading.Thread(target=self._countin_playback_loop, daemon=True)
+            self._playback_thread.start()
+            
+            return True
+        except Exception as e:
+            print(f"Count-in playback error: {e}")
+            self.is_playing = False
+            return False
+    
+    def _countin_playback_loop(self):
+        """Playback loop with metronome count-in."""
+        BLOCK_SIZE = 1024
+        click_interval_samples = int((60.0 / self.countin_bpm) * self.sample_rate)
+        
+        while not self._stop_event.is_set() and self.is_playing:
+            with self.lock:
+                current_pos = self.position
+                
+                # Handle count-in phase
+                if self.countin_current_beat < self.countin_beats:
+                    # Check if it's time for next click
+                    if current_pos >= self.countin_next_click_time:
+                        # Play click on all devices
+                        for device_index, stream in list(self.streams.items()):
+                            try:
+                                stream.write(self.countin_click_samples)
+                            except Exception as e:
+                                print(f"Count-in write error: {e}")
+                        
+                        self.countin_current_beat += 1
+                        self.countin_next_click_time += click_interval_samples
+                        
+                        # Signal UI to update beat counter
+                        self.position_changed.emit(self.countin_current_beat)
+                    
+                    # Advance position for count-in timing
+                    self.position = current_pos + BLOCK_SIZE
+                    continue
+                
+                # Count-in finished, switch to normal playback
+                elif self.countin_current_beat == self.countin_beats:
+                    # Reset position to start for normal playback
+                    self.position = self.loop_start if self.loop_enabled else 0
+                    current_pos = self.position
+                    self.countin_current_beat += 1  # Mark as finished
+                
+                # Normal playback logic (same as _playback_loop)
+                # Handle looping
+                if self.loop_enabled:
+                    if current_pos >= self.loop_end:
+                        current_pos = self.loop_start
+                        self.position = current_pos
+                    elif current_pos < self.loop_start:
+                        current_pos = self.loop_start
+                        self.position = current_pos
+                
+                # Check for end of tracks
+                max_len = self.get_total_samples()
+                if current_pos >= max_len and not self.loop_enabled:
+                    self.is_playing = False
+                    break
+                
+                has_solo = self._has_solo()
+                
+                # Generate audio for each device
+                for device_index, stream in list(self.streams.items()):
+                    device_tracks = [t for t in self.tracks if t.device == device_index]
+                    
+                    # Mix tracks for this device
+                    mixed = np.zeros((BLOCK_SIZE, 2), dtype='float32')
+                    for track in device_tracks:
+                        if track.audio_data is not None:
+                            samples = track.get_samples(current_pos, BLOCK_SIZE, has_solo)
+                            mixed += samples
                     
                     # Clip and write to stream
                     try:
@@ -1389,6 +1525,36 @@ class PrecisionPlayer(QMainWindow):
         transport = QHBoxLayout()
         transport.addStretch()
         
+        # Metronome controls
+        metronome_layout = QVBoxLayout()
+        metronome_layout.setSpacing(2)
+        
+        metronome_controls = QHBoxLayout()
+        metronome_controls.setSpacing(5)
+        
+        metronome_controls.addWidget(QLabel("BPM:"))
+        self.bpm_spinbox = QSpinBox()
+        self.bpm_spinbox.setRange(60, 200)
+        self.bpm_spinbox.setValue(120)
+        self.bpm_spinbox.setFixedWidth(60)
+        metronome_controls.addWidget(self.bpm_spinbox)
+        
+        metronome_controls.addWidget(QLabel("Beats:"))
+        self.beats_spinbox = QSpinBox()
+        self.beats_spinbox.setRange(1, 8)
+        self.beats_spinbox.setValue(4)
+        self.beats_spinbox.setFixedWidth(50)
+        metronome_controls.addWidget(self.beats_spinbox)
+        
+        metronome_layout.addLayout(metronome_controls)
+        
+        self.beat_counter_label = QLabel("Ready")
+        self.beat_counter_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #888888;")
+        self.beat_counter_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        metronome_layout.addWidget(self.beat_counter_label)
+        
+        transport.addLayout(metronome_layout)
+        
         self.stop_btn = QPushButton("⏹ Stop")
         self.stop_btn.clicked.connect(self.on_stop)
         self.stop_btn.setEnabled(False)
@@ -1412,6 +1578,25 @@ class PrecisionPlayer(QMainWindow):
             }
         """)
         transport.addWidget(self.play_btn)
+        
+        self.play_with_countin_btn = QPushButton("▶ Count-in Play")
+        self.play_with_countin_btn.clicked.connect(self.on_play_with_countin)
+        self.play_with_countin_btn.setEnabled(False)
+        self.play_with_countin_btn.setMinimumWidth(140)
+        self.play_with_countin_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #28a745;
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+            QPushButton:hover {
+                background-color: #218838;
+            }
+            QPushButton:disabled {
+                background-color: #2a2a2a;
+            }
+        """)
+        transport.addWidget(self.play_with_countin_btn)
         
         transport.addStretch()
         layout.addLayout(transport)
@@ -1461,6 +1646,9 @@ class PrecisionPlayer(QMainWindow):
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_ui)
         self.update_timer.start(30)  # ~33fps update
+        
+        # Connect engine signals
+        self.engine.position_changed.connect(self.on_position_changed)
     
     def add_track(self):
         """Add a new track from file."""
@@ -1503,6 +1691,7 @@ class PrecisionPlayer(QMainWindow):
                 
                 self.play_btn.setEnabled(True)
                 self.stop_btn.setEnabled(True)
+                self.play_with_countin_btn.setEnabled(True)
                 self.file_label.setText(f"{len(self.engine.tracks)} track(s)")
                 self.status_label.setText(f"Added: {track.name}")
             else:
@@ -1525,6 +1714,7 @@ class PrecisionPlayer(QMainWindow):
         if not self.engine.tracks:
             self.play_btn.setEnabled(False)
             self.stop_btn.setEnabled(False)
+            self.play_with_countin_btn.setEnabled(False)
             self.waveform.set_audio_data(None)
             self.file_label.setText("No tracks loaded")
         else:
@@ -1591,15 +1781,19 @@ class PrecisionPlayer(QMainWindow):
                 f"Jumped to marker at {int(time_seconds//60):02d}:{time_seconds%60:05.2f}"
             )
     
-    def on_track_device_changed(self, track_id, device_index):
-        """Handle per-track device selection change."""
-        self.engine.set_track_device(track_id, device_index)
-        # Find the track name for status
-        for widget in self.track_widgets:
-            if widget.track.id == track_id:
-                device_name = widget.device_combo.currentText()
-                self.status_label.setText(f"{widget.track.name} → {device_name}")
-                break
+    def on_position_changed(self, value):
+        """Handle position changes from engine (used for beat counter during count-in)."""
+        # During count-in, value is the current beat number
+        if hasattr(self.engine, 'countin_current_beat') and self.engine.countin_current_beat <= self.engine.countin_beats:
+            if value > 0:
+                self.beat_counter_label.setText(str(value))
+                # Flash the label
+                self.beat_counter_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #ffff00;")
+                QTimer.singleShot(200, lambda: self.beat_counter_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #888888;"))
+        else:
+            # Normal playback, reset counter
+            if self.beat_counter_label.text() != "Ready":
+                self.beat_counter_label.setText("Ready")
     
     def on_play_pause(self):
         """Handle play/pause button."""
@@ -1613,6 +1807,20 @@ class PrecisionPlayer(QMainWindow):
         """Handle stop button."""
         self.engine.stop()
         self.play_btn.setText("▶ Play")
+        self.beat_counter_label.setText("Ready")
+    
+    def on_play_with_countin(self):
+        """Handle play with count-in button."""
+        if not self.engine.tracks:
+            return
+        
+        bpm = self.bpm_spinbox.value()
+        beats = self.beats_spinbox.value()
+        
+        # Start count-in playback
+        self.engine.play_with_countin(bpm, beats)
+        self.play_btn.setText("⏸ Pause")
+        self.beat_counter_label.setText("1")  # Will be updated by timer
     
     def on_loop_toggle(self):
         """Handle loop toggle."""
@@ -1677,6 +1885,7 @@ class PrecisionPlayer(QMainWindow):
             # Check if playback finished
             if not self.engine.is_playing and self.play_btn.text() == "⏸ Pause":
                 self.play_btn.setText("▶ Play")
+                self.beat_counter_label.setText("Ready")
     
     def closeEvent(self, event):
         """Clean up on close."""
