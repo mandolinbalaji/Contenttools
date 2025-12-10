@@ -486,6 +486,9 @@ class MultiTrackEngine(QObject):
             self.countin_current_beat = 0
             self.countin_next_click_time = 0  # Will be set when playback starts
             
+            # Reset position for count-in
+            self.position = 0
+            
             # Get unique devices
             device_tracks = self._get_tracks_by_device()
             
