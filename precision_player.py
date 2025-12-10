@@ -457,13 +457,13 @@ class MultiTrackEngine(QObject):
     
     def _generate_metronome_click(self):
         """Generate a single metronome click sound."""
-        # Create a short click sound (100ms at 44.1kHz)
-        duration_samples = int(0.1 * self.sample_rate)
-        t = np.linspace(0, 0.1, duration_samples, False)
+        # Create a short click sound (10ms at 44.1kHz)
+        duration_samples = int(0.01 * self.sample_rate)
+        t = np.linspace(0, 0.01, duration_samples, False)
         
         # Simple sine wave click with exponential decay
         frequency = 1000  # 1kHz click
-        click = np.sin(2 * np.pi * frequency * t) * np.exp(-t * 20)  # Decay over 100ms
+        click = np.sin(2 * np.pi * frequency * t) * np.exp(-t * 200)  # Decay over 10ms
         
         # Convert to stereo
         return np.column_stack((click, click)).astype('float32')
