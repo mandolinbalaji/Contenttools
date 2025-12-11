@@ -40,13 +40,15 @@ def download_youtube_audio(url):
         with tempfile.TemporaryDirectory() as temp_dir:
             # yt-dlp command to download audio as MP3
             cmd = [
-                'yt-dlp',
+                'python', '-m', 'yt_dlp',
                 '--extract-audio',
                 '--audio-format', 'mp3',
                 '--audio-quality', '128K',
                 '--output', f'{temp_dir}/%(title)s.%(ext)s',
                 '--no-playlist',
-                '--quiet',
+                '--format', 'bestaudio/best',
+                '--ignore-errors',
+                '--no-warnings',
                 url
             ]
 
@@ -54,9 +56,10 @@ def download_youtube_audio(url):
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=temp_dir)
 
             if result.returncode != 0:
+                error_msg = result.stderr.strip() or result.stdout.strip() or 'Unknown yt-dlp error'
                 return {
                     'success': False,
-                    'error': f'yt-dlp failed: {result.stderr}'
+                    'error': f'yt-dlp failed: {error_msg}'
                 }
 
             # Find the downloaded file
@@ -71,7 +74,7 @@ def download_youtube_audio(url):
 
             # Get video info for filename
             info_cmd = [
-                'yt-dlp',
+                'python', '-m', 'yt_dlp',
                 '--print', '%(title)s',
                 '--no-playlist',
                 '--quiet',
@@ -117,6 +120,15 @@ def download_youtube_audio(url):
 @app.route('/')
 def index():
     return send_file('youtube-to-mp3.html')
+
+@app.route('/api/status', methods=['GET'])
+def status():
+    """Return server status."""
+    return jsonify({
+        'status': 'running',
+        'message': 'YouTube to MP3 server is online',
+        'version': '1.0'
+    })
 
 @app.route('/api/download', methods=['POST'])
 def download():

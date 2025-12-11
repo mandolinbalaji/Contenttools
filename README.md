@@ -1,4 +1,25 @@
-# AnytuneToLRC
+# AnytuneToLRC + Balaji's Tools
+
+## 🎵 Balaji's Tools - Music Production Dashboard
+
+A unified dashboard for music production tools, providing easy access to all your audio processing applications.
+
+### Quick Launch
+```bash
+python launch_dashboard.py
+```
+
+**Features:**
+- **Precision Audio Player**: Advanced looping audio player with sample-accurate playback
+- **YouTube to MP3 Server**: Convert YouTube videos to MP3 with web interface
+- **Ultimate Vocal Remover (UVR)**: AI-powered vocal separation tool
+- **SongIndex Server**: Music library indexing and search server
+- **Format Convert**: AnytuneToLRC converter for practice files
+- **Generate Video**: Video generation tools
+
+---
+
+## AnytuneToLRC - Convert Practice Files to LRC
 
 Convert Anytune practice session files (.atcfg) to LRC (lyrics) format for use in music players and karaoke applications.
 
@@ -137,3 +158,51 @@ Extract audio from YouTube videos and save as high-quality MP3 files.
 - Flask web server
 
 **Note**: Please respect copyright laws and only download content you have permission to use.
+
+---
+
+## 🎼 Dashboard Tools
+
+### Precision Audio Player
+Advanced music practice tool with sample-accurate playback:
+
+```bash
+python precision_player.py
+```
+
+**Features:**
+- Load audio files (MP3, WAV, FLAC, etc.)
+- Sample-accurate looping and seeking
+- Multi-track support with device routing
+- CSLP marker support for lyrics/notation
+- Metronome with count-in functionality
+- Keyboard shortcuts and waveform visualization
+
+### File Structure
+
+```
+├── balaji_tools.py          # 🎯 Main dashboard application
+├── launch_dashboard.py      # 🚀 Simple launcher script
+├── precision_player.py      # 🎵 Audio player (server controls removed)
+├── youtube_to_mp3_server.py # 🌐 YouTube download server
+├── youtube-to-mp3.html      # 🌐 Web interface with status indicator
+├── index.html              # 🔄 AnytuneToLRC converter
+├── generate_video.py       # 🎬 Video generation tool
+├── README.md               # 📖 This file
+└── requirements.txt         # 📦 Dependencies
+```
+
+### Troubleshooting
+
+**Audio Device Issues**: Ensure audio drivers are up to date and devices are properly configured.
+
+**Server Port Conflicts**: The dashboard automatically handles port 7773 conflicts.
+
+**Missing Tools**: 
+- UVR should be installed at `C:\Users\mando\AppData\Local\Programs\Ultimate Vocal Remover\`
+- SongIndex requires `G:\My Drive\Music_Scans\app.py`
+
+**Dependencies**:
+```bash
+pip install PyQt6 numpy sounddevice soundfile flask flask-cors yt-dlp
+```

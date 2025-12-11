@@ -22,6 +22,7 @@ import sounddevice as sd
 import soundfile as sf
 import threading
 from pathlib import Path
+import subprocess
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -1471,6 +1472,8 @@ class PrecisionPlayer(QMainWindow):
         self.load_cslp_btn.clicked.connect(self.load_cslp_file)
         top_bar.addWidget(self.load_cslp_btn)
         
+        top_bar.addStretch()
+        
         self.file_label = QLabel("No tracks loaded")
         self.file_label.setStyleSheet("color: #888888;")
         top_bar.addWidget(self.file_label, 1)
@@ -1867,11 +1870,9 @@ class PrecisionPlayer(QMainWindow):
             total_samples = self.engine.get_total_samples()
             self.engine.set_loop(True, 0, total_samples)
             self.waveform.set_loop(True, 0, 1)
-            self.status_label.setText("Loop enabled (full track)")
         else:
             self.engine.set_loop(False)
             self.waveform.set_loop(False)
-            self.status_label.setText("Loop disabled")
     
     def on_waveform_click(self, ratio):
         """Handle click on waveform to seek."""
@@ -1886,14 +1887,6 @@ class PrecisionPlayer(QMainWindow):
             start_samples = int(start_ratio * total_samples)
             end_samples = int(end_ratio * total_samples)
             self.engine.set_loop(True, start_samples, end_samples)
-            
-            # Update status with loop times
-            start_sec = start_samples / self.engine.sample_rate
-            end_sec = end_samples / self.engine.sample_rate
-            self.status_label.setText(
-                f"Loop: {int(start_sec//60):02d}:{start_sec%60:05.2f} → "
-                f"{int(end_sec//60):02d}:{end_sec%60:05.2f}"
-            )
     
     def update_ui(self):
         """Update UI elements (called by timer)."""

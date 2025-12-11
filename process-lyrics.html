@@ -905,12 +905,30 @@
                 const trimmed = line.trim();
                 if (trimmed) {
                     totalLines++;
-                    // Match LRC format: [mm:ss.xx]lyrics or [m:s.xx]lyrics
-                    // Flexible to handle both mm:ss and m:s formats
-                    const match = trimmed.match(/^\[(\d{1,2}):(\d{1,2}\.\d+)\](.*)/);
+                    // Match LRC format: [mm:ss.xx] or [mm:ss] or [mm:ssxxx] (missing dot)
+                    // Handle various formats including missing dots and varying decimal places
+                    const match = trimmed.match(/^\[(\d{1,2}):(\d+\.?\d*)\](.*)/);
                     if (match) {
                         const mins = match[1].padStart(2, '0');
-                        const secs = match[2].padStart(5, '0'); // Ensure SS.mmm format
+                        let secs = match[2];
+                        
+                        // Handle missing decimal point (e.g., "00000" should be "00.000")
+                        if (!secs.includes('.')) {
+                            if (secs.length <= 2) {
+                                // Just seconds, no decimal (e.g., "00" -> "00.00")
+                                secs = secs.padStart(2, '0') + '.00';
+                            } else {
+                                // Missing dot (e.g., "00000" -> "00.000")
+                                secs = secs.slice(0, 2) + '.' + secs.slice(2);
+                            }
+                        }
+                        
+                        // Ensure format is SS.xx (at least 2 decimal places)
+                        const parts = secs.split('.');
+                        const secPart = parts[0].padStart(2, '0');
+                        const decPart = (parts[1] || '00').slice(0, 3).padEnd(2, '0');
+                        secs = `${secPart}.${decPart}`;
+                        
                         timestamps.push({
                             time: `${mins}:${secs}`,
                             lyrics: match[3] || ''
