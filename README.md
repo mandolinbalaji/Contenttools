@@ -96,5 +96,44 @@ Generated LRC files include metadata headers and timestamp markers:
 - ✅ Automatic metadata extraction (title, artist, album)
 - ✅ Editable LRC output before download
 - ✅ Download both modified .atcfg and .lrc files separately
-- ✅ Copy to clipboard functionality
-- ✅ Sorts markers by timestamp automatically
+## YouTube to MP3
+
+Extract audio from YouTube videos and save as high-quality MP3 files.
+
+### Setup
+
+1. Install required packages:
+   ```bash
+   pip install flask flask-cors yt-dlp
+   ```
+
+2. Start the download server:
+   ```bash
+   python youtube_to_mp3_server.py
+   ```
+
+3. Open `youtube-to-mp3.html` in your browser or visit `http://localhost:5000`
+
+### Usage
+
+1. **Start the server**: Run `python youtube_to_mp3_server.py`
+2. **Open the page**: Go to `http://localhost:5000` in your browser
+3. **Paste URL**: Enter any YouTube URL (videos, shorts, playlists)
+4. **Download**: Click "Download MP3" - the file will be saved to your Downloads folder
+
+### Features
+
+- ✅ High-quality MP3 output (128kbps)
+- ✅ Automatic filename generation from video title
+- ✅ Handles duplicate filenames
+- ✅ Progress indication
+- ✅ Supports all YouTube formats (videos, shorts, playlists)
+- ✅ Saves directly to Downloads folder
+
+### Requirements
+
+- Python 3.7+
+- yt-dlp (automatically downloads FFmpeg if needed)
+- Flask web server
+
+**Note**: Please respect copyright laws and only download content you have permission to use.

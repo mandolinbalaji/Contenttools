@@ -1,6 +1,11 @@
 # Core dependencies
 # (Anytune parsing uses stdlib only: plistlib, json)
 
+# Web server for YouTube to MP3
+Flask>=2.3.0
+Flask-CORS>=4.0.0
+yt-dlp>=2023.7.6
+
 # Development dependencies
 pytest>=7.4.0
 pytest-cov>=4.1.0

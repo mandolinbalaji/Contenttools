@@ -30,6 +30,11 @@
             padding: 40px;
         }
 
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
         h1 {
             color: #333;
             margin-bottom: 10px;
@@ -40,6 +45,46 @@
             color: #666;
             margin-bottom: 30px;
             font-size: 14px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #667eea;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .nav-text {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
         }
 
         .upload-area {
@@ -255,16 +300,33 @@
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div class="header">
             <h1>🎵 Anytune to LRC Converter</h1>
-            <div style="display: flex; gap: 15px;">
-                <a href="process-lyrics.html" style="color: #667eea; text-decoration: none; font-weight: 600;">⚙️ Process Lyrics →</a>
-                <a href="create-cslp.html" style="color: #667eea; text-decoration: none; font-weight: 600;">📋 Create CSLP →</a>
-                <a href="generate-video.html" style="color: #667eea; text-decoration: none; font-weight: 600;">🎬 Generate Video →</a>
-                <a href="edit-notes.html" style="color: #667eea; text-decoration: none; font-weight: 600;">📝 Edit Notes →</a>
-            </div>
+            <p class="subtitle">Convert .atcfg files to LRC lyrics format with optional lyrics file support</p>
+            
+            <nav class="nav-menu">
+                <a href="process-lyrics.html" class="nav-link">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Process Lyrics</span>
+                </a>
+                <a href="create-cslp.html" class="nav-link">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Create CSLP</span>
+                </a>
+                <a href="generate-video.html" class="nav-link">
+                    <span class="nav-icon">🎬</span>
+                    <span class="nav-text">Generate Video</span>
+                </a>
+                <a href="edit-notes.html" class="nav-link">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">Edit Notes</span>
+                </a>
+                <a href="youtube-to-mp3.html" class="nav-link">
+                    <span class="nav-icon">🎵</span>
+                    <span class="nav-text">YouTube to MP3</span>
+                </a>
+            </nav>
         </div>
-        <p class="subtitle">Convert .atcfg files to LRC lyrics format with optional lyrics file support</p>
 
         <div class="error" id="error"></div>
         <div class="success" id="success"></div>
