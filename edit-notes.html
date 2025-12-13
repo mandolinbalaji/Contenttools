@@ -243,6 +243,38 @@
             cursor: not-allowed;
         }
 
+        #noteEditor {
+            width: 100%;
+            min-height: 400px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            background: #2c3e50;
+            color: #ecf0f1;
+            resize: vertical;
+            outline: none;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        #noteEditor:focus {
+            border-color: #3498db;
+        }
+
+        #noteEditor.active-mode {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+        }
+
+        #noteEditor:empty:before {
+            content: attr(placeholder);
+            color: #7f8c8d;
+            pointer-events: none;
+        }
+
         .error {
             background: #fee;
             border: 1px solid #fcc;
@@ -319,6 +351,10 @@
                 <button class="tool-btn" id="dotDownBtn" title="Dot below (Ṣ)">↓</button>
             </div>
             <div class="tool-group">
+                <label>Line:</label>
+                <button class="tool-btn" id="lineBtn" title="Toggle overline/underline on selected text">¯</button>
+            </div>
+            <div class="tool-group">
                 <label>Edit:</label>
                 <button class="tool-btn" id="undoBtn" title="Undo" disabled>↶</button>
                 <button class="tool-btn" id="redoBtn" title="Redo" disabled>↷</button>
@@ -327,7 +363,7 @@
 
         <div class="editor-area" id="editorArea">
             <div class="editor-label">Notation Editor</div>
-            <textarea id="noteEditor" placeholder="Notation content will appear here..."></textarea>
+            <div id="noteEditor" contenteditable="true" placeholder="Notation content will appear here..."></div>
         </div>
 
         <div class="button-group">
@@ -348,6 +384,7 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const dotUpBtn = document.getElementById('dotUpBtn');
         const dotDownBtn = document.getElementById('dotDownBtn');
+        const lineBtn = document.getElementById('lineBtn');
         const undoBtn = document.getElementById('undoBtn');
         const redoBtn = document.getElementById('redoBtn');
 
@@ -438,7 +475,7 @@
 
         // Load content into editor
         function loadContent(content) {
-            noteEditor.value = content;
+            noteEditor.textContent = content;
             toolbar.classList.add('visible');
             editorArea.classList.add('visible');
             copyBtn.disabled = false;
@@ -477,39 +514,35 @@
             }
         });
 
-        // Editor click handler for character transformation
-        noteEditor.addEventListener('click', (e) => {
-            if (!dotMode) return;
-
-            const pos = noteEditor.selectionStart;
-            const text = noteEditor.value;
-            
-            if (pos >= text.length) return;
-
-            const char = text[pos];
-            const mapping = dotMode === 'up' ? dotAbove : dotBelow;
-            
-            if (mapping[char]) {
-                // Save to undo stack
-                saveToHistory();
-                
-                // Replace character
-                const newText = text.substring(0, pos) + mapping[char] + text.substring(pos + 1);
-                noteEditor.value = newText;
-                
-                // Keep cursor position
-                noteEditor.setSelectionRange(pos + 1, pos + 1);
-                noteEditor.focus();
-                
-                // Clear redo stack
-                redoStack = [];
-                updateHistoryButtons();
+        // Line button (apply overline)
+        lineBtn.addEventListener('click', () => {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) {
+                showError('Please select some text first');
+                return;
             }
+            const range = selection.getRangeAt(0);
+            const selectedText = range.toString();
+            if (!selectedText.trim()) {
+                showError('Please select some text first');
+                return;
+            }
+            // Wrap in span with overline
+            const span = document.createElement('span');
+            span.style.textDecoration = 'overline';
+            span.textContent = selectedText;
+            range.deleteContents();
+            range.insertNode(span);
+            // Move cursor after
+            selection.collapse(span, 1);
+            saveToHistory();
+            redoStack = [];
+            updateHistoryButtons();
         });
 
         // History management
         function saveToHistory() {
-            undoStack.push(noteEditor.value);
+            undoStack.push(noteEditor.innerHTML);
             if (undoStack.length > MAX_HISTORY) {
                 undoStack.shift();
             }
@@ -523,8 +556,8 @@
         // Undo button
         undoBtn.addEventListener('click', () => {
             if (undoStack.length > 0) {
-                redoStack.push(noteEditor.value);
-                noteEditor.value = undoStack.pop();
+                redoStack.push(noteEditor.innerHTML);
+                noteEditor.innerHTML = undoStack.pop();
                 updateHistoryButtons();
             }
         });
@@ -532,8 +565,8 @@
         // Redo button
         redoBtn.addEventListener('click', () => {
             if (redoStack.length > 0) {
-                undoStack.push(noteEditor.value);
-                noteEditor.value = redoStack.pop();
+                undoStack.push(noteEditor.innerHTML);
+                noteEditor.innerHTML = redoStack.pop();
                 updateHistoryButtons();
             }
         });
@@ -548,33 +581,6 @@
                     e.preventDefault();
                     redoBtn.click();
                 }
-            } else if (e.key === 'Enter') {
-                // Convert current line to lowercase before inserting newline
-                e.preventDefault();
-                const textarea = e.target;
-                const start = textarea.selectionStart;
-                const text = textarea.value;
-                
-                // Find start of current line
-                let lineStart = start;
-                while (lineStart > 0 && text[lineStart - 1] !== '\n') {
-                    lineStart--;
-                }
-                
-                // Find end of current line
-                let lineEnd = start;
-                while (lineEnd < text.length && text[lineEnd] !== '\n') {
-                    lineEnd++;
-                }
-                
-                // Convert line to lowercase
-                const beforeLine = text.substring(0, lineStart);
-                const line = text.substring(lineStart, lineEnd);
-                const afterLine = text.substring(lineEnd);
-                const newText = beforeLine + line.toLowerCase() + afterLine;
-                
-                textarea.value = newText;
-                textarea.setSelectionRange(lineStart + line.length + 1, lineStart + line.length + 1);
             }
         });
 
@@ -594,7 +600,7 @@
         // Copy to clipboard
         copyBtn.addEventListener('click', async () => {
             try {
-                await navigator.clipboard.writeText(noteEditor.value);
+                await navigator.clipboard.writeText(noteEditor.textContent);
                 showSuccess('Content copied to clipboard!');
             } catch (error) {
                 showError('Failed to copy to clipboard');

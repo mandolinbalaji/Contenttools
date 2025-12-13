@@ -1,6 +1,9 @@
 # Core dependencies
 # (Anytune parsing uses stdlib only: plistlib, json)
 
+# PDF and image processing
+PyMuPDF>=1.23.0
+
 # Web server for YouTube to MP3
 Flask>=2.3.0
 Flask-CORS>=4.0.0

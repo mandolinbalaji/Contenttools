@@ -312,6 +312,27 @@ class ToolLauncher(QObject):
             self.status_updated.emit('generate_video', f'Error: {str(e)}')
             return False
 
+    def launch_pdf_extractor(self):
+        """Launch the PDF/Image extractor tool."""
+        try:
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            extractor_path = script_dir / 'pdf_image_extractor.py'
+
+            if not extractor_path.exists():
+                self.status_updated.emit('pdf_extractor', f'Error: pdf_image_extractor.py not found at {extractor_path}')
+                return False
+
+            # Launch GUI application (don't use CREATE_NO_WINDOW for GUI apps)
+            process = subprocess.Popen([sys.executable, str(extractor_path)],
+                                     cwd=str(script_dir))
+            self.processes['pdf_extractor'] = process
+            self.status_updated.emit('pdf_extractor', 'Running')
+            return True
+        except Exception as e:
+            self.status_updated.emit('pdf_extractor', f'Error: {str(e)}')
+            return False
+
     def check_process_status(self):
         """Check status of all running processes."""
         for name, process in list(self.processes.items()):
@@ -518,6 +539,25 @@ class BalajiTools(QMainWindow):
         self.status_labels['generate_video'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['generate_video'], 1, 3, Qt.AlignmentFlag.AlignCenter)
 
+        # PDF/Image Extractor
+        pdf_btn = QPushButton("📄\nPDF/Image\nExtractor")
+        pdf_btn.clicked.connect(self.launch_pdf_extractor)
+        pdf_btn.setMinimumSize(100, 100)
+        pdf_btn.setMaximumSize(120, 120)
+        pdf_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                text-align: center;
+                padding: 5px;
+            }
+        """)
+        audio_layout.addWidget(pdf_btn, 2, 0, Qt.AlignmentFlag.AlignCenter)
+
+        self.status_labels['pdf_extractor'] = QLabel("Not running")
+        self.status_labels['pdf_extractor'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['pdf_extractor'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        audio_layout.addWidget(self.status_labels['pdf_extractor'], 3, 0, Qt.AlignmentFlag.AlignCenter)
+
         tools_layout.addWidget(audio_group)
 
         # Server Tools
@@ -695,6 +735,13 @@ class BalajiTools(QMainWindow):
             self.log_text.append("🎬 Launched Generate Video Tool")
         else:
             self.log_text.append("❌ Failed to launch Generate Video Tool")
+
+    def launch_pdf_extractor(self):
+        """Launch the PDF/Image extractor."""
+        if self.launcher.launch_pdf_extractor():
+            self.log_text.append("📄 Launched PDF/Image Extractor")
+        else:
+            self.log_text.append("❌ Failed to launch PDF/Image Extractor")
 
     def on_status_update(self, tool_name, status):
         """Handle status updates from tools."""
