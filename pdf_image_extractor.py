@@ -23,7 +23,7 @@ import tempfile
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSplitter,
     QPushButton, QLabel, QListWidget, QListWidgetItem, QGraphicsView, QGraphicsScene,
-    QGraphicsPixmapItem, QGraphicsRectItem, QFileDialog, QMessageBox, QTextEdit,
+    QGraphicsPixmapItem, QGraphicsRectItem, QGraphicsItem, QFileDialog, QMessageBox, QTextEdit,
     QGroupBox, QComboBox, QSpinBox, QCheckBox, QProgressBar
 )
 from PyQt6.QtCore import Qt, QRectF, QPointF, pyqtSignal, QObject, QSize
