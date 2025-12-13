@@ -27,18 +27,18 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 800px;
             width: 100%;
-            padding: 40px;
+            padding: 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         h1 {
             color: #333;
             margin-bottom: 10px;
-            font-size: 28px;
+            font-size: 24px;
         }
 
         .subtitle {
@@ -52,7 +52,7 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            margin-top: 25px;
+            margin-top: 15px;
         }
 
         .nav-link {
@@ -216,7 +216,7 @@
 
         textarea {
             width: 100%;
-            height: 300px;
+            height: 500px;
             border: 1px solid #ddd;
             border-radius: 6px;
             padding: 12px;
@@ -379,6 +379,7 @@
         </div>
 
         <div class="button-group">
+            <button class="btn-secondary" id="clearBtn">🗑️ Clear All</button>
             <button class="btn-secondary" id="copyBtn" disabled>📋 Copy to Clipboard</button>
             <button class="btn-secondary" id="downloadAtcfgBtn" disabled>💾 Download Modified .atcfg</button>
             <button class="btn-primary" id="downloadBtn" disabled>💾 Download LRC File</button>
@@ -402,6 +403,7 @@
         const copyBtn = document.getElementById('copyBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const downloadAtcfgBtn = document.getElementById('downloadAtcfgBtn');
+        const clearBtn = document.getElementById('clearBtn');
 
         let currentFileName = '';
         let currentLrcContent = '';
@@ -675,6 +677,13 @@
             showSuccess('Modified .atcfg file downloaded!');
         });
 
+        // Clear all data
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                clearAll();
+            }
+        });
+
         // Message helpers
         function showError(message) {
             errorDiv.textContent = message;
@@ -691,6 +700,43 @@
         function hideMessages() {
             errorDiv.classList.remove('visible');
             successDiv.classList.remove('visible');
+        }
+
+        // Clear all data and reset UI
+        function clearAll() {
+            // Reset file inputs
+            atcfgInput.value = '';
+            lyricsInput.value = '';
+
+            // Reset file display
+            atcfgFileName.textContent = 'No file selected';
+            lyricsFileName.textContent = 'No file selected';
+            atcfgStatus.textContent = 'Click to select';
+            lyricsStatus.textContent = 'Click to select';
+            atcfgGroup.classList.remove('loaded');
+            lyricsGroup.classList.remove('loaded');
+
+            // Hide sections
+            infoSection.classList.remove('visible');
+            outputArea.classList.remove('visible');
+
+            // Clear textarea
+            lrcOutput.value = '';
+
+            // Disable buttons
+            copyBtn.disabled = true;
+            downloadBtn.disabled = true;
+            downloadAtcfgBtn.disabled = true;
+
+            // Clear variables
+            currentFileName = '';
+            currentLrcContent = '';
+            atcfgData = null;
+            lyricsData = null;
+            modifiedAtcfgData = null;
+
+            // Hide messages
+            hideMessages();
         }
     </script>
 </body>

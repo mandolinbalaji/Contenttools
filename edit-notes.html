@@ -548,6 +548,33 @@
                     e.preventDefault();
                     redoBtn.click();
                 }
+            } else if (e.key === 'Enter') {
+                // Convert current line to lowercase before inserting newline
+                e.preventDefault();
+                const textarea = e.target;
+                const start = textarea.selectionStart;
+                const text = textarea.value;
+                
+                // Find start of current line
+                let lineStart = start;
+                while (lineStart > 0 && text[lineStart - 1] !== '\n') {
+                    lineStart--;
+                }
+                
+                // Find end of current line
+                let lineEnd = start;
+                while (lineEnd < text.length && text[lineEnd] !== '\n') {
+                    lineEnd++;
+                }
+                
+                // Convert line to lowercase
+                const beforeLine = text.substring(0, lineStart);
+                const line = text.substring(lineStart, lineEnd);
+                const afterLine = text.substring(lineEnd);
+                const newText = beforeLine + line.toLowerCase() + afterLine;
+                
+                textarea.value = newText;
+                textarea.setSelectionRange(lineStart + line.length + 1, lineStart + line.length + 1);
             }
         });
 
@@ -576,7 +603,9 @@
 
         // Download file
         downloadBtn.addEventListener('click', () => {
-            const content = noteEditor.value;
+            let content = noteEditor.value;
+            // Convert all characters to lowercase
+            content = content.toLowerCase();
             const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
