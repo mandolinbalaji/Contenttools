@@ -51,6 +51,7 @@ class PDFImageViewer(QGraphicsView):
     """Graphics view for displaying PDFs and images with selection capability."""
 
     selection_changed = pyqtSignal(QRectF)
+    selection_updated = pyqtSignal(int, QRectF)  # index, new_rect
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -63,16 +64,16 @@ class PDFImageViewer(QGraphicsView):
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
 
+        # Set cross hair cursor for selection
+        self.setCursor(Qt.CursorShape.CrossCursor)
+
         # Selection rectangle
         self.selection_rect = None
         self.selection_start = None
         self.is_selecting = False
-
-        # Current pixmap item
-        self.pixmap_item = None
-
-        # Zoom factor
-        self.zoom_factor = 1.0
+        self.resize_handles = []  # List of resize handle items
+        self.dragging_handle = None  # Currently dragged handle
+        self.handle_size = 8  # Size of resize handles
 
     def set_image(self, pixmap: QPixmap):
         """Set the image to display."""
@@ -81,6 +82,59 @@ class PDFImageViewer(QGraphicsView):
         self.scene.addItem(self.pixmap_item)
         self.fitInView(self.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio)
         self.zoom_factor = 1.0
+        # Clear selection and handles
+        self.selection_rect = None
+        self.resize_handles.clear()
+
+    def create_resize_handles(self):
+        """Create resize handles for the selection rectangle."""
+        # Remove existing handles
+        for handle in self.resize_handles:
+            if handle in self.scene.items():
+                self.scene.removeItem(handle)
+        self.resize_handles.clear()
+
+        if not self.selection_rect:
+            return
+
+        rect = self.selection_rect.rect()
+        handle_positions = [
+            rect.topLeft(), rect.topRight(), rect.bottomLeft(), rect.bottomRight(),
+            QPointF(rect.center().x(), rect.top()),  # Top center
+            QPointF(rect.center().x(), rect.bottom()),  # Bottom center
+            QPointF(rect.left(), rect.center().y()),  # Left center
+            QPointF(rect.right(), rect.center().y()),  # Right center
+        ]
+
+        for pos in handle_positions:
+            handle = QGraphicsRectItem(pos.x() - self.handle_size/2, pos.y() - self.handle_size/2,
+                                     self.handle_size, self.handle_size)
+            handle.setPen(QPen(QColor(255, 0, 0), 1))
+            handle.setBrush(QBrush(QColor(255, 255, 255)))
+            handle.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
+            handle.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
+            self.scene.addItem(handle)
+            self.resize_handles.append(handle)
+
+    def update_resize_handles(self):
+        """Update positions of resize handles based on selection rectangle."""
+        if not self.selection_rect or not self.resize_handles:
+            return
+
+        rect = self.selection_rect.rect()
+        handle_positions = [
+            rect.topLeft(), rect.topRight(), rect.bottomLeft(), rect.bottomRight(),
+            QPointF(rect.center().x(), rect.top()),  # Top center
+            QPointF(rect.center().x(), rect.bottom()),  # Bottom center
+            QPointF(rect.left(), rect.center().y()),  # Left center
+            QPointF(rect.right(), rect.center().y()),  # Right center
+        ]
+
+        for i, pos in enumerate(handle_positions):
+            if i < len(self.resize_handles):
+                handle = self.resize_handles[i]
+                handle.setRect(pos.x() - self.handle_size/2, pos.y() - self.handle_size/2,
+                             self.handle_size, self.handle_size)
 
     def wheelEvent(self, event):
         """Handle mouse wheel for zooming."""
@@ -98,12 +152,27 @@ class PDFImageViewer(QGraphicsView):
     def mousePressEvent(self, event):
         """Handle mouse press for selection start."""
         if event.button() == Qt.MouseButton.LeftButton:
-            self.selection_start = self.mapToScene(event.pos())
+            scene_pos = self.mapToScene(event.pos())
+            
+            # Check if clicking on a resize handle
+            for i, handle in enumerate(self.resize_handles):
+                if handle.contains(scene_pos):
+                    self.dragging_handle = (i, handle.pos() + QPointF(self.handle_size/2, self.handle_size/2))
+                    self.setDragMode(QGraphicsView.DragMode.NoDrag)
+                    return
+            
+            # Start new selection
+            self.selection_start = scene_pos
             self.is_selecting = True
             # Disable drag mode during selection
             self.setDragMode(QGraphicsView.DragMode.NoDrag)
             if self.selection_rect:
                 self.scene.removeItem(self.selection_rect)
+                # Remove existing handles
+                for handle in self.resize_handles:
+                    if handle in self.scene.items():
+                        self.scene.removeItem(handle)
+                self.resize_handles.clear()
             self.selection_rect = QGraphicsRectItem()
             self.selection_rect.setPen(QPen(QColor(255, 0, 0), 2))
             self.selection_rect.setBrush(QBrush(QColor(255, 0, 0, 50)))
@@ -114,8 +183,44 @@ class PDFImageViewer(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         """Handle mouse move for selection rectangle update."""
+        scene_pos = self.mapToScene(event.pos())
+        
+        if self.dragging_handle is not None:
+            # Dragging a resize handle
+            handle_index, original_pos = self.dragging_handle
+            delta = scene_pos - original_pos
+            
+            if self.selection_rect:
+                rect = self.selection_rect.rect()
+                if handle_index == 0:  # Top-left
+                    rect.setTopLeft(rect.topLeft() + delta)
+                elif handle_index == 1:  # Top-right
+                    rect.setTopRight(rect.topRight() + delta)
+                elif handle_index == 2:  # Bottom-left
+                    rect.setBottomLeft(rect.bottomLeft() + delta)
+                elif handle_index == 3:  # Bottom-right
+                    rect.setBottomRight(rect.bottomRight() + delta)
+                elif handle_index == 4:  # Top-center
+                    rect.setTop(rect.top() + delta.y())
+                elif handle_index == 5:  # Bottom-center
+                    rect.setBottom(rect.bottom() + delta.y())
+                elif handle_index == 6:  # Left-center
+                    rect.setLeft(rect.left() + delta.x())
+                elif handle_index == 7:  # Right-center
+                    rect.setRight(rect.right() + delta.x())
+                
+                # Ensure minimum size
+                if rect.width() < 10:
+                    rect.setWidth(10)
+                if rect.height() < 10:
+                    rect.setHeight(10)
+                
+                self.selection_rect.setRect(rect)
+                self.update_resize_handles()
+            return
+        
         if self.is_selecting and self.selection_start:
-            current_pos = self.mapToScene(event.pos())
+            current_pos = scene_pos
             rect = QRectF(self.selection_start, current_pos).normalized()
             self.selection_rect.setRect(rect)
             # Don't call super() during selection to prevent panning
@@ -124,19 +229,33 @@ class PDFImageViewer(QGraphicsView):
 
     def mouseReleaseEvent(self, event):
         """Handle mouse release for selection completion."""
-        if event.button() == Qt.MouseButton.LeftButton and self.is_selecting:
-            self.is_selecting = False
-            # Restore drag mode after selection
-            self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
-            if self.selection_rect:
-                rect = self.selection_rect.rect()
-                if rect.width() > 10 and rect.height() > 10:  # Minimum size
-                    self.selection_changed.emit(rect)
-                else:
-                    self.scene.removeItem(self.selection_rect)
-                    self.selection_rect = None
-            # Don't call super() for left button during selection
-            return
+        if event.button() == Qt.MouseButton.LeftButton:
+            if self.dragging_handle is not None:
+                # Finished dragging handle - emit update signal
+                self.dragging_handle = None
+                self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
+                if self.selection_rect:
+                    # Find which selection this corresponds to and emit update
+                    # For now, just emit for the last selection
+                    rect = self.selection_rect.rect()
+                    self.selection_updated.emit(len(self.selections) - 1, rect)
+                return
+            
+            if self.is_selecting:
+                self.is_selecting = False
+                # Restore drag mode after selection
+                self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
+                if self.selection_rect:
+                    rect = self.selection_rect.rect()
+                    if rect.width() > 10 and rect.height() > 10:  # Minimum size
+                        # Create resize handles for the new selection
+                        self.create_resize_handles()
+                        self.selection_changed.emit(rect)
+                    else:
+                        self.scene.removeItem(self.selection_rect)
+                        self.selection_rect = None
+                # Don't call super() for left button during selection
+                return
         super().mouseReleaseEvent(event)
 
 
@@ -282,6 +401,7 @@ class PDFImageExtractor(QMainWindow):
     def setup_connections(self):
         """Setup signal connections."""
         self.viewer.selection_changed.connect(self.on_selection_made)
+        self.viewer.selection_updated.connect(self.on_selection_updated)
 
     def load_file(self):
         """Load a PDF, image, or text file."""
@@ -427,6 +547,26 @@ class PDFImageExtractor(QMainWindow):
             self.selections.append(selection)
 
             self.status_label.setText(f"Added selection: Line {len(self.selections)}")
+
+    def on_selection_updated(self, index: int, new_rect: QRectF):
+        """Handle selection rectangle updates."""
+        if 0 <= index < len(self.selections):
+            # Update the selection data
+            if self.viewer.pixmap_item:
+                pixmap = self.viewer.pixmap_item.pixmap()
+                selected_pixmap = pixmap.copy(new_rect.toRect())
+                thumbnail = selected_pixmap.scaled(100, 60, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                
+                # Update the selection item
+                self.selections[index].rect = new_rect
+                self.selections[index].image_data = selected_pixmap.toImage()
+                
+                # Update the list item
+                list_item = self.selections_list.item(index)
+                if list_item:
+                    list_item.setIcon(QIcon(thumbnail))
+                    
+            self.status_label.setText(f"Updated selection: Line {index + 1}")
 
     def clear_selections(self):
         """Clear all selections."""
