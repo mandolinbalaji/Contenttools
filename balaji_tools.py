@@ -16,13 +16,71 @@ import os
 from pathlib import Path
 import threading
 import time
+import tempfile
+import atexit
 
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QPushButton, QLabel, QFrame, QGroupBox, QTextEdit, QSplitter
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject
 from PyQt6.QtGui import QFont, QIcon, QPixmap
+
+def check_single_instance(force=False):
+    """Check if another instance is already running and prevent multiple instances."""
+    lock_file = Path(tempfile.gettempdir()) / 'balaji_tools_dashboard.lock'
+
+    if lock_file.exists() and not force:
+        try:
+            # Try to read the PID from the lock file
+            with open(lock_file, 'r') as f:
+                pid_str = f.read().strip()
+
+            if pid_str.isdigit():
+                pid = int(pid_str)
+                # Check if process is actually running
+                try:
+                    import psutil
+                    if psutil.pid_exists(pid):
+                        # Double check by looking for python process with our script name
+                        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+                            if proc.info['pid'] == pid:
+                                cmdline = proc.info.get('cmdline', [])
+                                if any('balaji_tools.py' in str(arg) for arg in cmdline):
+                                    return False  # Another instance is running
+                except ImportError:
+                    # psutil not available, fall back to simple check
+                    return False
+                except Exception:
+                    pass  # Process check failed, assume not running
+
+            # If we get here, the lock file exists but process isn't running
+            # Clean up stale lock file
+            lock_file.unlink()
+
+        except (FileNotFoundError, ValueError, OSError):
+            # Lock file corrupted or inaccessible, clean it up
+            try:
+                lock_file.unlink()
+            except Exception:
+                pass
+
+    # Create lock file with current PID
+    try:
+        with open(lock_file, 'w') as f:
+            f.write(str(os.getpid()))
+        return True
+    except Exception:
+        return False
+
+def cleanup_lock_file():
+    """Clean up the lock file when the application exits."""
+    lock_file = Path(tempfile.gettempdir()) / 'balaji_tools_dashboard.lock'
+    try:
+        if lock_file.exists():
+            lock_file.unlink()
+    except Exception:
+        pass
 
 class ToolLauncher(QObject):
     """Manages launching and monitoring external tools."""
@@ -38,10 +96,17 @@ class ToolLauncher(QObject):
     def launch_precision_player(self):
         """Launch the precision audio player."""
         try:
-            # Launch in background
-            process = subprocess.Popen([sys.executable, 'precision_player.py'],
-                                     cwd=os.getcwd(),
-                                     creationflags=subprocess.CREATE_NO_WINDOW)
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            player_path = script_dir / 'precision_player.py'
+
+            if not player_path.exists():
+                self.status_updated.emit('precision_player', f'Error: precision_player.py not found at {player_path}')
+                return False
+
+            # Launch GUI application (don't use CREATE_NO_WINDOW for GUI apps)
+            process = subprocess.Popen([sys.executable, str(player_path)],
+                                     cwd=str(script_dir))
             self.processes['precision_player'] = process
             self.status_updated.emit('precision_player', 'Running')
             return True
@@ -68,8 +133,16 @@ class ToolLauncher(QObject):
     def start_youtube_server(self):
         """Start the YouTube to MP3 server."""
         try:
-            process = subprocess.Popen([sys.executable, 'youtube_to_mp3_server.py'],
-                                     cwd=os.getcwd(),
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            server_path = script_dir / 'youtube_to_mp3_server.py'
+
+            if not server_path.exists():
+                self.status_updated.emit('youtube_server', f'Error: youtube_to_mp3_server.py not found at {server_path}')
+                return False
+
+            process = subprocess.Popen([sys.executable, str(server_path)],
+                                     cwd=str(script_dir),
                                      creationflags=subprocess.CREATE_NO_WINDOW)
             self.processes['youtube_server'] = process
             self.status_updated.emit('youtube_server', 'Running (port 7773)')
@@ -203,9 +276,12 @@ class ToolLauncher(QObject):
         """Launch the AnytuneToLRC format converter (opens index.html in browser)."""
         try:
             import webbrowser
-            index_path = Path(os.getcwd()) / 'index.html'
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            index_path = script_dir / 'index.html'
+
             if not index_path.exists():
-                self.status_updated.emit('format_converter', 'Error: index.html not found')
+                self.status_updated.emit('format_converter', f'Error: index.html not found at {index_path}')
                 return False
 
             webbrowser.open(f'file://{index_path}')
@@ -218,12 +294,16 @@ class ToolLauncher(QObject):
     def launch_generate_video(self):
         """Launch the generate video tool."""
         try:
-            if not Path('generate_video.py').exists():
-                self.status_updated.emit('generate_video', 'Error: generate_video.py not found')
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            video_path = script_dir / 'generate_video.py'
+
+            if not video_path.exists():
+                self.status_updated.emit('generate_video', f'Error: generate_video.py not found at {video_path}')
                 return False
 
-            process = subprocess.Popen([sys.executable, 'generate_video.py'],
-                                     cwd=os.getcwd(),
+            process = subprocess.Popen([sys.executable, str(video_path)],
+                                     cwd=str(script_dir),
                                      creationflags=subprocess.CREATE_NO_WINDOW)
             self.processes['generate_video'] = process
             self.status_updated.emit('generate_video', 'Running')
@@ -244,6 +324,26 @@ class ToolLauncher(QObject):
                     self.status_updated.emit(name, 'Stopped')
                 else:
                     self.status_updated.emit(name, 'Closed')
+
+    def stop_all_processes(self):
+        """Stop all running processes."""
+        for process_name, process in list(self.processes.items()):
+            try:
+                if process.poll() is None:  # Process is still running
+                    process.terminate()
+                    # Wait a bit for graceful termination
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        # Force kill if it doesn't terminate gracefully
+                        process.kill()
+                        process.wait(timeout=2)
+            except Exception as e:
+                print(f"Error terminating {process_name}: {e}")
+            finally:
+                # Remove from tracking regardless of termination success
+                if process_name in self.processes:
+                    del self.processes[process_name]
 
 
 class BalajiTools(QMainWindow):
@@ -338,100 +438,179 @@ class BalajiTools(QMainWindow):
 
         # Audio Tools
         audio_group = QGroupBox("🎼 Audio Production")
-        audio_layout = QVBoxLayout(audio_group)
+        audio_layout = QGridLayout(audio_group)
+        audio_layout.setSpacing(10)
+        audio_layout.setContentsMargins(10, 10, 10, 10)
 
         # Precision Player
-        player_layout = QHBoxLayout()
-        player_btn = QPushButton("🎵 Launch Precision Player")
+        player_btn = QPushButton("🎵\nPrecision\nPlayer")
         player_btn.clicked.connect(self.launch_precision_player)
-        player_layout.addWidget(player_btn)
+        player_btn.setMinimumSize(100, 100)
+        player_btn.setMaximumSize(120, 120)
+        player_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                text-align: center;
+                padding: 5px;
+            }
+        """)
+        audio_layout.addWidget(player_btn, 0, 0, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['precision_player'] = QLabel("Not running")
-        self.status_labels['precision_player'].setStyleSheet("color: #95a5a6;")
-        player_layout.addWidget(self.status_labels['precision_player'])
-        player_layout.addStretch()
-        audio_layout.addLayout(player_layout)
+        self.status_labels['precision_player'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['precision_player'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        audio_layout.addWidget(self.status_labels['precision_player'], 1, 0, Qt.AlignmentFlag.AlignCenter)
 
         # UVR
-        uvr_layout = QHBoxLayout()
-        uvr_btn = QPushButton("🎤 Launch UVR (Vocal Remover)")
+        uvr_btn = QPushButton("🎤\nUVR\nRemover")
         uvr_btn.clicked.connect(self.launch_uvr)
-        uvr_layout.addWidget(uvr_btn)
+        uvr_btn.setMinimumSize(100, 100)
+        uvr_btn.setMaximumSize(120, 120)
+        uvr_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                text-align: center;
+                padding: 5px;
+            }
+        """)
+        audio_layout.addWidget(uvr_btn, 0, 1, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['uvr'] = QLabel("Not running")
-        self.status_labels['uvr'].setStyleSheet("color: #95a5a6;")
-        uvr_layout.addWidget(self.status_labels['uvr'])
-        uvr_layout.addStretch()
-        audio_layout.addLayout(uvr_layout)
+        self.status_labels['uvr'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['uvr'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        audio_layout.addWidget(self.status_labels['uvr'], 1, 1, Qt.AlignmentFlag.AlignCenter)
 
         # Format Converter
-        format_layout = QHBoxLayout()
-        format_btn = QPushButton("🔄 Format Convert (AnytuneToLRC)")
+        format_btn = QPushButton("🔄\nFormat\nConverter")
         format_btn.clicked.connect(self.launch_format_converter)
-        format_layout.addWidget(format_btn)
+        format_btn.setMinimumSize(100, 100)
+        format_btn.setMaximumSize(120, 120)
+        format_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                text-align: center;
+                padding: 5px;
+            }
+        """)
+        audio_layout.addWidget(format_btn, 0, 2, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['format_converter'] = QLabel("Ready")
-        self.status_labels['format_converter'].setStyleSheet("color: #95a5a6;")
-        format_layout.addWidget(self.status_labels['format_converter'])
-        format_layout.addStretch()
-        audio_layout.addLayout(format_layout)
+        self.status_labels['format_converter'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['format_converter'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        audio_layout.addWidget(self.status_labels['format_converter'], 1, 2, Qt.AlignmentFlag.AlignCenter)
 
         # Generate Video
-        video_layout = QHBoxLayout()
-        video_btn = QPushButton("🎬 Generate Video")
+        video_btn = QPushButton("🎬\nGenerate\nVideo")
         video_btn.clicked.connect(self.launch_generate_video)
-        video_layout.addWidget(video_btn)
+        video_btn.setMinimumSize(100, 100)
+        video_btn.setMaximumSize(120, 120)
+        video_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                text-align: center;
+                padding: 5px;
+            }
+        """)
+        audio_layout.addWidget(video_btn, 0, 3, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['generate_video'] = QLabel("Not running")
-        self.status_labels['generate_video'].setStyleSheet("color: #95a5a6;")
-        video_layout.addWidget(self.status_labels['generate_video'])
-        video_layout.addStretch()
-        audio_layout.addLayout(video_layout)
+        self.status_labels['generate_video'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['generate_video'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        audio_layout.addWidget(self.status_labels['generate_video'], 1, 3, Qt.AlignmentFlag.AlignCenter)
 
         tools_layout.addWidget(audio_group)
 
         # Server Tools
         server_group = QGroupBox("🌐 Server Tools")
-        server_layout = QVBoxLayout(server_group)
+        server_layout = QGridLayout(server_group)
+        server_layout.setSpacing(10)
+        server_layout.setContentsMargins(10, 10, 10, 10)
 
         # YouTube Server
-        youtube_layout = QHBoxLayout()
-        self.youtube_start_btn = QPushButton("▶ Start YouTube Server")
-        self.youtube_start_btn.clicked.connect(self.start_youtube_server)
-        self.youtube_start_btn.setStyleSheet("QPushButton { background-color: #27ae60; } QPushButton:hover { background-color: #229954; }")
+        youtube_widget = QWidget()
+        youtube_layout = QVBoxLayout(youtube_widget)
+        youtube_layout.setSpacing(5)
 
-        self.youtube_stop_btn = QPushButton("⏹ Stop YouTube Server")
+        self.youtube_start_btn = QPushButton("▶\nStart\nYouTube")
+        self.youtube_start_btn.clicked.connect(self.start_youtube_server)
+        self.youtube_start_btn.setMinimumSize(80, 80)
+        self.youtube_start_btn.setMaximumSize(100, 100)
+        self.youtube_start_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #27ae60;
+                font-size: 10px;
+                text-align: center;
+                padding: 2px;
+            }
+            QPushButton:hover { background-color: #229954; }
+        """)
+
+        self.youtube_stop_btn = QPushButton("⏹\nStop\nYouTube")
         self.youtube_stop_btn.clicked.connect(self.stop_youtube_server)
         self.youtube_stop_btn.setEnabled(False)
-        self.youtube_stop_btn.setStyleSheet("QPushButton { background-color: #e74c3c; } QPushButton:hover { background-color: #c0392b; }")
+        self.youtube_stop_btn.setMinimumSize(80, 80)
+        self.youtube_stop_btn.setMaximumSize(100, 100)
+        self.youtube_stop_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                font-size: 10px;
+                text-align: center;
+                padding: 2px;
+            }
+            QPushButton:hover { background-color: #c0392b; }
+        """)
 
         youtube_layout.addWidget(self.youtube_start_btn)
         youtube_layout.addWidget(self.youtube_stop_btn)
 
         self.status_labels['youtube_server'] = QLabel("Stopped")
-        self.status_labels['youtube_server'].setStyleSheet("color: #95a5a6;")
+        self.status_labels['youtube_server'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['youtube_server'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         youtube_layout.addWidget(self.status_labels['youtube_server'])
-        youtube_layout.addStretch()
-        server_layout.addLayout(youtube_layout)
+
+        server_layout.addWidget(youtube_widget, 0, 0, Qt.AlignmentFlag.AlignCenter)
 
         # SongIndex Server
-        songindex_layout = QHBoxLayout()
-        songindex_btn = QPushButton("📚 Launch SongIndex Server")
-        songindex_btn.clicked.connect(self.launch_songindex_server)
+        songindex_widget = QWidget()
+        songindex_layout = QVBoxLayout(songindex_widget)
+        songindex_layout.setSpacing(5)
 
-        self.songindex_stop_btn = QPushButton("⏹ Stop SongIndex Server")
+        songindex_btn = QPushButton("📚\nLaunch\nSongIndex")
+        songindex_btn.clicked.connect(self.launch_songindex_server)
+        songindex_btn.setMinimumSize(80, 80)
+        songindex_btn.setMaximumSize(100, 100)
+        songindex_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 10px;
+                text-align: center;
+                padding: 2px;
+            }
+        """)
+
+        self.songindex_stop_btn = QPushButton("⏹\nStop\nSongIndex")
         self.songindex_stop_btn.clicked.connect(self.stop_songindex_server)
         self.songindex_stop_btn.setEnabled(False)
-        self.songindex_stop_btn.setStyleSheet("QPushButton { background-color: #e74c3c; } QPushButton:hover { background-color: #c0392b; }")
+        self.songindex_stop_btn.setMinimumSize(80, 80)
+        self.songindex_stop_btn.setMaximumSize(100, 100)
+        self.songindex_stop_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                font-size: 10px;
+                text-align: center;
+                padding: 2px;
+            }
+            QPushButton:hover { background-color: #c0392b; }
+        """)
 
         songindex_layout.addWidget(songindex_btn)
         songindex_layout.addWidget(self.songindex_stop_btn)
 
         self.status_labels['songindex'] = QLabel("Not running")
-        self.status_labels['songindex'].setStyleSheet("color: #95a5a6;")
+        self.status_labels['songindex'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['songindex'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         songindex_layout.addWidget(self.status_labels['songindex'])
-        songindex_layout.addStretch()
-        server_layout.addLayout(songindex_layout)
+
+        server_layout.addWidget(songindex_widget, 0, 1, Qt.AlignmentFlag.AlignCenter)
 
         tools_layout.addWidget(server_group)
         tools_layout.addStretch()
@@ -539,13 +718,40 @@ class BalajiTools(QMainWindow):
                     self.songindex_stop_btn.setEnabled(False)
 
     def closeEvent(self, event):
-        """Clean up on close."""
+        """Clean up on close - stop all running processes."""
+        # Stop all running processes
+        self.launcher.stop_all_processes()
+
+        # Stop servers using their specific stop methods (for port cleanup)
         self.launcher.stop_youtube_server()
         self.launcher.stop_songindex_server()
+
+        cleanup_lock_file()  # Clean up lock file
         event.accept()
 
 
 def main():
+    # Check command line arguments for force start
+    force_start = '--force' in sys.argv or '-f' in sys.argv
+
+    # Check for single instance
+    if not check_single_instance(force=force_start):
+        # Show error message using a simple dialog
+        app = QApplication(sys.argv)
+        from PyQt6.QtWidgets import QMessageBox
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Already Running")
+        msg.setText("Balaji's Tools dashboard is already running.")
+        msg.setInformativeText("Only one instance is allowed.\n\nUse --force or -f to start anyway.")
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msg.exec()
+        cleanup_lock_file()  # Clean up in case of error
+        sys.exit(1)
+
+    # Register cleanup function
+    atexit.register(cleanup_lock_file)
+
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
 

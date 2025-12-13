@@ -9,6 +9,20 @@ A unified dashboard for music production tools, providing easy access to all you
 python launch_dashboard.py
 ```
 
+### Advanced Options
+```bash
+# Force start (ignore single instance check)
+python balaji_tools.py --force
+# or
+python balaji_tools.py -f
+# or use the convenience script
+python force_start_dashboard.py
+```
+
+**Note:** The dashboard prevents multiple instances by default. If you get an "Already Running" message but can't find the window, use the force start option above.
+
+**Cleanup:** When you close the dashboard, it automatically stops all running tools and servers.
+
 **Features:**
 - **Precision Audio Player**: Advanced looping audio player with sample-accurate playback
 - **YouTube to MP3 Server**: Convert YouTube videos to MP3 with web interface
