@@ -27,7 +27,7 @@ from PyQt6.QtWidgets import (
     QGroupBox, QComboBox, QSpinBox, QCheckBox, QProgressBar
 )
 from PyQt6.QtCore import Qt, QRectF, QPointF, pyqtSignal, QObject, QSize
-from PyQt6.QtGui import QPixmap, QPainter, QPen, QBrush, QColor, QImage
+from PyQt6.QtGui import QPixmap, QPainter, QPen, QBrush, QColor, QImage, QIcon
 
 
 class SelectionItem:
@@ -100,12 +100,16 @@ class PDFImageViewer(QGraphicsView):
         if event.button() == Qt.MouseButton.LeftButton:
             self.selection_start = self.mapToScene(event.pos())
             self.is_selecting = True
+            # Disable drag mode during selection
+            self.setDragMode(QGraphicsView.DragMode.NoDrag)
             if self.selection_rect:
                 self.scene.removeItem(self.selection_rect)
             self.selection_rect = QGraphicsRectItem()
             self.selection_rect.setPen(QPen(QColor(255, 0, 0), 2))
             self.selection_rect.setBrush(QBrush(QColor(255, 0, 0, 50)))
             self.scene.addItem(self.selection_rect)
+            # Don't call super() to prevent default drag behavior
+            return
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
@@ -114,12 +118,16 @@ class PDFImageViewer(QGraphicsView):
             current_pos = self.mapToScene(event.pos())
             rect = QRectF(self.selection_start, current_pos).normalized()
             self.selection_rect.setRect(rect)
+            # Don't call super() during selection to prevent panning
+            return
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
         """Handle mouse release for selection completion."""
         if event.button() == Qt.MouseButton.LeftButton and self.is_selecting:
             self.is_selecting = False
+            # Restore drag mode after selection
+            self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
             if self.selection_rect:
                 rect = self.selection_rect.rect()
                 if rect.width() > 10 and rect.height() > 10:  # Minimum size
@@ -127,6 +135,8 @@ class PDFImageViewer(QGraphicsView):
                 else:
                     self.scene.removeItem(self.selection_rect)
                     self.selection_rect = None
+            # Don't call super() for left button during selection
+            return
         super().mouseReleaseEvent(event)
 
 
@@ -409,7 +419,7 @@ class PDFImageExtractor(QMainWindow):
             # Add to list with thumbnail
             item_text = f"Line {len(self.selections) + 1}\nPage {self.current_page + 1}"
             list_item = QListWidgetItem()
-            list_item.setIcon(thumbnail)
+            list_item.setIcon(QIcon(thumbnail))  # Convert QPixmap to QIcon
             list_item.setText(item_text)
             list_item.setData(Qt.ItemDataRole.UserRole, selection)
             self.selections_list.addItem(list_item)
