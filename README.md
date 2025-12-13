@@ -30,6 +30,7 @@ python force_start_dashboard.py
 - **SongIndex Server**: Music library indexing and search server
 - **Format Convert**: AnytuneToLRC converter for practice files
 - **Generate Video**: Video generation tools
+- **PDF/Image Extractor**: Slice PDFs and images into line-by-line notation PNGs
 
 ---
 
@@ -131,6 +132,44 @@ Generated LRC files include metadata headers and timestamp markers:
 - ✅ Automatic metadata extraction (title, artist, album)
 - ✅ Editable LRC output before download
 - ✅ Download both modified .atcfg and .lrc files separately
+
+---
+
+## PDF/Image Extractor - Line-by-Line Notation PNG Slicer
+
+Slice PDFs and images into individual line-by-line notation PNG files for use in notation editors.
+
+### Overview
+
+This desktop application allows you to:
+1. Load PDF documents (multi-page) or image files
+2. Select rectangular regions using free-form rectangle selection
+3. Organize selections in a draggable list (similar to lyrics processing)
+4. Export each selection as a numbered PNG file (line_001.png, line_002.png, etc.)
+5. Use the exported PNGs in the edit-notes tool by loading the folder
+
+### Usage
+
+Launch from the dashboard:
+1. Click "PDF/Image Extractor" in the dashboard
+2. Load a PDF or image file using the "Load PDF/Image/Text" button
+3. Navigate pages if it's a PDF
+4. Click and drag to select rectangular regions (lines of notation)
+5. Selections appear in the draggable list on the right
+6. Drag items in the list to reorder lines
+7. Set output directory and click "Export as PNGs"
+
+### Features
+
+- ✅ Load PDFs (multi-page) and images (PNG, JPG, BMP)
+- ✅ Free-form rectangle selection with visual feedback
+- ✅ Zoom and pan controls for precise selection
+- ✅ Draggable selection list (reorder lines like lyrics processing)
+- ✅ Export selections as numbered PNG files
+- ✅ Integration with edit-notes tool for timestamp assignment
+
+---
+
 ## YouTube to MP3
 
 Extract audio from YouTube videos and save as high-quality MP3 files.
