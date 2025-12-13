@@ -51,7 +51,7 @@ class PDFImageViewer(QGraphicsView):
     """Graphics view for displaying PDFs and images with selection capability."""
 
     selection_changed = pyqtSignal(QRectF)
-    selection_updated = pyqtSignal(int, QRectF)  # index, new_rect
+    selection_updated = pyqtSignal(QRectF)  # new_rect
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -235,10 +235,9 @@ class PDFImageViewer(QGraphicsView):
                 self.dragging_handle = None
                 self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
                 if self.selection_rect:
-                    # Find which selection this corresponds to and emit update
-                    # For now, just emit for the last selection
+                    # Emit update signal for the current selection
                     rect = self.selection_rect.rect()
-                    self.selection_updated.emit(len(self.selections) - 1, rect)
+                    self.selection_updated.emit(rect)
                 return
             
             if self.is_selecting:
@@ -548,9 +547,11 @@ class PDFImageExtractor(QMainWindow):
 
             self.status_label.setText(f"Added selection: Line {len(self.selections)}")
 
-    def on_selection_updated(self, index: int, new_rect: QRectF):
+    def on_selection_updated(self, new_rect: QRectF):
         """Handle selection rectangle updates."""
-        if 0 <= index < len(self.selections):
+        # For now, assume the last selection is being updated
+        if self.selections:
+            index = len(self.selections) - 1
             # Update the selection data
             if self.viewer.pixmap_item:
                 pixmap = self.viewer.pixmap_item.pixmap()
