@@ -26,7 +26,7 @@ from PyQt6.QtWidgets import (
     QGraphicsPixmapItem, QGraphicsRectItem, QFileDialog, QMessageBox, QTextEdit,
     QGroupBox, QComboBox, QSpinBox, QCheckBox, QProgressBar
 )
-from PyQt6.QtCore import Qt, QRectF, QPointF, pyqtSignal, QObject
+from PyQt6.QtCore import Qt, QRectF, QPointF, pyqtSignal, QObject, QSize
 from PyQt6.QtGui import QPixmap, QPainter, QPen, QBrush, QColor, QImage
 
 
@@ -222,7 +222,8 @@ class PDFImageExtractor(QMainWindow):
         selections_layout = QVBoxLayout(selections_group)
 
         self.selections_list = DraggableListWidget()
-        self.selections_list.setMaximumHeight(300)
+        self.selections_list.setMaximumHeight(400)  # Increased height for thumbnails
+        self.selections_list.setIconSize(QSize(100, 60))  # Set icon size for thumbnails
         selections_layout.addWidget(self.selections_list)
 
         # Selection controls
@@ -399,18 +400,23 @@ class PDFImageExtractor(QMainWindow):
             pixmap = self.viewer.pixmap_item.pixmap()
             selected_pixmap = pixmap.copy(rect.toRect())
 
+            # Create thumbnail (scale to fit in list)
+            thumbnail = selected_pixmap.scaled(100, 60, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+
             # Create selection item
             selection = SelectionItem(rect, self.current_page, selected_pixmap.toImage())
 
-            # Add to list
-            item_text = f"Line {len(self.selections) + 1} (Page {self.current_page + 1})"
-            list_item = QListWidgetItem(item_text)
+            # Add to list with thumbnail
+            item_text = f"Line {len(self.selections) + 1}\nPage {self.current_page + 1}"
+            list_item = QListWidgetItem()
+            list_item.setIcon(thumbnail)
+            list_item.setText(item_text)
             list_item.setData(Qt.ItemDataRole.UserRole, selection)
             self.selections_list.addItem(list_item)
 
             self.selections.append(selection)
 
-            self.status_label.setText(f"Added selection: {item_text}")
+            self.status_label.setText(f"Added selection: Line {len(self.selections)}")
 
     def clear_selections(self):
         """Clear all selections."""
