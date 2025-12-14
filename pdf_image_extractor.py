@@ -73,7 +73,7 @@ class PDFImageViewer(QGraphicsView):
         self.is_selecting = False
         self.resize_handles = []  # List of resize handle items
         self.dragging_handle = None  # Currently dragged handle
-        self.handle_size = 8  # Size of resize handles
+        self.handle_size = 12  # Size of resize handles (increased from 8)
 
     def set_image(self, pixmap: QPixmap):
         """Set the image to display."""
@@ -109,8 +109,8 @@ class PDFImageViewer(QGraphicsView):
         for pos in handle_positions:
             handle = QGraphicsRectItem(pos.x() - self.handle_size/2, pos.y() - self.handle_size/2,
                                      self.handle_size, self.handle_size)
-            handle.setPen(QPen(QColor(255, 0, 0), 1))
-            handle.setBrush(QBrush(QColor(255, 255, 255)))
+            handle.setPen(QPen(QColor(255, 0, 0), 2))  # Thicker border
+            handle.setBrush(QBrush(QColor(255, 255, 255, 200)))  # Semi-transparent white
             handle.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
             handle.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
             self.scene.addItem(handle)
@@ -157,9 +157,15 @@ class PDFImageViewer(QGraphicsView):
             # Check if clicking on a resize handle
             for i, handle in enumerate(self.resize_handles):
                 if handle.contains(scene_pos):
-                    self.dragging_handle = (i, handle.pos() + QPointF(self.handle_size/2, self.handle_size/2))
+                    self.dragging_handle = (i, scene_pos)  # Store handle index and current mouse position
+                    self.original_rect = self.selection_rect.rect() if self.selection_rect else None
                     self.setDragMode(QGraphicsView.DragMode.NoDrag)
                     return
+            
+            # Check if clicking on existing selection rectangle
+            if self.selection_rect and self.selection_rect.contains(scene_pos):
+                # Don't start new selection, just allow interaction with existing
+                return
             
             # Start new selection
             self.selection_start = scene_pos
@@ -187,35 +193,43 @@ class PDFImageViewer(QGraphicsView):
         
         if self.dragging_handle is not None:
             # Dragging a resize handle
-            handle_index, original_pos = self.dragging_handle
-            delta = scene_pos - original_pos
+            handle_index, start_pos = self.dragging_handle
+            delta = scene_pos - start_pos
             
-            if self.selection_rect:
-                rect = self.selection_rect.rect()
+            if self.selection_rect and self.original_rect:
+                new_rect = QRectF(self.original_rect)
+                
                 if handle_index == 0:  # Top-left
-                    rect.setTopLeft(rect.topLeft() + delta)
+                    new_rect.setTopLeft(self.original_rect.topLeft() + delta)
                 elif handle_index == 1:  # Top-right
-                    rect.setTopRight(rect.topRight() + delta)
+                    new_rect.setTopRight(self.original_rect.topRight() + delta)
                 elif handle_index == 2:  # Bottom-left
-                    rect.setBottomLeft(rect.bottomLeft() + delta)
+                    new_rect.setBottomLeft(self.original_rect.bottomLeft() + delta)
                 elif handle_index == 3:  # Bottom-right
-                    rect.setBottomRight(rect.bottomRight() + delta)
+                    new_rect.setBottomRight(self.original_rect.bottomRight() + delta)
                 elif handle_index == 4:  # Top-center
-                    rect.setTop(rect.top() + delta.y())
+                    new_rect.setTop(self.original_rect.top() + delta.y())
                 elif handle_index == 5:  # Bottom-center
-                    rect.setBottom(rect.bottom() + delta.y())
+                    new_rect.setBottom(self.original_rect.bottom() + delta.y())
                 elif handle_index == 6:  # Left-center
-                    rect.setLeft(rect.left() + delta.x())
+                    new_rect.setLeft(self.original_rect.left() + delta.x())
                 elif handle_index == 7:  # Right-center
-                    rect.setRight(rect.right() + delta.x())
+                    new_rect.setRight(self.original_rect.right() + delta.x())
                 
                 # Ensure minimum size
-                if rect.width() < 10:
-                    rect.setWidth(10)
-                if rect.height() < 10:
-                    rect.setHeight(10)
+                if new_rect.width() < 10:
+                    if handle_index in [0, 2, 6]:  # Left handles
+                        new_rect.setLeft(new_rect.right() - 10)
+                    else:  # Right handles
+                        new_rect.setRight(new_rect.left() + 10)
+                        
+                if new_rect.height() < 10:
+                    if handle_index in [0, 1, 4]:  # Top handles
+                        new_rect.setTop(new_rect.bottom() - 10)
+                    else:  # Bottom handles
+                        new_rect.setBottom(new_rect.top() + 10)
                 
-                self.selection_rect.setRect(rect)
+                self.selection_rect.setRect(new_rect)
                 self.update_resize_handles()
             return
         
