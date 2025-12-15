@@ -292,9 +292,9 @@ class ToolLauncher(QObject):
             return False
 
     def stop_website_server(self):
-        """Stop the website server by killing processes on port 8000 (assuming default port)."""
+        """Stop the website server by killing processes on ports 8000 and 7777."""
         try:
-            # Kill any processes on port 8000 (common default for Python HTTP servers)
+            # Kill any processes on ports 8000 and 7777
             result = subprocess.run(
                 ['netstat', '-ano'],
                 capture_output=True,
@@ -308,7 +308,7 @@ class ToolLauncher(QObject):
                 pids_to_kill = set()
 
                 for line in lines:
-                    if ':8000' in line and ('LISTENING' in line or 'ESTABLISHED' in line):
+                    if (':8000' in line or ':7777' in line) and ('LISTENING' in line or 'ESTABLISHED' in line):
                         parts = line.split()
                         if len(parts) >= 5:
                             pid = parts[-1].strip()
