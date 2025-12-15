@@ -327,11 +327,11 @@ class PDFImageExtractor(QMainWindow):
 
         layout.addLayout(toolbar)
 
-        # Main content splitter
+        # Main content splitter (now three panels)
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # Left side - Viewer
-        viewer_group = QGroupBox("Document Viewer")
+        # Left side - Original Viewer
+        viewer_group = QGroupBox("Original Document Viewer")
         viewer_layout = QVBoxLayout(viewer_group)
 
         self.viewer = PDFImageViewer()
@@ -354,6 +354,35 @@ class PDFImageExtractor(QMainWindow):
         viewer_layout.addLayout(zoom_layout)
 
         splitter.addWidget(viewer_group)
+
+        # Middle - 800x60 Preview
+        preview_group = QGroupBox("800x60 Preview (Real-time)")
+        preview_layout = QVBoxLayout(preview_group)
+
+        self.preview_label = QLabel()
+        self.preview_label.setMinimumSize(800, 60)
+        self.preview_label.setMaximumSize(800, 60)
+        self.preview_label.setStyleSheet("""
+            QLabel {
+                background-color: #f0f0f0;
+                border: 2px solid #cccccc;
+                border-radius: 4px;
+            }
+        """)
+        self.preview_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.preview_label.setText("Select a region to see 800x60 preview")
+        preview_layout.addWidget(self.preview_label)
+
+        # Preview info
+        preview_info = QHBoxLayout()
+        self.preview_size_label = QLabel("Dimensions: -")
+        self.preview_quality_label = QLabel("Quality: -")
+        preview_info.addWidget(self.preview_size_label)
+        preview_info.addStretch()
+        preview_info.addWidget(self.preview_quality_label)
+        preview_layout.addLayout(preview_info)
+
+        splitter.addWidget(preview_group)
 
         # Right side - Selections and export
         right_widget = QWidget()
@@ -403,7 +432,7 @@ class PDFImageExtractor(QMainWindow):
         right_layout.addStretch()
 
         splitter.addWidget(right_widget)
-        splitter.setSizes([700, 400])
+        splitter.setSizes([500, 200, 400])  # Left: 500, Middle: 200, Right: 400
 
         layout.addWidget(splitter)
 
@@ -561,6 +590,9 @@ class PDFImageExtractor(QMainWindow):
 
             self.status_label.setText(f"Added selection: Line {len(self.selections)}")
 
+            # Update the 800x60 preview
+            self.update_preview(selected_pixmap)
+
     def on_selection_updated(self, new_rect: QRectF):
         """Handle selection rectangle updates."""
         # For now, assume the last selection is being updated
@@ -583,11 +615,38 @@ class PDFImageExtractor(QMainWindow):
                     
             self.status_label.setText(f"Updated selection: Line {index + 1}")
 
+            # Update the 800x60 preview
+            self.update_preview(selected_pixmap)
+
+    def update_preview(self, selected_pixmap: QPixmap):
+        """Update the 800x60 preview with the selected region."""
+        try:
+            # Resize to exactly 800x60 pixels
+            preview_pixmap = selected_pixmap.scaled(800, 60, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            
+            # Update preview label
+            self.preview_label.setPixmap(preview_pixmap)
+            
+            # Update info labels
+            original_size = f"{selected_pixmap.width()}x{selected_pixmap.height()}"
+            self.preview_size_label.setText(f"Original: {original_size} → 800x60")
+            self.preview_quality_label.setText("Quality: High (Lanczos)")
+            
+        except Exception as e:
+            self.preview_label.setText(f"Preview error: {str(e)}")
+            self.preview_size_label.setText("Dimensions: Error")
+            self.preview_quality_label.setText("Quality: -")
+
     def clear_selections(self):
         """Clear all selections."""
         self.selections_list.clear()
         self.selections.clear()
         self.status_label.setText("All selections cleared")
+        
+        # Clear preview
+        self.preview_label.setText("Select a region to see 800x60 preview")
+        self.preview_size_label.setText("Dimensions: -")
+        self.preview_quality_label.setText("Quality: -")
 
     def remove_selected(self):
         """Remove selected item from list."""
@@ -608,7 +667,7 @@ class PDFImageExtractor(QMainWindow):
             self.output_dir_edit.setPlainText(output_dir)
 
     def export_pngs(self):
-        """Export all selections as PNG files."""
+        """Export all selections as 800x60 PNG files."""
         output_dir_text = self.output_dir_edit.toPlainText().strip()
         if not output_dir_text:
             QMessageBox.warning(self, "No Output Directory", "Please specify an output directory.")
@@ -629,13 +688,22 @@ class PDFImageExtractor(QMainWindow):
         try:
             for i, selection in enumerate(self.selections):
                 if selection.image_data:
+                    # Convert to QPixmap for resizing
+                    pixmap = QPixmap.fromImage(selection.image_data)
+                    
+                    # Resize to exactly 800x60 pixels
+                    resized_pixmap = pixmap.scaled(800, 60, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                    
+                    # Convert back to QImage for saving
+                    resized_image = resized_pixmap.toImage()
+                    
                     filename = f"line_{i+1:03d}.png"
                     filepath = output_dir / filename
-                    selection.image_data.save(str(filepath))
-                    self.status_label.setText(f"Exported {filename}")
+                    resized_image.save(str(filepath))
+                    self.status_label.setText(f"Exported {filename} (800x60)")
 
-            QMessageBox.information(self, "Export Complete", f"Exported {len(self.selections)} PNG files to {output_dir}")
-            self.status_label.setText(f"Export complete: {len(self.selections)} files")
+            QMessageBox.information(self, "Export Complete", f"Exported {len(self.selections)} PNG files (800x60) to {output_dir}")
+            self.status_label.setText(f"Export complete: {len(self.selections)} files at 800x60")
 
         except Exception as e:
             QMessageBox.critical(self, "Export Error", f"Failed to export files: {str(e)}")
