@@ -790,6 +790,13 @@ class LyricsDisplayWidget(QWidget):
             self.log_message.emit(log_msg)
             print(f"[IMAGE LOG] {log_msg}")  # Also print to console
             
+            # Check if it's just a filename (no path separators) - load from LyricsImages folder
+            if not ('/' in img_url or '\\' in img_url or img_url.startswith('http')) and self.directory:
+                img_url = str(Path(self.directory) / "LyricsImages" / img_url)
+                log_msg = f"Resolved filename to LyricsImages folder: {img_url}"
+                self.log_message.emit(log_msg)
+                print(f"[IMAGE LOG] {log_msg}")
+            
             # Try to load from URL or local file
             if img_url.startswith('http://') or img_url.startswith('https://'):
                 log_msg = f"Loading image from URL: {img_url}"
