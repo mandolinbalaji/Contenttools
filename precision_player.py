@@ -790,34 +790,57 @@ class LyricsDisplayWidget(QWidget):
             self.set_content(current_entry['text'], current_entry['notation'])
     
     def paintEvent(self, event):
-        """Draw lyrics and notation."""
+        """Draw lyrics and notation, supporting <img src=...> in lyrics."""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        
-        # Background
         painter.fillRect(self.rect(), QColor(25, 25, 30))
-        
         w = self.width()
         h = self.height()
-        
+
         # Draw lyrics (larger, top)
         if self.lyrics:
-            font = QFont("Segoe UI", 18, QFont.Weight.Bold)
-            painter.setFont(font)
-            painter.setPen(QColor(255, 255, 255))
-            painter.drawText(0, 0, w, h // 2 + 10, 
-                           Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom,
-                           self.lyrics)
-        
+            import re
+            img_match = re.search(r'<img\\s+src=["\\\']([^"\\\']+)["\\\']', self.lyrics)
+            if img_match:
+                from PyQt6.QtGui import QPixmap
+                img_url = img_match.group(1)
+                try:
+                    # Try to load from URL or local file
+                    if img_url.startswith('http://') or img_url.startswith('https://'):
+                        from urllib.request import urlopen
+                        from PyQt6.QtCore import QByteArray
+                        data = urlopen(img_url).read()
+                        pixmap = QPixmap()
+                        pixmap.loadFromData(data)
+                    else:
+                        pixmap = QPixmap(img_url)
+                    if not pixmap.isNull():
+                        # Center image in top half
+                        img_w = min(pixmap.width(), w-20)
+                        img_h = min(pixmap.height(), h//2-10)
+                        scaled = pixmap.scaled(img_w, img_h, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
+                        x = (w - scaled.width()) // 2
+                        y = (h//2 - scaled.height()) // 2
+                        painter.drawPixmap(x, y, scaled)
+                except Exception as e:
+                    # Fallback: draw error text
+                    font = QFont("Segoe UI", 12, QFont.Weight.Bold)
+                    painter.setFont(font)
+                    painter.setPen(QColor(255, 100, 100))
+                    painter.drawText(0, 0, w, h // 2 + 10, Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom, f"[Image error: {e}]")
+            else:
+                font = QFont("Segoe UI", 18, QFont.Weight.Bold)
+                painter.setFont(font)
+                painter.setPen(QColor(255, 255, 255))
+                painter.drawText(0, 0, w, h // 2 + 10, Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom, self.lyrics)
+
         # Draw notation (smaller, bottom)
         if self.notation:
             font = QFont("Consolas", 14)
             painter.setFont(font)
             painter.setPen(QColor(180, 220, 255))
-            painter.drawText(0, h // 2, w, h // 2, 
-                           Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop,
-                           self.notation)
-        
+            painter.drawText(0, h // 2, w, h // 2, Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop, self.notation)
+
         # Border
         painter.setPen(QPen(QColor(60, 60, 70)))
         painter.drawRect(0, 0, w - 1, h - 1)
