@@ -29,8 +29,8 @@ from PyQt6.QtWidgets import (
     QPushButton, QLabel, QComboBox, QFileDialog, QSlider, QFrame,
     QSplitter, QGroupBox, QScrollArea, QCheckBox, QSpinBox
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject
-from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QKeySequence, QShortcut, QFont
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject, QRect
+from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QKeySequence, QShortcut, QFont, QPixmap
 
 
 class AudioEngine(QObject):
@@ -715,6 +715,7 @@ class CSLPData:
     def __init__(self):
         self.timeline = []  # List of {time, text, notation, id}
         self.metadata = {}
+        self.directory = ""  # Directory of the CSLP file for resolving relative paths
         
     def load(self, filepath):
         """Load CSLP file."""
@@ -724,6 +725,7 @@ class CSLPData:
             
             self.metadata = data.get('metadata', {})
             self.timeline = data.get('data', {}).get('timeline', [])
+            self.directory = str(Path(filepath).parent)  # Store directory for relative path resolution
             
             # Ensure timeline is sorted by time
             self.timeline.sort(key=lambda x: x.get('time', 0))
@@ -756,11 +758,14 @@ class CSLPData:
 class LyricsDisplayWidget(QWidget):
     """Widget to display current lyrics and notation."""
     
+    log_message = pyqtSignal(str)  # Signal to send log messages to main window
+    
     def __init__(self):
         super().__init__()
         self.lyrics = ""
         self.notation = ""
         self.current_id = -1
+        self.directory = ""  # Directory for resolving relative image paths
         self.setMinimumHeight(80)
         self.setMaximumHeight(120)
         
@@ -769,6 +774,179 @@ class LyricsDisplayWidget(QWidget):
         self.lyrics = lyrics
         self.notation = notation
         self.update()
+    
+    def set_directory(self, directory):
+        """Set the directory for resolving relative image paths."""
+        self.directory = directory
+    
+    def load_image_from_src(self, img_url, painter, rect):
+        """Load and draw image from src URL/path, with logging."""
+        try:
+            # Log the original src
+            log_msg = f"Image tag detected: {img_url}"
+            self.log_message.emit(log_msg)
+            print(f"[IMAGE LOG] {log_msg}")  # Also print to console
+            
+            # Try to load from URL or local file
+            if img_url.startswith('http://') or img_url.startswith('https://'):
+                log_msg = f"Loading image from URL: {img_url}"
+                self.log_message.emit(log_msg)
+                print(f"[IMAGE LOG] {log_msg}")
+                try:
+                    import ssl
+                    from urllib.request import urlopen
+                    from PyQt6.QtCore import QByteArray
+                    
+                    # Create SSL context to handle HTTPS properly
+                    ssl_context = ssl.create_default_context()
+                    ssl_context.check_hostname = False
+                    ssl_context.verify_mode = ssl.CERT_NONE
+                    
+                    # Try to open the URL
+                    log_msg = f"Opening URL connection..."
+                    self.log_message.emit(log_msg)
+                    print(f"[IMAGE LOG] {log_msg}")
+                    with urlopen(img_url, context=ssl_context, timeout=10) as response:
+                        log_msg = f"URL response status: {getattr(response, 'status', 'unknown')}"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                        data = response.read()
+                        log_msg = f"Downloaded {len(data)} bytes of data"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                    
+                    # Try to load the data into a pixmap
+                    pixmap = QPixmap()
+                    success = pixmap.loadFromData(data)
+                    
+                    if not success:
+                        log_msg = f"Failed to parse image data from URL: {img_url} (data size: {len(data)} bytes)"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                        # Try to detect if it's HTML error page
+                        try:
+                            text_data = data.decode('utf-8', errors='ignore')
+                            if '<html' in text_data.lower() or '<!doctype' in text_data.lower():
+                                log_msg = "URL returned HTML instead of image data - likely a 404 or access error"
+                                self.log_message.emit(log_msg)
+                                print(f"[IMAGE LOG] {log_msg}")
+                        except:
+                            pass
+                        return False
+                    else:
+                        log_msg = f"Successfully parsed image data from URL"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                        
+                except Exception as url_error:
+                    log_msg = f"Failed to download image from URL: {url_error}"
+                    self.log_message.emit(log_msg)
+                    print(f"[IMAGE LOG] {log_msg}")
+                    log_msg = f"Error type: {type(url_error).__name__}"
+                    self.log_message.emit(log_msg)
+                    print(f"[IMAGE LOG] {log_msg}")
+                    return False
+            else:
+                # Resolve relative paths using CSLP directory
+                original_url = img_url
+                if not Path(img_url).is_absolute() and self.directory:
+                    img_url = str(Path(self.directory) / img_url)
+                    log_msg = f"Resolved relative path: {original_url} → {img_url}"
+                    self.log_message.emit(log_msg)
+                    print(f"[IMAGE LOG] {log_msg}")
+                else:
+                    log_msg = f"Loading image from absolute path: {img_url}"
+                    self.log_message.emit(log_msg)
+                    print(f"[IMAGE LOG] {log_msg}")
+                
+                # Check if file exists
+                if not Path(img_url).exists():
+                    log_msg = f"Image file does not exist: {img_url}"
+                    self.log_message.emit(log_msg)
+                    print(f"[IMAGE LOG] {log_msg}")
+                    return False
+                
+                log_msg = f"Attempting to load image file: {img_url}"
+                self.log_message.emit(log_msg)
+                print(f"[IMAGE LOG] {log_msg}")
+                pixmap = QPixmap(img_url)
+                log_msg = f"QPixmap created, isNull: {pixmap.isNull()}"
+                self.log_message.emit(log_msg)
+                print(f"[IMAGE LOG] {log_msg}")
+                
+                if pixmap.isNull():
+                    # Try to get more info about why it failed
+                    try:
+                        import os
+                        file_size = os.path.getsize(img_url)
+                        log_msg = f"File exists, size: {file_size} bytes"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                    except Exception as size_error:
+                        log_msg = f"Could not get file size: {size_error}"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                    
+                    # Try alternative loading method
+                    try:
+                        with open(img_url, 'rb') as f:
+                            data = f.read()
+                        log_msg = f"Read {len(data)} bytes from file"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                        pixmap = QPixmap()
+                        success = pixmap.loadFromData(data)
+                        log_msg = f"loadFromData result: {success}"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+                        if success:
+                            log_msg = "Alternative loading method succeeded!"
+                            self.log_message.emit(log_msg)
+                            print(f"[IMAGE LOG] {log_msg}")
+                        else:
+                            log_msg = "Alternative loading method also failed"
+                            self.log_message.emit(log_msg)
+                            print(f"[IMAGE LOG] {log_msg}")
+                    except Exception as alt_error:
+                        log_msg = f"Alternative loading failed: {alt_error}"
+                        self.log_message.emit(log_msg)
+                        print(f"[IMAGE LOG] {log_msg}")
+            
+            if not pixmap.isNull():
+                log_msg = f"Image loaded successfully: {pixmap.width()}x{pixmap.height()}"
+                self.log_message.emit(log_msg)
+                print(f"[IMAGE LOG] {log_msg}")
+                # Scale image to 100% of the notation area
+                available_w = rect.width()
+                available_h = rect.height()
+                
+                # Calculate scale factor to fill the entire area
+                scale_w = available_w / pixmap.width()
+                scale_h = available_h / pixmap.height()
+                scale = min(scale_w, scale_h)
+                
+                img_w = int(pixmap.width() * scale)
+                img_h = int(pixmap.height() * scale)
+                
+                log_msg = f"Scaling image to 100% of area: {img_w}x{img_h} (scale: {scale:.2f})"
+                self.log_message.emit(log_msg)
+                print(f"[IMAGE LOG] {log_msg}")
+                
+                scaled = pixmap.scaled(img_w, img_h, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
+                x = rect.x() + (rect.width() - scaled.width()) // 2
+                y = rect.y() + (rect.height() - scaled.height()) // 2
+                painter.drawPixmap(x, y, scaled)
+                return True
+            else:
+                log_msg = f"Failed to load image: pixmap is null (unsupported format or corrupted file)"
+                self.log_message.emit(log_msg)
+                print(f"[IMAGE LOG] {log_msg}")
+                return False
+        except Exception as e:
+            log_msg = f"Image loading error: {e}"
+            self.log_message.emit(log_msg)
+            print(f"[IMAGE LOG] {log_msg}")
+            return False
     
     def update_display(self, current_time, timeline):
         """Update display based on current playback time."""
@@ -790,7 +968,7 @@ class LyricsDisplayWidget(QWidget):
             self.set_content(current_entry['text'], current_entry['notation'])
     
     def paintEvent(self, event):
-        """Draw lyrics and notation, supporting <img src=...> in lyrics."""
+        """Draw lyrics and notation, supporting <img src=...> in both."""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), QColor(25, 25, 30))
@@ -798,48 +976,47 @@ class LyricsDisplayWidget(QWidget):
         h = self.height()
 
         # Draw lyrics (larger, top)
+        lyrics_rect = QRect(0, 0, w, h // 2)
         if self.lyrics:
             import re
-            img_match = re.search(r'<img\\s+src=["\\\']([^"\\\']+)["\\\']', self.lyrics)
+            img_match = re.search(r'<img\s+src\s*=\s*["\']([^"\']+)["\']', self.lyrics, re.IGNORECASE)
+            print(f"[REGEX LOG] Checking lyrics: {repr(self.lyrics[:100])}")
             if img_match:
-                from PyQt6.QtGui import QPixmap
+                print(f"[REGEX LOG] Found img tag in lyrics: {img_match.group(1)}")
                 img_url = img_match.group(1)
-                try:
-                    # Try to load from URL or local file
-                    if img_url.startswith('http://') or img_url.startswith('https://'):
-                        from urllib.request import urlopen
-                        from PyQt6.QtCore import QByteArray
-                        data = urlopen(img_url).read()
-                        pixmap = QPixmap()
-                        pixmap.loadFromData(data)
-                    else:
-                        pixmap = QPixmap(img_url)
-                    if not pixmap.isNull():
-                        # Center image in top half
-                        img_w = min(pixmap.width(), w-20)
-                        img_h = min(pixmap.height(), h//2-10)
-                        scaled = pixmap.scaled(img_w, img_h, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
-                        x = (w - scaled.width()) // 2
-                        y = (h//2 - scaled.height()) // 2
-                        painter.drawPixmap(x, y, scaled)
-                except Exception as e:
+                if not self.load_image_from_src(img_url, painter, lyrics_rect):
                     # Fallback: draw error text
                     font = QFont("Segoe UI", 12, QFont.Weight.Bold)
                     painter.setFont(font)
                     painter.setPen(QColor(255, 100, 100))
-                    painter.drawText(0, 0, w, h // 2 + 10, Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom, f"[Image error: {e}]")
+                    painter.drawText(lyrics_rect, Qt.AlignmentFlag.AlignCenter, f"[Image error: {img_url}]")
             else:
+                print(f"[REGEX LOG] No img tag found in lyrics")
                 font = QFont("Segoe UI", 18, QFont.Weight.Bold)
                 painter.setFont(font)
                 painter.setPen(QColor(255, 255, 255))
-                painter.drawText(0, 0, w, h // 2 + 10, Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom, self.lyrics)
+                painter.drawText(lyrics_rect, Qt.AlignmentFlag.AlignCenter, self.lyrics)
 
         # Draw notation (smaller, bottom)
+        notation_rect = QRect(0, h // 2, w, h // 2)
         if self.notation:
-            font = QFont("Consolas", 14)
-            painter.setFont(font)
-            painter.setPen(QColor(180, 220, 255))
-            painter.drawText(0, h // 2, w, h // 2, Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop, self.notation)
+            img_match = re.search(r'<img\s+src\s*=\s*["\']([^"\']+)["\']', self.notation, re.IGNORECASE)
+            print(f"[REGEX LOG] Checking notation: {repr(self.notation[:100])}")
+            if img_match:
+                print(f"[REGEX LOG] Found img tag in notation: {img_match.group(1)}")
+                img_url = img_match.group(1)
+                if not self.load_image_from_src(img_url, painter, notation_rect):
+                    # Fallback: draw error text
+                    font = QFont("Segoe UI", 12, QFont.Weight.Bold)
+                    painter.setFont(font)
+                    painter.setPen(QColor(255, 100, 100))
+                    painter.drawText(notation_rect, Qt.AlignmentFlag.AlignCenter, f"[Image error: {img_url}]")
+            else:
+                print(f"[REGEX LOG] No img tag found in notation")
+                font = QFont("Consolas", 14)
+                painter.setFont(font)
+                painter.setPen(QColor(180, 220, 255))
+                painter.drawText(notation_rect, Qt.AlignmentFlag.AlignCenter, self.notation)
 
         # Border
         painter.setPen(QPen(QColor(60, 60, 70)))
@@ -1657,6 +1834,9 @@ class PrecisionPlayer(QMainWindow):
         self.status_label = QLabel("Ready. Load an audio file to begin.")
         self.status_label.setStyleSheet("color: #888888; font-size: 11px;")
         layout.addWidget(self.status_label)
+        
+        # Connect lyrics display logging
+        self.lyrics_display.log_message.connect(self.status_label.setText)
     
     def populate_devices(self):
         """Populate available devices list for track widgets."""
@@ -1812,6 +1992,9 @@ class PrecisionPlayer(QMainWindow):
         success, message = self.cslp_data.load(filepath)
         
         if success and self.cslp_data.timeline:
+            # Set directory for image path resolution
+            self.lyrics_display.set_directory(self.cslp_data.directory)
+            
             # Pass markers to markers widget
             duration = self.engine.get_duration()
             self.markers_widget.set_markers(
