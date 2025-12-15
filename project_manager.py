@@ -82,8 +82,8 @@ class ProjectManager:
             except Exception as e:
                 print(f"Error reading project file {json_file}: {e}")
 
-        # Sort by last modified date
-        projects.sort(key=lambda x: x.get("last_modified", ""), reverse=True)
+        # Sort by name alphabetically
+        projects.sort(key=lambda x: x.get("name", "").lower())
         return projects
 
     def update_project_audio(self, audio_files: List[str]) -> bool:
