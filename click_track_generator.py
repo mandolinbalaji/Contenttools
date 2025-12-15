@@ -289,5 +289,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()</content>
-<parameter name="filePath">c:\AnytuneToLRC\click_track_generator.py
+    main()
