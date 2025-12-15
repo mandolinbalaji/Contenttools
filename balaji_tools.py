@@ -272,6 +272,77 @@ class ToolLauncher(QObject):
         if 'songindex' in self.processes:
             del self.processes['songindex']
 
+    def start_website_server(self):
+        """Start the website server using start_server.bat."""
+        try:
+            batch_path = r"C:\balajiwebsite\start_server.bat"
+
+            if not Path(batch_path).exists():
+                self.status_updated.emit('website_server', f'Error: start_server.bat not found at {batch_path}')
+                return False
+
+            process = subprocess.Popen([batch_path],
+                                     cwd=r"C:\balajiwebsite",
+                                     creationflags=subprocess.CREATE_NO_WINDOW)
+            self.processes['website_server'] = process
+            self.status_updated.emit('website_server', 'Running')
+            return True
+        except Exception as e:
+            self.status_updated.emit('website_server', f'Error: {str(e)}')
+            return False
+
+    def stop_website_server(self):
+        """Stop the website server by killing processes on port 8000 (assuming default port)."""
+        try:
+            # Kill any processes on port 8000 (common default for Python HTTP servers)
+            result = subprocess.run(
+                ['netstat', '-ano'],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                creationflags=subprocess.CREATE_NO_WINDOW
+            )
+
+            if result.returncode == 0:
+                lines = result.stdout.split('\n')
+                pids_to_kill = set()
+
+                for line in lines:
+                    if ':8000' in line and ('LISTENING' in line or 'ESTABLISHED' in line):
+                        parts = line.split()
+                        if len(parts) >= 5:
+                            pid = parts[-1].strip()
+                            if pid.isdigit():
+                                pids_to_kill.add(pid)
+
+                # Kill each process
+                killed_count = 0
+                for pid in pids_to_kill:
+                    try:
+                        subprocess.run(
+                            ['taskkill', '/PID', pid, '/F'],
+                            capture_output=True,
+                            timeout=5,
+                            creationflags=subprocess.CREATE_NO_WINDOW
+                        )
+                        killed_count += 1
+                    except Exception:
+                        pass
+
+                if killed_count > 0:
+                    self.status_updated.emit('website_server', f'Stopped ({killed_count} processes killed)')
+                else:
+                    self.status_updated.emit('website_server', 'No servers found running')
+            else:
+                self.status_updated.emit('website_server', 'Error checking port status')
+
+        except Exception as e:
+            self.status_updated.emit('website_server', f'Error stopping: {str(e)}')
+
+        # Remove from tracked processes
+        if 'website_server' in self.processes:
+            del self.processes['website_server']
+
     def launch_format_converter(self):
         """Launch the AnytuneToLRC format converter (opens index.html in browser)."""
         try:
@@ -342,6 +413,8 @@ class ToolLauncher(QObject):
                 if name == 'youtube_server':
                     self.status_updated.emit(name, 'Stopped')
                 elif name == 'songindex':
+                    self.status_updated.emit(name, 'Stopped')
+                elif name == 'website_server':
                     self.status_updated.emit(name, 'Stopped')
                 else:
                     self.status_updated.emit(name, 'Closed')
@@ -652,6 +725,50 @@ class BalajiTools(QMainWindow):
 
         server_layout.addWidget(songindex_widget, 0, 1, Qt.AlignmentFlag.AlignCenter)
 
+        # Website Server
+        website_widget = QWidget()
+        website_layout = QVBoxLayout(website_widget)
+        website_layout.setSpacing(5)
+
+        self.website_start_btn = QPushButton("🌐\nStart\nWebsite")
+        self.website_start_btn.clicked.connect(self.start_website_server)
+        self.website_start_btn.setMinimumSize(80, 80)
+        self.website_start_btn.setMaximumSize(100, 100)
+        self.website_start_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #27ae60;
+                font-size: 10px;
+                text-align: center;
+                padding: 2px;
+            }
+            QPushButton:hover { background-color: #229954; }
+        """)
+
+        self.website_stop_btn = QPushButton("⏹\nStop\nWebsite")
+        self.website_stop_btn.clicked.connect(self.stop_website_server)
+        self.website_stop_btn.setEnabled(False)
+        self.website_stop_btn.setMinimumSize(80, 80)
+        self.website_stop_btn.setMaximumSize(100, 100)
+        self.website_stop_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                font-size: 10px;
+                text-align: center;
+                padding: 2px;
+            }
+            QPushButton:hover { background-color: #c0392b; }
+        """)
+
+        website_layout.addWidget(self.website_start_btn)
+        website_layout.addWidget(self.website_stop_btn)
+
+        self.status_labels['website_server'] = QLabel("Stopped")
+        self.status_labels['website_server'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['website_server'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        website_layout.addWidget(self.status_labels['website_server'])
+
+        server_layout.addWidget(website_widget, 0, 2, Qt.AlignmentFlag.AlignCenter)
+
         tools_layout.addWidget(server_group)
         tools_layout.addStretch()
 
@@ -722,6 +839,22 @@ class BalajiTools(QMainWindow):
         self.songindex_stop_btn.setEnabled(False)
         self.log_text.append("🛑 Stopped SongIndex Server")
 
+    def start_website_server(self):
+        """Start the website server."""
+        if self.launcher.start_website_server():
+            self.website_start_btn.setEnabled(False)
+            self.website_stop_btn.setEnabled(True)
+            self.log_text.append("🌐 Started Website Server")
+        else:
+            self.log_text.append("❌ Failed to start Website Server")
+
+    def stop_website_server(self):
+        """Stop the website server."""
+        self.launcher.stop_website_server()
+        self.website_start_btn.setEnabled(True)
+        self.website_stop_btn.setEnabled(False)
+        self.log_text.append("🛑 Stopped Website Server")
+
     def launch_format_converter(self):
         """Launch the format converter."""
         if self.launcher.launch_format_converter():
@@ -764,6 +897,15 @@ class BalajiTools(QMainWindow):
                 else:
                     self.songindex_stop_btn.setEnabled(False)
 
+            # Update button states for Website server
+            elif tool_name == 'website_server':
+                if 'Running' in status:
+                    self.website_start_btn.setEnabled(False)
+                    self.website_stop_btn.setEnabled(True)
+                else:
+                    self.website_start_btn.setEnabled(True)
+                    self.website_stop_btn.setEnabled(False)
+
     def closeEvent(self, event):
         """Clean up on close - stop all running processes."""
         # Stop all running processes
@@ -772,6 +914,7 @@ class BalajiTools(QMainWindow):
         # Stop servers using their specific stop methods (for port cleanup)
         self.launcher.stop_youtube_server()
         self.launcher.stop_songindex_server()
+        self.launcher.stop_website_server()
 
         cleanup_lock_file()  # Clean up lock file
         event.accept()
