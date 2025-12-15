@@ -27,10 +27,13 @@ import subprocess
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QComboBox, QFileDialog, QSlider, QFrame,
-    QSplitter, QGroupBox, QScrollArea, QCheckBox, QSpinBox
+    QSplitter, QGroupBox, QScrollArea, QCheckBox, QSpinBox,
+    QMessageBox, QInputDialog
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject, QRect
 from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QKeySequence, QShortcut, QFont, QPixmap
+from project_manager import ProjectManager
+from project_dialog import ProjectDialog
 
 
 class AudioEngine(QObject):
@@ -1590,6 +1593,9 @@ class PrecisionPlayer(QMainWindow):
         self.track_widgets = []  # List of TrackWidget
         self.available_devices = []  # List of (name, index) tuples
         
+        # Initialize project manager
+        self.project_manager = ProjectManager()
+        
         self.populate_devices()  # Populate devices before UI setup
         self.init_ui()
         self.setup_shortcuts()
@@ -1671,6 +1677,14 @@ class PrecisionPlayer(QMainWindow):
         self.load_cslp_btn = QPushButton("📄 CSLP")
         self.load_cslp_btn.clicked.connect(self.load_cslp_file)
         top_bar.addWidget(self.load_cslp_btn)
+        
+        self.projects_btn = QPushButton("📋 Projects")
+        self.projects_btn.clicked.connect(self.show_projects_dialog)
+        top_bar.addWidget(self.projects_btn)
+        
+        self.save_project_btn = QPushButton("💾 Save")
+        self.save_project_btn.clicked.connect(self.save_current_project)
+        top_bar.addWidget(self.save_project_btn)
         
         top_bar.addStretch()
         
@@ -1872,6 +1886,7 @@ class PrecisionPlayer(QMainWindow):
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self, self.on_stop)
         QShortcut(QKeySequence("Ctrl+O"), self, self.add_track)
         QShortcut(QKeySequence(Qt.Key.Key_L), self, lambda: self.loop_btn.click())
+        QShortcut(QKeySequence("Ctrl+S"), self, self.save_current_project)
     
     def setup_timer(self):
         """Setup timer for UI updates."""
@@ -1991,27 +2006,33 @@ class PrecisionPlayer(QMainWindow):
         self.cslp_data = CSLPData()
         success, message = self.cslp_data.load(filepath)
         
-        if success and self.cslp_data.timeline:
-            # Set directory for image path resolution
-            self.lyrics_display.set_directory(self.cslp_data.directory)
+        if success:
+            # Set current CSLP file path regardless of whether there are markers
+            self.current_cslp = Path(filepath)
             
-            # Pass markers to markers widget
-            duration = self.engine.get_duration()
-            self.markers_widget.set_markers(
-                self.cslp_data.timeline,
-                duration
-            )
-            
-            # Set marker ratios for waveform snapping
-            if duration > 0:
-                marker_ratios = [entry.get('time', 0) / duration for entry in self.cslp_data.timeline]
-                self.waveform.set_marker_ratios(marker_ratios)
-            
-            self.status_label.setText(
-                f"Loaded CSLP: {len(self.cslp_data.timeline)} markers"
-            )
+            if self.cslp_data.timeline:
+                # Set directory for image path resolution
+                self.lyrics_display.set_directory(self.cslp_data.directory)
+                
+                # Pass markers to markers widget
+                duration = self.engine.get_duration()
+                self.markers_widget.set_markers(
+                    self.cslp_data.timeline,
+                    duration
+                )
+                
+                # Set marker ratios for waveform snapping
+                if duration > 0:
+                    marker_ratios = [entry.get('time', 0) / duration for entry in self.cslp_data.timeline]
+                    self.waveform.set_marker_ratios(marker_ratios)
+                
+                self.status_label.setText(
+                    f"Loaded CSLP: {len(self.cslp_data.timeline)} markers"
+                )
+            else:
+                self.status_label.setText("CSLP file loaded but has no markers")
         else:
-            self.status_label.setText("CSLP file has no markers")
+            self.status_label.setText(f"Failed to load CSLP file: {message}")
     
     def on_snap_changed(self, state):
         """Handle snap checkbox toggle."""
@@ -2122,8 +2143,202 @@ class PrecisionPlayer(QMainWindow):
                 self.play_btn.setText("▶ Play")
                 self.beat_counter_label.setText("Ready")
     
+    def show_projects_dialog(self):
+        """Show the projects management dialog."""
+        dialog = ProjectDialog(self.project_manager, self)
+        dialog.project_selected.connect(self.load_project)
+        dialog.exec()
+    
+    def load_project(self, project_data):
+        """Load a project from project data."""
+        try:
+            project_name = project_data["name"]
+            audio_files = project_data.get("audio_files", [])
+            cslp_file = project_data.get("cslp_file")
+            
+            # Clear current tracks
+            self.clear_all_tracks()
+            
+            # Load audio files
+            loaded_count = 0
+            for audio_file in audio_files:
+                if Path(audio_file).exists():
+                    self.add_track_from_file(audio_file)
+                    loaded_count += 1
+                    
+                    # Update main waveform with first track
+                    if loaded_count == 1:
+                        # Get the first track that was just added
+                        if self.engine.tracks:
+                            first_track = self.engine.tracks[-1]  # Last added track
+                            self.waveform.set_audio_data(first_track.audio_data)
+                else:
+                    print(f"Warning: Audio file not found: {audio_file}")
+            
+            # Load CSLP file
+            if cslp_file and Path(cslp_file).exists():
+                self.load_cslp_from_file(cslp_file)
+            elif cslp_file:
+                print(f"Warning: CSLP file not found: {cslp_file}")
+            
+            # Enable playback controls if tracks were loaded
+            if loaded_count > 0:
+                self.play_btn.setEnabled(True)
+                self.stop_btn.setEnabled(True)
+                self.play_with_countin_btn.setEnabled(True)
+                
+                # Reset position and loop points
+                self.engine.set_position_samples(0)
+                self.waveform.set_position(0)
+                self.update_ui()
+            
+            # Set current project
+            self.project_manager.current_project = project_data
+            self.project_manager.enable_auto_save()
+            
+            # Update status
+            self.status_label.setText(f"Loaded project '{project_name}': {loaded_count} audio files, CSLP: {cslp_file or 'None'}")
+            self.file_label.setText(f"Project: {project_name}")
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to load project: {e}")
+    
+    def save_current_project(self):
+        """Save the current project."""
+        if not self.project_manager.current_project:
+            # Create new project
+            name, ok = QInputDialog.getText(self, "Save Project", "Enter project name:")
+            if not ok or not name.strip():
+                return
+            
+            name = name.strip()
+            audio_files = []
+            for widget in self.track_widgets:
+                if widget.track and widget.track.filepath:
+                    audio_files.append(str(widget.track.filepath))
+            
+            cslp_file = str(self.current_cslp) if self.current_cslp else None
+            
+            project = self.project_manager.create_project(name, audio_files, cslp_file)
+            if self.project_manager.save_project(project):
+                self.project_manager.enable_auto_save()
+                QMessageBox.information(self, "Success", f"Project '{name}' saved!")
+                self.file_label.setText(f"Project: {name}")
+            else:
+                QMessageBox.critical(self, "Error", "Failed to save project.")
+        else:
+            # Update existing project
+            audio_files = []
+            for widget in self.track_widgets:
+                if widget.track and widget.track.filepath:
+                    audio_files.append(str(widget.track.filepath))
+            
+            cslp_file = str(self.current_cslp) if self.current_cslp else None
+            
+            self.project_manager.update_project_audio(audio_files)
+            self.project_manager.update_project_cslp(cslp_file)
+            
+            if self.project_manager.save_project(self.project_manager.current_project):
+                QMessageBox.information(self, "Success", f"Project '{self.project_manager.current_project['name']}' updated!")
+            else:
+                QMessageBox.critical(self, "Error", "Failed to update project.")
+    
+    def add_track_from_file(self, file_path):
+        """Add a track from file path (used by project loading)."""
+        try:
+            # Use the engine's add_track method which handles loading
+            track = self.engine.add_track(file_path)
+            
+            if track.audio_data is not None:
+                # Create track widget
+                track_widget = TrackWidget(track, self.available_devices)
+                track_widget.track_changed.connect(self.on_track_changed)
+                track_widget.track_removed.connect(self.remove_track)
+                
+                self.track_widgets.append(track_widget)
+                self.tracks_container_layout.addWidget(track_widget)
+                
+                self.update_file_label()
+            else:
+                print(f"Failed to load audio data from {file_path}")
+            
+        except Exception as e:
+            print(f"Error loading track {file_path}: {e}")
+    
+    def load_cslp_from_file(self, file_path):
+        """Load CSLP from file path (used by project loading)."""
+        try:
+            success, message = self.cslp_data.load(file_path)
+            if success:
+                self.current_cslp = Path(file_path)
+                self.update_cslp_display()
+                self.status_label.setText(f"Loaded CSLP: {Path(file_path).name}")
+            else:
+                print(f"Failed to load CSLP {file_path}: {message}")
+                self.current_cslp = None
+        except Exception as e:
+            print(f"Error loading CSLP {file_path}: {e}")
+            self.current_cslp = None
+    
+    def update_cslp_display(self):
+        """Update the display with current CSLP data."""
+        if self.cslp_data.timeline:
+            # Set directory for image path resolution
+            self.lyrics_display.set_directory(self.cslp_data.directory)
+            
+            # Pass markers to markers widget
+            duration = self.engine.get_duration()
+            self.markers_widget.set_markers(
+                self.cslp_data.timeline,
+                duration
+            )
+            
+            # Set marker ratios for waveform snapping
+            if duration > 0:
+                marker_ratios = [entry.get('time', 0) / duration for entry in self.cslp_data.timeline]
+                self.waveform.set_marker_ratios(marker_ratios)
+    
+    def clear_all_tracks(self):
+        """Clear all current tracks."""
+        # Remove from engine
+        for track_widget in self.track_widgets:
+            if track_widget.track:
+                self.engine.remove_track(track_widget.track)
+        
+        # Remove widgets
+        for track_widget in self.track_widgets:
+            track_widget.setParent(None)
+            track_widget.deleteLater()
+        
+        self.track_widgets.clear()
+        self.update_file_label()
+    
+    def update_file_label(self):
+        """Update the file label to show current status."""
+        if self.project_manager.current_project:
+            self.file_label.setText(f"Project: {self.project_manager.current_project['name']}")
+        elif self.engine.tracks:
+            self.file_label.setText(f"{len(self.engine.tracks)} track(s)")
+        else:
+            self.file_label.setText("No tracks loaded")
+    
+    def on_track_changed(self):
+        """Handle track changes for auto-save."""
+        if self.project_manager.auto_save_enabled and self.project_manager.current_project:
+            # Update audio files in project
+            audio_files = []
+            for widget in self.track_widgets:
+                if widget.track and widget.track.filepath:
+                    audio_files.append(str(widget.track.filepath))
+            
+            self.project_manager.update_project_audio(audio_files)
+    
     def closeEvent(self, event):
         """Clean up on close."""
+        # Auto-save current project if enabled
+        if self.project_manager.current_project and self.project_manager.auto_save_enabled:
+            self.project_manager.close_project()
+        
         self.engine.cleanup()
         event.accept()
 
