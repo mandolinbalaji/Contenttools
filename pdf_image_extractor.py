@@ -327,11 +327,11 @@ class PDFImageExtractor(QMainWindow):
 
         layout.addLayout(toolbar)
 
-        # Main content splitter (now three panels)
+        # Main content splitter (two panels)
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # Left side - Original Viewer
-        viewer_group = QGroupBox("Original Document Viewer")
+        # Left side - Document Viewer with Preview
+        viewer_group = QGroupBox("Document Viewer & 800x60 Preview")
         viewer_layout = QVBoxLayout(viewer_group)
 
         self.viewer = PDFImageViewer()
@@ -353,9 +353,7 @@ class PDFImageExtractor(QMainWindow):
 
         viewer_layout.addLayout(zoom_layout)
 
-        splitter.addWidget(viewer_group)
-
-        # Middle - 800x60 Preview
+        # 800x60 Preview below zoom controls
         preview_group = QGroupBox("800x60 Preview (Real-time)")
         preview_layout = QVBoxLayout(preview_group)
 
@@ -382,7 +380,9 @@ class PDFImageExtractor(QMainWindow):
         preview_info.addWidget(self.preview_quality_label)
         preview_layout.addLayout(preview_info)
 
-        splitter.addWidget(preview_group)
+        viewer_layout.addWidget(preview_group)
+
+        splitter.addWidget(viewer_group)
 
         # Right side - Selections and export
         right_widget = QWidget()
@@ -432,7 +432,7 @@ class PDFImageExtractor(QMainWindow):
         right_layout.addStretch()
 
         splitter.addWidget(right_widget)
-        splitter.setSizes([500, 200, 400])  # Left: 500, Middle: 200, Right: 400
+        splitter.setSizes([700, 400])  # Left: 700 (viewer + preview), Right: 400 (selections)
 
         layout.addWidget(splitter)
 
