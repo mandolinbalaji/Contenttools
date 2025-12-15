@@ -919,25 +919,21 @@ class LyricsDisplayWidget(QWidget):
                 log_msg = f"Image loaded successfully: {pixmap.width()}x{pixmap.height()}"
                 self.log_message.emit(log_msg)
                 print(f"[IMAGE LOG] {log_msg}")
-                # Scale image to 100% of the notation area
+                # Scale image to fill the entire notation area
                 available_w = rect.width()
                 available_h = rect.height()
                 
-                # Calculate scale factor to fill the entire area
-                scale_w = available_w / pixmap.width()
-                scale_h = available_h / pixmap.height()
-                scale = min(scale_w, scale_h)
+                # Stretch image to fill the entire area exactly
+                img_w = available_w
+                img_h = available_h
                 
-                img_w = int(pixmap.width() * scale)
-                img_h = int(pixmap.height() * scale)
-                
-                log_msg = f"Scaling image to 100% of area: {img_w}x{img_h} (scale: {scale:.2f})"
+                log_msg = f"Stretching image to fill area: {img_w}x{img_h}"
                 self.log_message.emit(log_msg)
                 print(f"[IMAGE LOG] {log_msg}")
                 
-                scaled = pixmap.scaled(img_w, img_h, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
-                x = rect.x() + (rect.width() - scaled.width()) // 2
-                y = rect.y() + (rect.height() - scaled.height()) // 2
+                scaled = pixmap.scaled(img_w, img_h, aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
+                x = rect.x()
+                y = rect.y()
                 painter.drawPixmap(x, y, scaled)
                 return True
             else:
