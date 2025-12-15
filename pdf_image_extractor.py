@@ -357,6 +357,33 @@ class PDFImageExtractor(QMainWindow):
         preview_group = QGroupBox("800x60 Preview (Real-time)")
         preview_layout = QVBoxLayout(preview_group)
 
+        # Preview dimension controls
+        preview_controls = QHBoxLayout()
+        preview_controls.addWidget(QLabel("Preview Size:"))
+        
+        self.preview_width_spin = QSpinBox()
+        self.preview_width_spin.setMinimum(100)
+        self.preview_width_spin.setMaximum(2000)
+        self.preview_width_spin.setValue(800)
+        self.preview_width_spin.setSuffix(" px")
+        preview_controls.addWidget(QLabel("Width:"))
+        preview_controls.addWidget(self.preview_width_spin)
+        
+        self.preview_height_spin = QSpinBox()
+        self.preview_height_spin.setMinimum(30)
+        self.preview_height_spin.setMaximum(500)
+        self.preview_height_spin.setValue(60)
+        self.preview_height_spin.setSuffix(" px")
+        preview_controls.addWidget(QLabel("Height:"))
+        preview_controls.addWidget(self.preview_height_spin)
+        
+        self.update_preview_btn = QPushButton("Update Preview")
+        self.update_preview_btn.clicked.connect(self.update_preview_size)
+        preview_controls.addWidget(self.update_preview_btn)
+        
+        preview_controls.addStretch()
+        preview_layout.addLayout(preview_controls)
+
         self.preview_label = QLabel()
         self.preview_label.setMinimumSize(800, 60)
         self.preview_label.setMaximumSize(800, 60)
@@ -368,13 +395,13 @@ class PDFImageExtractor(QMainWindow):
             }
         """)
         self.preview_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.preview_label.setText("Select a region to see 800x60 preview")
+        self.preview_label.setText("Select a region to see preview")
         preview_layout.addWidget(self.preview_label)
 
         # Preview info
         preview_info = QHBoxLayout()
-        self.preview_size_label = QLabel("Dimensions: -")
-        self.preview_quality_label = QLabel("Quality: -")
+        self.preview_size_label = QLabel("Preview: 800x60")
+        self.preview_quality_label = QLabel("Quality: High (Lanczos)")
         preview_info.addWidget(self.preview_size_label)
         preview_info.addStretch()
         preview_info.addWidget(self.preview_quality_label)
@@ -619,23 +646,40 @@ class PDFImageExtractor(QMainWindow):
             self.update_preview(selected_pixmap)
 
     def update_preview(self, selected_pixmap: QPixmap):
-        """Update the 800x60 preview with the selected region."""
+        """Update the preview with the selected region at custom dimensions."""
         try:
-            # Resize to exactly 800x60 pixels
-            preview_pixmap = selected_pixmap.scaled(800, 60, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            # Get custom dimensions from spin boxes
+            preview_width = self.preview_width_spin.value()
+            preview_height = self.preview_height_spin.value()
+            
+            # Resize to custom dimensions
+            preview_pixmap = selected_pixmap.scaled(preview_width, preview_height, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            
+            # Update preview label size constraints
+            self.preview_label.setMinimumSize(preview_width, preview_height)
+            self.preview_label.setMaximumSize(preview_width, preview_height)
             
             # Update preview label
             self.preview_label.setPixmap(preview_pixmap)
             
             # Update info labels
             original_size = f"{selected_pixmap.width()}x{selected_pixmap.height()}"
-            self.preview_size_label.setText(f"Original: {original_size} → 800x60")
+            self.preview_size_label.setText(f"Original: {original_size} → {preview_width}x{preview_height}")
             self.preview_quality_label.setText("Quality: High (Lanczos)")
             
         except Exception as e:
             self.preview_label.setText(f"Preview error: {str(e)}")
-            self.preview_size_label.setText("Dimensions: Error")
+            self.preview_size_label.setText("Preview: Error")
             self.preview_quality_label.setText("Quality: -")
+
+    def update_preview_size(self):
+        """Update preview when dimensions change."""
+        # If we have selections, update the preview with the last selection
+        if self.selections:
+            last_selection = self.selections[-1]
+            if last_selection.image_data:
+                pixmap = QPixmap.fromImage(last_selection.image_data)
+                self.update_preview(pixmap)
 
     def clear_selections(self):
         """Clear all selections."""
@@ -644,8 +688,10 @@ class PDFImageExtractor(QMainWindow):
         self.status_label.setText("All selections cleared")
         
         # Clear preview
-        self.preview_label.setText("Select a region to see 800x60 preview")
-        self.preview_size_label.setText("Dimensions: -")
+        preview_width = self.preview_width_spin.value()
+        preview_height = self.preview_height_spin.value()
+        self.preview_label.setText(f"Select a region to see {preview_width}x{preview_height} preview")
+        self.preview_size_label.setText(f"Preview: {preview_width}x{preview_height}")
         self.preview_quality_label.setText("Quality: -")
 
     def remove_selected(self):
@@ -667,7 +713,7 @@ class PDFImageExtractor(QMainWindow):
             self.output_dir_edit.setPlainText(output_dir)
 
     def export_pngs(self):
-        """Export all selections as 800x60 PNG files."""
+        """Export all selections as custom dimension PNG files."""
         output_dir_text = self.output_dir_edit.toPlainText().strip()
         if not output_dir_text:
             QMessageBox.warning(self, "No Output Directory", "Please specify an output directory.")
@@ -685,14 +731,18 @@ class PDFImageExtractor(QMainWindow):
             QMessageBox.warning(self, "No Selections", "No selections to export.")
             return
 
+        # Get custom dimensions
+        export_width = self.preview_width_spin.value()
+        export_height = self.preview_height_spin.value()
+
         try:
             for i, selection in enumerate(self.selections):
                 if selection.image_data:
                     # Convert to QPixmap for resizing
                     pixmap = QPixmap.fromImage(selection.image_data)
                     
-                    # Resize to exactly 800x60 pixels
-                    resized_pixmap = pixmap.scaled(800, 60, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                    # Resize to custom dimensions
+                    resized_pixmap = pixmap.scaled(export_width, export_height, Qt.AspectRatioMode.IgnoreAspectRatio, Qt.TransformationMode.SmoothTransformation)
                     
                     # Convert back to QImage for saving
                     resized_image = resized_pixmap.toImage()
@@ -700,10 +750,10 @@ class PDFImageExtractor(QMainWindow):
                     filename = f"line_{i+1:03d}.png"
                     filepath = output_dir / filename
                     resized_image.save(str(filepath))
-                    self.status_label.setText(f"Exported {filename} (800x60)")
+                    self.status_label.setText(f"Exported {filename} ({export_width}x{export_height})")
 
-            QMessageBox.information(self, "Export Complete", f"Exported {len(self.selections)} PNG files (800x60) to {output_dir}")
-            self.status_label.setText(f"Export complete: {len(self.selections)} files at 800x60")
+            QMessageBox.information(self, "Export Complete", f"Exported {len(self.selections)} PNG files ({export_width}x{export_height}) to {output_dir}")
+            self.status_label.setText(f"Export complete: {len(self.selections)} files at {export_width}x{export_height}")
 
         except Exception as e:
             QMessageBox.critical(self, "Export Error", f"Failed to export files: {str(e)}")
