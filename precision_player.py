@@ -919,21 +919,34 @@ class LyricsDisplayWidget(QWidget):
                 log_msg = f"Image loaded successfully: {pixmap.width()}x{pixmap.height()}"
                 self.log_message.emit(log_msg)
                 print(f"[IMAGE LOG] {log_msg}")
-                # Scale image to fill the entire notation area
+                # Scale image appropriately for the notation area
                 available_w = rect.width()
                 available_h = rect.height()
-                
-                # Stretch image to fill the entire area exactly
-                img_w = available_w
-                img_h = available_h
-                
-                log_msg = f"Stretching image to fill area: {img_w}x{img_h}"
+                img_w = pixmap.width()
+                img_h = pixmap.height()
+
+                if img_w <= available_w and img_h <= available_h:
+                    # Image is smaller than available space - center it without scaling
+                    scaled = pixmap
+                    x = rect.x() + (available_w - img_w) // 2
+                    y = rect.y() + (available_h - img_h) // 2
+                    log_msg = f"Image smaller than area, centering without scaling: {img_w}x{img_h} in {available_w}x{available_h}"
+                else:
+                    # Image is larger - scale down to fit while maintaining aspect ratio
+                    scale_w = available_w / img_w
+                    scale_h = available_h / img_h
+                    scale = min(scale_w, scale_h)
+
+                    new_w = int(img_w * scale)
+                    new_h = int(img_h * scale)
+
+                    scaled = pixmap.scaled(new_w, new_h, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
+                    x = rect.x() + (available_w - new_w) // 2
+                    y = rect.y() + (available_h - new_h) // 2
+                    log_msg = f"Image larger than area, scaled to fit: {new_w}x{new_h} (scale: {scale:.2f})"
+
                 self.log_message.emit(log_msg)
                 print(f"[IMAGE LOG] {log_msg}")
-                
-                scaled = pixmap.scaled(img_w, img_h, aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
-                x = rect.x()
-                y = rect.y()
                 painter.drawPixmap(x, y, scaled)
                 return True
             else:
