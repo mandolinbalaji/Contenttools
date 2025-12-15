@@ -404,6 +404,27 @@ class ToolLauncher(QObject):
             self.status_updated.emit('pdf_extractor', f'Error: {str(e)}')
             return False
 
+    def launch_click_track_generator(self):
+        """Launch the click track generator tool."""
+        try:
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            generator_path = script_dir / 'click_track_generator.py'
+
+            if not generator_path.exists():
+                self.status_updated.emit('click_track_generator', f'Error: click_track_generator.py not found at {generator_path}')
+                return False
+
+            # Launch GUI application (don't use CREATE_NO_WINDOW for GUI apps)
+            process = subprocess.Popen([sys.executable, str(generator_path)],
+                                     cwd=str(script_dir))
+            self.processes['click_track_generator'] = process
+            self.status_updated.emit('click_track_generator', 'Running')
+            return True
+        except Exception as e:
+            self.status_updated.emit('click_track_generator', f'Error: {str(e)}')
+            return False
+
     def check_process_status(self):
         """Check status of all running processes."""
         for name, process in list(self.processes.items()):
@@ -630,6 +651,25 @@ class BalajiTools(QMainWindow):
         self.status_labels['pdf_extractor'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
         self.status_labels['pdf_extractor'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['pdf_extractor'], 3, 0, Qt.AlignmentFlag.AlignCenter)
+
+        # Click Track Generator
+        clicktrack_btn = QPushButton("🪘\nGen Click\nTrack")
+        clicktrack_btn.clicked.connect(self.launch_click_track_generator)
+        clicktrack_btn.setMinimumSize(100, 100)
+        clicktrack_btn.setMaximumSize(120, 120)
+        clicktrack_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                text-align: center;
+                padding: 5px;
+            }
+        """)
+        audio_layout.addWidget(clicktrack_btn, 2, 1, Qt.AlignmentFlag.AlignCenter)
+
+        self.status_labels['click_track_generator'] = QLabel("Ready")
+        self.status_labels['click_track_generator'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['click_track_generator'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        audio_layout.addWidget(self.status_labels['click_track_generator'], 3, 1, Qt.AlignmentFlag.AlignCenter)
 
         tools_layout.addWidget(audio_group)
 
@@ -875,6 +915,13 @@ class BalajiTools(QMainWindow):
             self.log_text.append("📄 Launched PDF/Image Extractor")
         else:
             self.log_text.append("❌ Failed to launch PDF/Image Extractor")
+
+    def launch_click_track_generator(self):
+        """Launch the click track generator."""
+        if self.launcher.launch_click_track_generator():
+            self.log_text.append("🪘 Launched Click Track Generator")
+        else:
+            self.log_text.append("❌ Failed to launch Click Track Generator")
 
     def on_status_update(self, tool_name, status):
         """Handle status updates from tools."""
