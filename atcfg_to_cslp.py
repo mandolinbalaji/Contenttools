@@ -20,7 +20,8 @@ from datetime import datetime
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QPushButton, QLabel, QLineEdit, QTextEdit, QFileDialog, QGroupBox,
-    QFormLayout, QScrollArea, QFrame, QMessageBox, QProgressBar
+    QFormLayout, QScrollArea, QFrame, QMessageBox, QProgressBar, QTableWidget, QTableWidgetItem,
+    QDialog, QDialogButtonBox
 )
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont, QIcon
@@ -32,8 +33,10 @@ class ATCFGToCSLPConverter(QMainWindow):
     def __init__(self):
         super().__init__()
         self.atcfg_data = None
+        self.cslp_data = None
         self.base_name = ""
         self.timeline_entries = []
+        self.current_file_type = None  # 'atcfg' or 'cslp'
         self.init_ui()
 
     def init_ui(self):
@@ -116,68 +119,164 @@ class ATCFGToCSLPConverter(QMainWindow):
         self.file_path_label.setStyleSheet("color: #95a5a6; font-style: italic;")
         file_layout.addWidget(self.file_path_label)
 
-        load_btn = QPushButton("Load .atcfg File")
-        load_btn.clicked.connect(self.load_atcfg_file)
-        file_layout.addWidget(load_btn)
+        load_atcfg_btn = QPushButton("Load .atcfg")
+        load_atcfg_btn.clicked.connect(self.load_atcfg_file)
+        file_layout.addWidget(load_atcfg_btn)
+
+        load_cslp_btn = QPushButton("Load .cslp")
+        load_cslp_btn.clicked.connect(self.load_cslp_file)
+        file_layout.addWidget(load_cslp_btn)
+
+        file_layout.addStretch()
+
+        layout.addWidget(file_group)
 
         layout.addWidget(file_group)
 
         # Metadata section
-        metadata_group = QGroupBox("📋 Song Metadata")
-        metadata_layout = QFormLayout(metadata_group)
+        self.metadata_group = QGroupBox("📋 Song Metadata")
+        metadata_layout = QVBoxLayout(self.metadata_group)
+        self.metadata_group.setVisible(False)
 
-        self.title_edit = QLineEdit()
-        self.title_edit.setPlaceholderText("Song title")
-        metadata_layout.addRow("Title:", self.title_edit)
+        # Create metadata table with 2 columns for better layout
+        self.metadata_table = QTableWidget()
+        self.metadata_table.setColumnCount(4)  # 2 columns for labels, 2 for inputs
+        self.metadata_table.setHorizontalHeaderLabels(["Field 1", "Value 1", "Field 2", "Value 2"])
+        self.metadata_table.horizontalHeader().setStretchLastSection(True)
+        self.metadata_table.setAlternatingRowColors(True)
+        self.metadata_table.setStyleSheet("""
+            QTableWidget {
+                background-color: #34495e;
+                color: #ecf0f1;
+                border: 1px solid #3498db;
+                border-radius: 4px;
+            }
+            QHeaderView::section {
+                background-color: #2c3e50;
+                color: #ecf0f1;
+                padding: 8px;
+                border: none;
+                font-weight: bold;
+            }
+            QTableWidget::item {
+                padding: 5px;
+                border-bottom: 1px solid #34495e;
+            }
+            QLineEdit {
+                background-color: #34495e;
+                color: #ecf0f1;
+                border: 1px solid #3498db;
+                border-radius: 4px;
+                padding: 5px;
+            }
+        """)
 
-        self.artist_edit = QLineEdit()
-        self.artist_edit.setPlaceholderText("Artist name")
-        metadata_layout.addRow("Artist:", self.artist_edit)
+        # Add metadata rows in 2-column layout
+        metadata_fields_left = [
+            ("Title", "title_edit"),
+            ("Artist", "artist_edit"),
+            ("Ragam", "ragam_edit"),
+            ("Talam", "talam_edit"),
+            ("Edupu (BPM)", "edupu_edit")
+        ]
 
-        self.ragam_edit = QLineEdit()
-        self.ragam_edit.setPlaceholderText("e.g., Kharaharapriya")
-        metadata_layout.addRow("Ragam:", self.ragam_edit)
+        metadata_fields_right = [
+            ("Shruti", "shruti_edit"),
+            ("Aarohanam", "aarohanam_edit"),
+            ("Avarohanam", "avarohanam_edit"),
+            ("MP3 Filename", "mp3_edit")
+        ]
 
-        self.talam_edit = QLineEdit()
-        self.talam_edit.setPlaceholderText("e.g., Adi")
-        metadata_layout.addRow("Talam:", self.talam_edit)
+        # Calculate number of rows needed (max of both columns)
+        num_rows = max(len(metadata_fields_left), len(metadata_fields_right))
+        self.metadata_table.setRowCount(num_rows)
 
-        self.shruti_edit = QLineEdit()
-        self.shruti_edit.setPlaceholderText("e.g., C, C#")
-        metadata_layout.addRow("Shruti:", self.shruti_edit)
+        # Fill left column
+        for row, (label_text, attr_name) in enumerate(metadata_fields_left):
+            # Label
+            label_item = QTableWidgetItem(label_text)
+            label_item.setFlags(label_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            self.metadata_table.setItem(row, 0, label_item)
 
-        self.aarohanam_edit = QLineEdit()
-        self.aarohanam_edit.setPlaceholderText("e.g., S R2 G2 M1 P D2 N2 S")
-        metadata_layout.addRow("Aarohanam:", self.aarohanam_edit)
+            # Input widget
+            input_widget = QLineEdit()
+            if attr_name == "edupu_edit":
+                input_widget.setText("60")
+            input_widget.setPlaceholderText(f"Enter {label_text.lower()}")
+            input_widget.setMinimumHeight(30)
+            setattr(self, attr_name, input_widget)
+            self.metadata_table.setCellWidget(row, 1, input_widget)
 
-        self.avarohanam_edit = QLineEdit()
-        self.avarohanam_edit.setPlaceholderText("e.g., S N2 D2 P M1 G2 R2 S")
-        metadata_layout.addRow("Avarohanam:", self.avarohanam_edit)
+        # Fill right column
+        for row, (label_text, attr_name) in enumerate(metadata_fields_right):
+            # Label
+            label_item = QTableWidgetItem(label_text)
+            label_item.setFlags(label_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            self.metadata_table.setItem(row, 2, label_item)
 
-        self.edupu_edit = QLineEdit()
-        self.edupu_edit.setText("60")
-        self.edupu_edit.setPlaceholderText("BPM")
-        metadata_layout.addRow("Edupu (BPM):", self.edupu_edit)
+            # Input widget
+            input_widget = QLineEdit()
+            input_widget.setPlaceholderText(f"Enter {label_text.lower()}")
+            input_widget.setMinimumHeight(30)
+            setattr(self, attr_name, input_widget)
+            self.metadata_table.setCellWidget(row, 3, input_widget)
 
-        self.mp3_edit = QLineEdit()
-        self.mp3_edit.setPlaceholderText("song.mp3")
-        metadata_layout.addRow("MP3 Filename:", self.mp3_edit)
+        self.metadata_table.resizeColumnsToContents()
+        # Set minimum row height for better visibility
+        for i in range(self.metadata_table.rowCount()):
+            self.metadata_table.setRowHeight(i, 35)
+        metadata_layout.addWidget(self.metadata_table)
 
-        layout.addWidget(metadata_group)
+        layout.addWidget(self.metadata_group)
 
         # Timeline section
-        timeline_group = QGroupBox("⏰ Timeline & Lyrics")
-        timeline_layout = QVBoxLayout(timeline_group)
+        self.timeline_group = QGroupBox("⏰ Timeline & Lyrics")
+        timeline_layout = QVBoxLayout(self.timeline_group)
+        self.timeline_group.setVisible(False)
 
-        # Scroll area for timeline entries
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_widget = QWidget()
-        self.timeline_layout = QVBoxLayout(scroll_widget)
-        scroll_area.setWidget(scroll_widget)
-        timeline_layout.addWidget(scroll_area)
+        # Create timeline table
+        self.timeline_table = QTableWidget()
+        self.timeline_table.setColumnCount(3)
+        self.timeline_table.setHorizontalHeaderLabels(["Time (s)", "Lyrics", "Notation"])
+        self.timeline_table.horizontalHeader().setStretchLastSection(True)
+        self.timeline_table.setAlternatingRowColors(True)
+        self.timeline_table.setStyleSheet("""
+            QTableWidget {
+                background-color: #34495e;
+                color: #ecf0f1;
+                border: 1px solid #3498db;
+                border-radius: 4px;
+            }
+            QHeaderView::section {
+                background-color: #2c3e50;
+                color: #ecf0f1;
+                padding: 8px;
+                border: none;
+                font-weight: bold;
+            }
+            QTableWidget::item {
+                padding: 5px;
+                border-bottom: 1px solid #34495e;
+            }
+            QLineEdit {
+                background-color: #34495e;
+                color: #ecf0f1;
+                border: 1px solid #3498db;
+                border-radius: 4px;
+                padding: 5px;
+            }
+        """)
 
-        layout.addWidget(timeline_group)
+        # Set minimum height for the table
+        self.timeline_table.setMinimumHeight(400)
+
+        # Set minimum row height for better visibility
+        for i in range(self.timeline_table.rowCount()):
+            self.timeline_table.setRowHeight(i, 35)
+
+        timeline_layout.addWidget(self.timeline_table)
+
+        layout.addWidget(self.timeline_group)
 
         # Buttons
         button_layout = QHBoxLayout()
@@ -214,14 +313,20 @@ class ATCFGToCSLPConverter(QMainWindow):
                 self.atcfg_data = json.load(f)
 
             self.base_name = Path(file_path).stem
-            self.file_path_label.setText(f"Loaded: {Path(file_path).name}")
+            self.current_file_type = 'atcfg'
+            self.file_path_label.setText(f"Loaded ATCFG: {Path(file_path).name}")
             self.file_path_label.setStyleSheet("color: #27ae60; font-weight: bold;")
+            self.setWindowTitle(f"ATCFG to CSLP Converter - Editing: {Path(file_path).name}")
 
             # Populate metadata
             self.populate_metadata()
 
             # Create timeline
             self.create_timeline()
+
+            # Show sections
+            self.metadata_group.setVisible(True)
+            self.timeline_group.setVisible(True)
 
             # Enable buttons
             self.preview_btn.setEnabled(True)
@@ -232,6 +337,45 @@ class ATCFGToCSLPConverter(QMainWindow):
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to load ATCFG file:\n{str(e)}")
+            self.status_label.setText(f"Error: {str(e)}")
+            self.status_label.setStyleSheet("color: #e74c3c;")
+
+    def load_cslp_file(self):
+        """Load an existing CSLP file for editing."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Select CSLP File", "", "CSLP Files (*.cslp);;JSON Files (*.json);;All Files (*)"
+        )
+
+        if not file_path:
+            return
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                self.cslp_data = json.load(f)
+
+            self.base_name = Path(file_path).stem
+            self.current_file_type = 'cslp'
+            self.file_path_label.setText(f"Loaded CSLP: {Path(file_path).name}")
+            self.file_path_label.setStyleSheet("color: #27ae60; font-weight: bold;")
+            self.setWindowTitle(f"ATCFG to CSLP Converter - Editing: {Path(file_path).name}")
+
+            # Populate metadata from CSLP
+            self.populate_metadata_from_cslp()
+
+            # Create timeline from CSLP
+            self.create_timeline_from_cslp()
+
+            # Show sections
+            self.metadata_group.setVisible(True)
+            self.timeline_group.setVisible(True)
+            self.preview_btn.setEnabled(True)
+            self.save_btn.setEnabled(True)
+
+            self.status_label.setText("CSLP file loaded successfully!")
+            self.status_label.setStyleSheet("color: #27ae60;")
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to load CSLP file:\n{str(e)}")
             self.status_label.setText(f"Error: {str(e)}")
             self.status_label.setStyleSheet("color: #e74c3c;")
 
@@ -246,76 +390,162 @@ class ATCFGToCSLPConverter(QMainWindow):
         self.artist_edit.setText(track.get('artist', ''))
         self.mp3_edit.setText(self.base_name + '.mp3')
 
-    def create_timeline(self):
-        """Create timeline entries from audio marks."""
-        # Clear existing timeline
-        while self.timeline_layout.count():
-            child = self.timeline_layout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
+    def populate_metadata_from_cslp(self):
+        """Populate metadata fields from CSLP data."""
+        if not self.cslp_data or 'data' not in self.cslp_data:
+            return
 
+        metadata = self.cslp_data['data'].get('metadata', {})
+        config = self.cslp_data['data'].get('config', {})
+
+        self.title_edit.setText(metadata.get('title', self.base_name))
+        self.artist_edit.setText(metadata.get('artist', ''))
+        self.ragam_edit.setText(metadata.get('ragam', ''))
+        self.talam_edit.setText(metadata.get('talam', ''))
+        self.shruti_edit.setText(metadata.get('shruti', ''))
+        self.aarohanam_edit.setText(metadata.get('aarohanam', ''))
+        self.avarohanam_edit.setText(metadata.get('avarohanam', ''))
+        self.edupu_edit.setText(str(metadata.get('edupu', 60)))
+        self.mp3_edit.setText(self.cslp_data['data'].get('mp3FileName', ''))
+
+    def create_timeline(self):
+        """Create timeline entries from ATCFG audio marks."""
         if not self.atcfg_data or 'trackData' not in self.atcfg_data:
             return
 
         audio_marks = self.atcfg_data['trackData'][0].get('audioMarks', [])
-
+        self.timeline_table.setRowCount(len(audio_marks))
         self.timeline_entries = []
 
-        for i, mark in enumerate(audio_marks):
-            # Create timeline entry widget
-            entry_widget = QFrame()
-            entry_widget.setFrameStyle(QFrame.Shape.Box)
-            entry_widget.setStyleSheet("""
-                QFrame {
-                    background-color: #34495e;
-                    border: 1px solid #3498db;
-                    border-radius: 4px;
-                    margin: 5px 0;
-                }
-            """)
+        for row, mark in enumerate(audio_marks):
+            # Time column
+            time_item = QTableWidgetItem(f"{mark['time']:.6f}")
+            time_item.setFlags(time_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            time_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.timeline_table.setItem(row, 0, time_item)
 
-            entry_layout = QHBoxLayout(entry_widget)
-
-            # Time label
-            time_label = QLabel(f"{mark['time']:.2f}s")
-            time_label.setStyleSheet("color: #3498db; font-weight: bold; min-width: 80px;")
-            entry_layout.addWidget(time_label)
-
-            # Lyrics input
+            # Lyrics column
             lyrics_edit = QLineEdit()
             lyrics_edit.setPlaceholderText("Enter lyrics for this timestamp")
-            entry_layout.addWidget(lyrics_edit)
+            lyrics_edit.setMinimumHeight(30)  # Increase field height
+            self.timeline_table.setCellWidget(row, 1, lyrics_edit)
 
-            # Notation input
+            # Notation column
             notation_edit = QLineEdit()
             notation_edit.setPlaceholderText("Notation (optional)")
             notation_edit.setMaximumWidth(150)
-            entry_layout.addWidget(notation_edit)
+            notation_edit.setMinimumHeight(30)  # Increase field height
+            self.timeline_table.setCellWidget(row, 2, notation_edit)
 
-            self.timeline_layout.addWidget(entry_widget)
-
-            # Store references
+            # Store references for later use
             self.timeline_entries.append({
                 'time': mark['time'],
                 'lyrics_edit': lyrics_edit,
                 'notation_edit': notation_edit
             })
 
+        self.timeline_table.resizeColumnsToContents()
+        # Set proportional column widths: Time (10%), Lyrics (45%), Notation (stretches to fill remaining)
+        table_width = self.timeline_table.width()
+        if table_width > 0:
+            self.timeline_table.setColumnWidth(0, int(table_width * 0.10))  # Time column (smaller)
+            self.timeline_table.setColumnWidth(1, int(table_width * 0.45))  # Lyrics column
+            # Column 2 (Notation) will stretch to fill remaining space due to setStretchLastSection(True)
+        else:
+            # Fallback widths if table width not available yet
+            self.timeline_table.setColumnWidth(0, 80)    # Time
+            self.timeline_table.setColumnWidth(1, 285)   # Lyrics (45% of ~630px)
+            # Column 2 (Notation) will stretch to fill remaining space
+
+        # Set minimum row height for better visibility
+        for i in range(len(audio_marks)):
+            self.timeline_table.setRowHeight(i, 35)
+
+    def create_timeline_from_cslp(self):
+        """Create timeline entries from CSLP timeline data."""
+        if not self.cslp_data or 'data' not in self.cslp_data:
+            return
+
+        timeline = self.cslp_data['data'].get('timeline', [])
+        self.timeline_table.setRowCount(len(timeline))
+        self.timeline_entries = []
+
+        for row, item in enumerate(timeline):
+            # Time column
+            time_item = QTableWidgetItem(f"{item['time']:.6f}")
+            time_item.setFlags(time_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            time_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.timeline_table.setItem(row, 0, time_item)
+
+            # Lyrics column (pre-filled from CSLP)
+            lyrics_edit = QLineEdit()
+            lyrics_edit.setText(item.get('text', ''))
+            lyrics_edit.setPlaceholderText("Enter lyrics for this timestamp")
+            lyrics_edit.setMinimumHeight(30)  # Increase field height
+            self.timeline_table.setCellWidget(row, 1, lyrics_edit)
+
+            # Notation column (pre-filled from CSLP)
+            notation_edit = QLineEdit()
+            notation_edit.setText(item.get('notation', ''))
+            notation_edit.setPlaceholderText("Notation (optional)")
+            notation_edit.setMaximumWidth(150)
+            notation_edit.setMinimumHeight(30)  # Increase field height
+            self.timeline_table.setCellWidget(row, 2, notation_edit)
+
+            # Store references for later use
+            self.timeline_entries.append({
+                'time': item['time'],
+                'lyrics_edit': lyrics_edit,
+                'notation_edit': notation_edit
+            })
+
+        self.timeline_table.resizeColumnsToContents()
+        # Set proportional column widths: Time (10%), Lyrics (45%), Notation (stretches to fill remaining)
+        table_width = self.timeline_table.width()
+        if table_width > 0:
+            self.timeline_table.setColumnWidth(0, int(table_width * 0.10))  # Time column (smaller)
+            self.timeline_table.setColumnWidth(1, int(table_width * 0.45))  # Lyrics column
+            # Column 2 (Notation) will stretch to fill remaining space due to setStretchLastSection(True)
+        else:
+            # Fallback widths if table width not available yet
+            self.timeline_table.setColumnWidth(0, 80)    # Time
+            self.timeline_table.setColumnWidth(1, 285)   # Lyrics (45% of ~630px)
+            # Column 2 (Notation) will stretch to fill remaining space
+
+        # Set minimum row height for better visibility
+        for i in range(len(timeline)):
+            self.timeline_table.setRowHeight(i, 35)
+
     def preview_cslp(self):
         """Generate and preview CSLP content."""
         try:
             cslp_data = self.generate_cslp_data()
 
-            # Show preview dialog
-            preview_dialog = QMessageBox(self)
+            # Create custom preview dialog
+            preview_dialog = QDialog(self)
             preview_dialog.setWindowTitle("CSLP Preview")
-            preview_dialog.setText("CSLP JSON Preview:")
-            preview_dialog.setDetailedText(json.dumps(cslp_data, indent=2, ensure_ascii=False))
+            preview_dialog.setMinimumSize(800, 600)  # Much larger dialog
+            preview_dialog.setModal(True)
 
-            # Make the detailed text scrollable
-            scroll_area = preview_dialog.findChild(QTextEdit)
-            if scroll_area:
-                scroll_area.setMaximumHeight(400)
+            layout = QVBoxLayout(preview_dialog)
+
+            # Title label
+            title_label = QLabel("CSLP JSON Preview:")
+            title_label.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 10px;")
+            layout.addWidget(title_label)
+
+            # Text area for JSON preview
+            preview_text = QTextEdit()
+            preview_text.setPlainText(json.dumps(cslp_data, indent=2, ensure_ascii=False))
+            preview_text.setFont(QFont("Consolas", 10))  # Monospace font for JSON
+            preview_text.setReadOnly(True)
+            preview_text.setMinimumHeight(500)  # Tall text area
+            layout.addWidget(preview_text)
+
+            # Button box
+            button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+            button_box.rejected.connect(preview_dialog.reject)
+            layout.addWidget(button_box)
 
             preview_dialog.exec()
 
@@ -351,9 +581,6 @@ class ATCFGToCSLPConverter(QMainWindow):
 
     def generate_cslp_data(self):
         """Generate CSLP data structure."""
-        if not self.atcfg_data:
-            raise ValueError("No ATCFG data loaded")
-
         # Collect metadata
         metadata = {
             'title': self.title_edit.text() or self.base_name,
