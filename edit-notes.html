@@ -116,6 +116,11 @@
             background: #cbd5e0;
         }
 
+        .btn-active {
+            background: #667eea !important;
+            color: white !important;
+        }
+
         .image-grid {
             flex: 1;
             overflow-y: auto;
@@ -209,6 +214,11 @@
             resize: none;
             outline: none;
             background: white;
+        }
+
+        #noteEditor::selection {
+            background: #e6f3ff;
+            color: #333;
         }
 
         #noteEditor.drag-over {
@@ -306,6 +316,10 @@
                     <div class="file-controls">
                         <button class="btn btn-secondary" id="loadNotBtn">Load .not File</button>
                         <input type="file" id="notFileInput" accept=".not,.txt">
+                        <button class="btn btn-secondary" id="dotAboveBtn" title="Add dot above selected character">⬆️</button>
+                        <button class="btn btn-secondary" id="dotBelowBtn" title="Add dot below selected character">⬇️</button>
+                        <button class="btn btn-secondary" id="toUpperBtn" title="Convert selected text to uppercase">A</button>
+                        <button class="btn btn-secondary" id="toLowerBtn" title="Convert selected text to lowercase">a</button>
                     </div>
                 </div>
                 <div class="editor-container">
@@ -339,11 +353,59 @@
         const copyBtn = document.getElementById('copyBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const statusMessage = document.getElementById('statusMessage');
+        const dotAboveBtn = document.getElementById('dotAboveBtn');
+        const dotBelowBtn = document.getElementById('dotBelowBtn');
+        const toUpperBtn = document.getElementById('toUpperBtn');
+        const toLowerBtn = document.getElementById('toLowerBtn');
 
         // State
         let loadedImages = [];
         let currentFileName = '';
         let draggedImage = null;
+        let dotAboveMode = false;
+        let dotBelowMode = false;
+
+        // Initialize
+        updateButtonStates();
+
+        // Toggle dot mode
+        function toggleDotMode(mode) {
+            if (mode === 'above') {
+                dotAboveMode = !dotAboveMode;
+                dotBelowMode = false; // Disable the other mode
+                updateButtonStates();
+            } else if (mode === 'below') {
+                dotBelowMode = !dotBelowMode;
+                dotAboveMode = false; // Disable the other mode
+                updateButtonStates();
+            }
+        }
+
+        // Update button visual states
+        function updateButtonStates() {
+            dotAboveBtn.classList.toggle('btn-active', dotAboveMode);
+            dotBelowBtn.classList.toggle('btn-active', dotBelowMode);
+        }
+
+        // Transform selected text
+        function transformSelection(transformFunc) {
+            const textarea = noteEditor;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+
+            if (selectedText.length === 0) {
+                showStatus('Please select some text first', 'error');
+                return;
+            }
+
+            const transformedText = transformFunc(selectedText);
+            const newText = textarea.value.substring(0, start) + transformedText + textarea.value.substring(end);
+
+            textarea.value = newText;
+            textarea.setSelectionRange(start, start + transformedText.length);
+            textarea.focus();
+        }
 
         // Initialize
         browseFolderBtn.addEventListener('click', () => folderInput.click());
@@ -354,6 +416,10 @@
         notFileInput.addEventListener('change', loadNotFile);
         copyBtn.addEventListener('click', copyToClipboard);
         downloadBtn.addEventListener('click', downloadFile);
+        dotAboveBtn.addEventListener('click', () => toggleDotMode('above'));
+        dotBelowBtn.addEventListener('click', () => toggleDotMode('below'));
+        toUpperBtn.addEventListener('click', () => transformSelection(text => text.toUpperCase()));
+        toLowerBtn.addEventListener('click', () => transformSelection(text => text.toLowerCase()));
 
         // Image URL input enter key
         imageUrlInput.addEventListener('keypress', (e) => {
@@ -381,6 +447,23 @@
             if (imagePath) {
                 insertImageReference(imagePath);
                 showStatus('Image reference inserted!', 'success');
+            }
+        });
+
+        // Handle character transformation on click when mode is active
+        noteEditor.addEventListener('mouseup', () => {
+            if (dotAboveMode || dotBelowMode) {
+                const pos = noteEditor.selectionStart;
+                if (pos > 0 && pos <= noteEditor.value.length) {
+                    const char = noteEditor.value.charAt(pos - 1);
+                    if (char && char !== '\n' && char !== ' ') {
+                        const newChar = dotAboveMode ? char + '\u0307' : char + '\u0323';
+                        const text = noteEditor.value;
+                        const newText = text.substring(0, pos - 1) + newChar + text.substring(pos);
+                        noteEditor.value = newText;
+                        noteEditor.setSelectionRange(pos, pos);
+                    }
+                }
             }
         });
 
