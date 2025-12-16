@@ -425,6 +425,27 @@ class ToolLauncher(QObject):
             self.status_updated.emit('click_track_generator', f'Error: {str(e)}')
             return False
 
+    def launch_atcfg_to_cslp(self):
+        """Launch the ATCFG to CSLP converter tool."""
+        try:
+            # Get the directory where this script is located
+            script_dir = Path(__file__).parent
+            converter_path = script_dir / 'atcfg_to_cslp.py'
+
+            if not converter_path.exists():
+                self.status_updated.emit('atcfg_to_cslp', f'Error: atcfg_to_cslp.py not found at {converter_path}')
+                return False
+
+            # Launch GUI application (don't use CREATE_NO_WINDOW for GUI apps)
+            process = subprocess.Popen([sys.executable, str(converter_path)],
+                                     cwd=str(script_dir))
+            self.processes['atcfg_to_cslp'] = process
+            self.status_updated.emit('atcfg_to_cslp', 'Running')
+            return True
+        except Exception as e:
+            self.status_updated.emit('atcfg_to_cslp', f'Error: {str(e)}')
+            return False
+
     def check_process_status(self):
         """Check status of all running processes."""
         for name, process in list(self.processes.items()):
@@ -670,6 +691,25 @@ class BalajiTools(QMainWindow):
         self.status_labels['click_track_generator'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
         self.status_labels['click_track_generator'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['click_track_generator'], 3, 1, Qt.AlignmentFlag.AlignCenter)
+
+        # ATCFG to CSLP Converter
+        atcfg_btn = QPushButton("🔄\nATCFG\nto CSLP")
+        atcfg_btn.clicked.connect(self.launch_atcfg_to_cslp)
+        atcfg_btn.setMinimumSize(100, 100)
+        atcfg_btn.setMaximumSize(120, 120)
+        atcfg_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                text-align: center;
+                padding: 5px;
+            }
+        """)
+        audio_layout.addWidget(atcfg_btn, 2, 2, Qt.AlignmentFlag.AlignCenter)
+
+        self.status_labels['atcfg_to_cslp'] = QLabel("Ready")
+        self.status_labels['atcfg_to_cslp'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['atcfg_to_cslp'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+        audio_layout.addWidget(self.status_labels['atcfg_to_cslp'], 3, 2, Qt.AlignmentFlag.AlignCenter)
 
         tools_layout.addWidget(audio_group)
 
@@ -922,6 +962,13 @@ class BalajiTools(QMainWindow):
             self.log_text.append("🪘 Launched Click Track Generator")
         else:
             self.log_text.append("❌ Failed to launch Click Track Generator")
+
+    def launch_atcfg_to_cslp(self):
+        """Launch the ATCFG to CSLP converter."""
+        if self.launcher.launch_atcfg_to_cslp():
+            self.log_text.append("🔄 Launched ATCFG to CSLP Converter")
+        else:
+            self.log_text.append("❌ Failed to launch ATCFG to CSLP Converter")
 
     def on_status_update(self, tool_name, status):
         """Handle status updates from tools."""
