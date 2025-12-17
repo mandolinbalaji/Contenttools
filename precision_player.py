@@ -739,14 +739,13 @@ class CSLPData:
     
     def get_entry_at_time(self, seconds):
         """Get the timeline entry for a given time."""
-        current_entry = {'text': '', 'notation': '', 'id': 0}
+        current_entry = {'text': '', 'notation': '', 'time': 0}
         
         for entry in reversed(self.timeline):
             if entry and 'time' in entry and seconds >= entry['time']:
                 current_entry = {
                     'text': str(entry.get('text', '') or '').strip(),
                     'notation': str(entry.get('notation', '') or '').strip(),
-                    'id': entry.get('id', 0),
                     'time': entry.get('time', 0)
                 }
                 break
@@ -970,20 +969,20 @@ class LyricsDisplayWidget(QWidget):
     def update_display(self, current_time, timeline):
         """Update display based on current playback time."""
         # Find the current entry
-        current_entry = {'text': '', 'notation': '', 'id': -1}
+        current_entry = {'text': '', 'notation': '', 'time': -1}
         
         for entry in reversed(timeline):
             if entry and 'time' in entry and current_time >= entry['time']:
                 current_entry = {
                     'text': str(entry.get('text', '') or '').strip(),
                     'notation': str(entry.get('notation', '') or '').strip(),
-                    'id': entry.get('id', 0)
+                    'time': entry.get('time', 0)
                 }
                 break
         
         # Only update if changed
-        if current_entry['id'] != self.current_id:
-            self.current_id = current_entry['id']
+        if current_entry['time'] != self.current_id:
+            self.current_id = current_entry['time']
             self.set_content(current_entry['text'], current_entry['notation'])
     
     def paintEvent(self, event):
