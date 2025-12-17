@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Process Lyrics - Anytune to LRC</title>
+    <title>Process Lyrics - CSLP Editor</title>
     <style>
         * {
             margin: 0;
@@ -565,19 +565,19 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎵 Process Lyrics</h1>
+            <h1>🎵 Process Lyrics - CSLP Editor</h1>
             <a href="index.html" class="back-link">← Back to Converter</a>
         </div>
-        <p class="subtitle">Load LRC and lyrics files, match and edit lyrics to timestamps, then download merged LRC</p>
+        <p class="subtitle">Load CSLP and lyrics files, match and edit lyrics to timestamps, then download merged CSLP</p>
 
         <div class="error" id="error"></div>
         <div class="success" id="success"></div>
 
         <div class="file-upload-section">
-            <div class="file-group" id="lrcGroup" data-drop-zone="lrc">
-                <div class="file-group-label">LRC File</div>
-                <div class="file-name" id="lrcFileName">No file selected</div>
-                <input type="file" id="lrcInput" accept=".lrc">
+            <div class="file-group" id="cslpGroup" data-drop-zone="cslp">
+                <div class="file-group-label">CSLP File</div>
+                <div class="file-name" id="cslpFileName">No file selected</div>
+                <input type="file" id="cslpInput" accept=".cslp">
             </div>
             <div class="file-group" id="lyricsGroup" data-drop-zone="lyrics">
                 <div class="file-group-label">Lyrics .txt File</div>
@@ -630,16 +630,16 @@
 
         <div class="button-group">
             <button class="btn-secondary" id="resetBtn" disabled>🔄 Reset</button>
-            <button class="btn-primary" id="downloadBtn" disabled>💾 Download Merged LRC</button>
+            <button class="btn-primary" id="downloadBtn" disabled>💾 Download merged CSLP</button>
         </div>
     </div>
 
     <script>
-        const lrcGroup = document.getElementById('lrcGroup');
+        const cslpGroup = document.getElementById('cslpGroup');
         const lyricsGroup = document.getElementById('lyricsGroup');
-        const lrcInput = document.getElementById('lrcInput');
+        const cslpInput = document.getElementById('cslpInput');
         const lyricsInput = document.getElementById('lyricsInput');
-        const lrcFileName = document.getElementById('lrcFileName');
+        const cslpFileName = document.getElementById('cslpFileName');
         const lyricsFileName = document.getElementById('lyricsFileName');
         const processBtn = document.getElementById('processBtn');
         const resetBtn = document.getElementById('resetBtn');
@@ -652,7 +652,7 @@
         const errorDiv = document.getElementById('error');
         const successDiv = document.getElementById('success');
 
-        let lrcData = null;
+        let cslpData = null;
         let lyricsData = [];
         let timestampsData = [];
         let matchedData = [];
@@ -798,7 +798,7 @@
         });
 
         // File upload handlers
-        lrcGroup.addEventListener('click', () => lrcInput.click());
+        cslpGroup.addEventListener('click', () => cslpInput.click());
         lyricsGroup.addEventListener('click', () => lyricsInput.click());
 
         // Drag and drop handlers for file groups
@@ -820,8 +820,8 @@
                 if (files.length === 0) return;
 
                 const dropZoneType = zone.dataset.dropZone;
-                if (dropZoneType === 'lrc') {
-                    handleLrcFile(files[0]);
+                if (dropZoneType === 'cslp') {
+                    handleCslpFile(files[0]);
                 } else if (dropZoneType === 'lyrics') {
                     handleLyricsFile(files[0]);
                 } else if (dropZoneType === 'audio') {
@@ -830,9 +830,9 @@
             });
         });
 
-        lrcInput.addEventListener('change', (e) => {
+        cslpInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                handleLrcFile(e.target.files[0]);
+                handleCslpFile(e.target.files[0]);
             }
         });
 
@@ -842,28 +842,28 @@
             }
         });
 
-        function handleLrcFile(file) {
+        function handleCslpFile(file) {
             hideMessages();
 
-            if (!file.name.endsWith('.lrc')) {
-                showError('Please select a valid .lrc file');
+            if (!file.name.endsWith('.cslp')) {
+                showError('Please select a valid .cslp file');
                 return;
             }
 
-            lrcFileName.textContent = file.name;
-            lrcGroup.classList.add('loaded');
+            cslpFileName.textContent = file.name;
+            cslpGroup.classList.add('loaded');
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const content = e.target.result;
-                    const parseResult = parseLrcFile(content);
-                    lrcData = parseResult.timestamps;
-                    const message = `✓ LRC file processed: ${parseResult.parsedLines} timestamps extracted from ${parseResult.totalLines} lines`;
+                    const parseResult = parseCslpFile(content);
+                    cslpData = parseResult;
+                    const message = `✓ CSLP file processed: ${parseResult.timeline.length} timestamps extracted`;
                     showSuccess(message);
                     checkFilesReady();
                 } catch (error) {
-                    showError('Failed to parse LRC file: ' + error.message);
+                    showError('Failed to parse CSLP file: ' + error.message);
                 }
             };
             reader.readAsText(file);
@@ -895,51 +895,27 @@
             reader.readAsText(file);
         }
 
-        function parseLrcFile(content) {
-            const timestamps = [];
-            const lines = content.split('\n');
-            let totalLines = 0;
-            let parsedLines = 0;
+        function formatTimestamp(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const mm = String(minutes).padStart(2, '0');
+            const ss = secs.toFixed(3);
+            return `${mm}:${ss}`;
+        }
 
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                if (trimmed) {
-                    totalLines++;
-                    // Match LRC format: [mm:ss.xx] or [mm:ss] or [mm:ssxxx] (missing dot)
-                    // Handle various formats including missing dots and varying decimal places
-                    const match = trimmed.match(/^\[(\d{1,2}):(\d+\.?\d*)\](.*)/);
-                    if (match) {
-                        const mins = match[1].padStart(2, '0');
-                        let secs = match[2];
-                        
-                        // Handle missing decimal point (e.g., "00000" should be "00.000")
-                        if (!secs.includes('.')) {
-                            if (secs.length <= 2) {
-                                // Just seconds, no decimal (e.g., "00" -> "00.00")
-                                secs = secs.padStart(2, '0') + '.00';
-                            } else {
-                                // Missing dot (e.g., "00000" -> "00.000")
-                                secs = secs.slice(0, 2) + '.' + secs.slice(2);
-                            }
-                        }
-                        
-                        // Ensure format is SS.xx (at least 2 decimal places)
-                        const parts = secs.split('.');
-                        const secPart = parts[0].padStart(2, '0');
-                        const decPart = (parts[1] || '00').slice(0, 3).padEnd(2, '0');
-                        secs = `${secPart}.${decPart}`;
-                        
-                        timestamps.push({
-                            time: `${mins}:${secs}`,
-                            lyrics: match[3] || ''
-                        });
-                        parsedLines++;
-                    }
-                }
-            });
-
-            console.log(`LRC Parse Summary: ${parsedLines} timestamps parsed out of ${totalLines} total lines`);
-            return { timestamps, totalLines, parsedLines };
+        function parseCslpFile(content) {
+            const data = JSON.parse(content);
+            const timeline = data.data?.timeline || [];
+            
+            // Convert to the format expected by the rest of the code
+            const timestamps = timeline.map(entry => ({
+                time: formatTimestamp(entry.time),
+                lyrics: entry.text || '',
+                notation: entry.notation || ''
+            }));
+            
+            console.log(`CSLP Parse Summary: ${timestamps.length} timestamps extracted`);
+            return { timeline: timestamps, originalData: data };
         }
 
         function parseLyricsFile(content) {
@@ -963,7 +939,7 @@
         }
 
         function checkFilesReady() {
-            if (lrcData && lrcData.length > 0 && lyricsData && lyricsData.length > 0) {
+            if (cslpData && cslpData.timeline && cslpData.timeline.length > 0 && lyricsData && lyricsData.length > 0) {
                 processBtn.disabled = false;
             }
         }
@@ -976,16 +952,17 @@
             hideMessages();
 
             // Initialize matched data with timestamps and empty lyrics
-            matchedData = lrcData.map(item => ({
+            matchedData = cslpData.timeline.map(item => ({
                 time: item.time,
-                lyrics: item.lyrics || ''
+                lyrics: item.lyrics || '',
+                notation: item.notation || ''
             }));
 
             renderPanes();
             panesSection.classList.add('visible');
             resetBtn.disabled = false;
             downloadBtn.disabled = false;
-            showSuccess(`Loaded ${lrcData.length} timestamps and ${lyricsData.length} lyrics lines`);
+            showSuccess(`Loaded ${cslpData.timeline.length} timestamps and ${lyricsData.length} lyrics lines`);
         }
 
         function renderPanes() {
@@ -1139,38 +1116,52 @@
         });
 
         downloadBtn.addEventListener('click', () => {
-            downloadMergedLrc();
+            downloadMergedCslp();
         });
 
-        function downloadMergedLrc() {
-            let lrcContent = '';
-
-            matchedData.forEach(item => {
-                lrcContent += `[${item.time}]${item.lyrics}\n`;
+        function downloadMergedCslp() {
+            // Create updated timeline with lyrics
+            const updatedTimeline = matchedData.map((item, index) => {
+                const originalEntry = cslpData.originalData.data.timeline[index];
+                return {
+                    time: originalEntry.time,
+                    text: item.lyrics,
+                    notation: item.notation || originalEntry.notation || ''
+                };
             });
 
-            const blob = new Blob([lrcContent], { type: 'text/plain;charset=utf-8' });
+            // Create new CSLP data
+            const mergedCslp = {
+                ...cslpData.originalData,
+                data: {
+                    ...cslpData.originalData.data,
+                    timeline: updatedTimeline
+                }
+            };
+
+            const cslpContent = JSON.stringify(mergedCslp, null, 2);
+            const blob = new Blob([cslpContent], { type: 'application/json;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = lyricsBaseName + '_merged.lrc';
+            a.download = lyricsBaseName + '_merged.cslp';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showSuccess('Merged LRC file downloaded!');
+            showSuccess('Merged CSLP file downloaded!');
         }
 
         resetBtn.addEventListener('click', () => {
-            lrcData = null;
+            cslpData = null;
             lyricsData = [];
             matchedData = [];
             lyricsBaseName = 'merged';
             selectedLyricIndex = -1;
             selectedTimestampIndices.clear();
-            lrcFileName.textContent = 'No file selected';
+            cslpFileName.textContent = 'No file selected';
             lyricsFileName.textContent = 'No file selected';
-            lrcGroup.classList.remove('loaded');
+            cslpGroup.classList.remove('loaded');
             lyricsGroup.classList.remove('loaded');
             panesSection.classList.remove('visible');
             processBtn.disabled = true;
