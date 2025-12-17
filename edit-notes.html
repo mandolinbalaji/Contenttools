@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Notes - Notation Editor with Images</title>
+    <title>Edit Notes - CSLP Notation Editor with Images</title>
     <style>
         * {
             margin: 0;
@@ -285,7 +285,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📝 Edit Notes with Images</h1>
+            <h1>📝 Edit Notes - CSLP Notation Editor with Images</h1>
             <a href="index.html" class="back-link">← Back to Converter</a>
         </div>
 
@@ -312,10 +312,10 @@
             <!-- Right Pane: Editor -->
             <div class="right-pane">
                 <div class="pane-header">
-                    <div class="pane-title">📄 Notation File (.not)</div>
+                    <div class="pane-title">📄 CSLP File (.cslp)</div>
                     <div class="file-controls">
-                        <button class="btn btn-secondary" id="loadNotBtn">Load .not File</button>
-                        <input type="file" id="notFileInput" accept=".not,.txt">
+                        <button class="btn btn-secondary" id="loadNotBtn">Load .cslp File</button>
+                        <input type="file" id="notFileInput" accept=".cslp">
                         <button class="btn btn-secondary" id="dotAboveBtn" title="Add dot above selected character">⬆️</button>
                         <button class="btn btn-secondary" id="dotBelowBtn" title="Add dot below selected character">⬇️</button>
                         <button class="btn btn-secondary" id="toUpperBtn" title="Convert selected text to uppercase">A</button>
@@ -325,7 +325,7 @@
                 <div class="editor-container">
                     <div class="editor-area">
                         <div class="editor-header">Drag images here or edit text directly</div>
-                        <textarea id="noteEditor" placeholder="Load a .not file or start typing...&#10;&#10;You can also drag images from the left pane to insert image references."></textarea>
+                        <textarea id="noteEditor" placeholder="Load a .cslp file or start typing...&#10;&#10;You can also drag images from the left pane to insert image references."></textarea>
                     </div>
                 </div>
             </div>
@@ -333,7 +333,7 @@
 
         <div class="button-group">
             <button class="btn btn-secondary" id="copyBtn">📋 Copy to Clipboard</button>
-            <button class="btn btn-primary" id="downloadBtn">💾 Download .not File</button>
+            <button class="btn btn-primary" id="downloadBtn">💾 Download .cslp File</button>
         </div>
 
         <div id="statusMessage"></div>
@@ -364,6 +364,7 @@
         let draggedImage = null;
         let dotAboveMode = false;
         let dotBelowMode = false;
+        let cslpData = null; // Store the loaded CSLP data
 
         // Initialize
         updateButtonStates();
@@ -714,16 +715,45 @@
             showStatus('Images cleared', 'info');
         }
 
-        // Load .not file
+        // Format timestamp for display
+        function formatTimestamp(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const mm = String(minutes).padStart(2, '0');
+            const ss = secs.toFixed(3);
+            return `${mm}:${ss}`;
+        }
+
+        // Load .cslp file
         function loadNotFile(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = (e) => {
-                noteEditor.value = e.target.result;
-                currentFileName = file.name.replace(/\.(not|txt)$/i, '');
-                showStatus('File loaded successfully', 'success');
+                try {
+                    const content = e.target.result;
+                    cslpData = JSON.parse(content);
+                    
+                    // Extract all notation entries and combine them
+                    const timeline = cslpData.data?.timeline || [];
+                    const notations = timeline.map(entry => entry.notation || '').filter(n => n.trim());
+                    
+                    // Combine all notations with timestamps for context
+                    let combinedNotation = '';
+                    timeline.forEach((entry, index) => {
+                        if (entry.notation && entry.notation.trim()) {
+                            const timeStr = formatTimestamp(entry.time);
+                            combinedNotation += `[${timeStr}] ${entry.notation}\n`;
+                        }
+                    });
+                    
+                    noteEditor.value = combinedNotation.trim();
+                    currentFileName = file.name.replace(/\.cslp$/i, '');
+                    showStatus('CSLP file loaded successfully', 'success');
+                } catch (error) {
+                    showStatus('Error parsing CSLP file: ' + error.message, 'error');
+                }
             };
             reader.readAsText(file);
         }
@@ -768,19 +798,62 @@
                 return;
             }
 
-            const filename = currentFileName || 'notation';
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
+            if (!cslpData) {
+                showStatus('No CSLP file loaded. Load a .cslp file first.', 'error');
+                return;
+            }
 
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${filename}.not`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            try {
+                // Parse the edited content back into notation entries
+                const lines = content.split('\n');
+                const notationMap = new Map();
+                
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (trimmed) {
+                        // Match [mm:ss.xxx] notation format
+                        const match = trimmed.match(/^\[(\d{1,2}):(\d+\.?\d*)\]\s*(.*)/);
+                        if (match) {
+                            const mins = parseInt(match[1]);
+                            const secs = parseFloat(match[2]);
+                            const time = mins * 60 + secs;
+                            const notation = match[3].trim();
+                            notationMap.set(time, notation);
+                        }
+                    }
+                });
 
-            URL.revokeObjectURL(url);
-            showStatus('File downloaded successfully', 'success');
+                // Update the timeline with edited notations
+                const updatedTimeline = cslpData.data.timeline.map(entry => ({
+                    ...entry,
+                    notation: notationMap.get(entry.time) || entry.notation || ''
+                }));
+
+                // Create updated CSLP data
+                const updatedCslp = {
+                    ...cslpData,
+                    data: {
+                        ...cslpData.data,
+                        timeline: updatedTimeline
+                    }
+                };
+
+                const filename = currentFileName || 'notation';
+                const blob = new Blob([JSON.stringify(updatedCslp, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.cslp`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                URL.revokeObjectURL(url);
+                showStatus('CSLP file downloaded successfully', 'success');
+            } catch (error) {
+                showStatus('Error saving CSLP file: ' + error.message, 'error');
+            }
         }
 
         // Show status message
