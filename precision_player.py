@@ -769,7 +769,8 @@ class LyricsDisplayWidget(QWidget):
         self.current_id = -1
         self.directory = ""  # Directory for resolving relative image paths
         self.setMinimumHeight(80)
-        self.setMaximumHeight(120)
+        # Remove maximum height constraint to allow expansion
+        # self.setMaximumHeight(120)
         
     def set_content(self, lyrics, notation):
         """Update displayed lyrics and notation."""
@@ -1709,9 +1710,13 @@ class PrecisionPlayer(QMainWindow):
         
         layout.addLayout(top_bar)
         
-        # Lyrics/Notation display
+        # Lyrics/Notation display with border and title
+        lyrics_group = QGroupBox("Lyrics / Notation")
+        lyrics_layout = QVBoxLayout(lyrics_group)
+        lyrics_layout.setContentsMargins(5, 15, 5, 5)
         self.lyrics_display = LyricsDisplayWidget()
-        layout.addWidget(self.lyrics_display)
+        lyrics_layout.addWidget(self.lyrics_display)
+        layout.addWidget(lyrics_group)
         
         # Tracks scroll area
         tracks_group = QGroupBox("Tracks")
@@ -1733,8 +1738,6 @@ class PrecisionPlayer(QMainWindow):
         self.tracks_scroll.setWidget(self.tracks_container)
         tracks_layout.addWidget(self.tracks_scroll)
         
-        layout.addWidget(tracks_group)
-        
         # Container for waveform and markers
         bottom_container = QWidget()
         bottom_layout = QVBoxLayout(bottom_container)
@@ -1752,13 +1755,21 @@ class PrecisionPlayer(QMainWindow):
         self.markers_widget.marker_clicked.connect(self.on_marker_clicked)
         bottom_layout.addWidget(self.markers_widget)
         
-        # Create splitter for resizable tracks and waveform areas
-        splitter = QSplitter(Qt.Orientation.Vertical)
-        splitter.addWidget(tracks_group)
-        splitter.addWidget(bottom_container)
-        splitter.setSizes([200, 400])  # Initial sizes
+        # Create top-level splitter for all resizable sections
+        top_splitter = QSplitter(Qt.Orientation.Vertical)
+        top_splitter.addWidget(lyrics_group)
+        top_splitter.addWidget(tracks_group)
         
-        layout.addWidget(splitter, 1)
+        # Waveform area with border and title
+        waveform_group = QGroupBox("Waveform")
+        waveform_layout = QVBoxLayout(waveform_group)
+        waveform_layout.setContentsMargins(5, 15, 5, 5)
+        waveform_layout.addWidget(bottom_container)
+        top_splitter.addWidget(waveform_group)
+        
+        top_splitter.setSizes([150, 200, 200])  # Initial sizes for lyrics, tracks, waveform
+        
+        layout.addWidget(top_splitter, 1)
         
         # Time display
         time_layout = QHBoxLayout()
