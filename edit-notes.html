@@ -741,10 +741,12 @@
                     
                     // Combine all notations with timestamps for context
                     let combinedNotation = '';
+                    let lineNumber = 1;
                     timeline.forEach((entry, index) => {
                         if (entry.notation && entry.notation.trim()) {
                             const timeStr = formatTimestamp(entry.time);
-                            combinedNotation += `[${timeStr}] ${entry.notation}\n`;
+                            combinedNotation += `${lineNumber}. [${timeStr}] ${entry.notation}\n`;
+                            lineNumber++;
                         }
                     });
                     
@@ -811,8 +813,8 @@
                 lines.forEach(line => {
                     const trimmed = line.trim();
                     if (trimmed) {
-                        // Match [mm:ss.xxx] notation format
-                        const match = trimmed.match(/^\[(\d{1,2}):(\d+\.?\d*)\]\s*(.*)/);
+                        // Match serial. [mm:ss.xxx] notation format
+                        const match = trimmed.match(/^\d+\.\s*\[(\d{1,2}):(\d+\.?\d*)\]\s*(.*)/);
                         if (match) {
                             const mins = parseInt(match[1]);
                             const secs = parseFloat(match[2]);
