@@ -969,22 +969,58 @@ class LyricsDisplayWidget(QWidget):
     
     def update_display(self, current_time, timeline):
         """Update display based on current playback time."""
-        # Find the current entry
+        # Find the current entry and collect upcoming entries to show at least 4 lines
         current_entry = {'text': '', 'notation': '', 'time': -1}
+        current_index = -1
         
-        for entry in reversed(timeline):
+        # Find current entry
+        for i, entry in enumerate(reversed(timeline)):
             if entry and 'time' in entry and current_time >= entry['time']:
                 current_entry = {
                     'text': str(entry.get('text', '') or '').strip(),
                     'notation': str(entry.get('notation', '') or '').strip(),
                     'time': entry.get('time', 0)
                 }
+                current_index = len(timeline) - 1 - i
                 break
+        
+        # Collect entries to display (current + upcoming to reach at least 4 lines)
+        display_entries = []
+        
+        # Start from current entry
+        start_index = max(0, current_index)
+        
+        # Collect up to 4 entries starting from current
+        for i in range(start_index, min(start_index + 4, len(timeline))):
+            entry = timeline[i]
+            if entry:
+                display_entries.append({
+                    'text': str(entry.get('text', '') or '').strip(),
+                    'notation': str(entry.get('notation', '') or '').strip(),
+                    'time': entry.get('time', 0),
+                    'is_current': (i == current_index)
+                })
+        
+        # Combine all entries into display text (lyrics and notation together)
+        combined_text = ""
+        
+        for entry in display_entries:
+            # Add lyrics if present
+            if entry['text']:
+                if combined_text:
+                    combined_text += "\n"
+                combined_text += entry['text']
+            
+            # Add notation if present
+            if entry['notation']:
+                if combined_text:
+                    combined_text += "\n"
+                combined_text += entry['notation']
         
         # Only update if changed
         if current_entry['time'] != self.current_id:
             self.current_id = current_entry['time']
-            self.set_content(current_entry['text'], current_entry['notation'])
+            self.set_content(combined_text, "")  # Put everything in lyrics, leave notation empty
     
     def paintEvent(self, event):
         """Draw lyrics and notation, supporting <img src=...> in both."""
@@ -994,8 +1030,8 @@ class LyricsDisplayWidget(QWidget):
         w = self.width()
         h = self.height()
 
-        # Draw lyrics (larger, top)
-        lyrics_rect = QRect(0, 0, w, h // 2)
+        # Draw combined lyrics and notation (full area)
+        full_rect = QRect(0, 0, w, h)
         if self.lyrics:
             import re
             img_match = re.search(r'<img\s+src\s*=\s*["\']([^"\']+)["\']', self.lyrics, re.IGNORECASE)
@@ -1003,39 +1039,18 @@ class LyricsDisplayWidget(QWidget):
             if img_match:
                 print(f"[REGEX LOG] Found img tag in lyrics: {img_match.group(1)}")
                 img_url = img_match.group(1)
-                if not self.load_image_from_src(img_url, painter, lyrics_rect):
+                if not self.load_image_from_src(img_url, painter, full_rect):
                     # Fallback: draw error text
                     font = QFont("Segoe UI", 12, QFont.Weight.Bold)
                     painter.setFont(font)
                     painter.setPen(QColor(255, 100, 100))
-                    painter.drawText(lyrics_rect, Qt.AlignmentFlag.AlignCenter, f"[Image error: {img_url}]")
+                    painter.drawText(full_rect, Qt.AlignmentFlag.AlignCenter, f"[Image error: {img_url}]")
             else:
                 print(f"[REGEX LOG] No img tag found in lyrics")
-                font = QFont("Segoe UI", 18, QFont.Weight.Bold)
+                font = QFont("Segoe UI", 12, QFont.Weight.Normal)
                 painter.setFont(font)
                 painter.setPen(QColor(255, 255, 255))
-                painter.drawText(lyrics_rect, Qt.AlignmentFlag.AlignCenter, self.lyrics)
-
-        # Draw notation (smaller, bottom)
-        notation_rect = QRect(0, h // 2, w, h // 2)
-        if self.notation:
-            img_match = re.search(r'<img\s+src\s*=\s*["\']([^"\']+)["\']', self.notation, re.IGNORECASE)
-            print(f"[REGEX LOG] Checking notation: {repr(self.notation[:100])}")
-            if img_match:
-                print(f"[REGEX LOG] Found img tag in notation: {img_match.group(1)}")
-                img_url = img_match.group(1)
-                if not self.load_image_from_src(img_url, painter, notation_rect):
-                    # Fallback: draw error text
-                    font = QFont("Segoe UI", 12, QFont.Weight.Bold)
-                    painter.setFont(font)
-                    painter.setPen(QColor(255, 100, 100))
-                    painter.drawText(notation_rect, Qt.AlignmentFlag.AlignCenter, f"[Image error: {img_url}]")
-            else:
-                print(f"[REGEX LOG] No img tag found in notation")
-                font = QFont("Consolas", 14)
-                painter.setFont(font)
-                painter.setPen(QColor(180, 220, 255))
-                painter.drawText(notation_rect, Qt.AlignmentFlag.AlignCenter, self.notation)
+                painter.drawText(full_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, self.lyrics)
 
         # Border
         painter.setPen(QPen(QColor(60, 60, 70)))
