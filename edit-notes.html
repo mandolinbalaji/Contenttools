@@ -739,13 +739,14 @@
                     const timeline = cslpData.data?.timeline || [];
                     const notations = timeline.map(entry => entry.notation || '').filter(n => n.trim());
                     
-                    // Combine all notations with timestamps for context
+                    // Combine all timeline entries with timestamps for context
                     let combinedNotation = '';
                     let lineNumber = 1;
                     timeline.forEach((entry, index) => {
-                        if (entry.notation && entry.notation.trim()) {
-                            const timeStr = formatTimestamp(entry.time);
-                            combinedNotation += `${lineNumber}. [${timeStr}] ${entry.notation}\n`;
+                        const timeStr = formatTimestamp(entry.time);
+                        const content = (entry.notation && entry.notation.trim()) ? entry.notation : (entry.text || '');
+                        if (content.trim()) {
+                            combinedNotation += `${lineNumber}. [${timeStr}] ${content}\n`;
                             lineNumber++;
                         }
                     });
