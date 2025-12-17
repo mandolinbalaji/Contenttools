@@ -907,6 +907,9 @@
             const data = JSON.parse(content);
             const timeline = data.data?.timeline || [];
             
+            // Sort timeline by time before processing
+            timeline.sort((a, b) => a.time - b.time);
+            
             // Convert to the format expected by the rest of the code
             const timestamps = timeline.map(entry => ({
                 time: formatTimestamp(entry.time),
