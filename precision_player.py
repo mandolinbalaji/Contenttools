@@ -768,6 +768,8 @@ class LyricsDisplayWidget(QWidget):
         self.notation = ""
         self.current_id = -1
         self.directory = ""  # Directory for resolving relative image paths
+        self.current_line_index = -1  # Index of currently playing line
+        self.display_lines = []  # List of lines being displayed
         self.setMinimumHeight(80)
         # Remove maximum height constraint to allow expansion
         # self.setMaximumHeight(120)
@@ -1001,6 +1003,21 @@ class LyricsDisplayWidget(QWidget):
                     'is_current': (i == current_index)
                 })
         
+        # Store display lines for highlighting - each entry becomes one or two lines
+        self.display_lines = []
+        for entry in display_entries:
+            if entry['text']:
+                self.display_lines.append({'type': 'text', 'content': entry['text'], 'is_current': entry['is_current']})
+            if entry['notation']:
+                self.display_lines.append({'type': 'notation', 'content': entry['notation'], 'is_current': entry['is_current']})
+        
+        # Set current line index to the first current line
+        self.current_line_index = -1
+        for i, line in enumerate(self.display_lines):
+            if line['is_current']:
+                self.current_line_index = i
+                break
+        
         # Combine all entries into display text (lyrics and notation together)
         combined_text = ""
         
@@ -1047,10 +1064,35 @@ class LyricsDisplayWidget(QWidget):
                     painter.drawText(full_rect, Qt.AlignmentFlag.AlignCenter, f"[Image error: {img_url}]")
             else:
                 print(f"[REGEX LOG] No img tag found in lyrics")
+                # Split lyrics into lines for highlighting
+                lines = self.lyrics.split('\n')
                 font = QFont("Segoe UI", 12, QFont.Weight.Normal)
                 painter.setFont(font)
-                painter.setPen(QColor(255, 255, 255))
-                painter.drawText(full_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, self.lyrics)
+                
+                # Calculate line height
+                font_metrics = painter.fontMetrics()
+                line_height = font_metrics.height()
+                
+                # Draw each line with highlighting if it's the current line
+                y_offset = 10  # Start from top with some padding
+                
+                for i, line in enumerate(lines):
+                    # Check if this line corresponds to the current playing line
+                    is_current_line = (self.current_line_index >= 0 and 
+                                     i < len(self.display_lines) and 
+                                     self.display_lines[i].get('is_current', False))
+                    
+                    if is_current_line:
+                        # Highlight current line with background
+                        highlight_rect = QRect(0, y_offset - 2, w, line_height + 4)
+                        painter.fillRect(highlight_rect, QColor(70, 100, 150, 180))  # Semi-transparent blue highlight
+                        painter.setPen(QColor(255, 255, 200))  # Light yellow text for current line
+                    else:
+                        painter.setPen(QColor(200, 200, 200))  # Gray text for other lines
+                    
+                    # Draw the line
+                    painter.drawText(10, y_offset + font_metrics.ascent(), line)
+                    y_offset += line_height + 5  # Add some spacing between lines
 
         # Border
         painter.setPen(QPen(QColor(60, 60, 70)))
