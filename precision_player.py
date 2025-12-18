@@ -1638,56 +1638,106 @@ class PrecisionPlayer(QMainWindow):
         self.setMinimumSize(800, 400)
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #1e1e1e;
+                background-color: #0f0f23;
+                color: #e6e6e6;
             }
             QLabel {
-                color: #ffffff;
-                font-size: 12px;
+                color: #e6e6e6;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 400;
             }
             QPushButton {
-                background-color: #3c3c3c;
-                color: #ffffff;
-                border: 1px solid #555555;
-                padding: 8px 16px;
-                border-radius: 4px;
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #2d3748, stop:1 #1a202c);
+                color: #e6e6e6;
+                border: 1px solid #4a5568;
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-family: 'Segoe UI', sans-serif;
                 font-size: 14px;
+                font-weight: 500;
+                min-height: 16px;
             }
             QPushButton:hover {
-                background-color: #4a4a4a;
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4a5568, stop:1 #2d3748);
+                border-color: #63b3ed;
             }
             QPushButton:pressed {
-                background-color: #2a2a2a;
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #1a202c, stop:1 #0f0f23);
+                border-color: #3182ce;
             }
             QPushButton:disabled {
-                background-color: #2a2a2a;
-                color: #666666;
+                background-color: #2d3748;
+                color: #718096;
+                border-color: #4a5568;
             }
             QComboBox {
-                background-color: #3c3c3c;
-                color: #ffffff;
-                border: 1px solid #555555;
-                padding: 5px;
-                border-radius: 4px;
+                background-color: #1a202c;
+                color: #e6e6e6;
+                border: 1px solid #4a5568;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                min-height: 16px;
             }
             QComboBox::drop-down {
                 border: none;
+                width: 20px;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 4px solid #e6e6e6;
+                margin-right: 8px;
             }
             QComboBox QAbstractItemView {
-                background-color: #3c3c3c;
-                color: #ffffff;
-                selection-background-color: #0078d4;
+                background-color: #1a202c;
+                color: #e6e6e6;
+                selection-background-color: #3182ce;
+                border: 1px solid #4a5568;
+                border-radius: 4px;
             }
             QGroupBox {
-                color: #ffffff;
-                border: 1px solid #555555;
-                border-radius: 4px;
-                margin-top: 10px;
-                padding-top: 10px;
+                color: #e6e6e6;
+                border: 2px solid #4a5568;
+                border-radius: 8px;
+                margin-top: 12px;
+                padding-top: 12px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 14px;
+                font-weight: 600;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
+                left: 12px;
+                padding: 0 8px;
+                color: #63b3ed;
+            }
+            QScrollArea {
+                border: none;
+                background-color: transparent;
+            }
+            QScrollBar:vertical {
+                background-color: #1a202c;
+                width: 12px;
+                border-radius: 6px;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #4a5568;
+                border-radius: 6px;
+                min-height: 30px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #63b3ed;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                border: none;
+                background: none;
             }
         """)
         
@@ -1720,7 +1770,7 @@ class PrecisionPlayer(QMainWindow):
         top_bar.addStretch()
         
         self.file_label = QLabel("No tracks loaded")
-        self.file_label.setStyleSheet("color: #888888;")
+        self.file_label.setStyleSheet("color: #a0aec0; font-style: italic;")
         top_bar.addWidget(self.file_label, 1)
         
         layout.addLayout(top_bar)
@@ -1789,7 +1839,15 @@ class PrecisionPlayer(QMainWindow):
         # Time display
         time_layout = QHBoxLayout()
         self.time_label = QLabel("00:00.00 / 00:00.00")
-        self.time_label.setStyleSheet("font-size: 18px; font-family: monospace;")
+        self.time_label.setStyleSheet("""
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: #63b3ed;
+            background-color: transparent;
+            padding: 8px 12px;
+            border-radius: 4px;
+        """)
         time_layout.addWidget(self.time_label)
         time_layout.addStretch()
         

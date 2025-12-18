@@ -501,51 +501,75 @@ class BalajiTools(QMainWindow):
         self.setStyleSheet("""
             QMainWindow {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #2c3e50, stop:1 #34495e);
+                    stop:0 #0f0f23, stop:1 #1a202c);
             }
             QLabel {
-                color: #ecf0f1;
+                color: #e6e6e6;
+                font-family: 'Segoe UI', sans-serif;
                 font-size: 14px;
+                font-weight: 400;
             }
             QPushButton {
-                background-color: #3498db;
-                color: white;
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #3182ce, stop:1 #2c5282);
+                color: #ffffff;
                 border: none;
                 padding: 15px 25px;
                 border-radius: 8px;
+                font-family: 'Segoe UI', sans-serif;
                 font-size: 16px;
-                font-weight: bold;
+                font-weight: 600;
                 min-width: 200px;
             }
             QPushButton:hover {
-                background-color: #2980b9;
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #63b3ed, stop:1 #3182ce);
             }
             QPushButton:pressed {
-                background-color: #21618c;
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #2c5282, stop:1 #1a365d);
             }
             QPushButton:disabled {
-                background-color: #7f8c8d;
+                background-color: #4a5568;
+                color: #a0aec0;
             }
             QGroupBox {
-                color: #ecf0f1;
-                border: 2px solid #3498db;
-                border-radius: 8px;
-                margin-top: 10px;
+                color: #e6e6e6;
+                border: 2px solid #4a5568;
+                border-radius: 10px;
+                margin-top: 12px;
+                padding-top: 12px;
+                font-family: 'Segoe UI', sans-serif;
                 font-size: 16px;
-                font-weight: bold;
+                font-weight: 600;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
+                left: 12px;
+                padding: 0 8px;
+                color: #63b3ed;
             }
             QTextEdit {
-                background-color: #2c3e50;
-                color: #ecf0f1;
-                border: 1px solid #34495e;
-                border-radius: 4px;
-                font-family: 'Consolas', monospace;
+                background-color: #1a202c;
+                color: #e6e6e6;
+                border: 1px solid #4a5568;
+                border-radius: 6px;
+                font-family: 'Consolas', 'Monaco', monospace;
                 font-size: 12px;
+                padding: 8px;
+            }
+            QScrollBar:vertical {
+                background-color: #1a202c;
+                width: 12px;
+                border-radius: 6px;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #4a5568;
+                border-radius: 6px;
+                min-height: 30px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #63b3ed;
             }
         """)
 
@@ -559,7 +583,13 @@ class BalajiTools(QMainWindow):
         # Header
         header = QHBoxLayout()
         title = QLabel("🎵 Balaji's Music Production Tools")
-        title.setStyleSheet("font-size: 24px; font-weight: bold; color: #ecf0f1; margin-bottom: 10px;")
+        title.setStyleSheet("""
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #63b3ed;
+            margin-bottom: 10px;
+        """)
         header.addWidget(title)
         header.addStretch()
         layout.addLayout(header)
@@ -581,133 +611,287 @@ class BalajiTools(QMainWindow):
         # Precision Player
         player_btn = QPushButton("🎵\nPrecision\nPlayer")
         player_btn.clicked.connect(self.launch_precision_player)
-        player_btn.setMinimumSize(100, 100)
-        player_btn.setMaximumSize(120, 120)
+        player_btn.setMinimumSize(120, 120)
+        player_btn.setMaximumSize(140, 140)
         player_btn.setStyleSheet("""
             QPushButton {
-                font-size: 12px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4fd1c4, stop:1 #38b2ac);
+                color: #ffffff;
+                border: none;
+                border-radius: 70px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
                 text-align: center;
-                padding: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #68d391, stop:1 #4fd1c4);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #38b2ac, stop:1 #319795);
             }
         """)
         audio_layout.addWidget(player_btn, 0, 0, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['precision_player'] = QLabel("Not running")
-        self.status_labels['precision_player'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['precision_player'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['precision_player'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['precision_player'], 1, 0, Qt.AlignmentFlag.AlignCenter)
 
         # UVR
         uvr_btn = QPushButton("🎤\nUVR\nRemover")
         uvr_btn.clicked.connect(self.launch_uvr)
-        uvr_btn.setMinimumSize(100, 100)
-        uvr_btn.setMaximumSize(120, 120)
+        uvr_btn.setMinimumSize(120, 120)
+        uvr_btn.setMaximumSize(140, 140)
         uvr_btn.setStyleSheet("""
             QPushButton {
-                font-size: 12px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #f6ad55, stop:1 #ed8936);
+                color: #ffffff;
+                border: none;
+                border-radius: 70px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
                 text-align: center;
-                padding: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #fbbf24, stop:1 #f6ad55);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #ed8936, stop:1 #dd6b20);
             }
         """)
         audio_layout.addWidget(uvr_btn, 0, 1, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['uvr'] = QLabel("Not running")
-        self.status_labels['uvr'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['uvr'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['uvr'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['uvr'], 1, 1, Qt.AlignmentFlag.AlignCenter)
 
         # Format Converter
         format_btn = QPushButton("🔄\nFormat\nConverter")
         format_btn.clicked.connect(self.launch_format_converter)
-        format_btn.setMinimumSize(100, 100)
-        format_btn.setMaximumSize(120, 120)
+        format_btn.setMinimumSize(120, 120)
+        format_btn.setMaximumSize(140, 140)
         format_btn.setStyleSheet("""
             QPushButton {
-                font-size: 12px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #9f7aea, stop:1 #805ad5);
+                color: #ffffff;
+                border: none;
+                border-radius: 70px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
                 text-align: center;
-                padding: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #b794f6, stop:1 #9f7aea);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #805ad5, stop:1 #6b46c1);
             }
         """)
         audio_layout.addWidget(format_btn, 0, 2, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['format_converter'] = QLabel("Ready")
-        self.status_labels['format_converter'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['format_converter'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['format_converter'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['format_converter'], 1, 2, Qt.AlignmentFlag.AlignCenter)
 
         # Generate Video
         video_btn = QPushButton("🎬\nGenerate\nVideo")
         video_btn.clicked.connect(self.launch_generate_video)
-        video_btn.setMinimumSize(100, 100)
-        video_btn.setMaximumSize(120, 120)
+        video_btn.setMinimumSize(120, 120)
+        video_btn.setMaximumSize(140, 140)
         video_btn.setStyleSheet("""
             QPushButton {
-                font-size: 12px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #f56565, stop:1 #e53e3e);
+                color: #ffffff;
+                border: none;
+                border-radius: 70px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
                 text-align: center;
-                padding: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #fc8181, stop:1 #f56565);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #e53e3e, stop:1 #c53030);
             }
         """)
         audio_layout.addWidget(video_btn, 0, 3, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['generate_video'] = QLabel("Not running")
-        self.status_labels['generate_video'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['generate_video'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['generate_video'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['generate_video'], 1, 3, Qt.AlignmentFlag.AlignCenter)
 
         # PDF/Image Extractor
         pdf_btn = QPushButton("📄\nPDF/Image\nExtractor")
         pdf_btn.clicked.connect(self.launch_pdf_extractor)
-        pdf_btn.setMinimumSize(100, 100)
-        pdf_btn.setMaximumSize(120, 120)
+        pdf_btn.setMinimumSize(120, 120)
+        pdf_btn.setMaximumSize(140, 140)
         pdf_btn.setStyleSheet("""
             QPushButton {
-                font-size: 12px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #48bb78, stop:1 #38a169);
+                color: #ffffff;
+                border: none;
+                border-radius: 70px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
                 text-align: center;
-                padding: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #68d391, stop:1 #48bb78);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #38a169, stop:1 #2f855a);
             }
         """)
         audio_layout.addWidget(pdf_btn, 2, 0, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['pdf_extractor'] = QLabel("Not running")
-        self.status_labels['pdf_extractor'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['pdf_extractor'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['pdf_extractor'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['pdf_extractor'], 3, 0, Qt.AlignmentFlag.AlignCenter)
 
         # Click Track Generator
         clicktrack_btn = QPushButton("🪘\nGen Click\nTrack")
         clicktrack_btn.clicked.connect(self.launch_click_track_generator)
-        clicktrack_btn.setMinimumSize(100, 100)
-        clicktrack_btn.setMaximumSize(120, 120)
+        clicktrack_btn.setMinimumSize(120, 120)
+        clicktrack_btn.setMaximumSize(140, 140)
         clicktrack_btn.setStyleSheet("""
             QPushButton {
-                font-size: 12px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4299e1, stop:1 #3182ce);
+                color: #ffffff;
+                border: none;
+                border-radius: 70px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
                 text-align: center;
-                padding: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #63b3ed, stop:1 #4299e1);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #3182ce, stop:1 #2c5282);
             }
         """)
         audio_layout.addWidget(clicktrack_btn, 2, 1, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['click_track_generator'] = QLabel("Ready")
-        self.status_labels['click_track_generator'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['click_track_generator'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['click_track_generator'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['click_track_generator'], 3, 1, Qt.AlignmentFlag.AlignCenter)
 
         # ATCFG to CSLP Converter
         atcfg_btn = QPushButton("🔄\nATCFG\nto CSLP")
         atcfg_btn.clicked.connect(self.launch_atcfg_to_cslp)
-        atcfg_btn.setMinimumSize(100, 100)
-        atcfg_btn.setMaximumSize(120, 120)
+        atcfg_btn.setMinimumSize(120, 120)
+        atcfg_btn.setMaximumSize(140, 140)
         atcfg_btn.setStyleSheet("""
             QPushButton {
-                font-size: 12px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4fd1c4, stop:1 #38b2ac);
+                color: #ffffff;
+                border: none;
+                border-radius: 70px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
                 text-align: center;
-                padding: 5px;
+                padding: 8px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #68d391, stop:1 #4fd1c4);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #38b2ac, stop:1 #319795);
             }
         """)
         audio_layout.addWidget(atcfg_btn, 2, 2, Qt.AlignmentFlag.AlignCenter)
 
         self.status_labels['atcfg_to_cslp'] = QLabel("Ready")
-        self.status_labels['atcfg_to_cslp'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['atcfg_to_cslp'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['atcfg_to_cslp'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         audio_layout.addWidget(self.status_labels['atcfg_to_cslp'], 3, 2, Qt.AlignmentFlag.AlignCenter)
 
@@ -726,38 +910,76 @@ class BalajiTools(QMainWindow):
 
         self.youtube_start_btn = QPushButton("▶\nStart\nYouTube")
         self.youtube_start_btn.clicked.connect(self.start_youtube_server)
-        self.youtube_start_btn.setMinimumSize(80, 80)
-        self.youtube_start_btn.setMaximumSize(100, 100)
+        self.youtube_start_btn.setMinimumSize(100, 100)
+        self.youtube_start_btn.setMaximumSize(120, 120)
         self.youtube_start_btn.setStyleSheet("""
             QPushButton {
-                background-color: #27ae60;
-                font-size: 10px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #48bb78, stop:1 #38a169);
+                color: #ffffff;
+                border: none;
+                border-radius: 60px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 12px;
+                font-weight: 600;
                 text-align: center;
-                padding: 2px;
+                padding: 6px;
             }
-            QPushButton:hover { background-color: #229954; }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #68d391, stop:1 #48bb78);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #38a169, stop:1 #2f855a);
+            }
         """)
 
         self.youtube_stop_btn = QPushButton("⏹\nStop\nYouTube")
         self.youtube_stop_btn.clicked.connect(self.stop_youtube_server)
         self.youtube_stop_btn.setEnabled(False)
-        self.youtube_stop_btn.setMinimumSize(80, 80)
-        self.youtube_stop_btn.setMaximumSize(100, 100)
+        self.youtube_stop_btn.setMinimumSize(100, 100)
+        self.youtube_stop_btn.setMaximumSize(120, 120)
         self.youtube_stop_btn.setStyleSheet("""
             QPushButton {
-                background-color: #e74c3c;
-                font-size: 10px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #f56565, stop:1 #e53e3e);
+                color: #ffffff;
+                border: none;
+                border-radius: 60px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 12px;
+                font-weight: 600;
                 text-align: center;
-                padding: 2px;
+                padding: 6px;
             }
-            QPushButton:hover { background-color: #c0392b; }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #fc8181, stop:1 #f56565);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #e53e3e, stop:1 #c53030);
+            }
+            QPushButton:disabled {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4a5568, stop:1 #2d3748);
+                color: #718096;
+            }
         """)
 
         youtube_layout.addWidget(self.youtube_start_btn)
         youtube_layout.addWidget(self.youtube_stop_btn)
 
         self.status_labels['youtube_server'] = QLabel("Stopped")
-        self.status_labels['youtube_server'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['youtube_server'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['youtube_server'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         youtube_layout.addWidget(self.status_labels['youtube_server'])
 
@@ -770,36 +992,76 @@ class BalajiTools(QMainWindow):
 
         songindex_btn = QPushButton("📚\nLaunch\nSongIndex")
         songindex_btn.clicked.connect(self.launch_songindex_server)
-        songindex_btn.setMinimumSize(80, 80)
-        songindex_btn.setMaximumSize(100, 100)
+        songindex_btn.setMinimumSize(100, 100)
+        songindex_btn.setMaximumSize(120, 120)
         songindex_btn.setStyleSheet("""
             QPushButton {
-                font-size: 10px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4299e1, stop:1 #3182ce);
+                color: #ffffff;
+                border: none;
+                border-radius: 60px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 12px;
+                font-weight: 600;
                 text-align: center;
-                padding: 2px;
+                padding: 6px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #63b3ed, stop:1 #4299e1);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #3182ce, stop:1 #2c5282);
             }
         """)
 
         self.songindex_stop_btn = QPushButton("⏹\nStop\nSongIndex")
         self.songindex_stop_btn.clicked.connect(self.stop_songindex_server)
         self.songindex_stop_btn.setEnabled(False)
-        self.songindex_stop_btn.setMinimumSize(80, 80)
-        self.songindex_stop_btn.setMaximumSize(100, 100)
+        self.songindex_stop_btn.setMinimumSize(100, 100)
+        self.songindex_stop_btn.setMaximumSize(120, 120)
         self.songindex_stop_btn.setStyleSheet("""
             QPushButton {
-                background-color: #e74c3c;
-                font-size: 10px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #f56565, stop:1 #e53e3e);
+                color: #ffffff;
+                border: none;
+                border-radius: 60px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 12px;
+                font-weight: 600;
                 text-align: center;
-                padding: 2px;
+                padding: 6px;
             }
-            QPushButton:hover { background-color: #c0392b; }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #fc8181, stop:1 #f56565);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #e53e3e, stop:1 #c53030);
+            }
+            QPushButton:disabled {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4a5568, stop:1 #2d3748);
+                color: #718096;
+            }
         """)
 
         songindex_layout.addWidget(songindex_btn)
         songindex_layout.addWidget(self.songindex_stop_btn)
 
         self.status_labels['songindex'] = QLabel("Not running")
-        self.status_labels['songindex'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['songindex'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['songindex'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         songindex_layout.addWidget(self.status_labels['songindex'])
 
@@ -812,38 +1074,76 @@ class BalajiTools(QMainWindow):
 
         self.website_start_btn = QPushButton("🌐\nStart\nWebsite")
         self.website_start_btn.clicked.connect(self.start_website_server)
-        self.website_start_btn.setMinimumSize(80, 80)
-        self.website_start_btn.setMaximumSize(100, 100)
+        self.website_start_btn.setMinimumSize(100, 100)
+        self.website_start_btn.setMaximumSize(120, 120)
         self.website_start_btn.setStyleSheet("""
             QPushButton {
-                background-color: #27ae60;
-                font-size: 10px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #9f7aea, stop:1 #805ad5);
+                color: #ffffff;
+                border: none;
+                border-radius: 60px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 12px;
+                font-weight: 600;
                 text-align: center;
-                padding: 2px;
+                padding: 6px;
             }
-            QPushButton:hover { background-color: #229954; }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #b794f6, stop:1 #9f7aea);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #805ad5, stop:1 #6b46c1);
+            }
         """)
 
         self.website_stop_btn = QPushButton("⏹\nStop\nWebsite")
         self.website_stop_btn.clicked.connect(self.stop_website_server)
         self.website_stop_btn.setEnabled(False)
-        self.website_stop_btn.setMinimumSize(80, 80)
-        self.website_stop_btn.setMaximumSize(100, 100)
+        self.website_stop_btn.setMinimumSize(100, 100)
+        self.website_stop_btn.setMaximumSize(120, 120)
         self.website_stop_btn.setStyleSheet("""
             QPushButton {
-                background-color: #e74c3c;
-                font-size: 10px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #f56565, stop:1 #e53e3e);
+                color: #ffffff;
+                border: none;
+                border-radius: 60px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 12px;
+                font-weight: 600;
                 text-align: center;
-                padding: 2px;
+                padding: 6px;
             }
-            QPushButton:hover { background-color: #c0392b; }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #fc8181, stop:1 #f56565);
+            }
+            QPushButton:pressed {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #e53e3e, stop:1 #c53030);
+            }
+            QPushButton:disabled {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4a5568, stop:1 #2d3748);
+                color: #718096;
+            }
         """)
 
         website_layout.addWidget(self.website_start_btn)
         website_layout.addWidget(self.website_stop_btn)
 
         self.status_labels['website_server'] = QLabel("Stopped")
-        self.status_labels['website_server'].setStyleSheet("color: #95a5a6; font-size: 10px; text-align: center;")
+        self.status_labels['website_server'].setStyleSheet("""
+            color: #a0aec0;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            font-style: italic;
+        """)
         self.status_labels['website_server'].setAlignment(Qt.AlignmentFlag.AlignCenter)
         website_layout.addWidget(self.status_labels['website_server'])
 
