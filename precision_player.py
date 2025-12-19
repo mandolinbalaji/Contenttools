@@ -380,6 +380,17 @@ class MultiTrackEngine(QObject):
         if self.is_playing:
             self._rebuild_streams()
     
+    def _rebuild_streams(self):
+        """Rebuild audio streams after track changes during playback."""
+        if not self.is_playing:
+            return
+        
+        # Pause to stop current playback and close streams
+        self.pause()
+        
+        # Restart playback with new stream configuration
+        self.play()
+    
     def get_total_samples(self):
         """Get max samples across all tracks."""
         if not self.tracks:
