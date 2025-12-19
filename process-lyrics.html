@@ -28,10 +28,14 @@
         }
 
         .header {
+            margin-bottom: 30px;
+        }
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
         h1 {
@@ -560,13 +564,82 @@
         .success.visible {
             display: block;
         }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #667eea;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .nav-text {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎵 Process Lyrics - CSLP Editor</h1>
-            <a href="index.html" class="back-link">← Back to Converter</a>
+            <div class="header-top">
+                <h1>🎵 Process Lyrics - CSLP Editor</h1>
+                <a href="index.html" class="back-link">← Back to Converter</a>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="process-lyrics.html" class="nav-link">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Process Lyrics</span>
+                </a>
+                <a href="atcfg-to-cslp.html" class="nav-link">
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-text">ATCFG to CSLP</span>
+                </a>
+                <a href="create-cslp.html" class="nav-link">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Create CSLP</span>
+                </a>
+                <a href="generate-video.html" class="nav-link">
+                    <span class="nav-icon">🎬</span>
+                    <span class="nav-text">Generate Video</span>
+                </a>
+                <a href="edit-notes.html" class="nav-link">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">Edit Notes</span>
+                </a>
+                <a href="youtube-to-mp3.html" class="nav-link">
+                    <span class="nav-icon">🎵</span>
+                    <span class="nav-text">YouTube to MP3</span>
+                </a>
+            </nav>
         </div>
         <p class="subtitle">Load CSLP and lyrics files, match and edit lyrics to timestamps, then download merged CSLP</p>
 
