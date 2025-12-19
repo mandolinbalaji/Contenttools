@@ -2297,8 +2297,23 @@ class PrecisionPlayer(QMainWindow):
             audio_files = project_data.get("audio_files", [])
             cslp_file = project_data.get("cslp_file")
             
+            print(f"[DEBUG] Loading project: {project_name}")
+            print(f"[DEBUG] Current tracks before clearing: {len(self.engine.tracks)}")
+            print(f"[DEBUG] Current CSLP timeline entries: {len(self.cslp_data.timeline) if self.cslp_data else 0}")
+            
+            # Stop playback before loading
+            self.engine.stop()
+            print("[DEBUG] Playback stopped")
+            
             # Clear current tracks
             self.clear_all_tracks()
+            print(f"[DEBUG] Tracks cleared, remaining tracks: {len(self.engine.tracks)}")
+            
+            # Clear current CSLP data
+            self.cslp_data = CSLPData()
+            self.current_cslp = None
+            self.update_cslp_display()
+            print("[DEBUG] CSLP data cleared")
             
             # Load audio files
             loaded_count = 0
@@ -2306,6 +2321,7 @@ class PrecisionPlayer(QMainWindow):
                 if Path(audio_file).exists():
                     self.add_track_from_file(audio_file)
                     loaded_count += 1
+                    print(f"[DEBUG] Loaded audio file: {audio_file}")
                     
                     # Update main waveform with first track
                     if loaded_count == 1:
@@ -2313,14 +2329,20 @@ class PrecisionPlayer(QMainWindow):
                         if self.engine.tracks:
                             first_track = self.engine.tracks[-1]  # Last added track
                             self.waveform.set_audio_data(first_track.audio_data)
+                            print("[DEBUG] Waveform updated with first track")
                 else:
                     print(f"Warning: Audio file not found: {audio_file}")
+            
+            print(f"[DEBUG] Total tracks after loading: {len(self.engine.tracks)}")
             
             # Load CSLP file
             if cslp_file and Path(cslp_file).exists():
                 self.load_cslp_from_file(cslp_file)
+                print(f"[DEBUG] Loaded CSLP file: {cslp_file}")
             elif cslp_file:
                 print(f"Warning: CSLP file not found: {cslp_file}")
+            
+            print(f"[DEBUG] Final CSLP timeline entries: {len(self.cslp_data.timeline)}")
             
             # Enable playback controls if tracks were loaded
             if loaded_count > 0:
@@ -2332,6 +2354,7 @@ class PrecisionPlayer(QMainWindow):
                 self.engine.set_position_samples(0)
                 self.waveform.set_position(0)
                 self.update_ui()
+                print("[DEBUG] Playback controls enabled and position reset")
             
             # Set current project
             self.project_manager.current_project = project_data
@@ -2341,7 +2364,10 @@ class PrecisionPlayer(QMainWindow):
             self.status_label.setText(f"Loaded project '{project_name}': {loaded_count} audio files, CSLP: {cslp_file or 'None'}")
             self.file_label.setText(f"Project: {project_name}")
             
+            print(f"[DEBUG] Project '{project_name}' loaded successfully")
+            
         except Exception as e:
+            print(f"[DEBUG] Error loading project: {e}")
             QMessageBox.critical(self, "Error", f"Failed to load project: {e}")
     
     def save_current_project(self):
@@ -2444,7 +2470,7 @@ class PrecisionPlayer(QMainWindow):
         # Remove from engine
         for track_widget in self.track_widgets:
             if track_widget.track:
-                self.engine.remove_track(track_widget.track)
+                self.engine.remove_track(track_widget.track.id)
         
         # Remove widgets
         for track_widget in self.track_widgets:
