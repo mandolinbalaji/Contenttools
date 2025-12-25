@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Notation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #667eea;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .nav-text {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #f0f2ff;
+            border-color: #5a67d8;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .upload-hint {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .file-inputs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .file-input-group {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f8f9ff;
+            transition: all 0.3s;
+        }
+
+        .file-input-group.loaded {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .file-input-group .upload-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .file-input-group .upload-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .file-input-group .upload-hint {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .file-status {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .file-input-group input[type="file"] {
+            display: none;
+        }
+
+        .info-section {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+        }
+
+        .info-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .output-area {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+        }
+
+        .output-area.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .output-title {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .output-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            background: #f8f9ff;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+        }
+
+        .message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+        }
+
+        .success {
+            background: #c6f6d5;
+            color: #276749;
+            border: 1px solid #9ae6b4;
+        }
+
+        .clear-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            opacity: 0;
+        }
+
+        .clear-btn:hover {
+            background: #c53030;
+            transform: scale(1.1);
+        }
+
+        .clear-btn.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                gap: 10px;
+            }
+
+            .nav-link {
+                min-width: 100px;
+                padding: 12px 16px;
+            }
+
+            .nav-text {
+                font-size: 11px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Generate Notation</h1>
+            <p class="subtitle">Convert .cslp files to notation text format</p>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Home</span>
+                </a>
+                <a href="process-lyrics.html" class="nav-link">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Process Lyrics</span>
+                </a>
+                <a href="atcfg-to-cslp.html" class="nav-link">
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-text">ATCFG to CSLP</span>
+                </a>
+                <a href="create-cslp.html" class="nav-link">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Create CSLP</span>
+                </a>
+                <a href="generate-video.html" class="nav-link">
+                    <span class="nav-icon">🎬</span>
+                    <span class="nav-text">Generate Video</span>
+                </a>
+                <a href="edit-notes.html" class="nav-link">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">Edit Notes</span>
+                </a>
+                <a href="youtube-to-mp3.html" class="nav-link">
+                    <span class="nav-icon">🎵</span>
+                    <span class="nav-text">YouTube to MP3</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="file-inputs">
+            <div class="file-input-group" id="cslpGroup">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">CSLP file</div>
+                <div class="upload-hint">Required - JSON format</div>
+                <div class="file-name" id="cslpFileName">No file selected</div>
+                <div class="file-status" id="cslpStatus">Click to select</div>
+                <input type="file" id="cslpInput" accept=".cslp">
+            </div>
+        </div>
+
+        <div class="info-section" id="infoSection">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">File Name</div>
+                    <div class="info-value" id="fileName">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Title</div>
+                    <div class="info-value" id="songTitle">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Ragam</div>
+                    <div class="info-value" id="songRagam">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Talam</div>
+                    <div class="info-value" id="songTalam">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Aarohanam</div>
+                    <div class="info-value" id="songAarohanam">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Avarohanam</div>
+                    <div class="info-value" id="songAvarohanam">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Timeline Entries</div>
+                    <div class="info-value" id="markerCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="output-area" id="outputArea">
+            <div class="output-header">
+                <div class="output-title">Generated Notation</div>
+                <div class="output-controls">
+                    <button class="btn btn-secondary" id="copyBtn" disabled>📋 Copy</button>
+                    <button class="btn btn-primary" id="downloadBtn" disabled>💾 Download TXT</button>
+                </div>
+            </div>
+            <textarea id="notationOutput" readonly placeholder="Notation will appear here..."></textarea>
+        </div>
+
+        <button class="clear-btn" id="clearBtn" title="Clear all">🗑️</button>
+    </div>
+
+    <script>
+        // DOM elements
+        const cslpInput = document.getElementById('cslpInput');
+        const cslpGroup = document.getElementById('cslpGroup');
+        const cslpFileName = document.getElementById('cslpFileName');
+        const cslpStatus = document.getElementById('cslpStatus');
+        const infoSection = document.getElementById('infoSection');
+        const outputArea = document.getElementById('outputArea');
+        const notationOutput = document.getElementById('notationOutput');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+
+        let currentFileName = '';
+        let currentNotationContent = '';
+        let cslpData = null;
+
+        // File input handling
+        cslpGroup.addEventListener('click', () => {
+            cslpInput.click();
+        });
+
+        cslpInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleCslpFile(file);
+            }
+        });
+
+        // Drag and drop handling
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.cslp')) {
+                    handleCslpFile(file);
+                } else {
+                    showError('Please drop a .cslp file');
+                }
+            }
+        });
+
+        // Handle CSLP file selection
+        async function handleCslpFile(file) {
+            try {
+                currentFileName = file.name.replace('.cslp', '');
+                cslpFileName.textContent = file.name;
+                cslpStatus.textContent = 'Processing...';
+                cslpGroup.classList.add('loaded');
+
+                const text = await file.text();
+                cslpData = JSON.parse(text);
+
+                processCslpData(cslpData);
+            } catch (error) {
+                showError('Error reading file: ' + error.message);
+                resetFileInput();
+            }
+        }
+
+        // Process CSLP data
+        function processCslpData(data) {
+            try {
+                // Extract metadata
+                const metadata = data.data?.metadata || {};
+                const timeline = data.data?.timeline || [];
+
+                if (timeline.length === 0) {
+                    showError('No timeline entries found in CSLP file');
+                    return;
+                }
+
+                // Display file info
+                document.getElementById('fileName').textContent = currentFileName + '.cslp';
+                document.getElementById('songTitle').textContent = metadata.title || 'N/A';
+                document.getElementById('songRagam').textContent = metadata.ragam || 'N/A';
+                document.getElementById('songTalam').textContent = metadata.talam || 'N/A';
+                document.getElementById('songAarohanam').textContent = metadata.aarohanam || 'N/A';
+                document.getElementById('songAvarohanam').textContent = metadata.avarohanam || 'N/A';
+                document.getElementById('markerCount').textContent = timeline.length;
+
+                // Generate notation content
+                currentNotationContent = generateNotationContent(metadata, timeline);
+                notationOutput.value = currentNotationContent;
+
+                // Show results
+                infoSection.classList.add('visible');
+                outputArea.classList.add('visible');
+                copyBtn.disabled = false;
+                downloadBtn.disabled = false;
+                clearBtn.classList.add('visible');
+
+                showSuccess(`Successfully processed ${timeline.length} timeline entries!`);
+            } catch (error) {
+                showError('Error processing CSLP data: ' + error.message);
+            }
+        }
+
+        // Generate notation content
+        function generateNotationContent(metadata, timeline) {
+            let content = '';
+
+            // Add metadata
+            if (metadata.title) content += `Title: ${metadata.title}\n`;
+            if (metadata.ragam) content += `Ragam: ${metadata.ragam}\n`;
+            if (metadata.talam) content += `Talam: ${metadata.talam}\n`;
+            if (metadata.aarohanam) content += `Aarohanam: ${metadata.aarohanam}\n`;
+            if (metadata.avarohanam) content += `Avarohanam: ${metadata.avarohanam}\n`;
+
+            content += '\n';
+
+            // Add notation and lyrics from timeline (without timestamps)
+            timeline.forEach((entry) => {
+                const notation = entry.notation || '';
+                const lyrics = entry.text || '';
+                if (notation) content += `${notation}\n`;
+                if (lyrics) content += `${lyrics}\n`;
+                content += '\n';
+            });
+
+            return content.trim();
+        }
+
+        // Copy to clipboard
+        copyBtn.addEventListener('click', async () => {
+            try {
+                const textToCopy = notationOutput.value;
+                await navigator.clipboard.writeText(textToCopy);
+                showSuccess('Notation content copied to clipboard!');
+            } catch (error) {
+                showError('Failed to copy to clipboard');
+            }
+        });
+
+        // Download TXT file
+        downloadBtn.addEventListener('click', () => {
+            try {
+                const blob = new Blob([currentNotationContent], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${currentFileName}_notation.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showSuccess('Notation file downloaded!');
+            } catch (error) {
+                showError('Failed to download file');
+            }
+        });
+
+        // Clear all data
+        clearBtn.addEventListener('click', clearAll);
+
+        function clearAll() {
+            // Reset file input
+            cslpInput.value = '';
+
+            // Reset file display
+            cslpFileName.textContent = 'No file selected';
+            cslpStatus.textContent = 'Click to select';
+            cslpGroup.classList.remove('loaded');
+
+            // Hide sections
+            infoSection.classList.remove('visible');
+            outputArea.classList.remove('visible');
+
+            // Clear textarea
+            notationOutput.value = '';
+
+            // Disable buttons
+            copyBtn.disabled = true;
+            downloadBtn.disabled = true;
+
+            // Clear variables
+            currentFileName = '';
+            currentNotationContent = '';
+            cslpData = null;
+
+            // Hide messages and clear button
+            hideMessages();
+            clearBtn.classList.remove('visible');
+        }
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+            successDiv.classList.remove('visible');
+        }
+
+        function showSuccess(message) {
+            successDiv.textContent = message;
+            successDiv.classList.add('visible');
+            errorDiv.classList.remove('visible');
+        }
+
+        function hideMessages() {
+            errorDiv.classList.remove('visible');
+            successDiv.classList.remove('visible');
+        }
+
+        function resetFileInput() {
+            cslpInput.value = '';
+            cslpFileName.textContent = 'No file selected';
+            cslpStatus.textContent = 'Click to select';
+            cslpGroup.classList.remove('loaded');
+        }
+    </script>
+</body>
+</html>
