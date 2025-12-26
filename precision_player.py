@@ -1621,7 +1621,7 @@ class TrackWidget(QFrame):
         self.remove_btn.setStyleSheet("""
             QPushButton { 
                 background-color: #553333; 
-                color: #ff8888;
+                color: #ffffff;
                 border: 1px solid #664444;
                 border-radius: 3px;
                 font-weight: bold;

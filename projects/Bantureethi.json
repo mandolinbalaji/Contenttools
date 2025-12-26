@@ -2,12 +2,13 @@
   "_file_path": "projects\\Bantureethi.json",
   "audio_files": [
     "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Bantureethi/Stems/Bantureethi_Db_minus.mp3",
-    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Bantureethi/Stems/Bantureethi-Db_plus.mp3"
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Bantureethi/Stems/Bantureethi-Db_plus.mp3",
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Bantureethi/Stems/Bantureethi_Db_minus_click_track.mp3"
   ],
   "created": "2025-12-15T15:33:22.943516",
   "cslp_file": "C:\\Users\\mando\\iCloudDrive\\BalajiMusicContent\\All_Backing_Tracks\\Bantureethi\\Assets\\Bantureethi_Db_minus.cslp",
   "id": "0296c4a1-8d74-49c4-a186-8b92a301063f",
-  "last_modified": "2025-12-19T19:53:07.545596",
+  "last_modified": "2025-12-26T13:14:29.380028",
   "name": "Bantureethi",
   "version": "1.0"
 }
