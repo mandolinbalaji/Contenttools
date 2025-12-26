@@ -1875,19 +1875,19 @@ class PrecisionPlayer(QMainWindow):
         self.markers_widget.marker_clicked.connect(self.on_marker_clicked)
         bottom_layout.addWidget(self.markers_widget)
         
-        # Create top-level splitter for all resizable sections
-        top_splitter = QSplitter(Qt.Orientation.Vertical)
-        top_splitter.addWidget(lyrics_group)
-        top_splitter.addWidget(tracks_group)
-        
         # Waveform area with border and title
         waveform_group = QGroupBox("Waveform")
         waveform_layout = QVBoxLayout(waveform_group)
         waveform_layout.setContentsMargins(5, 15, 5, 5)
         waveform_layout.addWidget(bottom_container)
-        top_splitter.addWidget(waveform_group)
         
-        top_splitter.setSizes([150, 200, 200])  # Initial sizes for lyrics, tracks, waveform
+        # Create top-level splitter for all resizable sections
+        top_splitter = QSplitter(Qt.Orientation.Vertical)
+        top_splitter.addWidget(lyrics_group)
+        top_splitter.addWidget(waveform_group)
+        top_splitter.addWidget(tracks_group)
+        
+        top_splitter.setSizes([150, 200, 200])  # Initial sizes for lyrics, waveform, tracks
         
         layout.addWidget(top_splitter, 1)
         
