@@ -1540,15 +1540,16 @@ class TrackWidget(QFrame):
         
         self.mute_btn = QPushButton("M")
         self.mute_btn.setCheckable(True)
-        self.mute_btn.setFixedSize(28, 28)
+        self.mute_btn.setFixedSize(26, 26)
         self.mute_btn.setToolTip("Mute")
         self.mute_btn.setStyleSheet("""
             QPushButton { 
-                background-color: #555555; 
-                color: #cccccc;
+                background-color: #000000; 
+                color: white;
                 border: 1px solid #666666;
                 border-radius: 3px;
                 font-weight: bold;
+                font-size: 12px;
             }
             QPushButton:checked { 
                 background-color: #cc4444; 
@@ -1564,15 +1565,16 @@ class TrackWidget(QFrame):
         
         self.solo_btn = QPushButton("S")
         self.solo_btn.setCheckable(True)
-        self.solo_btn.setFixedSize(28, 28)
+        self.solo_btn.setFixedSize(32, 32)
         self.solo_btn.setToolTip("Solo")
         self.solo_btn.setStyleSheet("""
             QPushButton { 
                 background-color: #555555; 
-                color: #cccccc;
+                color: white;
                 border: 1px solid #666666;
                 border-radius: 3px;
                 font-weight: bold;
+                font-size: 12px;
             }
             QPushButton:checked { 
                 background-color: #44aa44; 
@@ -1600,13 +1602,12 @@ class TrackWidget(QFrame):
         
         controls_widget = QWidget()
         controls_widget.setLayout(controls)
-        controls_widget.setMaximumWidth(200)
         controls_widget.setMinimumWidth(200)
         layout.addWidget(controls_widget)
         
         # Remove button
         self.remove_btn = QPushButton("✕")
-        self.remove_btn.setFixedSize(28, 28)
+        self.remove_btn.setFixedSize(32, 32)
         self.remove_btn.setToolTip("Remove track")
         self.remove_btn.setStyleSheet("""
             QPushButton { 
@@ -1615,6 +1616,7 @@ class TrackWidget(QFrame):
                 border: 1px solid #664444;
                 border-radius: 3px;
                 font-weight: bold;
+                font-size: 14px;
             }
             QPushButton:hover {
                 background-color: #774444;
@@ -2369,7 +2371,24 @@ class PrecisionPlayer(QMainWindow):
             
             # Update status
             self.status_label.setText(f"Loaded project '{project_name}': {loaded_count} audio files, CSLP: {cslp_file or 'None'}")
-            self.file_label.setText(f"Project: {project_name}")
+            
+            # Build project display text with metadata if available
+            display_text = f"Project: {project_name}"
+            if self.cslp_data and self.cslp_data.metadata:
+                metadata = self.cslp_data.metadata
+                raga = metadata.get('ragam', '')
+                thalam = metadata.get('talam', '')
+                aro = metadata.get('aarohanam', '')
+                ava = metadata.get('avarohanam', '')
+                if raga or thalam or aro or ava:
+                    metadata_parts = []
+                    if raga: metadata_parts.append(f"Raga: {raga}")
+                    if thalam: metadata_parts.append(f"Thalam: {thalam}")
+                    if aro: metadata_parts.append(f"Aro: {aro}")
+                    if ava: metadata_parts.append(f"Ava: {ava}")
+                    display_text += f" ({', '.join(metadata_parts)})"
+            
+            self.file_label.setText(display_text)
             
             print(f"[DEBUG] Project '{project_name}' loaded successfully")
             
@@ -2397,7 +2416,12 @@ class PrecisionPlayer(QMainWindow):
             if self.project_manager.save_project(project):
                 self.project_manager.enable_auto_save()
                 QMessageBox.information(self, "Success", f"Project '{name}' saved!")
-                self.file_label.setText(f"Project: {name}")
+                
+                # Load CSLP data if available to update metadata display
+                if cslp_file:
+                    self.load_cslp_from_file(cslp_file)
+                
+                self.update_file_label()
             else:
                 QMessageBox.critical(self, "Error", "Failed to save project.")
         else:
@@ -2490,7 +2514,25 @@ class PrecisionPlayer(QMainWindow):
     def update_file_label(self):
         """Update the file label to show current status."""
         if self.project_manager.current_project:
-            self.file_label.setText(f"Project: {self.project_manager.current_project['name']}")
+            project_name = self.project_manager.current_project['name']
+            display_text = f"Project: {project_name}"
+            
+            # Add metadata if available
+            if self.cslp_data and self.cslp_data.metadata:
+                metadata = self.cslp_data.metadata
+                raga = metadata.get('ragam', '')
+                thalam = metadata.get('talam', '')
+                aro = metadata.get('aarohanam', '')
+                ava = metadata.get('avarohanam', '')
+                if raga or thalam or aro or ava:
+                    metadata_parts = []
+                    if raga: metadata_parts.append(f"Raga: {raga}")
+                    if thalam: metadata_parts.append(f"Thalam: {thalam}")
+                    if aro: metadata_parts.append(f"Aro: {aro}")
+                    if ava: metadata_parts.append(f"Ava: {ava}")
+                    display_text += f" ({', '.join(metadata_parts)})"
+            
+            self.file_label.setText(display_text)
         elif self.engine.tracks:
             self.file_label.setText(f"{len(self.engine.tracks)} track(s)")
         else:
