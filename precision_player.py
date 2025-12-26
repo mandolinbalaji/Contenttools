@@ -1102,7 +1102,9 @@ class LyricsDisplayWidget(QWidget):
                         painter.setPen(QColor(200, 200, 200))  # Gray text for other lines
                     
                     # Draw the line
-                    painter.drawText(10, y_offset + font_metrics.ascent(), line)
+                    text_width = font_metrics.horizontalAdvance(line)
+                    x = max(10, (w - text_width) // 2)  # Center horizontally, but not less than 10
+                    painter.drawText(x, y_offset + font_metrics.ascent(), line)
                     y_offset += line_height + 5  # Add some spacing between lines
 
         # Border
