@@ -737,9 +737,12 @@ class CSLPData:
             with open(filepath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            self.metadata = data.get('metadata', {})
+            self.metadata = data.get('data', {}).get('metadata', {})
             self.timeline = data.get('data', {}).get('timeline', [])
             self.directory = str(Path(filepath).parent)  # Store directory for relative path resolution
+            
+            print(f"[DEBUG] CSLPData.load - Loaded metadata: {self.metadata}")
+            print(f"[DEBUG] CSLPData.load - Loaded {len(self.timeline)} timeline entries")
             
             # Ensure timeline is sorted by time
             self.timeline.sort(key=lambda x: x.get('time', 0))
@@ -2376,10 +2379,12 @@ class PrecisionPlayer(QMainWindow):
             display_text = f"Project: {project_name}"
             if self.cslp_data and self.cslp_data.metadata:
                 metadata = self.cslp_data.metadata
+                print(f"[DEBUG] CSLP metadata found: {metadata}")
                 raga = metadata.get('ragam', '')
                 thalam = metadata.get('talam', '')
                 aro = metadata.get('aarohanam', '')
                 ava = metadata.get('avarohanam', '')
+                print(f"[DEBUG] Extracted - Raga: '{raga}', Thalam: '{thalam}', Aro: '{aro}', Ava: '{ava}'")
                 if raga or thalam or aro or ava:
                     metadata_parts = []
                     if raga: metadata_parts.append(f"Raga: {raga}")
@@ -2387,6 +2392,11 @@ class PrecisionPlayer(QMainWindow):
                     if aro: metadata_parts.append(f"Aro: {aro}")
                     if ava: metadata_parts.append(f"Ava: {ava}")
                     display_text += f" ({', '.join(metadata_parts)})"
+                    print(f"[DEBUG] Display text with metadata: {display_text}")
+                else:
+                    print("[DEBUG] No metadata fields found to display")
+            else:
+                print("[DEBUG] No CSLP data or metadata available")
             
             self.file_label.setText(display_text)
             
@@ -2520,10 +2530,12 @@ class PrecisionPlayer(QMainWindow):
             # Add metadata if available
             if self.cslp_data and self.cslp_data.metadata:
                 metadata = self.cslp_data.metadata
+                print(f"[DEBUG] update_file_label - CSLP metadata found: {metadata}")
                 raga = metadata.get('ragam', '')
                 thalam = metadata.get('talam', '')
                 aro = metadata.get('aarohanam', '')
                 ava = metadata.get('avarohanam', '')
+                print(f"[DEBUG] update_file_label - Extracted - Raga: '{raga}', Thalam: '{thalam}', Aro: '{aro}', Ava: '{ava}'")
                 if raga or thalam or aro or ava:
                     metadata_parts = []
                     if raga: metadata_parts.append(f"Raga: {raga}")
@@ -2531,6 +2543,11 @@ class PrecisionPlayer(QMainWindow):
                     if aro: metadata_parts.append(f"Aro: {aro}")
                     if ava: metadata_parts.append(f"Ava: {ava}")
                     display_text += f" ({', '.join(metadata_parts)})"
+                    print(f"[DEBUG] update_file_label - Display text with metadata: {display_text}")
+                else:
+                    print("[DEBUG] update_file_label - No metadata fields found to display")
+            else:
+                print("[DEBUG] update_file_label - No CSLP data or metadata available")
             
             self.file_label.setText(display_text)
         elif self.engine.tracks:
