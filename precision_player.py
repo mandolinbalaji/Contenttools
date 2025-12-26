@@ -1035,14 +1035,17 @@ class LyricsDisplayWidget(QWidget):
         # Combine all entries into display text (lyrics and notation together)
         combined_text = ""
         
-        for entry in display_entries:
+        for j, entry in enumerate(display_entries):
+            # Calculate the timeline index for this entry
+            timeline_index = start_index + j
+            
             # Add lyrics if present
             if entry['text']:
                 if combined_text:
                     combined_text += "\n"
-                combined_text += entry['text']
+                combined_text += f"{timeline_index + 1}. {entry['text']}"
             
-            # Add notation if present
+            # Add notation if present (without serial number)
             if entry['notation']:
                 if combined_text:
                     combined_text += "\n"
@@ -1104,8 +1107,8 @@ class LyricsDisplayWidget(QWidget):
                     else:
                         painter.setPen(QColor(200, 200, 200))  # Gray text for other lines
                     
-                    # Add serial number to lyrics line (not notation)
-                    display_line = f"{i + 1}. {line}"
+                    # Draw the line (serial numbers are already included in combined_text)
+                    display_line = line
                     
                     # Draw the line
                     text_width = font_metrics.horizontalAdvance(display_line)
