@@ -1678,6 +1678,7 @@ class TrackWidget(QFrame):
         
         - If track name contains 'click', display 'Click'
         - If track name contains 'vocals', display 'Vocal'
+        - If track name contains 'minus', display 'Minus'
         - Otherwise return the original name
         """
         track_name_lower = track_name.lower()
@@ -1685,6 +1686,8 @@ class TrackWidget(QFrame):
             return 'Click'
         elif 'vocals' in track_name_lower:
             return 'Vocal'
+        elif 'minus' in track_name_lower:
+            return 'Minus'
         else:
             return track_name
 
