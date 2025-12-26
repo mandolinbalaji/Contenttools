@@ -1515,7 +1515,8 @@ class TrackWidget(QFrame):
         controls.setSpacing(4)
         
         # Track name
-        self.name_label = QLabel(self.track.name)
+        display_name = self._simplify_track_name(self.track.name)
+        self.name_label = QLabel(display_name)
         self.name_label.setStyleSheet("font-weight: bold; color: #ffffff;")
         self.name_label.setMaximumWidth(180)
         self.name_label.setWordWrap(True)  # Enable word wrapping for long track names
@@ -1671,6 +1672,21 @@ class TrackWidget(QFrame):
     def set_loop(self, enabled, start_ratio, end_ratio):
         """Update loop markers on waveform."""
         self.waveform.set_loop(enabled, start_ratio, end_ratio)
+    
+    def _simplify_track_name(self, track_name):
+        """Simplify track names based on keywords.
+        
+        - If track name contains 'click', display 'Click'
+        - If track name contains 'vocals', display 'Vocal'
+        - Otherwise return the original name
+        """
+        track_name_lower = track_name.lower()
+        if 'click' in track_name_lower:
+            return 'Click'
+        elif 'vocals' in track_name_lower:
+            return 'Vocal'
+        else:
+            return track_name
 
 
 class PrecisionPlayer(QMainWindow):
