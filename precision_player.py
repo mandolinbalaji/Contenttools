@@ -1518,6 +1518,7 @@ class TrackWidget(QFrame):
         self.name_label = QLabel(self.track.name)
         self.name_label.setStyleSheet("font-weight: bold; color: #ffffff;")
         self.name_label.setMaximumWidth(180)
+        self.name_label.setWordWrap(True)  # Enable word wrapping for long track names
         controls.addWidget(self.name_label)
         
         # Output device selector
