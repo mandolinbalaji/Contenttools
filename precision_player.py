@@ -1104,10 +1104,13 @@ class LyricsDisplayWidget(QWidget):
                     else:
                         painter.setPen(QColor(200, 200, 200))  # Gray text for other lines
                     
+                    # Add serial number to lyrics line (not notation)
+                    display_line = f"{i + 1}. {line}"
+                    
                     # Draw the line
-                    text_width = font_metrics.horizontalAdvance(line)
+                    text_width = font_metrics.horizontalAdvance(display_line)
                     x = max(10, (w - text_width) // 2)  # Center horizontally, but not less than 10
-                    painter.drawText(x, y_offset + font_metrics.ascent(), line)
+                    painter.drawText(x, y_offset + font_metrics.ascent(), display_line)
                     y_offset += line_height + 5  # Add some spacing between lines
 
         # Border
