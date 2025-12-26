@@ -1604,12 +1604,6 @@ class TrackWidget(QFrame):
         controls_widget.setMinimumWidth(200)
         layout.addWidget(controls_widget)
         
-        # Mini waveform (right side, expandable)
-        self.waveform = MiniWaveformWidget()
-        if self.track.audio_data is not None:
-            self.waveform.set_audio_data(self.track.audio_data)
-        layout.addWidget(self.waveform, 1)
-        
         # Remove button
         self.remove_btn = QPushButton("✕")
         self.remove_btn.setFixedSize(28, 28)
@@ -1850,7 +1844,7 @@ class PrecisionPlayer(QMainWindow):
         self.tracks_scroll.setStyleSheet("QScrollArea { border: none; }")
         
         self.tracks_container = QWidget()
-        self.tracks_container_layout = QVBoxLayout(self.tracks_container)
+        self.tracks_container_layout = QHBoxLayout(self.tracks_container)
         self.tracks_container_layout.setContentsMargins(0, 0, 0, 0)
         self.tracks_container_layout.setSpacing(5)
         self.tracks_container_layout.addStretch()
