@@ -1507,18 +1507,18 @@ class TrackWidget(QFrame):
     
     def init_ui(self):
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(8)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(12)
         
         # Left side: controls
         controls = QVBoxLayout()
-        controls.setSpacing(4)
+        controls.setSpacing(8)
         
         # Track name
         display_name = self._simplify_track_name(self.track.name)
         self.name_label = QLabel(display_name)
-        self.name_label.setStyleSheet("font-weight: bold; color: #ffffff;")
-        self.name_label.setMaximumWidth(180)
+        self.name_label.setStyleSheet("font-weight: bold; color: #ffffff; font-size: 14px;")
+        self.name_label.setMaximumWidth(200)
         self.name_label.setWordWrap(True)  # Enable word wrapping for long track names
         controls.addWidget(self.name_label)
         
@@ -1526,16 +1526,17 @@ class TrackWidget(QFrame):
         device_layout = QHBoxLayout()
         device_layout.addWidget(QLabel("Out:"))
         self.device_combo = QComboBox()
-        self.device_combo.setMaximumWidth(150)
+        self.device_combo.setMaximumWidth(160)
         self.device_combo.setToolTip("Output device for this track")
         self.device_combo.setStyleSheet("""
             QComboBox {
                 background-color: #3a3a3a;
                 color: #ffffff;
                 border: 1px solid #555555;
-                padding: 2px 5px;
-                border-radius: 3px;
-                font-size: 10px;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                min-height: 24px;
             }
         """)
         # Populate devices
@@ -1547,20 +1548,20 @@ class TrackWidget(QFrame):
         
         # Mute/Solo buttons row
         btn_layout = QHBoxLayout()
-        btn_layout.setSpacing(4)
+        btn_layout.setSpacing(8)
         
         self.mute_btn = QPushButton("M")
         self.mute_btn.setCheckable(True)
-        self.mute_btn.setFixedSize(26, 26)
+        self.mute_btn.setFixedSize(32, 32)
         self.mute_btn.setToolTip("Mute")
         self.mute_btn.setStyleSheet("""
             QPushButton { 
                 background-color: #000000; 
                 color: white;
                 border: 1px solid #666666;
-                border-radius: 3px;
+                border-radius: 4px;
                 font-weight: bold;
-                font-size: 12px;
+                font-size: 14px;
             }
             QPushButton:checked { 
                 background-color: #cc4444; 
@@ -1583,9 +1584,9 @@ class TrackWidget(QFrame):
                 background-color: #555555; 
                 color: white;
                 border: 1px solid #666666;
-                border-radius: 3px;
+                border-radius: 4px;
                 font-weight: bold;
-                font-size: 12px;
+                font-size: 14px;
             }
             QPushButton:checked { 
                 background-color: #44aa44; 
@@ -1604,7 +1605,7 @@ class TrackWidget(QFrame):
         self.volume_slider = QSlider(Qt.Orientation.Horizontal)
         self.volume_slider.setRange(0, 200)
         self.volume_slider.setValue(100)
-        self.volume_slider.setMaximumWidth(60)
+        self.volume_slider.setMaximumWidth(80)
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
         btn_layout.addWidget(self.volume_slider)
         
@@ -1613,7 +1614,7 @@ class TrackWidget(QFrame):
         
         controls_widget = QWidget()
         controls_widget.setLayout(controls)
-        controls_widget.setMinimumWidth(200)
+        controls_widget.setMinimumWidth(220)
         layout.addWidget(controls_widget)
         
         # Remove button
@@ -1641,11 +1642,11 @@ class TrackWidget(QFrame):
             TrackWidget {
                 background-color: #2a2a2a;
                 border: 1px solid #444;
-                border-radius: 4px;
+                border-radius: 6px;
             }
         """)
-        self.setMinimumHeight(90)
-        self.setMaximumHeight(100)
+        self.setMinimumHeight(110)
+        self.setMaximumHeight(120)
     
     def on_device_changed(self, index):
         """Handle device selection change."""
@@ -1725,7 +1726,7 @@ class PrecisionPlayer(QMainWindow):
             QLabel {
                 color: #e6e6e6;
                 font-family: 'Segoe UI', sans-serif;
-                font-size: 13px;
+                font-size: 14px;
                 font-weight: 400;
             }
             QPushButton {
@@ -1733,12 +1734,12 @@ class PrecisionPlayer(QMainWindow):
                     stop:0 #2d3748, stop:1 #1a202c);
                 color: #e6e6e6;
                 border: 1px solid #4a5568;
-                padding: 10px 20px;
-                border-radius: 6px;
+                padding: 12px 24px;
+                border-radius: 8px;
                 font-family: 'Segoe UI', sans-serif;
                 font-size: 14px;
                 font-weight: 500;
-                min-height: 16px;
+                min-height: 20px;
             }
             QPushButton:hover {
                 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
@@ -1786,18 +1787,21 @@ class PrecisionPlayer(QMainWindow):
             QGroupBox {
                 color: #e6e6e6;
                 border: 2px solid #4a5568;
-                border-radius: 8px;
-                margin-top: 12px;
-                padding-top: 12px;
+                border-radius: 10px;
+                margin-top: 15px;
+                padding-top: 15px;
                 font-family: 'Segoe UI', sans-serif;
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: 600;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 12px;
-                padding: 0 8px;
+                left: 15px;
+                padding: 0 10px;
                 color: #63b3ed;
+                font-size: 16px;
+                font-weight: 600;
+            }
             }
             QScrollArea {
                 border: none;
@@ -1826,8 +1830,8 @@ class PrecisionPlayer(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
-        layout.setSpacing(10)
-        layout.setContentsMargins(20, 15, 20, 15)
+        layout.setSpacing(15)
+        layout.setContentsMargins(25, 20, 25, 20)
         
         # Top bar - File controls
         top_bar = QHBoxLayout()
@@ -1859,7 +1863,7 @@ class PrecisionPlayer(QMainWindow):
         # Lyrics/Notation display with border and title
         lyrics_group = QGroupBox("Lyrics / Notation")
         lyrics_layout = QVBoxLayout(lyrics_group)
-        lyrics_layout.setContentsMargins(5, 15, 5, 5)
+        lyrics_layout.setContentsMargins(10, 20, 10, 10)
         self.lyrics_display = LyricsDisplayWidget()
         lyrics_layout.addWidget(self.lyrics_display)
         layout.addWidget(lyrics_group)
@@ -1867,18 +1871,18 @@ class PrecisionPlayer(QMainWindow):
         # Tracks scroll area
         tracks_group = QGroupBox("Tracks")
         tracks_layout = QVBoxLayout(tracks_group)
-        tracks_layout.setContentsMargins(5, 15, 5, 5)
+        tracks_layout.setContentsMargins(10, 20, 10, 10)
         
         self.tracks_scroll = QScrollArea()
         self.tracks_scroll.setWidgetResizable(True)
-        self.tracks_scroll.setMinimumHeight(100)
-        self.tracks_scroll.setMaximumHeight(250)
+        self.tracks_scroll.setMinimumHeight(120)
+        self.tracks_scroll.setMaximumHeight(280)
         self.tracks_scroll.setStyleSheet("QScrollArea { border: none; }")
         
         self.tracks_container = QWidget()
         self.tracks_container_layout = QHBoxLayout(self.tracks_container)
         self.tracks_container_layout.setContentsMargins(0, 0, 0, 0)
-        self.tracks_container_layout.setSpacing(5)
+        self.tracks_container_layout.setSpacing(10)
         self.tracks_container_layout.addStretch()
         
         self.tracks_scroll.setWidget(self.tracks_container)
