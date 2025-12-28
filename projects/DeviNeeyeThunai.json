@@ -8,7 +8,7 @@
   "created": "2025-12-26T18:21:12.218443",
   "cslp_file": "C:\\Users\\mando\\iCloudDrive\\BalajiMusicContent\\All_Backing_Tracks\\DeviNeeye\\Assets\\DeviNeeye_Db_Minus.cslp",
   "id": "bfb8ef81-3ddd-4c06-ab6e-4e4114771d1d",
-  "last_modified": "2025-12-28T10:00:54.834429",
+  "last_modified": "2025-12-28T14:13:00.282862",
   "name": "DeviNeeyeThunai",
   "track_settings": {
     "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/DeviNeeye/Stems/DeviNeeye_Db_Minus.mp3": {
@@ -16,7 +16,7 @@
       "muted": false,
       "name": "DeviNeeye_Db_Minus",
       "solo": false,
-      "volume": 1.47
+      "volume": 0.46
     },
     "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/DeviNeeye/Stems/DeviNeeye_Db_Minus_click_track.mp3": {
       "device": null,
@@ -27,7 +27,7 @@
     },
     "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/DeviNeeye/Stems/DeviNeeye_Db_vocals.mp3": {
       "device": null,
-      "muted": true,
+      "muted": false,
       "name": "DeviNeeye_Db_vocals",
       "solo": false,
       "volume": 1.0

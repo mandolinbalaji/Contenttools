@@ -1,13 +1,37 @@
 {
   "_file_path": "projects\\Samajavaragamana.json",
   "audio_files": [
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Samajavaragamana/Stems/samajavaragamana_vocals.mp3",
     "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Samajavaragamana/Stems/samajavaragamana_minus.mp3",
     "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Samajavaragamana/Stems/samajavaragamana_click_track.mp3"
   ],
   "created": "2025-12-18T10:38:30.320905",
   "cslp_file": "C:\\Users\\mando\\iCloudDrive\\BalajiMusicContent\\All_Backing_Tracks\\Samajavaragamana\\Assets\\samajavaragamana_minus.cslp",
   "id": "1fcdd689-e7e4-4117-b147-15734d6a8cf2",
-  "last_modified": "2025-12-26T12:58:53.078876",
+  "last_modified": "2025-12-28T14:11:16.861860",
   "name": "Samajavaragamana",
-  "version": "1.0"
+  "version": "1.0",
+  "track_settings": {
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Samajavaragamana/Stems/samajavaragamana_vocals.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "samajavaragamana_vocals"
+    },
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Samajavaragamana/Stems/samajavaragamana_minus.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "samajavaragamana_minus"
+    },
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Samajavaragamana/Stems/samajavaragamana_click_track.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "samajavaragamana_click_track"
+    }
+  }
 }
