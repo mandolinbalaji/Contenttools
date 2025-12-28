@@ -1851,6 +1851,11 @@ class PrecisionPlayer(QMainWindow):
         self.save_project_btn.clicked.connect(self.save_current_project)
         top_bar.addWidget(self.save_project_btn)
         
+        self.download_lyrics_btn = QPushButton("📥 Lyrics TXT")
+        self.download_lyrics_btn.clicked.connect(self.download_lyrics_txt)
+        self.download_lyrics_btn.setEnabled(False)
+        top_bar.addWidget(self.download_lyrics_btn)
+        
         top_bar.addStretch()
         
         self.file_label = QLabel("No tracks loaded")
@@ -2220,6 +2225,9 @@ class PrecisionPlayer(QMainWindow):
             # Set current CSLP file path regardless of whether there are markers
             self.current_cslp = Path(filepath)
             
+            # Enable download button since we have CSLP data
+            self.download_lyrics_btn.setEnabled(True)
+            
             if self.cslp_data.timeline:
                 # Set directory for image path resolution
                 self.lyrics_display.set_directory(self.cslp_data.directory)
@@ -2381,6 +2389,7 @@ class PrecisionPlayer(QMainWindow):
             # Clear current CSLP data
             self.cslp_data = CSLPData()
             self.current_cslp = None
+            self.download_lyrics_btn.setEnabled(False)
             self.update_cslp_display()
             print("[DEBUG] CSLP data cleared")
             
@@ -2582,14 +2591,17 @@ class PrecisionPlayer(QMainWindow):
             success, message = self.cslp_data.load(file_path)
             if success:
                 self.current_cslp = Path(file_path)
+                self.download_lyrics_btn.setEnabled(True)
                 self.update_cslp_display()
                 self.status_label.setText(f"Loaded CSLP: {Path(file_path).name}")
             else:
                 print(f"Failed to load CSLP {file_path}: {message}")
                 self.current_cslp = None
+                self.download_lyrics_btn.setEnabled(False)
         except Exception as e:
             print(f"Error loading CSLP {file_path}: {e}")
             self.current_cslp = None
+            self.download_lyrics_btn.setEnabled(False)
     
     def update_cslp_display(self):
         """Update the display with current CSLP data."""
@@ -2668,6 +2680,81 @@ class PrecisionPlayer(QMainWindow):
                     audio_files.append(str(widget.track.filepath))
             
             self.project_manager.update_project_audio(audio_files)
+    
+    def download_lyrics_txt(self):
+        """Download lyrics and notation as a formatted TXT file."""
+        if not self.cslp_data or not self.cslp_data.timeline:
+            QMessageBox.warning(self, "No Data", "No CSLP data loaded. Please load a CSLP file first.")
+            return
+        
+        # Generate filename suggestion
+        filename = "lyrics_notation.txt"
+        if self.cslp_data.metadata.get('title'):
+            # Sanitize filename
+            title = self.cslp_data.metadata['title'].replace(' ', '_').replace('/', '_').replace('\\', '_')
+            filename = f"{title}_lyrics.txt"
+        
+        # Get save location
+        filepath, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Lyrics TXT",
+            filename,
+            "Text Files (*.txt);;All Files (*.*)"
+        )
+        
+        if not filepath:
+            return
+        
+        try:
+            # Generate content
+            content = self.generate_lyrics_txt_content()
+            
+            # Write file
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            QMessageBox.information(self, "Success", f"Lyrics TXT saved to:\n{filepath}")
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to save file:\n{str(e)}")
+    
+    def generate_lyrics_txt_content(self):
+        """Generate formatted TXT content with metadata table and lyrics/notation."""
+        lines = []
+        
+        # Add metadata table at the top
+        lines.append("=" * 60)
+        lines.append("SONG METADATA")
+        lines.append("=" * 60)
+        
+        metadata = self.cslp_data.metadata
+        if metadata:
+            # Create table format
+            max_key_len = max(len(key) for key in metadata.keys()) if metadata else 0
+            
+            for key, value in metadata.items():
+                if value:  # Only include non-empty values
+                    key_formatted = key.upper().replace('_', ' ')
+                    lines.append(f"{key_formatted:<{max_key_len}} : {value}")
+        
+        lines.append("")
+        lines.append("=" * 60)
+        lines.append("LYRICS AND NOTATION")
+        lines.append("=" * 60)
+        lines.append("")
+        
+        # Add alternating lyrics and notation lines
+        for entry in self.cslp_data.timeline:
+            text = entry.get('text', '').strip()
+            notation = entry.get('notation', '').strip()
+            
+            if text:
+                lines.append(f"Lyrics: {text}")
+            if notation:
+                lines.append(f"Notation: {notation}")
+            lines.append("")  # Empty line between entries
+        
+        return "\n".join(lines)
     
     def closeEvent(self, event):
         """Clean up on close."""
