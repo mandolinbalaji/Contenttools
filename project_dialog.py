@@ -34,6 +34,74 @@ class ProjectDialog(QDialog):
 
     def setup_ui(self):
         """Setup the user interface."""
+        # Apply dark theme stylesheet
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #0f0f23;
+                color: #e6e6e6;
+            }
+            QLabel {
+                color: #e6e6e6;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 14px;
+                font-weight: 400;
+            }
+            QPushButton {
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #2d3748, stop:1 #1a202c);
+                color: #e6e6e6;
+                border: 1px solid #4a5568;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-family: 'Segoe UI', sans-serif;
+                font-size: 12px;
+                font-weight: 500;
+                min-height: 16px;
+            }
+            QPushButton:hover {
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4a5568, stop:1 #2d3748);
+                border-color: #63b3ed;
+            }
+            QPushButton:pressed {
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #1a202c, stop:1 #0f0f23);
+            }
+            QPushButton:disabled {
+                background-color: #2a2a2a;
+                color: #666;
+                border-color: #444;
+            }
+            QGroupBox {
+                font-weight: bold;
+                border: 2px solid #4a5568;
+                border-radius: 6px;
+                margin-top: 1ex;
+                color: #e6e6e6;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 10px 0 10px;
+                color: #e6e6e6;
+                font-weight: bold;
+            }
+            QListWidget {
+                background-color: #1a1a1a;
+                border: 1px solid #4a5568;
+                border-radius: 4px;
+                color: #e6e6e6;
+                selection-background-color: #4a5568;
+            }
+            QListWidget::item:hover {
+                background-color: #2d3748;
+            }
+            QListWidget::item:selected {
+                background-color: #4a5568;
+                color: #ffffff;
+            }
+        """)
+
         layout = QVBoxLayout(self)
 
         # Title
@@ -94,6 +162,7 @@ class ProjectDialog(QDialog):
 
         self.name_label = QLabel("No project selected")
         self.name_label.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+        self.name_label.setStyleSheet("font-weight: bold; color: #ffffff;")
         details_layout.addRow("Name:", self.name_label)
 
         self.audio_label = QLabel("-")
