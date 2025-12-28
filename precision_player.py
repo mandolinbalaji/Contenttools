@@ -1802,7 +1802,6 @@ class PrecisionPlayer(QMainWindow):
                 font-size: 16px;
                 font-weight: 600;
             }
-            }
             QScrollArea {
                 border: none;
                 background-color: transparent;
