@@ -22,13 +22,14 @@ class ProjectManager:
         self.current_project_path: Optional[Path] = None
         self.auto_save_enabled = False
 
-    def create_project(self, name: str, audio_files: List[str] = None, cslp_file: str = None) -> Dict[str, Any]:
+    def create_project(self, name: str, audio_files: List[str] = None, cslp_file: str = None, track_settings: Dict[str, Dict[str, Any]] = None) -> Dict[str, Any]:
         """Create a new project configuration."""
         project = {
             "id": str(uuid.uuid4()),
             "name": name,
             "audio_files": audio_files or [],
             "cslp_file": cslp_file,
+            "track_settings": track_settings or {},
             "created": datetime.now().isoformat(),
             "last_modified": datetime.now().isoformat(),
             "version": "1.0"
@@ -102,6 +103,16 @@ class ProjectManager:
             return False
 
         self.current_project["cslp_file"] = cslp_file
+        if self.auto_save_enabled:
+            return self.save_project(self.current_project)
+        return True
+
+    def update_project_track_settings(self, track_settings: Dict[str, Dict[str, Any]]) -> bool:
+        """Update track settings in current project."""
+        if not self.current_project:
+            return False
+
+        self.current_project["track_settings"] = track_settings
         if self.auto_save_enabled:
             return self.save_project(self.current_project)
         return True

@@ -258,7 +258,7 @@ class Track:
         self.audio_data = None
         self.sample_rate = 44100
         self.channels = 2
-        self.volume = 1.0  # 0.0 to 1.0
+        self.volume = 1.0  # 0.0 to 2.0 (200%)
         self.muted = False
         self.solo = False
         self.device = None  # Output device index
@@ -1602,7 +1602,7 @@ class TrackWidget(QFrame):
         # Volume slider inline with M/S
         btn_layout.addWidget(QLabel("Vol"))
         self.volume_slider = QSlider(Qt.Orientation.Horizontal)
-        self.volume_slider.setRange(0, 100)
+        self.volume_slider.setRange(0, 200)
         self.volume_slider.setValue(100)
         self.volume_slider.setMaximumWidth(60)
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
@@ -1663,6 +1663,7 @@ class TrackWidget(QFrame):
     
     def on_volume_changed(self, value):
         self.track.volume = value / 100.0
+        self.volume_slider.setToolTip(f"Volume: {value}%")
         self.track_changed.emit(self.track.id)
     
     def set_position(self, ratio):
@@ -2152,7 +2153,20 @@ class PrecisionPlayer(QMainWindow):
     
     def on_track_changed(self, track_id):
         """Handle track settings changed (mute/solo/volume)."""
-        pass  # Settings already applied to track object
+        # Settings already applied to track object
+        # Auto-save track settings if enabled
+        if self.project_manager.current_project and self.project_manager.auto_save_enabled:
+            track_settings = {}
+            for widget in self.track_widgets:
+                if widget.track and widget.track.filepath:
+                    track_settings[str(widget.track.filepath)] = {
+                        "volume": widget.track.volume,
+                        "muted": widget.track.muted,
+                        "solo": widget.track.solo,
+                        "device": widget.track.device,
+                        "name": widget.track.name
+                    }
+            self.project_manager.update_project_track_settings(track_settings)
     
     def on_track_device_changed(self, track_id, device_index):
         """Handle per-track device selection change."""
@@ -2163,6 +2177,20 @@ class PrecisionPlayer(QMainWindow):
                 device_name = widget.device_combo.currentText()
                 self.status_label.setText(f"{widget.track.name} → {device_name}")
                 break
+        
+        # Auto-save track settings if enabled
+        if self.project_manager.current_project and self.project_manager.auto_save_enabled:
+            track_settings = {}
+            for widget in self.track_widgets:
+                if widget.track and widget.track.filepath:
+                    track_settings[str(widget.track.filepath)] = {
+                        "volume": widget.track.volume,
+                        "muted": widget.track.muted,
+                        "solo": widget.track.solo,
+                        "device": widget.track.device,
+                        "name": widget.track.name
+                    }
+            self.project_manager.update_project_track_settings(track_settings)
     
     def load_file(self):
         """Alias for add_track for compatibility."""
@@ -2380,6 +2408,33 @@ class PrecisionPlayer(QMainWindow):
             elif cslp_file:
                 print(f"Warning: CSLP file not found: {cslp_file}")
             
+            # Apply track settings if available
+            track_settings = project_data.get("track_settings", {})
+            if track_settings:
+                for widget in self.track_widgets:
+                    if widget.track and widget.track.filepath:
+                        filepath_str = str(widget.track.filepath)
+                        if filepath_str in track_settings:
+                            settings = track_settings[filepath_str]
+                            widget.track.volume = settings.get("volume", 1.0)
+                            widget.track.muted = settings.get("muted", False)
+                            widget.track.solo = settings.get("solo", False)
+                            widget.track.device = settings.get("device")
+                            widget.track.name = settings.get("name", widget.track.name)
+                            
+                            # Update UI to reflect loaded settings
+                            widget.volume_slider.setValue(int(widget.track.volume * 100))
+                            widget.mute_btn.setChecked(widget.track.muted)
+                            widget.solo_btn.setChecked(widget.track.solo)
+                            if widget.track.device is not None:
+                                # Find the device index in the combo box
+                                for i in range(widget.device_combo.count()):
+                                    if widget.device_combo.itemData(i) == widget.track.device:
+                                        widget.device_combo.setCurrentIndex(i)
+                                        break
+                            
+                            print(f"[DEBUG] Applied settings for track: {filepath_str}")
+            
             print(f"[DEBUG] Final CSLP timeline entries: {len(self.cslp_data.timeline)}")
             
             # Enable playback controls if tracks were loaded
@@ -2442,13 +2497,22 @@ class PrecisionPlayer(QMainWindow):
             
             name = name.strip()
             audio_files = []
+            track_settings = {}
             for widget in self.track_widgets:
                 if widget.track and widget.track.filepath:
                     audio_files.append(str(widget.track.filepath))
+                    # Store track settings keyed by filepath
+                    track_settings[str(widget.track.filepath)] = {
+                        "volume": widget.track.volume,
+                        "muted": widget.track.muted,
+                        "solo": widget.track.solo,
+                        "device": widget.track.device,
+                        "name": widget.track.name
+                    }
             
             cslp_file = str(self.current_cslp) if self.current_cslp else None
             
-            project = self.project_manager.create_project(name, audio_files, cslp_file)
+            project = self.project_manager.create_project(name, audio_files, cslp_file, track_settings)
             if self.project_manager.save_project(project):
                 self.project_manager.enable_auto_save()
                 QMessageBox.information(self, "Success", f"Project '{name}' saved!")
@@ -2463,14 +2527,24 @@ class PrecisionPlayer(QMainWindow):
         else:
             # Update existing project
             audio_files = []
+            track_settings = {}
             for widget in self.track_widgets:
                 if widget.track and widget.track.filepath:
                     audio_files.append(str(widget.track.filepath))
+                    # Store track settings keyed by filepath
+                    track_settings[str(widget.track.filepath)] = {
+                        "volume": widget.track.volume,
+                        "muted": widget.track.muted,
+                        "solo": widget.track.solo,
+                        "device": widget.track.device,
+                        "name": widget.track.name
+                    }
             
             cslp_file = str(self.current_cslp) if self.current_cslp else None
             
             self.project_manager.update_project_audio(audio_files)
             self.project_manager.update_project_cslp(cslp_file)
+            self.project_manager.update_project_track_settings(track_settings)
             
             if self.project_manager.save_project(self.project_manager.current_project):
                 QMessageBox.information(self, "Success", f"Project '{self.project_manager.current_project['name']}' updated!")
