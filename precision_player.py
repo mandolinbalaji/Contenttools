@@ -1690,6 +1690,13 @@ class PrecisionPlayer(QMainWindow):
         self.setup_shortcuts()
         self.setup_timer()
         
+        # Try to load the last opened project after UI is initialized
+        last_project = self.project_manager.load_last_project_on_startup()
+        if last_project:
+            print(f"Auto-loading last project: {last_project['name']}")
+            # Load the project data into the UI
+            self.load_project(last_project)
+        
     def init_ui(self):
         """Initialize the user interface."""
         self.setWindowTitle("Precision Audio Player")
@@ -2251,14 +2258,11 @@ class PrecisionPlayer(QMainWindow):
         # During count-in, value is the current beat number
         if hasattr(self.engine, 'countin_current_beat') and self.engine.countin_current_beat <= self.engine.countin_beats:
             if value > 0:
-                self.beat_counter_label.setText(str(value))
-                # Flash the label
-                self.beat_counter_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #ffff00;")
-                QTimer.singleShot(200, lambda: self.beat_counter_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #888888;"))
+                # Beat counter display removed - could be added back if needed
+                pass
         else:
             # Normal playback, reset counter
-            if self.beat_counter_label.text() != "Ready":
-                self.beat_counter_label.setText("Ready")
+            pass
     
     def on_play_pause(self):
         """Handle play/pause button."""
@@ -2272,7 +2276,6 @@ class PrecisionPlayer(QMainWindow):
         """Handle stop button."""
         self.engine.stop()
         self.play_btn.setText("▶ Play")
-        self.beat_counter_label.setText("Ready")
     
     def on_play_with_countin(self):
         """Handle play with count-in button."""
@@ -2285,7 +2288,6 @@ class PrecisionPlayer(QMainWindow):
         # Start count-in playback
         self.engine.play_with_countin(bpm, beats)
         self.play_btn.setText("⏸ Pause")
-        self.beat_counter_label.setText("1")  # Will be updated by timer
     
     def on_loop_toggle(self):
         """Handle loop toggle."""
@@ -2340,7 +2342,6 @@ class PrecisionPlayer(QMainWindow):
             # Check if playback finished
             if not self.engine.is_playing and self.play_btn.text() == "⏸ Pause":
                 self.play_btn.setText("▶ Play")
-                self.beat_counter_label.setText("Ready")
     
     def show_projects_dialog(self):
         """Show the projects management dialog."""
@@ -2459,6 +2460,9 @@ class PrecisionPlayer(QMainWindow):
             
             # Update file label with project info and metadata
             self.update_file_label()
+            
+            # Remember this as the last opened project
+            self.project_manager.save_last_project(project_name)
             
             print(f"[DEBUG] Project '{project_name}' loaded successfully")
             
