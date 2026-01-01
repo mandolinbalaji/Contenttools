@@ -1508,9 +1508,9 @@ class TrackWidget(QGroupBox):
         self.init_ui()
     
     def init_ui(self):
-        layout = QHBoxLayout(self)
+        layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 20, 10, 10)
-        layout.setSpacing(8)
+        layout.setSpacing(12)  # Increased spacing for more space below devices
         
         # Top row: Device selector
         top_row = QHBoxLayout()
@@ -1607,7 +1607,7 @@ class TrackWidget(QGroupBox):
         self.solo_btn.clicked.connect(self.on_solo_toggle)
         bottom_row.addWidget(self.solo_btn)
         
-        # Volume slider
+        # Volume slider (horizontal)
         bottom_row.addWidget(QLabel("Vol:"))
         self.volume_slider = QSlider(Qt.Orientation.Horizontal)
         self.volume_slider.setRange(0, 200)
@@ -1619,8 +1619,10 @@ class TrackWidget(QGroupBox):
         bottom_row.addStretch()
         layout.addLayout(bottom_row)
         
-        self.setMinimumHeight(110)
-        self.setMaximumHeight(120)
+        # Reduce groupbox width
+        self.setMaximumWidth(280)
+        self.setMinimumHeight(130)
+        self.setMaximumHeight(140)
     
     def on_device_changed(self, index):
         """Handle device selection change."""
