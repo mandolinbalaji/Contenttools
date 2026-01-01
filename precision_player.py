@@ -1492,7 +1492,7 @@ class MiniWaveformWidget(QWidget):
             painter.drawLine(x, 0, x, h)
 
 
-class TrackWidget(QFrame):
+class TrackWidget(QGroupBox):
     """Widget for a single track with controls and output device selector."""
     
     track_removed = pyqtSignal(int)  # Emits track ID
@@ -1500,33 +1500,26 @@ class TrackWidget(QFrame):
     device_changed = pyqtSignal(int, object)  # Emits (track_id, device_index)
     
     def __init__(self, track, devices):
-        super().__init__()
+        # Set the track name as the group box title
+        display_name = self._simplify_track_name(track.name)
+        super().__init__(display_name)
         self.track = track
         self.devices = devices  # List of (name, index) tuples
         self.init_ui()
     
     def init_ui(self):
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(12, 12, 12, 12)
-        layout.setSpacing(12)
+        layout.setContentsMargins(10, 20, 10, 10)
+        layout.setSpacing(8)
         
-        # Left side: controls
-        controls = QVBoxLayout()
-        controls.setSpacing(8)
-        
-        # Track name
-        display_name = self._simplify_track_name(self.track.name)
-        self.name_label = QLabel(display_name)
-        self.name_label.setStyleSheet("font-weight: bold; color: #ffffff; font-size: 14px;")
-        self.name_label.setMaximumWidth(200)
-        self.name_label.setWordWrap(True)  # Enable word wrapping for long track names
-        controls.addWidget(self.name_label)
+        # Top row: Device selector, Delete button
+        top_row = QHBoxLayout()
+        top_row.setSpacing(8)
         
         # Output device selector
-        device_layout = QHBoxLayout()
-        device_layout.addWidget(QLabel("Out:"))
+        top_row.addWidget(QLabel("Out:"))
         self.device_combo = QComboBox()
-        self.device_combo.setMaximumWidth(160)
+        self.device_combo.setMaximumWidth(120)
         self.device_combo.setToolTip("Output device for this track")
         self.device_combo.setStyleSheet("""
             QComboBox {
@@ -1543,22 +1536,45 @@ class TrackWidget(QFrame):
         for name, idx in self.devices:
             self.device_combo.addItem(name, idx)
         self.device_combo.currentIndexChanged.connect(self.on_device_changed)
-        device_layout.addWidget(self.device_combo, 1)
-        controls.addLayout(device_layout)
+        top_row.addWidget(self.device_combo)
         
-        # Mute/Solo buttons row
-        btn_layout = QHBoxLayout()
-        btn_layout.setSpacing(8)
+        # Remove button
+        self.remove_btn = QPushButton("✕")
+        self.remove_btn.setFixedSize(28, 28)
+        self.remove_btn.setToolTip("Remove track")
+        self.remove_btn.setStyleSheet("""
+            QPushButton { 
+                background-color: #553333; 
+                color: #ffffff;
+                border: 1px solid #664444;
+                border-radius: 3px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #774444;
+                color: #ffaaaa;
+            }
+        """)
+        self.remove_btn.clicked.connect(lambda: self.track_removed.emit(self.track.id))
+        top_row.addWidget(self.remove_btn)
+        
+        top_row.addStretch()
+        layout.addLayout(top_row)
+        
+        # Bottom row: Mute, Solo, Volume
+        bottom_row = QHBoxLayout()
+        bottom_row.setSpacing(8)
         
         self.mute_btn = QPushButton("🔇")
         self.mute_btn.setCheckable(True)
-        self.mute_btn.setFixedSize(48, 48)
+        self.mute_btn.setFixedSize(40, 32)
         self.mute_btn.setToolTip("Mute")
         self.mute_btn.setStyleSheet("""
             QPushButton { 
                 background-color: #373645;
                 font-size: 14px;
-                padding: 10px 20px;
+                padding: 6px 12px;
             }
             QPushButton:checked { 
                 background-color: #cc4444; 
@@ -1570,7 +1586,7 @@ class TrackWidget(QFrame):
             }
         """)
         self.mute_btn.clicked.connect(self.on_mute_toggle)
-        btn_layout.addWidget(self.mute_btn)
+        bottom_row.addWidget(self.mute_btn)
         
         self.solo_btn = QPushButton("S")
         self.solo_btn.setCheckable(True)
@@ -1595,53 +1611,20 @@ class TrackWidget(QFrame):
             }
         """)
         self.solo_btn.clicked.connect(self.on_solo_toggle)
-        btn_layout.addWidget(self.solo_btn)
+        bottom_row.addWidget(self.solo_btn)
         
-        # Volume slider inline with M/S
-        btn_layout.addWidget(QLabel("Vol"))
+        # Volume slider
+        bottom_row.addWidget(QLabel("Vol:"))
         self.volume_slider = QSlider(Qt.Orientation.Horizontal)
         self.volume_slider.setRange(0, 200)
         self.volume_slider.setValue(100)
-        self.volume_slider.setMaximumWidth(80)
+        self.volume_slider.setMaximumWidth(100)
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
-        btn_layout.addWidget(self.volume_slider)
+        bottom_row.addWidget(self.volume_slider)
         
-        btn_layout.addStretch()
-        controls.addLayout(btn_layout)
+        bottom_row.addStretch()
+        layout.addLayout(bottom_row)
         
-        controls_widget = QWidget()
-        controls_widget.setLayout(controls)
-        controls_widget.setMinimumWidth(220)
-        layout.addWidget(controls_widget)
-        
-        # Remove button
-        self.remove_btn = QPushButton("✕")
-        self.remove_btn.setFixedSize(32, 32)
-        self.remove_btn.setToolTip("Remove track")
-        self.remove_btn.setStyleSheet("""
-            QPushButton { 
-                background-color: #553333; 
-                color: #ffffff;
-                border: 1px solid #664444;
-                border-radius: 3px;
-                font-weight: bold;
-                font-size: 14px;
-            }
-            QPushButton:hover {
-                background-color: #774444;
-                color: #ffaaaa;
-            }
-        """)
-        self.remove_btn.clicked.connect(lambda: self.track_removed.emit(self.track.id))
-        layout.addWidget(self.remove_btn)
-        
-        self.setStyleSheet("""
-            TrackWidget {
-                background-color: #0f0f23;
-                border: 1px solid #444;
-                border-radius: 6px;
-            }
-        """)
         self.setMinimumHeight(110)
         self.setMaximumHeight(120)
     
@@ -1875,7 +1858,7 @@ class PrecisionPlayer(QMainWindow):
         # Tracks scroll area
         tracks_group = QGroupBox("Tracks")
         tracks_layout = QVBoxLayout(tracks_group)
-        tracks_layout.setContentsMargins(10, 20, 10, 10)
+        tracks_layout.setContentsMargins(5, 15, 5, 5)
         
         self.tracks_scroll = QScrollArea()
         self.tracks_scroll.setWidgetResizable(True)
