@@ -1512,12 +1512,12 @@ class TrackWidget(QGroupBox):
         layout.setContentsMargins(10, 20, 10, 10)
         layout.setSpacing(8)
         
-        # Top row: Device selector, Delete button
+        # Top row: Device selector
         top_row = QHBoxLayout()
         top_row.setSpacing(8)
         
         # Output device selector
-        top_row.addWidget(QLabel("Out:"))
+        top_row.addWidget(QLabel("O:"))
         self.device_combo = QComboBox()
         self.device_combo.setMaximumWidth(120)
         self.device_combo.setToolTip("Output device for this track")
@@ -1538,18 +1538,22 @@ class TrackWidget(QGroupBox):
         self.device_combo.currentIndexChanged.connect(self.on_device_changed)
         top_row.addWidget(self.device_combo)
         
+        top_row.addStretch()
+        layout.addLayout(top_row)
+        
+        # Bottom row: Delete, Mute, Solo, Volume
+        bottom_row = QHBoxLayout()
+        bottom_row.setSpacing(8)
+        
         # Remove button
         self.remove_btn = QPushButton("✕")
-        self.remove_btn.setFixedSize(28, 28)
+        self.remove_btn.setFixedSize(40, 32)
         self.remove_btn.setToolTip("Remove track")
         self.remove_btn.setStyleSheet("""
             QPushButton { 
-                background-color: #553333; 
-                color: #ffffff;
-                border: 1px solid #664444;
-                border-radius: 3px;
-                font-weight: bold;
+                background-color: #373645;
                 font-size: 14px;
+                padding: 6px 12px;
             }
             QPushButton:hover {
                 background-color: #774444;
@@ -1557,14 +1561,7 @@ class TrackWidget(QGroupBox):
             }
         """)
         self.remove_btn.clicked.connect(lambda: self.track_removed.emit(self.track.id))
-        top_row.addWidget(self.remove_btn)
-        
-        top_row.addStretch()
-        layout.addLayout(top_row)
-        
-        # Bottom row: Mute, Solo, Volume
-        bottom_row = QHBoxLayout()
-        bottom_row.setSpacing(8)
+        bottom_row.addWidget(self.remove_btn)
         
         self.mute_btn = QPushButton("🔇")
         self.mute_btn.setCheckable(True)
@@ -1590,16 +1587,13 @@ class TrackWidget(QGroupBox):
         
         self.solo_btn = QPushButton("S")
         self.solo_btn.setCheckable(True)
-        self.solo_btn.setFixedSize(32, 32)
+        self.solo_btn.setFixedSize(40, 32)
         self.solo_btn.setToolTip("Solo")
         self.solo_btn.setStyleSheet("""
             QPushButton { 
-                background-color: #555555; 
-                color: white;
-                border: 1px solid #666666;
-                border-radius: 4px;
-                font-weight: bold;
+                background-color: #373645;
                 font-size: 14px;
+                padding: 6px 12px;
             }
             QPushButton:checked { 
                 background-color: #44aa44; 
