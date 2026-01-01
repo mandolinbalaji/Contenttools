@@ -1550,18 +1550,15 @@ class TrackWidget(QFrame):
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(8)
         
-        self.mute_btn = QPushButton("M")
+        self.mute_btn = QPushButton("🔇")
         self.mute_btn.setCheckable(True)
-        self.mute_btn.setFixedSize(32, 32)
+        self.mute_btn.setFixedSize(48, 48)
         self.mute_btn.setToolTip("Mute")
         self.mute_btn.setStyleSheet("""
             QPushButton { 
-                background-color: #000000; 
-                color: white;
-                border: 1px solid #666666;
-                border-radius: 4px;
-                font-weight: bold;
+                background-color: #373645;
                 font-size: 14px;
+                padding: 10px 20px;
             }
             QPushButton:checked { 
                 background-color: #cc4444; 
@@ -1640,7 +1637,7 @@ class TrackWidget(QFrame):
         
         self.setStyleSheet("""
             TrackWidget {
-                background-color: #2a2a2a;
+                background-color: #0f0f23;
                 border: 1px solid #444;
                 border-radius: 6px;
             }
@@ -1834,6 +1831,9 @@ class PrecisionPlayer(QMainWindow):
         
         # Top bar - File controls
         top_bar = QHBoxLayout()
+        self.projects_btn = QPushButton("📋 Projects")
+        self.projects_btn.clicked.connect(self.show_projects_dialog)
+        top_bar.addWidget(self.projects_btn)
         
         self.load_btn = QPushButton("📂 Add Track")
         self.load_btn.clicked.connect(self.add_track)
@@ -1842,16 +1842,16 @@ class PrecisionPlayer(QMainWindow):
         self.load_cslp_btn = QPushButton("📄 CSLP")
         self.load_cslp_btn.clicked.connect(self.load_cslp_file)
         top_bar.addWidget(self.load_cslp_btn)
-        
-        self.projects_btn = QPushButton("📋 Projects")
-        self.projects_btn.clicked.connect(self.show_projects_dialog)
-        top_bar.addWidget(self.projects_btn)
-        
+
         self.save_project_btn = QPushButton("💾 Save")
         self.save_project_btn.clicked.connect(self.save_current_project)
         top_bar.addWidget(self.save_project_btn)
         
-        self.download_lyrics_btn = QPushButton("📥 Lyrics TXT")
+        
+        
+        
+        
+        self.download_lyrics_btn = QPushButton("📥 Download Notes")
         self.download_lyrics_btn.clicked.connect(self.download_lyrics_txt)
         self.download_lyrics_btn.setEnabled(False)
         top_bar.addWidget(self.download_lyrics_btn)
@@ -1884,6 +1884,7 @@ class PrecisionPlayer(QMainWindow):
         self.tracks_scroll.setStyleSheet("QScrollArea { border: none; }")
         
         self.tracks_container = QWidget()
+        self.tracks_container.setStyleSheet("QWidget { background-color: #0f0f23; }")
         self.tracks_container_layout = QHBoxLayout(self.tracks_container)
         self.tracks_container_layout.setContentsMargins(0, 0, 0, 0)
         self.tracks_container_layout.setSpacing(10)
@@ -1915,16 +1916,6 @@ class PrecisionPlayer(QMainWindow):
         waveform_layout.setContentsMargins(5, 15, 5, 5)
         waveform_layout.addWidget(bottom_container)
         
-        # Create top-level splitter for all resizable sections
-        top_splitter = QSplitter(Qt.Orientation.Vertical)
-        top_splitter.addWidget(lyrics_group)
-        top_splitter.addWidget(waveform_group)
-        top_splitter.addWidget(tracks_group)
-        
-        top_splitter.setSizes([150, 200, 200])  # Initial sizes for lyrics, waveform, tracks
-        
-        layout.addWidget(top_splitter, 1)
-        
         # Time display
         time_layout = QHBoxLayout()
         self.time_label = QLabel("00:00.00 / 00:00.00")
@@ -1940,21 +1931,40 @@ class PrecisionPlayer(QMainWindow):
         time_layout.addWidget(self.time_label)
         time_layout.addStretch()
         
-        self.loop_btn = QPushButton("🔁 Loop")
-        self.loop_btn.setCheckable(True)
-        self.loop_btn.clicked.connect(self.on_loop_toggle)
-        time_layout.addWidget(self.loop_btn)
+        # Transport controls with border and title
+        transport_group = QGroupBox("Transport")
+        transport_layout = QVBoxLayout(transport_group)
+        transport_layout.setContentsMargins(10, 20, 10, 10)
         
-        self.snap_checkbox = QCheckBox("Snap")
-        self.snap_checkbox.setToolTip("Snap loop markers to CSLP markers")
-        self.snap_checkbox.stateChanged.connect(self.on_snap_changed)
-        time_layout.addWidget(self.snap_checkbox)
+        # Time display inside transport
+        transport_layout.addLayout(time_layout)
         
-        layout.addLayout(time_layout)
-        
-        # Transport controls
         transport = QHBoxLayout()
         transport.addStretch()
+        
+        self.play_btn = QPushButton("▶ Play")
+        self.play_btn.clicked.connect(self.on_play_pause)
+        self.play_btn.setEnabled(False)
+        self.play_btn.setMinimumWidth(120)
+        self.play_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #373645;
+                font-size: 16px;
+                padding: 12px 24px;
+            }
+            QPushButton:hover {
+                background-color: #1084d8;
+            }
+            QPushButton:disabled {
+                background-color: #2a2a2a;
+            }
+        """)
+        transport.addWidget(self.play_btn)
+        
+        self.stop_btn = QPushButton("⏹ Stop")
+        self.stop_btn.clicked.connect(self.on_stop)
+        self.stop_btn.setEnabled(False)
+        transport.addWidget(self.stop_btn)
         
         # Metronome controls
         metronome_layout = QVBoxLayout()
@@ -1979,36 +1989,7 @@ class PrecisionPlayer(QMainWindow):
         
         metronome_layout.addLayout(metronome_controls)
         
-        self.beat_counter_label = QLabel("Ready")
-        self.beat_counter_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #888888;")
-        self.beat_counter_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        metronome_layout.addWidget(self.beat_counter_label)
-        
         transport.addLayout(metronome_layout)
-        
-        self.stop_btn = QPushButton("⏹ Stop")
-        self.stop_btn.clicked.connect(self.on_stop)
-        self.stop_btn.setEnabled(False)
-        transport.addWidget(self.stop_btn)
-        
-        self.play_btn = QPushButton("▶ Play")
-        self.play_btn.clicked.connect(self.on_play_pause)
-        self.play_btn.setEnabled(False)
-        self.play_btn.setMinimumWidth(120)
-        self.play_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #0078d4;
-                font-size: 16px;
-                padding: 12px 24px;
-            }
-            QPushButton:hover {
-                background-color: #1084d8;
-            }
-            QPushButton:disabled {
-                background-color: #2a2a2a;
-            }
-        """)
-        transport.addWidget(self.play_btn)
         
         self.play_with_countin_btn = QPushButton("▶ Count-in Play")
         self.play_with_countin_btn.clicked.connect(self.on_play_with_countin)
@@ -2016,7 +1997,7 @@ class PrecisionPlayer(QMainWindow):
         self.play_with_countin_btn.setMinimumWidth(140)
         self.play_with_countin_btn.setStyleSheet("""
             QPushButton {
-                background-color: #28a745;
+                background-color: #373645;
                 font-size: 14px;
                 padding: 10px 20px;
             }
@@ -2029,8 +2010,29 @@ class PrecisionPlayer(QMainWindow):
         """)
         transport.addWidget(self.play_with_countin_btn)
         
+        self.loop_btn = QPushButton("🔁 Loop")
+        self.loop_btn.setCheckable(True)
+        self.loop_btn.clicked.connect(self.on_loop_toggle)
+        transport.addWidget(self.loop_btn)
+        
+        self.snap_checkbox = QCheckBox("Snap")
+        self.snap_checkbox.setToolTip("Snap loop markers to CSLP markers")
+        self.snap_checkbox.stateChanged.connect(self.on_snap_changed)
+        transport.addWidget(self.snap_checkbox)
+        
         transport.addStretch()
-        layout.addLayout(transport)
+        transport_layout.addLayout(transport)
+        
+        # Create top-level splitter for all resizable sections
+        top_splitter = QSplitter(Qt.Orientation.Vertical)
+        top_splitter.addWidget(lyrics_group)
+        top_splitter.addWidget(waveform_group)
+        top_splitter.addWidget(transport_group)
+        top_splitter.addWidget(tracks_group)
+        
+        top_splitter.setSizes([150, 200, 150, 200])  # Initial sizes for lyrics, waveform, transport, tracks
+        
+        layout.addWidget(top_splitter, 1)
         
         # Status bar
         self.status_label = QLabel("Ready. Load an audio file to begin.")
@@ -2382,9 +2384,17 @@ class PrecisionPlayer(QMainWindow):
             self.engine.stop()
             print("[DEBUG] Playback stopped")
             
+            # Clear current project reference
+            self.project_manager.current_project = None
+            print("[DEBUG] Current project cleared")
+            
             # Clear current tracks
             self.clear_all_tracks()
             print(f"[DEBUG] Tracks cleared, remaining tracks: {len(self.engine.tracks)}")
+            
+            # Clear waveform since tracks are cleared
+            self.waveform.set_audio_data(None)
+            print("[DEBUG] Waveform cleared")
             
             # Clear current CSLP data
             self.cslp_data = CSLPData()
@@ -2468,30 +2478,8 @@ class PrecisionPlayer(QMainWindow):
             # Update status
             self.status_label.setText(f"Loaded project '{project_name}': {loaded_count} audio files, CSLP: {cslp_file or 'None'}")
             
-            # Build project display text with metadata if available
-            display_text = f"Project: {project_name}"
-            if self.cslp_data and self.cslp_data.metadata:
-                metadata = self.cslp_data.metadata
-                print(f"[DEBUG] CSLP metadata found: {metadata}")
-                raga = metadata.get('ragam', '')
-                thalam = metadata.get('talam', '')
-                aro = metadata.get('aarohanam', '')
-                ava = metadata.get('avarohanam', '')
-                print(f"[DEBUG] Extracted - Raga: '{raga}', Thalam: '{thalam}', Aro: '{aro}', Ava: '{ava}'")
-                if raga or thalam or aro or ava:
-                    metadata_parts = []
-                    if raga: metadata_parts.append(f"Raga: {raga}")
-                    if thalam: metadata_parts.append(f"Thalam: {thalam}")
-                    if aro: metadata_parts.append(f"Aro: {aro}")
-                    if ava: metadata_parts.append(f"Ava: {ava}")
-                    display_text += f" ({', '.join(metadata_parts)})"
-                    print(f"[DEBUG] Display text with metadata: {display_text}")
-                else:
-                    print("[DEBUG] No metadata fields found to display")
-            else:
-                print("[DEBUG] No CSLP data or metadata available")
-            
-            self.file_label.setText(display_text)
+            # Update file label with project info and metadata
+            self.update_file_label()
             
             print(f"[DEBUG] Project '{project_name}' loaded successfully")
             
@@ -2605,6 +2593,11 @@ class PrecisionPlayer(QMainWindow):
     
     def update_cslp_display(self):
         """Update the display with current CSLP data."""
+        # Always clear displays first
+        self.lyrics_display.set_content("", "")
+        self.markers_widget.set_markers([], 0)
+        self.waveform.set_marker_ratios([])
+        
         if self.cslp_data.timeline:
             # Set directory for image path resolution
             self.lyrics_display.set_directory(self.cslp_data.directory)
@@ -2743,16 +2736,19 @@ class PrecisionPlayer(QMainWindow):
         lines.append("=" * 60)
         lines.append("")
         
-        # Add alternating lyrics and notation lines
-        for entry in self.cslp_data.timeline:
+        # Add combined lyrics and notation lines with serial numbers
+        for i, entry in enumerate(self.cslp_data.timeline, 1):
             text = entry.get('text', '').strip()
             notation = entry.get('notation', '').strip()
             
             if text:
-                lines.append(f"Lyrics: {text}")
+                lines.append(f"{i}. {text}")
             if notation:
-                lines.append(f"Notation: {notation}")
-            lines.append("")  # Empty line between entries
+                lines.append(f"   {notation}")
+            
+            # Add empty line between entries if there's content
+            if text or notation:
+                lines.append("")
         
         return "\n".join(lines)
     
