@@ -21,6 +21,9 @@ class ProjectManager:
         self.current_project: Optional[Dict[str, Any]] = None
         self.current_project_path: Optional[Path] = None
         self.auto_save_enabled = False
+        
+        # Last project tracking
+        self.config_file = self.projects_dir / "last_project.txt"
 
     def create_project(self, name: str, audio_files: List[str] = None, cslp_file: str = None, track_settings: Dict[str, Dict[str, Any]] = None) -> Dict[str, Any]:
         """Create a new project configuration."""
@@ -151,3 +154,36 @@ class ProjectManager:
         except Exception as e:
             print(f"Error deleting project: {e}")
         return False
+
+    def save_last_project(self, project_name: str) -> bool:
+        """Save the name of the last opened project."""
+        try:
+            with open(self.config_file, 'w', encoding='utf-8') as f:
+                f.write(project_name)
+            return True
+        except Exception as e:
+            print(f"Error saving last project: {e}")
+            return False
+
+    def get_last_project(self) -> Optional[str]:
+        """Get the name of the last opened project."""
+        try:
+            if self.config_file.exists():
+                with open(self.config_file, 'r', encoding='utf-8') as f:
+                    return f.read().strip()
+        except Exception as e:
+            print(f"Error reading last project: {e}")
+        return None
+
+    def load_last_project_on_startup(self) -> Optional[Dict[str, Any]]:
+        """Load the last opened project automatically on startup."""
+        last_project_name = self.get_last_project()
+        if last_project_name:
+            # Find the project file
+            project_path = self.projects_dir / f"{last_project_name.replace(' ', '_')}.json"
+            if project_path.exists():
+                print(f"Loading last project: {last_project_name}")
+                return self.load_project(project_path)
+            else:
+                print(f"Last project file not found: {project_path}")
+        return None

@@ -2001,10 +2001,35 @@ class PrecisionPlayer(QMainWindow):
         self.loop_btn.clicked.connect(self.on_loop_toggle)
         transport.addWidget(self.loop_btn)
         
+      
+        
         self.snap_checkbox = QCheckBox("Snap")
         self.snap_checkbox.setToolTip("Snap loop markers to CSLP markers")
         self.snap_checkbox.stateChanged.connect(self.on_snap_changed)
         transport.addWidget(self.snap_checkbox)
+        
+        # Pitch controls
+        pitch_layout = QHBoxLayout()
+        pitch_layout.setSpacing(2)
+        pitch_layout.addWidget(QLabel("P:"))
+        
+        minus_btn = QPushButton("-")
+        minus_btn.setFixedWidth(40)
+        minus_btn.setFixedHeight(32)
+        pitch_layout.addWidget(minus_btn)
+        
+        val_label = QLabel("0")
+        val_label.setFixedWidth(40)
+        val_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        val_label.setStyleSheet("border: 1px solid #555; border-radius: 3px; background-color: #333; color: #ccc;")
+        pitch_layout.addWidget(val_label)
+        
+        plus_btn = QPushButton("+")
+        plus_btn.setFixedWidth(30)
+        plus_btn.setFixedHeight(25)
+        pitch_layout.addWidget(plus_btn)
+        
+        transport.addLayout(pitch_layout)
         
         transport.addStretch()
         transport_layout.addLayout(transport)
