@@ -1,0 +1,17 @@
+Brovabarama Krithi starts 1.5 beats(6 notes after first beat) tried to use ' for higher pitch 
+Pallavi
+|,,,,|,,pd|n,,p|,,m,|g,,,|,,g,|m,,p|,,p,||
+|g,,,|,,pd|ns',p|,,m,|g,,,|,,g,|m,,p|,,p,||
+|g,,,|,,m,|g,,s|,,n,|s,,,|s,sg|mggm|pmp,||
+|pmgs|gmpd|ns',p|,,m,|g,,,|,,,,|s,,,,||
+Anupallavi
+|,,,,|,,dn|s,sn|dnp,|d,n,|s,'s',|,,s'|,,s'||
+|,,s',|,,dn|s,sn|dnp,|d,n,|s',dn|s,,p|dns,||
+dnsd|npdn|s,sn|dnp,|d,n,|s,'s',|s',g',|,m'p',||
+|m',g',|s',p,|s,sn|dnpd|nssn|pmgm|pmmp|mgs,||
+|pmgs|gmpd|ns',p|,,m,|g,,,|,,,,|s,,,|,,,,||
+Charanam
+|,,,,|,,p,|p,p,|,,pm|gm,p|,,pd|ns,p|,mg||
+|sg,s|,,dn|s,sn|dnp,|d,n,|s,s,|s,gm|p,m,|| (dns,sndnp, d,n,s, is lower octave)
+p,,p|,,[Repeat Anupallavi]
+
