@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube to MP3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            transition: background-color 0.3s;
+        }
+
+        .status-indicator.online {
+            background: #28a745;
+            box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
+        }
+
+        .status-indicator.offline {
+            background: #dc3545;
+        }
+
+        .status-text {
+            color: #666;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border: 1px solid #667eea;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .url-input-section {
+            margin-bottom: 30px;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .url-input-group .form-group {
+            flex: 1;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .progress-section.visible {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .result-section {
+            background: #f8f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            display: none;
+        }
+
+        .result-section.visible {
+            display: block;
+        }
+
+        .result-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error.visible {
+            display: block;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success.visible {
+            display: block;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <h1>🎵 YouTube to MP3</h1>
+                <div class="server-status">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <span class="status-text" id="statusText">Checking server...</span>
+                </div>
+            </div>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+
+        <p class="subtitle">Extract audio from YouTube videos and download as MP3 files</p>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="url-input-section">
+            <div class="url-input-group">
+                <div class="form-group">
+                    <label for="youtubeUrl">YouTube URL</label>
+                    <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." required>
+                </div>
+                <button class="btn btn-primary" id="downloadBtn">Download MP3</button>
+            </div>
+        </div>
+
+        <div class="progress-section" id="progressSection">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Initializing download...</div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <h3>✅ Download Complete</h3>
+            <p>Your MP3 file has been saved to your Downloads folder!</p>
+            <p class="info-text">The file is ready to use in your music library.</p>
+        </div>
+
+        <div class="info-text">
+            <strong>Supported formats:</strong> Any valid YouTube URL (videos, playlists, shorts)<br>
+            <strong>Output:</strong> High-quality MP3 audio (128kbps)<br>
+            <strong>Note:</strong> Please respect copyright and only download content you have permission to use.
+        </div>
+    </div>
+
+    <script>
+        const downloadBtn = document.getElementById('downloadBtn');
+        const youtubeUrl = document.getElementById('youtubeUrl');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultSection = document.getElementById('resultSection');
+        const finalDownloadBtn = document.getElementById('finalDownloadBtn');
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+
+        let downloadProcess = null;
+
+        // Server status checking
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('http://localhost:7773/api/status', {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(5000) // 5 second timeout
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.status === 'running') {
+                        statusIndicator.className = 'status-indicator online';
+                        statusText.textContent = 'Server Online';
+                        statusText.style.color = '#28a745';
+                        downloadBtn.disabled = false;
+                        return true;
+                    }
+                }
+            } catch (error) {
+                // Server is not responding
+            }
+
+            // Server is offline
+            statusIndicator.className = 'status-indicator offline';
+            statusText.textContent = 'Server Offline';
+            statusText.style.color = '#dc3545';
+            downloadBtn.disabled = true;
+            return false;
+        }
+
+        // Check server status on page load and every 10 seconds
+        checkServerStatus();
+        setInterval(checkServerStatus, 10000);
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+            successDiv.classList.remove('visible');
+        }
+
+        function showSuccess(message) {
+            successDiv.textContent = message;
+            successDiv.classList.add('visible');
+            errorDiv.classList.remove('visible');
+        }
+
+        function hideMessages() {
+            errorDiv.classList.remove('visible');
+            successDiv.classList.remove('visible');
+        }
+
+        function updateProgress(percent, text) {
+            progressFill.style.width = percent + '%';
+            progressText.textContent = text;
+        }
+
+        downloadBtn.addEventListener('click', async () => {
+            const url = youtubeUrl.value.trim();
+            if (!url) {
+                showError('Please enter a YouTube URL');
+                return;
+            }
+
+            hideMessages();
+            downloadBtn.disabled = true;
+            downloadBtn.textContent = 'Processing...';
+            progressSection.classList.add('visible');
+            resultSection.classList.remove('visible');
+
+            updateProgress(0, 'Starting download...');
+
+            try {
+                // Call the Python server
+                const response = await fetch('http://localhost:7773/api/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess(result.message);
+                    resultSection.classList.add('visible');
+                } else {
+                    showError(result.error || 'Download failed');
+                }
+
+            } catch (error) {
+                console.error('Download error:', error);
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    showError('Cannot connect to download server. Please make sure the YouTube to MP3 server is running (python youtube_to_mp3_server.py)');
+                } else {
+                    showError('Failed to download: ' + error.message);
+                }
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = 'Download MP3';
+                progressSection.classList.remove('visible');
+            }
+        });
+
+        // Allow Enter key to trigger download
+        youtubeUrl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                downloadBtn.click();
+            }
+        });
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">c:\AnytuneToLRC\youtube-to-mp3.html

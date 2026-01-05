@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Video</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border: 1px solid #667eea;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error.visible {
+            display: block;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success.visible {
+            display: block;
+        }
+
+        .file-upload-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .file-group {
+            flex: 1;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-group:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .file-group.drag-over {
+            border-color: #00ff00;
+            background: #f0fff0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .file-group.loaded {
+            border-color: #4CAF50;
+            background: #f0fff0;
+        }
+
+        .file-group-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .file-name {
+            color: #999;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-group.loaded .file-name {
+            color: #3c3;
+        }
+
+        .file-group input[type="file"] {
+            display: none;
+        }
+
+        .button-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .preview-section {
+            margin-bottom: 30px;
+        }
+
+        .preview-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .canvas-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #previewCanvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .progress-section.visible {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #f0f8ff;
+            border: 1px solid #b0d4f1;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+
+        .specs-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .specs-list li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Generate Video</h1>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+        <p class="subtitle">Create YouTube Shorts video with lyrics and notation overlay</p>
+
+        <div class="info-box">
+            <strong>📋 Video Specifications:</strong>
+            <ul class="specs-list">
+                <li><strong>Format:</strong> YouTube Shorts (1080 x 1920)</li>
+                <li><strong>Chroma Key:</strong> #00FF00 (Pure Green) - Replace with your video</li>
+                <li><strong>Layout:</strong> Title at top, green screen middle, lyrics/notation at bottom</li>
+            </ul>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="file-upload-section">
+            <div class="file-group" id="audioGroup" data-drop-zone="audio">
+                <div class="file-group-label">🎵 Audio File</div>
+                <div class="file-name" id="audioFileName">No file selected</div>
+                <input type="file" id="audioInput" accept="audio/*">
+            </div>
+            <div class="file-group" id="cslpGroup" data-drop-zone="cslp">
+                <div class="file-group-label">📄 CSLP File</div>
+                <div class="file-name" id="cslpFileName">No file selected</div>
+                <input type="file" id="cslpInput" accept=".cslp">
+            </div>
+        </div>
+
+        <div class="path-section" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px dashed #ccc;">
+            <p style="margin: 0 0 10px 0; font-size: 13px; color: #666;">📂 <strong>For MP4 Generation:</strong> Enter full file paths (browsers can't access paths directly)</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label for="audioPath" style="display: block; font-size: 12px; color: #555; margin-bottom: 4px;">Audio Path</label>
+                    <input type="text" id="audioPath" placeholder="C:\Music\song.mp3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-family: Consolas, monospace;">
+                </div>
+                <div>
+                    <label for="cslpPath" style="display: block; font-size: 12px; color: #555; margin-bottom: 4px;">CSLP Path</label>
+                    <input type="text" id="cslpPath" placeholder="C:\Projects\song.cslp" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-family: Consolas, monospace;">
+                </div>
+            </div>
+        </div>
+
+        <div class="title-section" style="margin-bottom: 20px; margin-top: 20px;">
+            <label for="videoTitle" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Video Title</label>
+            <input type="text" id="videoTitle" placeholder="Enter title (auto-filled from CSLP)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; font-family: inherit;">
+        </div>
+
+        <div class="title-section" style="margin-bottom: 20px;">
+            <label for="infoText" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Info Text (optional - displays above lyrics)</label>
+            <input type="text" id="infoText" placeholder="e.g. Raga: Shankarabharanam | Tala: Adi" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; font-family: inherit;">
+        </div>
+
+        <div class="button-section">
+            <button class="btn btn-secondary" id="previewBtn" disabled>👁️ Preview Frame</button>
+            <button class="btn btn-primary" id="renderBtn" disabled>🎬 Render Video (Browser)</button>
+            <button class="btn btn-secondary" id="downloadBtn" disabled>💾 Download Video</button>
+            <button class="btn btn-primary" id="generateCmdBtn" disabled>📋 Generate Command (MP4)</button>
+        </div>
+
+        <div class="command-section" id="commandSection" style="display: none; margin-top: 20px; padding: 20px; background: #1e1e1e; border-radius: 8px;">
+            <h4 style="color: #4ec9b0; margin: 0 0 10px 0;">🎬 Python Command for MP4 Generation</h4>
+            <p style="color: #9cdcfe; font-size: 14px; margin-bottom: 10px;">Copy and run this command in your terminal (requires Python + Pillow + FFmpeg):</p>
+            <div style="position: relative;">
+                <pre id="commandOutput" style="background: #2d2d2d; color: #ce9178; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; margin: 0; white-space: pre-wrap; word-break: break-all;"></pre>
+                <button id="copyCommandBtn" style="position: absolute; top: 8px; right: 8px; padding: 5px 10px; background: #0e639c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Copy</button>
+            </div>
+            <div style="margin-top: 15px; padding: 15px; background: #2d2d2d; border-radius: 4px;">
+                <p style="color: #6a9955; margin: 0 0 8px 0; font-size: 13px;">📦 First-time setup:</p>
+                <code style="color: #dcdcaa; font-size: 12px;">pip install pillow</code>
+                <p style="color: #6a9955; margin: 10px 0 5px 0; font-size: 13px;">📥 FFmpeg: <a href="https://ffmpeg.org/download.html" target="_blank" style="color: #4ec9b0;">Download here</a></p>
+            </div>
+        </div>
+
+        <div class="progress-section" id="progressSection">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Rendering: 0%</div>
+        </div>
+
+        <div class="preview-section">
+            <h3>Preview</h3>
+            <div class="canvas-container">
+                <canvas id="previewCanvas" width="1080" height="1920"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const audioGroup = document.getElementById('audioGroup');
+        const cslpGroup = document.getElementById('cslpGroup');
+        const audioInput = document.getElementById('audioInput');
+        const cslpInput = document.getElementById('cslpInput');
+        const audioFileName = document.getElementById('audioFileName');
+        const cslpFileName = document.getElementById('cslpFileName');
+        const previewBtn = document.getElementById('previewBtn');
+        const renderBtn = document.getElementById('renderBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const generateCmdBtn = document.getElementById('generateCmdBtn');
+        const commandSection = document.getElementById('commandSection');
+        const commandOutput = document.getElementById('commandOutput');
+        const copyCommandBtn = document.getElementById('copyCommandBtn');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const error = document.getElementById('error');
+        const success = document.getElementById('success');
+
+        const ctx = previewCanvas.getContext('2d');
+
+        // State
+        let audioFile = null;
+        let audioFileName_stored = null;
+        let cslpFileName_stored = null;
+        let audioElement = null;
+        let cslpData = null;
+        let renderedBlob = null;
+
+        // Constants
+        const WIDTH = 1080;
+        const HEIGHT = 1920;
+        const TITLE_HEIGHT = 150;
+        const STRIP_HEIGHT = 400;
+        const INFO_HEIGHT = 60;
+        const GREEN_HEIGHT = HEIGHT - TITLE_HEIGHT - STRIP_HEIGHT;
+        const CHROMA_KEY = '#00FF00';
+
+        // File group click handlers
+        audioGroup.addEventListener('click', () => audioInput.click());
+        cslpGroup.addEventListener('click', () => cslpInput.click());
+
+        // Drag and drop handlers
+        document.querySelectorAll('[data-drop-zone]').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length === 0) return;
+
+                const dropZoneType = zone.dataset.dropZone;
+                if (dropZoneType === 'audio') {
+                    handleAudioFile(files[0]);
+                } else if (dropZoneType === 'cslp') {
+                    handleCslpFile(files[0]);
+                }
+            });
+        });
+
+        // File input change handlers
+        audioInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleAudioFile(e.target.files[0]);
+            }
+        });
+
+        cslpInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleCslpFile(e.target.files[0]);
+            }
+        });
+
+        function hideMessages() {
+            error.classList.remove('visible');
+            success.classList.remove('visible');
+        }
+
+        function showError(msg) {
+            hideMessages();
+            error.textContent = msg;
+            error.classList.add('visible');
+        }
+
+        function showSuccess(msg) {
+            hideMessages();
+            success.textContent = msg;
+            success.classList.add('visible');
+        }
+
+        function handleAudioFile(file) {
+            hideMessages();
+            audioFile = file;
+            audioFileName_stored = file.name;
+            audioFileName.textContent = file.name;
+            audioGroup.classList.add('loaded');
+
+            // Create audio element
+            if (audioElement) {
+                audioElement.pause();
+            }
+            audioElement = new Audio(URL.createObjectURL(file));
+            audioElement.addEventListener('loadedmetadata', () => {
+                showSuccess(`✓ Audio loaded: ${formatDuration(audioElement.duration)}`);
+                checkFilesReady();
+            });
+        }
+
+        function handleCslpFile(file) {
+            hideMessages();
+
+            if (!file.name.endsWith('.cslp')) {
+                showError('Please select a valid .cslp file');
+                return;
+            }
+
+            cslpFileName_stored = file.name;
+            cslpFileName.textContent = file.name;
+            cslpGroup.classList.add('loaded');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    cslpData = JSON.parse(e.target.result);
+                    const timelineCount = cslpData.data?.timeline?.length || 0;
+                    
+                    // Auto-fill title from CSLP metadata
+                    const titleFromCslp = cslpData.metadata?.title || '';
+                    if (titleFromCslp) {
+                        document.getElementById('videoTitle').value = titleFromCslp;
+                    }
+                    
+                    showSuccess(`✓ CSLP loaded: ${timelineCount} timeline entries`);
+                    checkFilesReady();
+                } catch (err) {
+                    showError('Failed to parse CSLP file: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function checkFilesReady() {
+            const ready = audioFile && cslpData;
+            previewBtn.disabled = !ready;
+            renderBtn.disabled = !ready;
+            // Command can be generated with paths OR loaded files
+            checkCommandReady();
+        }
+
+        function checkCommandReady() {
+            const audioPath = document.getElementById('audioPath').value.trim();
+            const cslpPath = document.getElementById('cslpPath').value.trim();
+            const hasFiles = audioFileName_stored && cslpFileName_stored;
+            const hasPaths = audioPath && cslpPath;
+            generateCmdBtn.disabled = !(hasFiles || hasPaths);
+        }
+
+        // Listen to path input changes
+        document.getElementById('audioPath').addEventListener('input', checkCommandReady);
+        document.getElementById('cslpPath').addEventListener('input', checkCommandReady);
+
+        // Generate Command button
+        generateCmdBtn.addEventListener('click', () => {
+            // Get paths from input fields, fallback to filenames
+            const audioPath = document.getElementById('audioPath').value.trim() || audioFileName_stored;
+            const cslpPath = document.getElementById('cslpPath').value.trim() || cslpFileName_stored;
+            
+            if (!audioPath || !cslpPath) {
+                showError('Please load files or enter file paths');
+                return;
+            }
+            
+            const title = document.getElementById('videoTitle').value.trim();
+            const info = document.getElementById('infoText').value.trim();
+            
+            let cmd = `python generate_video.py "${audioPath}" "${cslpPath}"`;
+            
+            if (title) {
+                cmd += ` --title "${title}"`;
+            }
+            if (info) {
+                cmd += ` --info "${info}"`;
+            }
+            
+            commandOutput.textContent = cmd;
+            commandSection.style.display = 'block';
+            showSuccess('Command generated! Copy and run in your terminal.');
+        });
+
+        // Copy command button
+        copyCommandBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(commandOutput.textContent).then(() => {
+                copyCommandBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyCommandBtn.textContent = 'Copy';
+                }, 2000);
+            });
+        });
+
+        // Preview button
+        previewBtn.addEventListener('click', () => {
+            drawFrame(0);
+            showSuccess('Preview frame drawn');
+        });
+
+        // Draw a single frame at given time
+        function drawFrame(currentTime) {
+            // Clear canvas
+            ctx.fillStyle = CHROMA_KEY;
+            ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+            // Get title from input field
+            const title = document.getElementById('videoTitle').value.trim();
+
+            // Draw title area (top) - only if title is not blank
+            if (title) {
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(0, 0, WIDTH, TITLE_HEIGHT);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 64px Impact, Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(title.toUpperCase(), WIDTH / 2, TITLE_HEIGHT / 2);
+            }
+
+            // Green screen area (middle) - already filled with CHROMA_KEY
+
+            // Find current timeline entry with null checks
+            const timeline = cslpData?.data?.timeline || [];
+            let currentEntry = { text: '', notation: '' };
+            
+            for (let i = timeline.length - 1; i >= 0; i--) {
+                const entry = timeline[i];
+                if (entry && typeof entry.time === 'number' && currentTime >= entry.time) {
+                    currentEntry = {
+                        text: (entry.text || '').toString().trim(),
+                        notation: (entry.notation || '').toString().trim()
+                    };
+                    break;
+                }
+            }
+
+            // Draw bottom strip
+            const stripY = HEIGHT - STRIP_HEIGHT;
+            
+            // Get info text
+            const infoText = document.getElementById('infoText').value.trim();
+            
+            // Draw info bar if text provided (just above the strip)
+            if (infoText) {
+                const infoY = stripY - INFO_HEIGHT;
+                ctx.fillStyle = '#F5F5F5';
+                ctx.fillRect(0, infoY, WIDTH, INFO_HEIGHT);
+                ctx.fillStyle = '#666666';
+                ctx.font = '28px Arial, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                
+                // Marquee scrolling - always scroll, loops continuously
+                const textWidth = ctx.measureText(infoText).width;
+                const gap = 100; // gap between repeated text
+                const totalWidth = textWidth + gap;
+                const scrollSpeed = 80; // pixels per second
+                const scrollOffset = (currentTime * scrollSpeed) % totalWidth;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(0, infoY, WIDTH, INFO_HEIGHT);
+                ctx.clip();
+                
+                // Draw text multiple times to create seamless loop
+                let x = WIDTH - scrollOffset;
+                while (x < WIDTH) {
+                    ctx.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x += totalWidth;
+                }
+                // Also draw before start for seamless entry
+                x = WIDTH - scrollOffset - totalWidth;
+                while (x + textWidth > 0) {
+                    ctx.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x -= totalWidth;
+                }
+                
+                ctx.restore();
+            }
+            
+            // White background for strip
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, stripY, WIDTH, STRIP_HEIGHT);
+
+            // Draw lyrics
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 48px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const lyricsY = stripY + STRIP_HEIGHT / 3;
+            ctx.fillText(currentEntry.text || '', WIDTH / 2, lyricsY);
+
+            // Draw notation
+            ctx.fillStyle = '#333333';
+            ctx.font = '40px Courier New, monospace';
+            const notationY = stripY + (STRIP_HEIGHT * 2 / 3);
+            ctx.fillText(currentEntry.notation || '', WIDTH / 2, notationY);
+        }
+
+        // Render video
+        renderBtn.addEventListener('click', async () => {
+            if (!audioElement || !cslpData) return;
+
+            renderBtn.disabled = true;
+            progressSection.classList.add('visible');
+            
+            try {
+                await renderVideo();
+                downloadBtn.disabled = false;
+                showSuccess('✓ Video rendered successfully! Click Download to save.');
+            } catch (err) {
+                showError('Rendering failed: ' + err.message);
+            }
+            
+            renderBtn.disabled = false;
+        });
+
+        async function renderVideo() {
+            const duration = audioElement.duration;
+            const fps = 30;
+            const totalFrames = Math.ceil(duration * fps);
+
+            // Create offscreen canvas for rendering
+            const offscreen = document.createElement('canvas');
+            offscreen.width = WIDTH;
+            offscreen.height = HEIGHT;
+            const offCtx = offscreen.getContext('2d');
+
+            // Setup MediaRecorder
+            const stream = offscreen.captureStream(fps);
+            
+            // Add audio track
+            const audioCtx = new AudioContext();
+            const source = audioCtx.createMediaElementSource(audioElement);
+            const dest = audioCtx.createMediaStreamDestination();
+            source.connect(dest);
+            source.connect(audioCtx.destination);
+            
+            stream.addTrack(dest.stream.getAudioTracks()[0]);
+
+            const mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: 8000000
+            });
+
+            const chunks = [];
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    chunks.push(e.data);
+                }
+            };
+
+            return new Promise((resolve, reject) => {
+                mediaRecorder.onstop = () => {
+                    renderedBlob = new Blob(chunks, { type: 'video/webm' });
+                    resolve();
+                };
+
+                mediaRecorder.onerror = (e) => {
+                    reject(e.error);
+                };
+
+                mediaRecorder.start();
+                audioElement.currentTime = 0;
+                audioElement.play();
+
+                let frameCount = 0;
+                const startTime = performance.now();
+
+                function renderFrame() {
+                    const currentTime = audioElement.currentTime;
+                    const progress = Math.min(100, (currentTime / duration) * 100);
+                    
+                    progressFill.style.width = progress + '%';
+                    progressText.textContent = `Rendering: ${progress.toFixed(1)}% (${formatDuration(currentTime)} / ${formatDuration(duration)})`;
+
+                    // Draw frame to offscreen canvas
+                    drawFrameToCanvas(offCtx, currentTime);
+
+                    // Copy to preview
+                    ctx.drawImage(offscreen, 0, 0);
+
+                    if (currentTime < duration && !audioElement.ended) {
+                        requestAnimationFrame(renderFrame);
+                    } else {
+                        audioElement.pause();
+                        mediaRecorder.stop();
+                        progressFill.style.width = '100%';
+                        progressText.textContent = 'Rendering complete!';
+                    }
+                }
+
+                requestAnimationFrame(renderFrame);
+            });
+        }
+
+        function drawFrameToCanvas(context, currentTime) {
+            // Clear canvas
+            context.fillStyle = CHROMA_KEY;
+            context.fillRect(0, 0, WIDTH, HEIGHT);
+
+            // Get title from input field
+            const title = document.getElementById('videoTitle').value.trim();
+
+            // Draw title area (top) - only if title is not blank
+            if (title) {
+                context.fillStyle = '#333333';
+                context.fillRect(0, 0, WIDTH, TITLE_HEIGHT);
+                context.fillStyle = '#FFFFFF';
+                context.font = 'bold 64px Impact, Arial, sans-serif';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(title.toUpperCase(), WIDTH / 2, TITLE_HEIGHT / 2);
+            }
+
+            // Find current timeline entry with null checks
+            const timeline = cslpData?.data?.timeline || [];
+            let currentEntry = { text: '', notation: '' };
+            
+            for (let i = timeline.length - 1; i >= 0; i--) {
+                const entry = timeline[i];
+                if (entry && typeof entry.time === 'number' && currentTime >= entry.time) {
+                    currentEntry = {
+                        text: (entry.text || '').toString().trim(),
+                        notation: (entry.notation || '').toString().trim()
+                    };
+                    break;
+                }
+            }
+
+            // Draw bottom strip
+            const stripY = HEIGHT - STRIP_HEIGHT;
+            
+            // Get info text
+            const infoText = document.getElementById('infoText').value.trim();
+            
+            // Draw info bar if text provided (just above the strip)
+            if (infoText) {
+                const infoY = stripY - INFO_HEIGHT;
+                context.fillStyle = '#F5F5F5';
+                context.fillRect(0, infoY, WIDTH, INFO_HEIGHT);
+                context.fillStyle = '#666666';
+                context.font = '28px Arial, sans-serif';
+                context.textAlign = 'left';
+                context.textBaseline = 'middle';
+                
+                // Marquee scrolling - always scroll, loops continuously
+                const textWidth = context.measureText(infoText).width;
+                const gap = 100; // gap between repeated text
+                const totalWidth = textWidth + gap;
+                const scrollSpeed = 80; // pixels per second
+                const scrollOffset = (currentTime * scrollSpeed) % totalWidth;
+                
+                context.save();
+                context.beginPath();
+                context.rect(0, infoY, WIDTH, INFO_HEIGHT);
+                context.clip();
+                
+                // Draw text multiple times to create seamless loop
+                let x = WIDTH - scrollOffset;
+                while (x < WIDTH) {
+                    context.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x += totalWidth;
+                }
+                // Also draw before start for seamless entry
+                x = WIDTH - scrollOffset - totalWidth;
+                while (x + textWidth > 0) {
+                    context.fillText(infoText, x, infoY + INFO_HEIGHT / 2);
+                    x -= totalWidth;
+                }
+                
+                context.restore();
+            }
+            
+            // White background for strip
+            context.fillStyle = '#FFFFFF';
+            context.fillRect(0, stripY, WIDTH, STRIP_HEIGHT);
+
+            // Draw lyrics
+            context.fillStyle = '#000000';
+            context.font = 'bold 48px Arial, sans-serif';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            const lyricsY = stripY + STRIP_HEIGHT / 3;
+            context.fillText(currentEntry.text || '', WIDTH / 2, lyricsY);
+
+            // Draw notation
+            context.fillStyle = '#333333';
+            context.font = '40px Courier New, monospace';
+            const notationY = stripY + (STRIP_HEIGHT * 2 / 3);
+            context.fillText(currentEntry.notation || '', WIDTH / 2, notationY);
+        }
+
+        // Download button
+        downloadBtn.addEventListener('click', () => {
+            if (!renderedBlob) return;
+
+            const title = document.getElementById('videoTitle').value.trim() || cslpData?.data?.metadata?.title || 'video';
+            const safeTitle = title.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const url = URL.createObjectURL(renderedBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = safeTitle + '_shorts.webm';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess(`✓ Downloaded: ${safeTitle}_shorts.webm (Upload directly to YouTube, or convert to MP4 for other players)`);
+        });
+    </script>
+</body>
+</html>

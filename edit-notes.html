@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Notes - CSLP Notation Editor with Images</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        .two-pane-layout {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+
+        .left-pane, .right-pane {
+            flex: 1;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f8f9ff;
+            border: 2px solid #e0e6ff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .pane-title {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .image-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-active {
+            background: #667eea !important;
+            color: white !important;
+        }
+
+        .image-grid {
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            padding: 10px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .image-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .image-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-item .image-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            font-size: 11px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .editor-area {
+            flex: 1;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #f7fafc;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        #noteEditor {
+            flex: 1;
+            border: none;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            background: white;
+        }
+
+        #noteEditor::selection {
+            background: #e6f3ff;
+            color: #333;
+        }
+
+        #noteEditor.drag-over {
+            background: #f0f8ff;
+            border: 2px dashed #667eea;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Hidden inputs */
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .two-pane-layout {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .left-pane, .right-pane {
+                flex: none;
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Edit Notes - CSLP Notation Editor with Images</h1>
+            <a href="index.html" class="back-link">← Back to Converter</a>
+        </div>
+
+        <div class="two-pane-layout">
+            <!-- Left Pane: Images -->
+            <div class="left-pane">
+                <div class="pane-header">
+                    <div class="pane-title">🖼️ Images</div>
+                    <div class="image-controls">
+                        <input type="text" id="imageUrlInput" placeholder="GitHub URL or folder path" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px; width: 200px;">
+                        <button class="btn btn-secondary" id="browseFolderBtn">📁 Browse Folder</button>
+                        <input type="file" id="folderInput" webkitdirectory style="display: none;">
+                        <button class="btn btn-primary" id="loadImagesBtn">Load Images</button>
+                        <button class="btn btn-secondary" id="clearImagesBtn">Clear</button>
+                    </div>
+                </div>
+                <div class="image-grid" id="imageGrid">
+                    <div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 40px;">
+                        Click "Load Images" to load images from a folder or GitHub URL
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Pane: Editor -->
+            <div class="right-pane">
+                <div class="pane-header">
+                    <div class="pane-title">📄 CSLP File (.cslp)</div>
+                    <div class="file-controls">
+                        <button class="btn btn-secondary" id="loadNotBtn">Load .cslp File</button>
+                        <input type="file" id="notFileInput" accept=".cslp">
+                        <button class="btn btn-secondary" id="dotAboveBtn" title="Add dot above selected character">⬆️</button>
+                        <button class="btn btn-secondary" id="dotBelowBtn" title="Add dot below selected character">⬇️</button>
+                        <button class="btn btn-secondary" id="toUpperBtn" title="Convert selected text to uppercase">A</button>
+                        <button class="btn btn-secondary" id="toLowerBtn" title="Convert selected text to lowercase">a</button>
+                    </div>
+                </div>
+                <div class="editor-container">
+                    <div class="editor-area">
+                        <div class="editor-header">Drag images here or edit text directly</div>
+                        <textarea id="noteEditor" placeholder="Load a .cslp file or start typing...&#10;&#10;You can also drag images from the left pane to insert image references."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-secondary" id="copyBtn">📋 Copy to Clipboard</button>
+            <button class="btn btn-primary" id="downloadBtn">💾 Download .cslp File</button>
+        </div>
+
+        <div id="statusMessage"></div>
+    </div>
+
+    <script>
+        // DOM elements
+        const imageUrlInput = document.getElementById('imageUrlInput');
+        const browseFolderBtn = document.getElementById('browseFolderBtn');
+        const folderInput = document.getElementById('folderInput');
+        const loadImagesBtn = document.getElementById('loadImagesBtn');
+        const clearImagesBtn = document.getElementById('clearImagesBtn');
+        const imageGrid = document.getElementById('imageGrid');
+        const loadNotBtn = document.getElementById('loadNotBtn');
+        const notFileInput = document.getElementById('notFileInput');
+        const noteEditor = document.getElementById('noteEditor');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const dotAboveBtn = document.getElementById('dotAboveBtn');
+        const dotBelowBtn = document.getElementById('dotBelowBtn');
+        const toUpperBtn = document.getElementById('toUpperBtn');
+        const toLowerBtn = document.getElementById('toLowerBtn');
+
+        // State
+        let loadedImages = [];
+        let currentFileName = '';
+        let draggedImage = null;
+        let dotAboveMode = false;
+        let dotBelowMode = false;
+        let cslpData = null; // Store the loaded CSLP data
+
+        // Initialize
+        updateButtonStates();
+
+        // Toggle dot mode
+        function toggleDotMode(mode) {
+            if (mode === 'above') {
+                dotAboveMode = !dotAboveMode;
+                dotBelowMode = false; // Disable the other mode
+                updateButtonStates();
+            } else if (mode === 'below') {
+                dotBelowMode = !dotBelowMode;
+                dotAboveMode = false; // Disable the other mode
+                updateButtonStates();
+            }
+        }
+
+        // Update button visual states
+        function updateButtonStates() {
+            dotAboveBtn.classList.toggle('btn-active', dotAboveMode);
+            dotBelowBtn.classList.toggle('btn-active', dotBelowMode);
+        }
+
+        // Transform selected text
+        function transformSelection(transformFunc) {
+            const textarea = noteEditor;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+
+            if (selectedText.length === 0) {
+                showStatus('Please select some text first', 'error');
+                return;
+            }
+
+            const transformedText = transformFunc(selectedText);
+            const newText = textarea.value.substring(0, start) + transformedText + textarea.value.substring(end);
+
+            textarea.value = newText;
+            textarea.setSelectionRange(start, start + transformedText.length);
+            textarea.focus();
+        }
+
+        // Initialize
+        browseFolderBtn.addEventListener('click', () => folderInput.click());
+        folderInput.addEventListener('change', handleFolderSelection);
+        loadImagesBtn.addEventListener('click', loadImages);
+        clearImagesBtn.addEventListener('click', clearImages);
+        loadNotBtn.addEventListener('click', () => notFileInput.click());
+        notFileInput.addEventListener('change', loadNotFile);
+        copyBtn.addEventListener('click', copyToClipboard);
+        downloadBtn.addEventListener('click', downloadFile);
+        dotAboveBtn.addEventListener('click', () => toggleDotMode('above'));
+        dotBelowBtn.addEventListener('click', () => toggleDotMode('below'));
+        toUpperBtn.addEventListener('click', () => transformSelection(text => text.toUpperCase()));
+        toLowerBtn.addEventListener('click', () => transformSelection(text => text.toLowerCase()));
+
+        // Image URL input enter key
+        imageUrlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadImages();
+            }
+        });
+
+        // Drag and drop for images to editor
+        noteEditor.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            noteEditor.classList.add('drag-over');
+        });
+
+        noteEditor.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            noteEditor.classList.remove('drag-over');
+        });
+
+        noteEditor.addEventListener('drop', (e) => {
+            e.preventDefault();
+            noteEditor.classList.remove('drag-over');
+
+            const imagePath = e.dataTransfer.getData('text/plain');
+            if (imagePath) {
+                insertImageReference(imagePath);
+                showStatus('Image reference inserted!', 'success');
+            }
+        });
+
+        // Handle character transformation on click when mode is active
+        noteEditor.addEventListener('mouseup', () => {
+            if (dotAboveMode || dotBelowMode) {
+                const pos = noteEditor.selectionStart;
+                if (pos > 0 && pos <= noteEditor.value.length) {
+                    const char = noteEditor.value.charAt(pos - 1);
+                    if (char && char !== '\n' && char !== ' ') {
+                        const newChar = dotAboveMode ? char + '\u0307' : char + '\u0323';
+                        const text = noteEditor.value;
+                        const newText = text.substring(0, pos - 1) + newChar + text.substring(pos);
+                        noteEditor.value = newText;
+                        noteEditor.setSelectionRange(pos, pos);
+                    }
+                }
+            }
+        });
+
+        // Handle folder selection
+        function handleFolderSelection(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                // Get the folder path from the first file
+                const firstFile = files[0];
+                let folderPath = '';
+
+                // Try to get the folder path
+                if (firstFile.webkitRelativePath) {
+                    // For webkitdirectory, we can get the relative path
+                    folderPath = firstFile.webkitRelativePath.split('/')[0];
+                } else if (firstFile.path) {
+                    // Some browsers provide the full path
+                    folderPath = firstFile.path.replace(/[/\\][^/\\]*$/, '');
+                } else {
+                    // Fallback: try to construct from the file path
+                    const pathParts = firstFile.name.split(/[/\\]/);
+                    if (pathParts.length > 1) {
+                        folderPath = pathParts.slice(0, -1).join('/');
+                    }
+                }
+
+                // If we couldn't determine the folder path, show an error
+                if (!folderPath) {
+                    showStatus('Could not determine folder path. Please enter it manually.', 'error');
+                    return;
+                }
+
+                // Set the folder path in the input
+                imageUrlInput.value = folderPath;
+                showStatus(`Selected folder: ${folderPath}`, 'success');
+            }
+        }
+
+        // Load images from selected files (folder picker)
+        async function loadImagesFromSelectedFiles(files) {
+            const images = [];
+            const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'];
+
+            for (const file of files) {
+                const extension = file.name.split('.').pop().toLowerCase();
+                if (imageExtensions.includes(extension)) {
+                    // Create a blob URL for the image
+                    const blobUrl = URL.createObjectURL(file);
+                    images.push({
+                        name: file.name,
+                        url: blobUrl,
+                        path: file.name, // Use filename as path for drag-drop
+                        file: file // Keep reference to the file
+                    });
+                }
+            }
+
+            return images;
+        }
+
+        // Load images from folder or URL
+        async function loadImages() {
+            const input = imageUrlInput.value.trim();
+            if (!input) {
+                showStatus('Please enter a folder path or GitHub URL, or browse for a folder', 'error');
+                return;
+            }
+
+            showStatus('Loading images...', 'info');
+
+            try {
+                let images = [];
+
+                if (input.startsWith('http')) {
+                    // GitHub URL
+                    images = await loadImagesFromGitHub(input);
+                } else {
+                    // Local folder - check if we have selected files from folder picker
+                    const files = folderInput.files;
+                    if (files.length > 0) {
+                        images = await loadImagesFromSelectedFiles(files);
+                    } else {
+                        images = await loadImagesFromFolder(input);
+                    }
+                }
+
+                loadedImages = images;
+                displayImages(images);
+                showStatus(`Loaded ${images.length} images`, 'success');
+
+            } catch (error) {
+                console.error('Error loading images:', error);
+                showStatus('Error loading images: ' + error.message, 'error');
+            }
+        }
+
+        // Load images from GitHub URL
+        async function loadImagesFromGitHub(url) {
+            // Extract GitHub repo info
+            const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)(?:\/tree\/([^\/]+)\/(.+))?/);
+            if (!match) {
+                throw new Error('Invalid GitHub URL format');
+            }
+
+            const [, owner, repo, branch = 'main', path = ''] = match;
+
+            // Try to get images from GitHub API
+            try {
+                const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch from GitHub API');
+                }
+
+                const contents = await response.json();
+                const images = [];
+
+                for (const item of contents) {
+                    if (item.type === 'file' && isImageFile(item.name)) {
+                        images.push({
+                            name: item.name,
+                            url: item.download_url,
+                            path: item.download_url
+                        });
+                    }
+                }
+
+                return images;
+            } catch (error) {
+                // Fallback: try to load common image patterns
+                console.warn('GitHub API failed, trying direct URL access:', error);
+                return await loadImagesFromDirectUrl(url);
+            }
+        }
+
+        // Load images from direct URL patterns
+        async function loadImagesFromDirectUrl(baseUrl) {
+            const images = [];
+            const commonExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+
+            // Try common image naming patterns
+            for (let i = 1; i <= 20; i++) {
+                for (const ext of commonExtensions) {
+                    const imageName = `line_${String(i).padStart(3, '0')}${ext}`;
+                    const imageUrl = `${baseUrl}/${imageName}`.replace(/\/+/g, '/');
+
+                    try {
+                        const response = await fetch(imageUrl, { method: 'HEAD' });
+                        if (response.ok) {
+                            images.push({
+                                name: imageName,
+                                url: imageUrl,
+                                path: imageUrl
+                            });
+                        }
+                    } catch (error) {
+                        // Image doesn't exist, continue
+                    }
+                }
+            }
+
+            return images;
+        }
+
+        // Load images from local folder
+        async function loadImagesFromFolder(folderPath) {
+            try {
+                // Use server endpoint to list images
+                const response = await fetch(`/api/images/list?path=${encodeURIComponent(folderPath)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load images from folder');
+                }
+                const data = await response.json();
+                return data.images || [];
+            } catch (error) {
+                // Fallback: try to load from common patterns
+                console.warn('Server endpoint failed, using fallback:', error);
+                return generateFallbackImages(folderPath);
+            }
+        }
+
+        // Generate fallback image list for local folders
+        function generateFallbackImages(folderPath) {
+            const images = [];
+            const commonExtensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+
+            for (let i = 1; i <= 20; i++) {
+                for (const ext of commonExtensions) {
+                    images.push({
+                        name: `line_${String(i).padStart(3, '0')}.${ext}`,
+                        url: `${folderPath}/line_${String(i).padStart(3, '0')}.${ext}`,
+                        path: `${folderPath}/line_${String(i).padStart(3, '0')}.${ext}`
+                    });
+                }
+            }
+
+            return images;
+        }
+
+        // Check if file is an image
+        function isImageFile(filename) {
+            const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'];
+            return imageExtensions.some(ext => filename.toLowerCase().endsWith(ext));
+        }
+
+        // Display images in grid
+        function displayImages(images) {
+            imageGrid.innerHTML = '';
+
+            if (images.length === 0) {
+                imageGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 40px;">No images found</div>';
+                return;
+            }
+
+            images.forEach(image => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                imageItem.draggable = true;
+                imageItem.dataset.path = image.path;
+
+                imageItem.innerHTML = `
+                    <img src="${image.url}" alt="${image.name}" onerror="this.style.display='none'">
+                    <div class="image-name">${image.name}</div>
+                `;
+
+                // Drag start
+                imageItem.addEventListener('dragstart', (e) => {
+                    draggedImage = image;
+                    e.dataTransfer.setData('text/plain', image.path);
+                    imageItem.classList.add('dragging');
+                });
+
+                // Drag end
+                imageItem.addEventListener('dragend', () => {
+                    imageItem.classList.remove('dragging');
+                    draggedImage = null;
+                });
+
+                imageGrid.appendChild(imageItem);
+            });
+        }
+
+        // Clear images
+        function clearImages() {
+            loadedImages = [];
+            imageGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 40px;">Click "Load Images" to load images from a folder or GitHub URL</div>';
+            showStatus('Images cleared', 'info');
+        }
+
+        // Format timestamp for display
+        function formatTimestamp(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const mm = String(minutes).padStart(2, '0');
+            const ss = secs.toFixed(3);
+            return `${mm}:${ss}`;
+        }
+
+        // Load .cslp file
+        function loadNotFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    cslpData = JSON.parse(content);
+                    
+                    // Extract all notation entries and combine them
+                    const timeline = cslpData.data?.timeline || [];
+                    const notations = timeline.map(entry => entry.notation || '').filter(n => n.trim());
+                    
+                    // Combine all timeline entries with timestamps for context
+                    let combinedNotation = '';
+                    let lineNumber = 1;
+                    timeline.forEach((entry, index) => {
+                        const timeStr = formatTimestamp(entry.time);
+                        const content = (entry.notation && entry.notation.trim()) ? entry.notation : (entry.text || '');
+                        if (content.trim()) {
+                            combinedNotation += `${lineNumber}. [${timeStr}] ${content}\n`;
+                            lineNumber++;
+                        }
+                    });
+                    
+                    noteEditor.value = combinedNotation.trim();
+                    currentFileName = file.name.replace(/\.cslp$/i, '');
+                    showStatus('CSLP file loaded successfully', 'success');
+                } catch (error) {
+                    showStatus('Error parsing CSLP file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Insert image reference at cursor position
+        function insertImageReference(imagePath) {
+            const textarea = noteEditor;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+
+            // Insert image reference
+            const imageRef = `<img src="${imagePath}">`;
+            const newText = text.substring(0, start) + imageRef + text.substring(end);
+
+            textarea.value = newText;
+            textarea.focus();
+
+            // Set cursor after the inserted text
+            const newCursorPos = start + imageRef.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }
+
+        // Copy to clipboard
+        async function copyToClipboard() {
+            try {
+                await navigator.clipboard.writeText(noteEditor.value);
+                showStatus('Copied to clipboard!', 'success');
+            } catch (error) {
+                // Fallback for older browsers
+                noteEditor.select();
+                document.execCommand('copy');
+                showStatus('Copied to clipboard!', 'success');
+            }
+        }
+
+        // Download file
+        function downloadFile() {
+            const content = noteEditor.value;
+            if (!content.trim()) {
+                showStatus('No content to download', 'error');
+                return;
+            }
+
+            if (!cslpData) {
+                showStatus('No CSLP file loaded. Load a .cslp file first.', 'error');
+                return;
+            }
+
+            try {
+                // Parse the edited content back into notation entries
+                const lines = content.split('\n').filter(line => line.trim());
+                const sortedTimeline = [...cslpData.data.timeline].sort((a, b) => a.time - b.time);
+                
+                // Update the sorted timeline with edited notations
+                const updatedSortedTimeline = sortedTimeline.map((entry, index) => {
+                    if (index < lines.length) {
+                        const line = lines[index].trim();
+                        // Extract content after the timestamp
+                        const match = line.match(/^\d+\.\s*\[.*?\]\s*(.*)/);
+                        const notation = match ? match[1].trim() : '';
+                        return {
+                            ...entry,
+                            notation: notation
+                        };
+                    }
+                    return entry;
+                });
+
+                // Update the original timeline (preserving original order if needed)
+                const updatedTimeline = cslpData.data.timeline.map(entry => {
+                    const sortedEntry = updatedSortedTimeline.find(se => se.time === entry.time);
+                    return sortedEntry || entry;
+                });
+
+                // Create updated CSLP data
+                const updatedCslp = {
+                    ...cslpData,
+                    data: {
+                        ...cslpData.data,
+                        timeline: updatedTimeline
+                    }
+                };
+
+                const filename = currentFileName || 'notation';
+                const blob = new Blob([JSON.stringify(updatedCslp, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.cslp`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                URL.revokeObjectURL(url);
+                showStatus('CSLP file downloaded successfully', 'success');
+            } catch (error) {
+                showStatus('Error saving CSLP file: ' + error.message, 'error');
+            }
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 's':
+                        e.preventDefault();
+                        downloadFile();
+                        break;
+                    case 'o':
+                        e.preventDefault();
+                        notFileInput.click();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

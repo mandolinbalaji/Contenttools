@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATCFG/CSLP Converter & Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border: 1px solid #667eea;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .file-input-section {
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .file-input-group {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .file-input-group:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .file-input-group.loaded {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-status {
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .metadata-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metadata-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .timeline-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .timeline-item {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .timeline-time {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .timeline-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .timeline-inputs input {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .preview-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .preview-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .preview-textarea {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .metadata-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 ATCFG/CSLP Converter & Editor</h1>
+            <a href="index.html" class="back-link">← Back to Converter</a>
+        </div>
+
+        <p class="subtitle">Load ATCFG files to create new CSLP files, or load existing CSLP files for editing</p>
+
+        <div id="statusMessage"></div>
+
+        <div class="file-input-section">
+            <div class="file-input-group" id="atcfgGroup">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Anytune .atcfg file</div>
+                <div class="upload-hint">Create new CSLP from timing data</div>
+                <div class="file-name" id="atcfgFileName">No file selected</div>
+                <div class="file-status" id="atcfgStatus">Click to select</div>
+                <input type="file" id="atcfgInput" accept=".atcfg">
+            </div>
+
+            <div class="file-input-group" id="cslpGroup">
+                <div class="upload-icon">📝</div>
+                <div class="upload-text">Existing .cslp file</div>
+                <div class="upload-hint">Load and edit existing CSLP</div>
+                <div class="file-name" id="cslpFileName">No file selected</div>
+                <div class="file-status" id="cslpStatus">Click to select</div>
+                <input type="file" id="cslpInput" accept=".cslp,.json">
+            </div>
+        </div>
+
+        <div class="metadata-section" id="metadataSection" style="display: none;">
+            <div class="metadata-title">📋 Song Metadata</div>
+            <div class="metadata-grid">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Song title">
+                </div>
+                <div class="form-group">
+                    <label for="artist">Artist</label>
+                    <input type="text" id="artist" placeholder="Artist name">
+                </div>
+                <div class="form-group">
+                    <label for="ragam">Ragam</label>
+                    <input type="text" id="ragam" placeholder="e.g., Kharaharapriya">
+                </div>
+                <div class="form-group">
+                    <label for="talam">Talam</label>
+                    <input type="text" id="talam" placeholder="e.g., Adi">
+                </div>
+                <div class="form-group">
+                    <label for="shruti">Shruti</label>
+                    <input type="text" id="shruti" placeholder="e.g., C, C#">
+                </div>
+                <div class="form-group">
+                    <label for="aarohanam">Aarohanam</label>
+                    <input type="text" id="aarohanam" placeholder="e.g., S R2 G2 M1 P D2 N2 S">
+                </div>
+                <div class="form-group">
+                    <label for="avarohanam">Avarohanam</label>
+                    <input type="text" id="avarohanam" placeholder="e.g., S N2 D2 P M1 G2 R2 S">
+                </div>
+                <div class="form-group">
+                    <label for="edupu">Edupu (BPM)</label>
+                    <input type="number" id="edupu" placeholder="60" value="60">
+                </div>
+                <div class="form-group">
+                    <label for="mp3FileName">MP3 Filename</label>
+                    <input type="text" id="mp3FileName" placeholder="song.mp3">
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-section" id="timelineSection" style="display: none;">
+            <div class="metadata-title">⏰ Timeline & Lyrics</div>
+            <div id="timelineContainer">
+                <!-- Timeline items will be added here -->
+            </div>
+        </div>
+
+        <div class="preview-section" id="previewSection">
+            <div class="preview-title">👁️ CSLP Preview</div>
+            <textarea class="preview-textarea" id="previewTextarea" readonly></textarea>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-secondary" id="previewBtn" disabled>👁️ Preview CSLP</button>
+            <button class="btn btn-primary" id="downloadBtn" disabled>💾 Download CSLP</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const atcfgGroup = document.getElementById('atcfgGroup');
+        const atcfgInput = document.getElementById('atcfgInput');
+        const atcfgFileName = document.getElementById('atcfgFileName');
+        const atcfgStatus = document.getElementById('atcfgStatus');
+        const cslpGroup = document.getElementById('cslpGroup');
+        const cslpInput = document.getElementById('cslpInput');
+        const cslpFileName = document.getElementById('cslpFileName');
+        const cslpStatus = document.getElementById('cslpStatus');
+        const metadataSection = document.getElementById('metadataSection');
+        const timelineSection = document.getElementById('timelineSection');
+        const timelineContainer = document.getElementById('timelineContainer');
+        const previewSection = document.getElementById('previewSection');
+        const previewTextarea = document.getElementById('previewTextarea');
+        const previewBtn = document.getElementById('previewBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // State
+        let atcfgData = null;
+        let cslpData = null;
+        let baseName = '';
+        let currentFileType = null; // 'atcfg' or 'cslp'
+
+        // Event listeners
+        atcfgGroup.addEventListener('click', () => atcfgInput.click());
+        atcfgInput.addEventListener('change', handleAtcfgFile);
+        cslpGroup.addEventListener('click', () => cslpInput.click());
+        cslpInput.addEventListener('change', handleCslpFile);
+        previewBtn.addEventListener('click', generateCslpPreview);
+        downloadBtn.addEventListener('click', downloadCslpFile);
+
+        function handleAtcfgFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    atcfgData = JSON.parse(e.target.result);
+                    cslpData = null; // Clear any loaded CSLP
+                    baseName = file.name.replace('.atcfg', '');
+                    currentFileType = 'atcfg';
+
+                    // Reset CSLP input
+                    cslpInput.value = '';
+                    cslpFileName.textContent = 'No file selected';
+                    cslpStatus.textContent = 'Click to select';
+                    cslpGroup.classList.remove('loaded');
+
+                    // Update UI
+                    atcfgFileName.textContent = file.name;
+                    atcfgStatus.textContent = 'Loaded successfully';
+                    atcfgGroup.classList.add('loaded');
+
+                    // Populate metadata
+                    populateMetadata();
+
+                    // Create timeline
+                    createTimeline();
+
+                    // Show sections
+                    metadataSection.style.display = 'block';
+                    timelineSection.style.display = 'block';
+                    previewBtn.disabled = false;
+                    downloadBtn.disabled = false;
+
+                    showStatus('ATCFG file loaded successfully!', 'success');
+                } catch (error) {
+                    showStatus('Error parsing ATCFG file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function handleCslpFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    cslpData = JSON.parse(e.target.result);
+                    atcfgData = null; // Clear any loaded ATCFG
+                    baseName = file.name.replace('.cslp', '').replace('.json', '');
+                    currentFileType = 'cslp';
+
+                    // Reset ATCFG input
+                    atcfgInput.value = '';
+                    atcfgFileName.textContent = 'No file selected';
+                    atcfgStatus.textContent = 'Click to select';
+                    atcfgGroup.classList.remove('loaded');
+
+                    // Update UI
+                    cslpFileName.textContent = file.name;
+                    cslpStatus.textContent = 'Loaded successfully';
+                    cslpGroup.classList.add('loaded');
+
+                    // Populate metadata from CSLP
+                    populateMetadataFromCslp();
+
+                    // Create timeline from CSLP
+                    createTimelineFromCslp();
+
+                    // Show sections
+                    metadataSection.style.display = 'block';
+                    timelineSection.style.display = 'block';
+                    previewBtn.disabled = false;
+                    downloadBtn.disabled = false;
+
+                    showStatus('CSLP file loaded successfully!', 'success');
+                } catch (error) {
+                    showStatus('Error parsing CSLP file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function populateMetadata() {
+            if (!atcfgData?.trackData?.[0]) return;
+
+            const track = atcfgData.trackData[0];
+            document.getElementById('title').value = track.title || baseName;
+            document.getElementById('artist').value = track.artist || '';
+            document.getElementById('mp3FileName').value = baseName + '.mp3';
+        }
+
+        function populateMetadataFromCslp() {
+            if (!cslpData?.data?.metadata) return;
+
+            const metadata = cslpData.data.metadata;
+            const config = cslpData.data.config || {};
+
+            document.getElementById('title').value = metadata.title || baseName;
+            document.getElementById('artist').value = metadata.artist || '';
+            document.getElementById('ragam').value = metadata.ragam || '';
+            document.getElementById('talam').value = metadata.talam || '';
+            document.getElementById('shruti').value = metadata.shruti || '';
+            document.getElementById('aarohanam').value = metadata.aarohanam || '';
+            document.getElementById('avarohanam').value = metadata.avarohanam || '';
+            document.getElementById('edupu').value = metadata.edupu || 60;
+            document.getElementById('mp3FileName').value = cslpData.data.mp3FileName || '';
+        }
+
+        function createTimeline() {
+            if (!atcfgData?.trackData?.[0]?.audioMarks) return;
+
+            const audioMarks = atcfgData.trackData[0].audioMarks;
+            // Sort audioMarks by time
+            audioMarks.sort((a, b) => a.time - b.time);
+            timelineContainer.innerHTML = '';
+
+            audioMarks.forEach((mark, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+
+                timelineItem.innerHTML = `
+                    <div class="timeline-time">Time: ${mark.time.toFixed(2)}s</div>
+                    <div class="timeline-inputs">
+                        <input type="text" placeholder="Lyrics for this timestamp" data-index="${index}" class="lyrics-input">
+                        <input type="text" placeholder="Notation (optional)" data-index="${index}" class="notation-input">
+                    </div>
+                `;
+
+                timelineContainer.appendChild(timelineItem);
+            });
+        }
+
+        function createTimelineFromCslp() {
+            if (!cslpData?.data?.timeline) return;
+
+            const timeline = cslpData.data.timeline;
+            // Sort timeline by time
+            timeline.sort((a, b) => a.time - b.time);
+            timelineContainer.innerHTML = '';
+
+            timeline.forEach((item, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+
+                timelineItem.innerHTML = `
+                    <div class="timeline-time">Time: ${item.time.toFixed(6)}s</div>
+                    <div class="timeline-inputs">
+                        <input type="text" placeholder="Lyrics for this timestamp" data-index="${index}" class="lyrics-input" value="${item.text || ''}">
+                        <input type="text" placeholder="Notation (optional)" data-index="${index}" class="notation-input" value="${item.notation || ''}">
+                    </div>
+                `;
+
+                timelineContainer.appendChild(timelineItem);
+            });
+        }
+
+        function generateCslpPreview() {
+            if (!atcfgData && !cslpData) return;
+
+            try {
+                const metadata = {
+                    title: document.getElementById('title').value || baseName,
+                    artist: document.getElementById('artist').value,
+                    ragam: document.getElementById('ragam').value,
+                    talam: document.getElementById('talam').value,
+                    shruti: document.getElementById('shruti').value,
+                    aarohanam: document.getElementById('aarohanam').value,
+                    avarohanam: document.getElementById('avarohanam').value,
+                    edupu: parseInt(document.getElementById('edupu').value) || 60
+                };
+
+                let timeline = [];
+                let lastPosition = 0;
+
+                if (currentFileType === 'atcfg') {
+                    // Generate timeline from ATCFG audio marks
+                    const audioMarks = atcfgData.trackData[0].audioMarks || [];
+                    timeline = audioMarks.map((mark, index) => {
+                        const lyricsInput = document.querySelector(`.lyrics-input[data-index="${index}"]`);
+                        const notationInput = document.querySelector(`.notation-input[data-index="${index}"]`);
+
+                        return {
+                            id: Date.now() + index,
+                            time: mark.time,
+                            text: lyricsInput ? lyricsInput.value : '',
+                            notation: notationInput ? notationInput.value : '',
+                            lineNumber: index
+                        };
+                    });
+                    lastPosition = audioMarks.length > 0 ? audioMarks[audioMarks.length - 1].time : 0;
+                } else if (currentFileType === 'cslp') {
+                    // Update existing timeline from CSLP
+                    const existingTimeline = cslpData.data.timeline || [];
+                    timeline = existingTimeline.map((item, index) => {
+                        const lyricsInput = document.querySelector(`.lyrics-input[data-index="${index}"]`);
+                        const notationInput = document.querySelector(`.notation-input[data-index="${index}"]`);
+
+                        return {
+                            id: item.id || (Date.now() + index),
+                            time: item.time,
+                            text: lyricsInput ? lyricsInput.value : (item.text || ''),
+                            notation: notationInput ? notationInput.value : (item.notation || ''),
+                            lineNumber: index
+                        };
+                    });
+                    lastPosition = cslpData.data.config?.lastPosition || (timeline.length > 0 ? timeline[timeline.length - 1].time : 0);
+                }
+
+                const ulpLines = timeline.map(item => item.text);
+
+                const cslpContent = {
+                    data: {
+                        metadata,
+                        mp3FileName: document.getElementById('mp3FileName').value,
+                        config: {
+                            offset: 0.25,
+                            lastPosition: lastPosition
+                        },
+                        ulpLines,
+                        rawText: ulpLines.join('\n'),
+                        timeline
+                    },
+                    integrityHash: generateHash()
+                };
+
+                previewTextarea.value = JSON.stringify(cslpContent, null, 2);
+                previewSection.style.display = 'block';
+                showStatus('CSLP preview generated!', 'success');
+            } catch (error) {
+                showStatus('Error generating CSLP: ' + error.message, 'error');
+            }
+        }
+
+        function downloadCslpFile() {
+            if (!previewTextarea.value) {
+                generateCslpPreview();
+            }
+
+            try {
+                const cslpContent = JSON.parse(previewTextarea.value);
+                const blob = new Blob([JSON.stringify(cslpContent, null, 2)], { type: 'application/json;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = baseName + '.cslp';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                URL.revokeObjectURL(url);
+                showStatus(`✓ CSLP file downloaded: ${baseName}.cslp`, 'success');
+            } catch (error) {
+                showStatus('Error downloading CSLP file: ' + error.message, 'error');
+            }
+        }
+
+        function generateHash() {
+            // Simple hash generation for integrity check
+            return 'hash-' + Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function showStatus(message, type) {
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

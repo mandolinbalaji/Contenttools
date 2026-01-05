@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cymatics Audio Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #simulator {
+            flex: 1;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            max-width: 90vh;
+            max-height: 90vh;
+            margin: 0 auto;
+            border: 2px solid #333;
+            background: radial-gradient(circle, #001122, #000);
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        #monitor {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 300px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+        }
+        button {
+            background: #444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #frequency {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 24px;
+            font-family: monospace;
+            background: rgba(0,0,0,0.5);
+            padding: 5px;
+        }
+        #volume {
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            color: #fff;
+            font-size: 18px;
+            font-family: monospace;
+            background: rgba(0,0,0,0.5);
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <select id="audioSelect" style="display:none; margin-right: 10px;"></select>
+        <button id="startBtn">Start Audio Input</button>
+    </div>
+    <div id="frequency">Frequency: -- Hz</div>
+    <div id="volume">Volume: --</div>
+    <canvas id="simulator"></canvas>
+    <canvas id="monitor"></canvas>
+
+    <script>
+        const simulator = document.getElementById('simulator');
+        const ctx = simulator.getContext('2d');
+        const monitor = document.getElementById('monitor');
+        const mctx = monitor.getContext('2d');
+
+        let audioContext, analyser, dataArray, bufferLength;
+        let animationId;
+
+        // Resize canvases to fit
+        function resizeCanvases() {
+            const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9);
+            simulator.width = size;
+            simulator.height = size;
+        }
+        resizeCanvases();
+        window.addEventListener('resize', resizeCanvases);
+
+        let devicesLoaded = false;
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('startBtn');
+            const select = document.getElementById('audioSelect');
+
+            if (!devicesLoaded) {
+                try {
+                    // First, get permission
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(track => track.stop()); // Stop the temp stream
+
+                    // Now enumerate devices
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const audioInputs = devices.filter(d => d.kind === 'audioinput');
+
+                    select.innerHTML = '<option value="">Select Audio Input</option>';
+                    audioInputs.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.deviceId;
+                        option.text = device.label || `Microphone ${device.deviceId.slice(0,8)}`;
+                        select.appendChild(option);
+                    });
+
+                    select.style.display = 'inline-block';
+                    btn.textContent = 'Start with Selected Input';
+                    devicesLoaded = true;
+                } catch (err) {
+                    alert('Error accessing microphone: ' + err.message);
+                }
+            } else {
+                // Use selected device
+                const deviceId = select.value;
+                if (!deviceId) {
+                    alert('Please select an audio input device.');
+                    return;
+                }
+
+                try {
+                    const constraints = deviceId ? { audio: { deviceId: { exact: deviceId } } } : { audio: true };
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createMediaStreamSource(stream);
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 2048;
+                    analyser.smoothingTimeConstant = 0.8;
+                    bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                    source.connect(analyser);
+                    draw();
+                    btn.disabled = true;
+                    btn.textContent = 'Running...';
+                } catch (err) {
+                    alert('Error starting with selected device: ' + err.message);
+                }
+            }
+        });
+
+        function draw() {
+            animationId = requestAnimationFrame(draw);
+
+            analyser.getByteFrequencyData(dataArray);
+
+            // Calculate volume (average amplitude)
+            const volume = dataArray.reduce((sum, val) => sum + val, 0) / bufferLength;
+            document.getElementById('volume').textContent = `Volume: ${Math.round(volume)}`;
+
+            // Find dominant frequency
+            let maxIndex = 0;
+            let maxValue = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                if (dataArray[i] > maxValue) {
+                    maxValue = dataArray[i];
+                    maxIndex = i;
+                }
+            }
+            const frequency = maxIndex * audioContext.sampleRate / analyser.fftSize;
+            document.getElementById('frequency').textContent = `Frequency: ${Math.round(frequency)} Hz`;
+
+            // Clear simulator
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, simulator.width, simulator.height);
+
+            // Calculate modes from detected frequency for more varied geometric patterns
+            let m, n;
+            if (frequency < 200) {
+                m = 1; n = 1; // Cross
+            } else if (frequency < 400) {
+                m = 2; n = 1; // Rectangle
+            } else if (frequency < 600) {
+                m = 2; n = 2; // Square
+            } else if (frequency < 800) {
+                m = 3; n = 1; // Complex rectangle
+            } else if (frequency < 1000) {
+                m = 3; n = 2; // More complex
+            } else if (frequency < 1200) {
+                m = 4; n = 1; // Even more
+            } else if (frequency < 1400) {
+                m = 3; n = 3; // Square-ish
+            } else {
+                m = 4; n = 2; // Advanced rectangle
+            }
+
+            // Draw sand accumulation patterns (white lines where sand collects at nodes)
+            const L = simulator.width;
+            const step = 1; // Fine resolution for detailed sand patterns
+            ctx.fillStyle = '#ffffff';
+            for (let x = 0; x < L; x += step) {
+                for (let y = 0; y < L; y += step) {
+                    const wave = Math.sin(m * Math.PI * x / L) * Math.sin(n * Math.PI * y / L);
+                    if (Math.abs(wave) < 0.005) { // Very close to nodes for thin lines
+                        ctx.fillRect(x, y, step, step);
+                    }
+                }
+            }
+
+            // Input monitor: waveform
+            mctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            mctx.fillRect(0, 0, monitor.width, monitor.height);
+            mctx.beginPath();
+            mctx.strokeStyle = '#0f0';
+            mctx.lineWidth = 2;
+            for (let i = 0; i < bufferLength; i++) {
+                const x = (i / bufferLength) * monitor.width;
+                const y = monitor.height - (dataArray[i] / 255) * monitor.height;
+                if (i === 0) mctx.moveTo(x, y);
+                else mctx.lineTo(x, y);
+            }
+            mctx.stroke();
+        }
+    </script>
+</body>
+</html>

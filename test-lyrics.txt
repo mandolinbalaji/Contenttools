@@ -1,0 +1,3 @@
+PL1: first line of lyrics
+PL2: second line of lyrics
+PL3: third line of lyrics

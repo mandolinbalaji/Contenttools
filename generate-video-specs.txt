@@ -1,0 +1,93 @@
+================================================================================
+                    GENERATE VIDEO - SPECIFICATIONS
+================================================================================
+
+FORMAT: YouTube Shorts (9:16 Portrait)
+DIMENSIONS: 1080 x 1920 pixels
+
+================================================================================
+                         LAYOUT BREAKDOWN
+================================================================================
+
+┌─────────────────────────────────────────────────────────┐
+│                                                         │
+│                    SONG TITLE                           │  ← ~150px
+│              (Bold, white, centered)                    │
+│                                                         │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│                                                         │
+│                                                         │
+│                  GREEN SCREEN AREA                      │  ← ~1370px
+│                    (#00FF00)                            │
+│                                                         │
+│              Replace with your video                    │
+│                                                         │
+│                                                         │
+│                                                         │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │         LYRICS LINE (centered)                    │  │  ← ~400px
+│  │         NOTATION LINE (centered)                  │  │
+│  └───────────────────────────────────────────────────┘  │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+
+================================================================================
+                         COLOR VALUES
+================================================================================
+
+CHROMA KEY (Green Screen):
+  - HEX: #00FF00
+  - RGB: (0, 255, 0)
+  - Name: Pure Green / Lime
+
+TITLE TEXT:
+  - Color: #FFFFFF (White)
+  - Font: Bold, Sans-serif (Impact or similar)
+  - Size: ~72px
+  - Shadow: Optional dark shadow for readability
+
+LYRICS/NOTATION STRIP:
+  - Background: #FFFFFF (White) or #FFF8E7 (Cream)
+  - Lyrics Text: #000000 (Black)
+  - Notation Text: #333333 (Dark Gray)
+  - Font: Sans-serif for lyrics, Monospace for notation
+  - Padding: 20px all around
+  - Border Radius: 10px (rounded corners)
+
+================================================================================
+                         SECTION HEIGHTS
+================================================================================
+
+Total Height: 1920px
+
+  Title Area:        150px  (top)
+  Green Screen:     1370px  (middle - chroma key area)
+  Bottom Strip:      400px  (lyrics + notation)
+
+================================================================================
+                         WORKFLOW
+================================================================================
+
+1. Upload audio file (.mp3, .m4a, .wav)
+2. Upload CSLP file (.cslp)
+3. Click "Render Video"
+4. Download WebM video file
+5. Import into video editor (Premiere, CapCut, DaVinci, etc.)
+6. Apply Chroma Key effect to remove #00FF00 green
+7. Layer your performance video behind the lyrics strip
+8. Export final video for YouTube Shorts
+
+================================================================================
+                         NOTES
+================================================================================
+
+- Song title is extracted from CSLP metadata (data.metadata.title)
+- Lyrics and notation update/transition at each timestamp
+- Video duration matches audio file length
+- Output format: WebM (native browser support)
+- For MP4, use a video converter after export
+
+================================================================================
