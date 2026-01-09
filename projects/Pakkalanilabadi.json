@@ -1,0 +1,37 @@
+{
+  "_file_path": "projects\\Pakkalanilabadi.json",
+  "audio_files": [
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Pakkalanilabadi/Stems/Pakkalanilabadi_vocals.mp3",
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Pakkalanilabadi/Stems/Pakkalanilabadi_minus.mp3",
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Pakkalanilabadi/Stems/Pakkalanilabadi_click_track.mp3"
+  ],
+  "created": "2026-01-06T14:56:03.977337",
+  "cslp_file": "C:\\iCloudDrive\\BalajiMusicContent\\All_Backing_Tracks\\Pakkalanilabadi\\Assets\\Pakkalanilabadi_minus.cslp",
+  "id": "2a92f41a-2838-4232-8aef-7319ba2d9fb8",
+  "last_modified": "2026-01-06T15:21:10.418448",
+  "name": "Pakkalanilabadi",
+  "track_settings": {
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Pakkalanilabadi/Stems/Pakkalanilabadi_vocals.mp3": {
+      "volume": 0.24,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "Pakkalanilabadi_vocals"
+    },
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Pakkalanilabadi/Stems/Pakkalanilabadi_minus.mp3": {
+      "volume": 0.12,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "Pakkalanilabadi_minus"
+    },
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Pakkalanilabadi/Stems/Pakkalanilabadi_click_track.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "Pakkalanilabadi_click_track"
+    }
+  },
+  "version": "1.0"
+}
