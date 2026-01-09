@@ -1121,66 +1121,41 @@ class LyricsDisplayWidget(QWidget):
         painter.drawRect(0, 0, w - 1, h - 1)
 
 
-class MarkersWidget(QWidget):
-    """Widget to display clickable markers below waveform."""
+class MarkerInnerWidget(QWidget):
+    """Inner widget for drawing markers."""
     
     marker_clicked = pyqtSignal(float)  # Emits time in seconds
     
-    def __init__(self):
-        super().__init__()
-        self.markers = []  # List of {time, label}
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.markers = []
         self.duration = 0
         self.current_marker_index = -1
-        self.setMinimumHeight(35)
-        self.setMaximumHeight(35)
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
-        
-    def set_markers(self, timeline, duration):
-        """Set markers from CSLP timeline."""
-        self.markers = []
+        self.setMouseTracking(True)
+    
+    def set_markers(self, markers, duration, current_index):
+        self.markers = markers
         self.duration = duration
-        
-        for i, entry in enumerate(timeline):
-            self.markers.append({
-                'time': entry.get('time', 0),
-                'label': str(i + 1),
-                'text': entry.get('text', '')[:20]  # First 20 chars for tooltip
-            })
-        
+        self.current_marker_index = current_index
         self.update()
     
-    def set_current_time(self, seconds):
-        """Update which marker is current."""
-        new_index = -1
-        for i, marker in enumerate(self.markers):
-            if seconds >= marker['time']:
-                new_index = i
-        
-        if new_index != self.current_marker_index:
-            self.current_marker_index = new_index
-            self.update()
-    
     def paintEvent(self, event):
-        """Draw markers."""
+        """Draw circular markers."""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        
-        # Background
-        painter.fillRect(self.rect(), QColor(35, 35, 40))
         
         if not self.markers or self.duration <= 0:
             return
         
-        w = self.width()
-        h = self.height()
-        
-        font = QFont("Segoe UI", 9)
-        painter.setFont(font)
-        
+        # Draw markers
         for i, marker in enumerate(self.markers):
-            x = int((marker['time'] / self.duration) * w)
+            # Position based on time
+            x = int((marker['time'] / self.duration) * self.width())
             
-            # Marker line
+            # Marker circle
+            center_y = 12  # Center vertically in the 25px height
+            radius = 10
+            
             if i == self.current_marker_index:
                 painter.setPen(QPen(QColor(100, 255, 100), 2))
                 painter.setBrush(QBrush(QColor(100, 255, 100)))
@@ -1188,13 +1163,15 @@ class MarkersWidget(QWidget):
                 painter.setPen(QPen(QColor(100, 150, 200), 1))
                 painter.setBrush(QBrush(QColor(70, 100, 140)))
             
-            # Draw marker tick
-            painter.drawLine(x, 0, x, 10)
+            # Draw circle
+            painter.drawEllipse(x - radius, center_y - radius, radius * 2, radius * 2)
             
             # Draw marker number
-            painter.drawEllipse(x - 10, 12, 20, 18)
             painter.setPen(QColor(255, 255, 255) if i == self.current_marker_index else QColor(200, 200, 200))
-            painter.drawText(x - 10, 12, 20, 18, Qt.AlignmentFlag.AlignCenter, marker['label'])
+            font = QFont("Segoe UI", 8)
+            painter.setFont(font)
+            painter.drawText(x - radius, center_y - radius, radius * 2, radius * 2, 
+                           Qt.AlignmentFlag.AlignCenter, marker['label'])
     
     def mousePressEvent(self, event):
         """Handle click to jump to marker."""
@@ -1209,14 +1186,142 @@ class MarkersWidget(QWidget):
             
             for marker in self.markers:
                 dist = abs(marker['time'] - click_time)
-                # Check if click is within ~20 pixels of marker
+                # Check if click is within marker circle
                 marker_x = (marker['time'] / self.duration) * w
-                if abs(x - marker_x) < 20 and dist < min_dist:
+                if abs(x - marker_x) < 15 and dist < min_dist:  # 15px tolerance
                     min_dist = dist
                     nearest_marker = marker
             
             if nearest_marker:
                 self.marker_clicked.emit(nearest_marker['time'])
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.ignore()
+
+
+class MarkersWidget(QScrollArea):
+    """Widget to display clickable markers below waveform."""
+
+    marker_clicked = pyqtSignal(float)  # Emits time in seconds
+
+    def __init__(self):
+        super().__init__()
+        self.markers = []  # List of {time, label}
+        self.duration = 0
+        self.current_marker_index = -1
+
+        # Create inner widget for markers
+        self.inner_widget = MarkerInnerWidget()
+        self.inner_widget.marker_clicked.connect(self.marker_clicked.emit)
+        self.inner_layout = QHBoxLayout(self.inner_widget)
+        self.inner_layout.setContentsMargins(5, 5, 5, 5)
+        self.inner_layout.setSpacing(5)
+
+        self.setWidget(self.inner_widget)
+        self.setWidgetResizable(True)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setMinimumHeight(40)
+        self.setMaximumHeight(40)
+
+        # Style
+        self.setStyleSheet("""
+            QScrollArea {
+                border: 1px solid #444;
+                background-color: #252530;
+            }
+            QScrollBar:horizontal {
+                background-color: #333;
+                height: 12px;
+            }
+            QScrollBar::handle:horizontal {
+                background-color: #555;
+                border-radius: 6px;
+            }
+            QScrollBar::handle:horizontal:hover {
+                background-color: #666;
+            }
+        """)
+        
+    def set_markers(self, timeline, duration):
+        """Set markers from CSLP timeline."""
+        self.markers = []
+        self.duration = duration
+        
+        for i, entry in enumerate(timeline):
+            marker_data = {
+                'time': entry.get('time', 0),
+                'label': str(i + 1),
+                'text': entry.get('text', '')[:20]  # First 20 chars for tooltip
+            }
+            self.markers.append(marker_data)
+        
+        # Update inner widget
+        self.inner_widget.set_markers(self.markers, self.duration, self.current_marker_index)
+        
+        # Set minimum width based on number of markers
+        min_width = max(400, len(self.markers) * 30)  # At least 400px, 30px per marker
+        self.inner_widget.setMinimumWidth(min_width)
+        
+        # Reset scroll position to beginning
+        self.horizontalScrollBar().setValue(0)
+        
+    def set_current_time(self, seconds):
+        """Update which marker is current."""
+        new_index = -1
+        for i, marker in enumerate(self.markers):
+            if seconds >= marker['time']:
+                new_index = i
+        
+        if new_index != self.current_marker_index:
+            self.current_marker_index = new_index
+            self.inner_widget.set_markers(self.markers, self.duration, self.current_marker_index)
+            
+            # Smart auto-scroll based on remaining time and markers
+            self._update_scroll_position()
+    
+    def _update_scroll_position(self):
+        """Update scroll position based on current time and remaining markers."""
+        if not self.markers or self.duration <= 0 or self.current_marker_index < 0:
+            return
+        
+        current_marker = self.markers[self.current_marker_index]
+        current_time = current_marker['time']
+        time_remaining = self.duration - current_time
+        
+        # Count remaining markers
+        remaining_markers = len(self.markers) - self.current_marker_index - 1
+        
+        if remaining_markers == 0:
+            # Last marker, scroll to show it
+            marker_x = int((current_time / self.duration) * self.inner_widget.width())
+            self.ensureWidgetVisible(self.inner_widget, marker_x - self.width() // 2, 0)
+        elif self.current_marker_index == 0 and current_time < self.duration * 0.1:
+            # At the beginning, don't scroll
+            self.horizontalScrollBar().setValue(0)
+        else:
+            # Calculate optimal scroll position to show upcoming markers
+            # Look ahead to next few markers
+            look_ahead_count = min(5, remaining_markers)  # Look at next 5 markers
+            if self.current_marker_index + look_ahead_count < len(self.markers):
+                last_visible_marker = self.markers[self.current_marker_index + look_ahead_count]
+                last_marker_x = int((last_visible_marker['time'] / self.duration) * self.inner_widget.width())
+                
+                # Scroll so that the current marker is slightly left of center
+                target_scroll = max(0, last_marker_x - int(self.width() * 0.7))
+                self.horizontalScrollBar().setValue(target_scroll)
+            else:
+                # Near the end, scroll to show remaining markers
+                marker_x = int((current_time / self.duration) * self.inner_widget.width())
+                self.ensureWidgetVisible(self.inner_widget, marker_x - int(self.width() * 0.3), 0)
+    
+    def resizeEvent(self, event):
+        """Handle resize to recalculate scroll position."""
+        super().resizeEvent(event)
+        # Recalculate scroll position after resize
+        self._update_scroll_position()
 
 
 class WaveformWidget(QWidget):
