@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metronome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <style>
+        body {
+            text-align: center;
+            background-color: white;
+            color: orange;
+            font-family: 'Lora', serif;
+            font-size: 12px;
+        }
+        .bar-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px;
+        }
+        .bar {
+            width: 20px;
+            height: 80px;
+            background-color: lightgray;
+            margin-right: 3px; /* Spacing between bars */
+            transition: background 0.2s;
+        }
+        .active {
+            background-color: orange;
+        }
+        .accent {
+            background-color: red !important;
+        }
+        .active.accent {
+            background-color: blue !important;
+        }
+        .gap {
+            width: 10px; /* Width of the gap */
+            height: 80px;
+            margin-right: 3px; /* Spacing after the gap */
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .inline-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        button {
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: darkorange;
+        }
+        .icon-button {
+            font-size: 18px;
+            padding: 5px;
+        }
+        input[type="number"], input[type="range"] {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Metronome</h1>
+    <div class="bar-container" id="barContainer"></div>
+    
+    <div class="controls">
+        <div class="inline-controls">
+            <label for="bpm">BPM:</label>
+            <input type="number" id="bpm" value="60" min="30" max="300" onchange="setBPM(this.value)">
+            <button onclick="setBPM(60)">60</button>
+            <button onclick="setBPM(75)">75</button>
+            <button onclick="setBPM(120)">120</button>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <div class="inline-controls">
+            <label for="beats">Beats:</label>
+            <input type="number" id="beats" value="8" min="1" max="16">
+            <button onclick="setBeats(8, [0,4,6], [4,6])">Adhi 1</button>
+            <button onclick="setBeats(16, [0,1,8,9,12,13], [8,10,12,14])">Adhi 2</button>
+            <button onclick="setBeats(3, [0], [1])">Rupakam</button>
+            <button onclick="setBeats(5, [0,2], [2])">Kandam</button>
+            <button onclick="setBeats(7, [0,3,5], [3,5])">Mishram</button>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <label for="accents">Accent Bars:</label>
+        <input type="text" id="accents" placeholder="e.g. 1,4" onchange="setAccents()">
+    </div>
+    
+    <div class="controls">
+        <div class="inline-controls">
+            <button class="icon-button" onclick="toggleMetronome()">▶️ / ⏹️</button>
+            <button class="icon-button" onclick="toggleMute()">🔇 / 🔊</button>
+            <input type="range" id="volume" min="0" max="1" step="0.1" value="0" onchange="setVolume(this.value)">
+        </div>
+    </div>
+    
+    <!-- Audio elements for woodblock sounds -->
+    <audio id="regularSound" src="/tick.mp3"></audio>
+    <audio id="accentSound" src="/tock.mp3"></audio>
+    
+    <script>
+        let bpm = 60;
+        let beatsPerCycle = 8;
+        let interval;
+        let currentBeat = 0;
+        let accentBeats = [0, 4, 6];
+        let isMuted = false;
+        let volume = 1;
+
+        // Audio elements
+        const regularSound = document.getElementById('regularSound');
+        const accentSound = document.getElementById('accentSound');
+
+        function setBPM(value) {
+            bpm = parseInt(value);
+            document.getElementById('bpm').value = bpm;
+            restartMetronome();
+        }
+
+        function setBeats(value, accents = [], gaps = []) {
+            document.getElementById('beats').value = value;
+            beatsPerCycle = value;
+            accentBeats = accents;
+            createBars(gaps);
+            restartMetronome();
+        }
+
+        function createBars(gaps = []) {
+            const container = document.getElementById('barContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < beatsPerCycle; i++) {
+                // Add a bar
+                let bar = document.createElement('div');
+                bar.classList.add('bar');
+                if (accentBeats.includes(i)) {
+                    bar.classList.add('accent');
+                }
+                container.appendChild(bar);
+
+                // Add a gap if this position is in the gaps array
+                if (gaps.includes(i + 1)) { // Insert gap AFTER the specified bar
+                    let gap = document.createElement('div');
+                    gap.classList.add('gap');
+                    container.appendChild(gap);
+                }
+            }
+        }
+
+        function toggleMetronome() {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            } else {
+                startMetronome();
+            }
+        }
+
+        function startMetronome() {
+            const bars = document.querySelectorAll('.bar');
+            currentBeat = 0;
+            interval = setInterval(() => {
+                bars.forEach(bar => bar.classList.remove('active', 'active-accent'));
+                bars[currentBeat].classList.add('active');
+                if (accentBeats.includes(currentBeat)) {
+                    bars[currentBeat].classList.add('active', 'accent');
+                    playSound(accentSound); // Play accent sound
+                } else {
+                    playSound(regularSound); // Play regular sound
+                }
+                currentBeat = (currentBeat + 1) % beatsPerCycle;
+            }, (60000 / bpm));
+        }
+
+        function playSound(sound) {
+            if (!isMuted) {
+                sound.currentTime = 0; // Reset sound to start
+                sound.volume = volume; // Set volume
+                sound.play(); // Play the sound
+            }
+        }
+
+        function restartMetronome() {
+            if (interval) {
+                clearInterval(interval);
+                startMetronome();
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.querySelector('.icon-button:nth-child(2)').textContent = isMuted ? '🔇' : '🔊';
+        }
+
+        function setVolume(value) {
+            volume = parseFloat(value);
+        }
+
+        createBars();
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Swaras Notation Recognizer</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 600px; }
+    button { font-size: 1em; margin-right: 1em; padding: 0.5em 1em; }
+    #output { font-size: 1.2em; margin-top: 1em; }
+  </style>
+</head>
+<body>
+
+<h2>🎙️ Say: sa ri ga ma pa da ni</h2>
+<button id="start">Start</button>
+<button id="stop" disabled>Stop</button>
+<button id="download" disabled>Download Notation</button>
+
+<div id="output">Notation: (waiting...)</div>
+
+<script>
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
+const downloadBtn = document.getElementById("download");
+const outputDiv = document.getElementById("output");
+
+const swaraMap = {
+  sa: "S", ri: "R", ga: "G", ma: "M", pa: "P", da: "D", ni: "N",
+  re: "R", gee: "G", mi: "M", baa: "P", dha: "D", nee: "N"
+};
+
+let recognition;
+let notation = [];
+
+function mapWordsToSwaras(text) {
+  const words = text.toLowerCase().split(/\s+/);
+  const notes = words.map(word => {
+    const clean = word.replace(/[^a-z]/g, '');
+    return swaraMap[clean] || null;
+  }).filter(Boolean);
+  return notes;
+}
+
+function setupRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("SpeechRecognition not supported in this browser.");
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = "en-IN";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+
+  recognition.onresult = (event) => {
+    const text = event.results[event.results.length - 1][0].transcript;
+    console.log("🎤 Recognized:", text);
+    const notes = mapWordsToSwaras(text);
+    if (notes.length > 0) {
+      notation.push(...notes);
+      outputDiv.textContent = "Notation: " + notation.join(" ");
+      downloadBtn.disabled = false;
+    }
+  };
+
+  recognition.onerror = (e) => {
+    console.error("Speech recognition error:", e.error);
+  };
+
+  recognition.onend = () => {
+    console.log("Stopped listening");
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  };
+}
+
+setupRecognition();
+
+startBtn.onclick = () => {
+  notation = [];
+  outputDiv.textContent = "Listening for swaras...";
+  recognition.start();
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+  downloadBtn.disabled = true;
+};
+
+stopBtn.onclick = () => {
+  recognition.stop();
+};
+
+downloadBtn.onclick = () => {
+  const text = notation.join(" ");
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "notation.txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+</script>
+
+</body>
+</html>

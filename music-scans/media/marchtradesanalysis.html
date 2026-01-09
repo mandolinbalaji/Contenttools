@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>March Trades Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .report {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>March Trades Analysis</h1>
+    <h2>Hourly Analysis (March 11-13, 2025)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Hour (EST)</th>
+                <th>Total Trades</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Net Profit/Loss</th>
+                <th>Avg. Profit/Loss per Trade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hourly Breakdown -->
+            <tr><td>10:00-11:00</td><td>1</td><td>1</td><td>0</td><td>$32.80</td><td>$32.80</td></tr>
+            <tr><td>11:00-12:00</td><td>1</td><td>1</td><td>0</td><td>$32.80</td><td>$32.80</td></tr>
+            <tr><td>12:00-13:00</td><td>4</td><td>3</td><td>1</td><td>$75.20</td><td>$18.80</td></tr>
+            <tr><td>13:00-14:00</td><td>25</td><td>19</td><td>6</td><td>$463.50</td><td>$18.54</td></tr>
+            <tr><td>14:00-15:00</td><td>35</td><td>22</td><td>13</td><td>$227.40</td><td>$6.50</td></tr>
+            <tr><td>15:00-16:00</td><td>5</td><td>3</td><td>2</td><td>$62.70</td><td>$12.54</td></tr>
+            <tr><td>16:00-17:00</td><td>18</td><td>10</td><td>8</td><td>$87.40</td><td>$4.86</td></tr>
+            <tr><td>17:00-18:00</td><td>19</td><td>11</td><td>8</td><td>$82.80</td><td>$4.36</td></tr>
+            <tr><td>18:00-19:00</td><td>2</td><td>1</td><td>1</td><td>-$26.40</td><td>-$13.20</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Overall Report and Opinion</h2>
+    <div class="report">
+        <p><strong>Total Trades:</strong> 110</p>
+        <p><strong>Total Wins:</strong> 71 (64.55% win rate)</p>
+        <p><strong>Total Losses:</strong> 39 (35.45% loss rate)</p>
+        <p><strong>Total Net Profit:</strong> $1088.40</p>
+        <p><strong>Average Profit per Trade:</strong> $9.89</p>
+        <p><strong>Total Commission Paid:</strong> $77.00</p>
+        <p><strong>Maximum Adverse Excursion (MAE):</strong> $185.50 (Trade 84)</p>
+        <p><strong>Maximum Favorable Excursion (MFE):</strong> $185.50 (Trade 84)</p>
+
+        <h3>Analysis and Opinion:</h3>
+        <p>The trading activity from March 11-13, 2025, shows a generally positive performance with a net profit of $1088.40 across 110 trades. The win rate of 64.55% is respectable, indicating that the trader is more often correct in their market direction predictions. However, there are several observations and areas for improvement:</p>
+        
+        <ul>
+            <li><strong>Hourly Performance:</strong> The most active trading hours were 13:00-14:00 and 14:00-15:00, accounting for 60% of all trades. The 13:00-14:00 hour was the most profitable ($463.50), suggesting a strong strategy or market condition alignment during this period. Conversely, the 18:00-19:00 hour resulted in a net loss, possibly indicating fatigue or less favorable market conditions late in the day.</li>
+            <li><strong>Trade Consistency:</strong> The average profit per trade ($9.89) is modest, but losses can be significant (e.g., -$186.20 in Trade 84). This suggests a need for tighter risk management, as large losses occasionally offset multiple smaller wins.</li>
+            <li><strong>Risk Management:</strong> The MAE and MFE values indicate that some trades experienced substantial adverse movements before closing. For instance, Trade 84 had a $185.50 MAE, resulting in a significant loss. Implementing stricter stop-losses could mitigate such drawdowns.</li>
+            <li><strong>Commission Impact:</strong> At $0.70 per trade, commissions totaled $77.00, which is roughly 7% of the net profit. While not excessive, reducing trade frequency or optimizing for higher-profit trades could improve overall profitability.</li>
+            <li><strong>Strategy Observation:</strong> The data lacks strategy names, making it difficult to pinpoint which approaches work best. However, the predominance of short trades (86 vs. 24 long) suggests a bearish bias or strategy preference. The short trades had a higher win rate (67.44%) compared to long trades (58.33%), supporting this approach in the given market context.</li>
+        </ul>
+
+        <p><strong>Recommendation:</strong> The trader should focus on refining risk management by setting tighter stop-losses to limit large losses (e.g., Trades 84, 85). Additionally, analyzing why the 13:00-14:00 period is so successful could help replicate that success in other hours. Reducing trade frequency in less profitable hours (e.g., 18:00-19:00) might also improve efficiency. Overall, the performance is solid, but consistency and risk control could elevate it further.</p>
+    </div>
+</body>
+</html>

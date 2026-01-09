@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Lyrics Viewer with Metronome</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+            color: #333333;
+            height: 100vh;
+            display: flex;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .song-list-container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .song-list {
+            width: 250px;
+            background: #fff3e6;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #ffcc80;
+        }
+
+        .song-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ffcc80;
+            transition: background 0.3s;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .song-item span {
+            flex: 1;
+            overflow-wrap: break-word;
+        }
+
+        .song-item:hover {
+            background: #ffe6b3;
+        }
+
+        .song-actions {
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .song-item:hover .song-actions {
+            display: flex;
+        }
+
+        .song-actions button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background: #ff9800;
+            color: #ffffff;
+        }
+
+        .edit-btn:hover {
+            background: #fb8c00;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: #ffffff;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        .index {
+            width: 30px;
+            text-align: center;
+            background: #fff3e6;
+            padding: 10px 0;
+        }
+
+        .index a {
+            display: block;
+            color: #ff9800;
+            text-decoration: none;
+            padding: 2px 0;
+            font-size: 11px;
+            transition: color 0.3s;
+        }
+
+        .index a:hover {
+            color: #fb8c00;
+        }
+
+        .search-icon {
+            width: 30px;
+            text-align: center;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .search-icon svg {
+            fill: #ff9800;
+            width: 28px;
+            height: 28px;
+            transition: fill 0.3s;
+        }
+
+        .search-icon:hover svg {
+            fill: #fb8c00;
+        }
+
+        .lyrics-panel {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            height: 100%;
+            position: relative;
+            background: #ffffff;
+        }
+
+        .lyrics-content {
+            background: #fff3e6;
+            padding: 20px;
+            border-radius: 5px;
+            min-height: 100%;
+            height: 100%;
+            display: none;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #ff9800;
+        }
+
+        .form-container {
+            background: #fff3e6;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ffcc80;
+            border-radius: 3px;
+            background: #ffffff;
+            color: #333333;
+            box-sizing: border-box;
+        }
+
+        .form-container button {
+            padding: 8px 15px;
+            background: #ff9800;
+            border: none;
+            border-radius: 3px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px 0;
+        }
+
+        .form-container button:hover {
+            background: #fb8c00;
+        }
+
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .edit-modal input, .edit-modal textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ffcc80;
+            border-radius: 3px;
+            background: #fff3e6;
+            color: #333333;
+            box-sizing: border-box;
+        }
+
+        .edit-modal textarea {
+            height: 150px;
+            resize: vertical;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .edit-modal button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #ff9800;
+            color: #ffffff;
+        }
+
+        .save-btn:hover {
+            background: #fb8c00;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: #ffffff;
+        }
+
+        .cancel-btn:hover {
+            background: #d32f2f;
+        }
+
+        #pdfViewer {
+            width: 100%;
+            height: calc(100% - 60px);
+            border: none;
+            display: none;
+        }
+
+        #imageViewer {
+            width: 100%;
+            height: calc(100% - 60px);
+            object-fit: contain;
+            border: none;
+            display: none;
+        }
+
+        .link-buttons {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            display: flex;
+            background: transparent;
+            margin-bottom: 10px;
+        }
+
+        .link-buttons button {
+            padding: 8px 15px;
+            background: #ffcc80;
+            border: 1px solid #ff9800;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            color: #333333;
+            cursor: pointer;
+            margin-right: 2px;
+            transition: background 0.3s, color 0.3s;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .link-buttons button:hover {
+            background: #ffe6b3;
+        }
+
+        .link-buttons button.active {
+            background: #fff3e6;
+            color: #ff9800;
+            border-bottom: 1px solid #fff3e6;
+        }
+
+        #searchInput {
+            margin-bottom: 10px;
+        }
+
+        .extra-link-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .extra-link-container input {
+            flex: 1;
+        }
+
+        .extra-link-container button {
+            margin-left: 10px;
+            background: #f44336;
+        }
+
+        .extra-link-container button:hover {
+            background: #d32f2f;
+        }
+
+        /* Highlight selected song */
+        .song-item.selected span {
+            font-weight: bold;
+            color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="song-list-container">
+            <div class="song-list" id="songList">
+                <div class="form-container">
+                    <input type="text" id="searchInput" placeholder="Search songs...">
+                    <input type="text" id="songTitleInput" placeholder="Enter song title">
+                    <input type="text" id="link1Input" placeholder="Link 1 (e.g., YouTube)">
+                    <input type="text" id="link2Input" placeholder="Link 2 (e.g., PDF/JPG)">
+                    <input type="text" id="link3Input" placeholder="Link 3 (optional)">
+                    <button onclick="addSong()">Add Song</button>
+                    <button onclick="saveToJSON()">Save to JSON</button>
+                    <button onclick="openMetronome()">Metronome</button>
+                </div>
+                <!-- Songs will be loaded dynamically here -->
+            </div>
+            <div class="index" id="index">
+                <a href="#A">A</a><a href="#B">B</a><a href="#C">C</a><a href="#D">D</a><a href="#E">E</a>
+                <a href="#F">F</a><a href="#G">G</a><a href="#H">H</a><a href="#I">I</a><a href="#J">J</a>
+                <a href="#K">K</a><a href="#L">L</a><a href="#M">M</a><a href="#N">N</a><a href="#O">O</a>
+                <a href="#P">P</a><a href="#Q">Q</a><a href="#R">R</a><a href="#S">S</a><a href="#T">T</a>
+                <a href="#U">U</a><a href="#V">V</a><a href="#W">W</a><a href="#X">X</a><a href="#Y">Y</a>
+                <a href="#Z">Z</a>
+                <div class="search-icon" onclick="focusSearch()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="lyrics-panel">
+            <div class="lyrics-content" id="lyricsContent">
+                <h2 id="songTitle"></h2>
+                <div class="link-buttons" id="linkButtons"></div>
+                <pre id="lyricsText" style="display:none;"></pre>
+                <iframe id="pdfViewer"></iframe>
+                <img id="imageViewer" alt="Song Image">
+            </div>
+        </div>
+
+        <div class="edit-modal" id="editModal">
+            <h3>Edit Song</h3>
+            <input type="text" id="editTitle" placeholder="Song Title">
+            <div id="editLinks"></div>
+            <textarea id="editLyrics" placeholder="Enter lyrics or other content here..."></textarea>
+            <button onclick="addExtraLink()">Add Another Link</button>
+            <button class="save-btn" onclick="saveEdit()">Save</button>
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
+
+        <div id="metronomeWindow" style="display:none; position:fixed; top:100px; left:100px; width:400px; height:300px; background:#fff; border:1px solid #ccc; box-shadow:0 0 10px rgba(0,0,0,0.5); resize:both; overflow:auto; z-index:1001;">
+            <div id="metronomeTitleBar" style="background:#ff9800; color:#fff; padding:5px; cursor:move; display:flex; justify-content:space-between;">
+                <span>Metronome</span>
+                <button onclick="closeMetronome()" style="background:none; border:none; color:#fff; cursor:pointer;">X</button>
+            </div>
+            <iframe src="metronome.html" style="width:100%; height:calc(100% - 30px); border:none;"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const songList = document.getElementById('songList');
+        const lyricsContent = document.getElementById('lyricsContent');
+        const songTitle = document.getElementById('songTitle');
+        const lyricsText = document.getElementById('lyricsText');
+        const pdfViewer = document.getElementById('pdfViewer');
+        const imageViewer = document.getElementById('imageViewer');
+        const linkButtons = document.getElementById('linkButtons');
+        const editModal = document.getElementById('editModal');
+        const searchInput = document.getElementById('searchInput');
+        let currentEditItem = null;
+        let allSongs = [];
+
+        // Simulated lyrics for testing (fallback if fetch fails)
+        const dummyLyrics = {
+            "Akilandeswari": "Load the image directly from the server.",
+            "Basmabhushithanga": "Sample lyrics for Basmabhushithanga...\nLine 1\nLine 2",
+        };
+
+        // Function to focus the search input
+        function focusSearch() {
+            searchInput.focus();
+            searchInput.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Function to add a new song
+        function addSong() {
+            const title = document.getElementById('songTitleInput').value.trim();
+            const link1 = document.getElementById('link1Input').value.trim();
+            const link2 = document.getElementById('link2Input').value.trim();
+            const link3 = document.getElementById('link3Input').value.trim();
+
+            if (title) {
+                const newSongData = { 
+                    title, 
+                    links: [link1, link2, link3].filter(link => link),
+                    lyrics: '' 
+                };
+                allSongs.push(newSongData);
+                const newSong = createSongItem(title, newSongData.links, newSongData.lyrics);
+                insertSongAlphabetically(newSong);
+                filterSongs();
+                document.getElementById('songTitleInput').value = '';
+                document.getElementById('link1Input').value = '';
+                document.getElementById('link2Input').value = '';
+                document.getElementById('link3Input').value = '';
+                saveToJSONBackend();
+            } else {
+                alert('Please enter a song title.');
+            }
+        }
+
+        // Function to set active tab
+        function setActiveTab(button) {
+            const buttons = linkButtons.querySelectorAll('button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        }
+
+        // Function to check if a link is external
+        function isExternalLink(link) {
+            return link.startsWith('http://') || link.startsWith('https://');
+        }
+
+        // Function to create a song item
+        function createSongItem(title, links, lyrics) {
+            const newSong = document.createElement('div');
+            newSong.classList.add('song-item');
+            newSong.setAttribute('data-links', JSON.stringify(links));
+            newSong.setAttribute('data-lyrics', lyrics || '');
+            newSong.id = title[0].toUpperCase();
+            newSong.innerHTML = `
+                <span>${title}</span>
+                <div class="song-actions">
+                    <button class="edit-btn" onclick="editSong(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteSong(this)">Delete</button>
+                </div>
+            `;
+
+            newSong.addEventListener('click', async (e) => {
+                if (e.target.tagName !== 'BUTTON') {
+                    // Remove 'selected' from all song items
+                    document.querySelectorAll('.song-item').forEach(item => item.classList.remove('selected'));
+                    // Add 'selected' to the clicked song item
+                    newSong.classList.add('selected');
+                    songTitle.textContent = title;
+                    lyricsContent.style.display = 'block';
+                    lyricsText.style.display = 'none';
+                    pdfViewer.style.display = 'none';
+                    imageViewer.style.display = 'none';
+                    linkButtons.innerHTML = '';
+
+                    const songLinks = JSON.parse(newSong.getAttribute('data-links'));
+                    const songLyrics = newSong.getAttribute('data-lyrics');
+
+                    if (songLinks.length === 0 && !songLyrics) {
+                        lyricsText.style.display = 'block';
+                        lyricsText.textContent = 'No links or lyrics provided.';
+                        setActiveTab(null);
+                    } else {
+                        songLinks.forEach((link, index) => {
+                            const btn = document.createElement('button');
+                            btn.textContent = isExternalLink(link) ? link : `Link ${index + 1}`;
+                            btn.onclick = () => {
+                                if (isExternalLink(link)) {
+                                    window.open(link, '_blank');
+                                } else {
+                                    displayLink(link, title);
+                                }
+                                setActiveTab(btn);
+                            };
+                            linkButtons.appendChild(btn);
+                        });
+                        if (songLyrics) {
+                            const lyricsBtn = document.createElement('button');
+                            lyricsBtn.textContent = 'Lyrics';
+                            lyricsBtn.onclick = () => {
+                                displayLyrics(songLyrics, title);
+                                setActiveTab(lyricsBtn);
+                            };
+                            linkButtons.appendChild(lyricsBtn);
+                        }
+                        const firstInternalLink = songLinks.find(link => !isExternalLink(link));
+                        if (firstInternalLink) {
+                            displayLink(firstInternalLink, title);
+                            setActiveTab(linkButtons.querySelector('button'));
+                        } else if (songLyrics) {
+                            displayLyrics(songLyrics, title);
+                            setActiveTab(linkButtons.querySelector('button:last-child'));
+                        }
+                    }
+                }
+            });
+
+            return newSong;
+        }
+
+        // Function to display a link (internal links only)
+        function displayLink(link, title) {
+            if (isExternalLink(link)) return;
+
+            const lowerLink = link.toLowerCase();
+            lyricsText.style.display = 'none';
+            if (lowerLink.endsWith('.pdf')) {
+                pdfViewer.style.display = 'block';
+                imageViewer.style.display = 'none';
+                pdfViewer.src = link + '#view=Fit';
+            } else if (lowerLink.endsWith('.jpg') || lowerLink.endsWith('.jpeg') || lowerLink.endsWith('.png')) {
+                pdfViewer.style.display = 'none';
+                imageViewer.style.display = 'block';
+                imageViewer.src = link;
+            } else if (link.includes('youtube.com') || link.includes('youtu.be')) {
+                pdfViewer.style.display = 'block';
+                imageViewer.style.display = 'none';
+                pdfViewer.src = link.replace('watch?v=', 'embed/');
+            } else {
+                lyricsText.style.display = 'block';
+                pdfViewer.style.display = 'none';
+                imageViewer.style.display = 'none';
+                fetch(link)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.text();
+                    })
+                    .then(text => lyricsText.textContent = text)
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        lyricsText.textContent = dummyLyrics[title] || `Content not available for ${title}. Error: ${error.message}`;
+                    });
+            }
+        }
+
+        // Function to display lyrics
+        function displayLyrics(lyrics, title) {
+            lyricsText.style.display = 'block';
+            pdfViewer.style.display = 'none';
+            imageViewer.style.display = 'none';
+            lyricsText.textContent = lyrics || dummyLyrics[title] || 'No lyrics provided.';
+        }
+
+        // Function to insert song alphabetically
+        function insertSongAlphabetically(newSong) {
+            const songItems = Array.from(songList.querySelectorAll('.song-item'));
+            const title = newSong.querySelector('span').textContent;
+            const insertIndex = songItems.findIndex(item => item.querySelector('span').textContent.toLowerCase() > title.toLowerCase());
+            if (insertIndex === -1) {
+                songList.appendChild(newSong);
+            } else {
+                songList.insertBefore(newSong, songItems[insertIndex]);
+            }
+        }
+
+        // Function to edit a song
+        function editSong(button) {
+            currentEditItem = button.closest('.song-item');
+            const title = currentEditItem.querySelector('span').textContent;
+            const links = JSON.parse(currentEditItem.getAttribute('data-links'));
+            const lyrics = currentEditItem.getAttribute('data-lyrics');
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editLyrics').value = lyrics || '';
+
+            const editLinksDiv = document.getElementById('editLinks');
+            editLinksDiv.innerHTML = '';
+            links.forEach((link, index) => {
+                const linkContainer = document.createElement('div');
+                linkContainer.classList.add('extra-link-container');
+                linkContainer.innerHTML = `
+                    <input type="text" value="${link}" placeholder="Link ${index + 1}">
+                    <button onclick="removeExtraLink(this)">Remove</button>
+                `;
+                editLinksDiv.appendChild(linkContainer);
+            });
+
+            editModal.style.display = 'block';
+        }
+
+        // Function to add an extra link input
+        function addExtraLink() {
+            const editLinksDiv = document.getElementById('editLinks');
+            const newLinkContainer = document.createElement('div');
+            newLinkContainer.classList.add('extra-link-container');
+            newLinkContainer.innerHTML = `
+                <input type="text" placeholder="Additional Link">
+                <button onclick="removeExtraLink(this)">Remove</button>
+            `;
+            editLinksDiv.appendChild(newLinkContainer);
+        }
+
+        // Function to remove an extra link input
+        function removeExtraLink(button) {
+            const linkContainer = button.parentElement;
+            linkContainer.remove();
+        }
+
+        // Function to save edited song
+        function saveEdit() {
+            const newTitle = document.getElementById('editTitle').value.trim();
+            const linkInputs = document.querySelectorAll('#editLinks input');
+            const newLinks = Array.from(linkInputs).map(input => input.value.trim()).filter(link => link);
+            const newLyrics = document.getElementById('editLyrics').value.trim();
+
+            if (newTitle && currentEditItem) {
+                const oldTitle = currentEditItem.querySelector('span').textContent;
+                const index = allSongs.findIndex(song => song.title === oldTitle);
+                if (index !== -1) {
+                    allSongs[index] = { title: newTitle, links: newLinks, lyrics: newLyrics };
+                }
+
+                currentEditItem.querySelector('span').textContent = newTitle;
+                currentEditItem.setAttribute('data-links', JSON.stringify(newLinks));
+                currentEditItem.setAttribute('data-lyrics', newLyrics);
+                currentEditItem.id = newTitle[0].toUpperCase();
+
+                songList.removeChild(currentEditItem);
+                insertSongAlphabetically(currentEditItem);
+
+                // If the edited song is currently displayed, update the UI fully
+                if (songTitle.textContent === oldTitle) {
+                    songTitle.textContent = newTitle;
+
+                    // Clear and recreate link buttons
+                    linkButtons.innerHTML = '';
+                    newLinks.forEach((link, index) => {
+                        const btn = document.createElement('button');
+                        btn.textContent = isExternalLink(link) ? link : `Link ${index + 1}`;
+                        btn.onclick = () => {
+                            if (isExternalLink(link)) {
+                                window.open(link, '_blank');
+                            } else {
+                                displayLink(link, newTitle);
+                            }
+                            setActiveTab(btn);
+                        };
+                        linkButtons.appendChild(btn);
+                    });
+                    if (newLyrics) {
+                        const lyricsBtn = document.createElement('button');
+                        lyricsBtn.textContent = 'Lyrics';
+                        lyricsBtn.onclick = () => {
+                            displayLyrics(newLyrics, newTitle);
+                            setActiveTab(lyricsBtn);
+                        };
+                        linkButtons.appendChild(lyricsBtn);
+                    }
+
+                    // Display the first internal link or lyrics
+                    const firstInternalLink = newLinks.find(link => !isExternalLink(link));
+                    if (firstInternalLink) {
+                        displayLink(firstInternalLink, newTitle);
+                        setActiveTab(linkButtons.querySelector('button'));
+                    } else if (newLyrics) {
+                        displayLyrics(newLyrics, newTitle);
+                        setActiveTab(linkButtons.querySelector('button:last-child'));
+                    }
+
+                    // Ensure the song remains selected
+                    document.querySelectorAll('.song-item').forEach(item => item.classList.remove('selected'));
+                    currentEditItem.classList.add('selected');
+                }
+
+                closeModal();
+                filterSongs();
+                saveToJSONBackend();
+            } else {
+                alert('Please enter a song title.');
+            }
+        }
+
+        // Function to delete a song
+        function deleteSong(button) {
+            const songItem = button.closest('.song-item');
+            const title = songItem.querySelector('span').textContent;
+            if (confirm(`Are you sure you want to delete "${title}"?`)) {
+                allSongs = allSongs.filter(song => song.title !== title);
+                songList.removeChild(songItem);
+                if (songTitle.textContent === title) {
+                    lyricsContent.style.display = 'none';
+                }
+                filterSongs();
+                saveToJSONBackend();
+            }
+        }
+
+        // Function to close the edit modal
+        function closeModal() {
+            editModal.style.display = 'none';
+            currentEditItem = null;
+        }
+
+        // Function to save song list to JSON manually (download)
+        function saveToJSON() {
+            const jsonString = JSON.stringify(allSongs, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'songs.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Function to save song list to JSON on backend
+        function saveToJSONBackend() {
+            fetch('/save-songs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(allSongs),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Songs saved to backend successfully');
+                } else {
+                    console.error('Failed to save songs to backend:', data);
+                }
+            })
+            .catch(error => console.error('Error saving songs to backend:', error));
+        }
+
+        // Function to load song list from JSON
+        function loadSongsFromJSON() {
+            fetch('/songs.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to load songs.json: ' + response.statusText);
+                    return response.json();
+                })
+                .then(songs => {
+                    allSongs = songs.map(song => ({
+                        title: song.title,
+                        links: Array.isArray(song.links) ? song.links : [song.link1 || '', song.link2 || '', song.link3 || ''].filter(l => l),
+                        lyrics: song.lyrics || ''
+                    }));
+                    if (allSongs.length === 0) {
+                        throw new Error('songs.json is empty');
+                    }
+                    songs.forEach(song => {
+                        const newSong = createSongItem(
+                            song.title,
+                            Array.isArray(song.links) ? song.links : [song.link1 || '', song.link2 || '', song.link3 || ''].filter(l => l),
+                            song.lyrics || ''
+                        );
+                        songList.appendChild(newSong);
+                    });
+                    filterSongs();
+                })
+                .catch(error => {
+                    console.error('Error loading songs:', error.message);
+                    allSongs = [
+                        {"title": "Akilandeswari", "links": ["/Akilandeswari_Balajinotes.PNG"], "lyrics": ""}
+                    ];
+                    allSongs.forEach(song => {
+                        const newSong = createSongItem(song.title, song.links, song.lyrics);
+                        songList.appendChild(newSong);
+                    });
+                    filterSongs();
+                    saveToJSONBackend();
+                });
+        }
+
+
+
+
+
+
+function filterSongs() {
+    const searchText = searchInput.value.toLowerCase();
+    const songItems = songList.querySelectorAll('.song-item');
+    songItems.forEach(item => songList.removeChild(item));
+
+    const filteredSongs = allSongs.filter(song => {
+        // Match in title
+        if (song.title.toLowerCase().includes(searchText)) return true;
+
+        // Match in lyrics
+        if (song.lyrics && song.lyrics.toLowerCase().includes(searchText)) return true;
+
+        // Match in any of the links
+        if (Array.isArray(song.links)) {
+            for (const link of song.links) {
+                if (link.toLowerCase().includes(searchText)) return true;
+            }
+        }
+
+        return false;
+    });
+
+    filteredSongs.forEach(song => {
+        const newSong = createSongItem(song.title, song.links, song.lyrics);
+        insertSongAlphabetically(newSong);
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Load songs when the page starts
+        window.onload = function() {
+            loadSongsFromJSON();
+            searchInput.addEventListener('input', filterSongs);
+        };
+
+        // Metronome functionality
+        function openMetronome() {
+            document.getElementById('metronomeWindow').style.display = 'block';
+        }
+
+        function closeMetronome() {
+            document.getElementById('metronomeWindow').style.display = 'none';
+        }
+
+        // Dragging functionality for metronome window
+        const metronomeTitleBar = document.getElementById('metronomeTitleBar');
+        const metronomeWindow = document.getElementById('metronomeWindow');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        metronomeTitleBar.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - metronomeWindow.offsetLeft;
+            offsetY = e.clientY - metronomeWindow.offsetTop;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                metronomeWindow.style.left = (e.clientX - offsetX) + 'px';
+                metronomeWindow.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>

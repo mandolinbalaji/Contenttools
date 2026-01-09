@@ -1,0 +1,29 @@
+S, R, G,  R,    SN, S   R; ,; ,; ,;
+
+R, G, M, G,   RS, N, S; ,; ,;
+
+P, D P M P   P, P M G M  P, M G R G     R N P N R M
+
+P, P M G M  P, M G R G  P, G R S R      N S R N D P
+
+S, R, G,  R, SN, S   R; ,; ,; ,;
+
+R, G, M, G,   RS, N, S; ,; ,;
+
+P , D P M P   S , R S N R     M , P M R M     P,  N R N P
+
+R , G R S R   P , D P M P     R , G R S R      N P M R N P
+
+S, R, G,  R,   SN, S   R; ,; ,; ,;
+
+R, G, M, G,   RS, N, S; ,; ,;
+
+SPDPDP RPDPDP GPDPDP MGRSNP
+
+NMPMPM RMPMPM GMPMPM SNDPMG
+
+RMPNRM P; PMRNPM P; PMGRSN
+
+S, R, G,  R, SN, S   R; ,; ,; ,;
+
+R, G, M, G,   RS, N, S; ,; ,;
