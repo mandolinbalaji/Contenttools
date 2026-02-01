@@ -459,18 +459,18 @@
         function parseAtomicNotes(input) {
             const validNotes = 'SRGMPDNS';
             const notes = [];
-            const tokens = input.toUpperCase().trim().split(/\s+/);
+            const cleanInput = input.toUpperCase().trim();
             
-            tokens.forEach(token => {
-                if (token.length > 0) {
-                    const char = token[0];
-                    if (validNotes.includes(char)) {
-                        const octave = appState.octaveUp ? 1 : (appState.octaveDown ? -1 : 0);
-                        const speed = appState.speedMode ? 2 : 1;
-                        notes.push({ char, octave, speed });
-                    }
+            // Parse character by character to support "sssss" as 5 notes
+            // This way "S R G" and "SRG" both work as 3 notes
+            for (let i = 0; i < cleanInput.length; i++) {
+                const char = cleanInput[i];
+                if (validNotes.includes(char)) {
+                    const octave = appState.octaveUp ? 1 : (appState.octaveDown ? -1 : 0);
+                    const speed = appState.speedMode ? 2 : 1;
+                    notes.push({ char, octave, speed });
                 }
-            });
+            }
             
             return notes;
         }
@@ -771,6 +771,13 @@
             if (appState.atomicNotes.length === 0) {
                 document.getElementById('statusText').textContent = 'No notes to play';
                 return;
+            }
+            
+            // Resume AudioContext if suspended (browser security requirement)
+            try {
+                await Tone.start();
+            } catch (e) {
+                console.log('Audio context already started');
             }
             
             appState.isPlaying = true;
