@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrahmaLayam - Carnatic Notation Editor</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/releases/vexflow-core.js"></script>
+    <script src="https://unpkg.com/vexflow@4.2.2/build/vexflow.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         * {
@@ -609,25 +609,49 @@
 
         function renderWesternStaff(notes) {
             const canvas = document.getElementById('vexflowCanvas');
-            const ctx = new Vex.IRenderContext(canvas, Vex.Flow.Renderer.Backends.SVG);
-            const renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.SVG);
-            ctx.clear();
+            if (!canvas) return;
+            
+            try {
+                if (typeof Vex === 'undefined') {
+                    const svgElement = canvas.parentElement;
+                    svgElement.innerHTML = '<div style="padding: 12px; color: #999; font-size: 12px;">Loading notation library...</div>';
+                    return;
+                }
 
-            const stave = new Vex.Flow.Stave(10, 0, 300);
-            stave.addClef('treble').setContext(ctx).draw();
+                const svgElement = canvas.parentElement;
+                svgElement.innerHTML = '';
+                const newCanvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                newCanvas.id = 'vexflowCanvas';
+                newCanvas.setAttribute('width', '100%');
+                newCanvas.setAttribute('height', '180');
+                svgElement.appendChild(newCanvas);
 
-            const noteMap = {
-                'S': 'D/4', 'R': 'E/4', 'G': 'F#/4', 'M': 'G/4',
-                'P': 'A/4', 'D': 'B/4', 'N': 'C#/5'
-            };
+                const renderer = new Vex.Flow.Renderer(newCanvas, Vex.Flow.Renderer.Backends.SVG);
+                const context = renderer.getContext();
 
-            const vexNotes = notes
-                .filter(n => noteMap[n])
-                .slice(0, 8)
-                .map(n => new Vex.Flow.StaveNote({ keys: [noteMap[n]], duration: 'q' }));
+                const stave = new Vex.Flow.Stave(10, 0, 300);
+                stave.addClef('treble').setContext(context).draw();
 
-            if (vexNotes.length > 0) {
-                Vex.Flow.Formatter.FormatAndDraw(ctx, stave, vexNotes);
+                const noteMap = {
+                    'S': 'D/4', 'R': 'E/4', 'G': 'F#/4', 'M': 'G/4',
+                    'P': 'A/4', 'D': 'B/4', 'N': 'C#/5'
+                };
+
+                const vexNotes = notes
+                    .filter(n => noteMap[n])
+                    .slice(0, 8)
+                    .map(n => new Vex.Flow.StaveNote({ keys: [noteMap[n]], duration: 'q' }));
+
+                if (vexNotes.length > 0) {
+                    const voice = new Vex.Flow.Voice({ num_beats: vexNotes.length, beat_value: 4 });
+                    voice.addTickables(vexNotes);
+                    new Vex.Flow.Formatter().joinVoices([voice]).format([voice], 300);
+                    voice.draw(context, stave);
+                }
+            } catch (error) {
+                console.error('VexFlow error:', error);
+                const svgElement = canvas.parentElement;
+                svgElement.innerHTML = '<div style="padding: 12px; color: #999; font-size: 12px;">Unable to render notation</div>';
             }
         }
 
