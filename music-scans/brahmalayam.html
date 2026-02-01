@@ -444,7 +444,7 @@
 
         // Initialize Tone.js
         function initAudio() {
-            appState.synth = new Tone.Synth({
+            appState.synth = new Tone.PolySynth(Tone.Synth, {
                 oscillator: { type: 'triangle' },
                 envelope: {
                     attack: 0.005,
@@ -453,6 +453,9 @@
                     release: 0.1
                 }
             }).toDestination();
+            
+            // Set reasonable volume to prevent clipping
+            appState.synth.volume.value = -6;
         }
 
         // Parse textarea into atomic notes
@@ -767,40 +770,43 @@
             }
         }
 
-        async function playNotes() {
+        function playNotes() {
             if (appState.atomicNotes.length === 0) {
                 document.getElementById('statusText').textContent = 'No notes to play';
                 return;
             }
             
-            // Resume AudioContext if suspended (browser security requirement)
-            try {
-                await Tone.start();
-            } catch (e) {
-                console.log('Audio context already started');
-            }
+            // Resume AudioContext immediately on user gesture (synchronous)
+            Tone.start().catch(() => {
+                console.log('Audio context already started or not available');
+            });
             
             appState.isPlaying = true;
             const beatDuration = 60 / appState.bpm;  // Duration of one beat in seconds
             
-            for (let note of appState.atomicNotes) {
-                if (!appState.isPlaying) break;
+            // Use async IIFE to handle async playback after initial gesture
+            (async () => {
+                for (let note of appState.atomicNotes) {
+                    if (!appState.isPlaying) break;
+                    
+                    const frequency = getNoteFrequency(note.char, note.octave);
+                    const noteDuration = beatDuration / note.speed;  // Faster speed = shorter duration
+                    
+                    appState.synth.frequency.value = frequency;
+                    appState.synth.triggerAttackRelease(noteDuration);
+                    await new Promise(resolve => setTimeout(resolve, noteDuration * 1000));
+                }
                 
-                const frequency = getNoteFrequency(note.char, note.octave);
-                const noteDuration = beatDuration / note.speed;  // Faster speed = shorter duration
-                
-                appState.synth.frequency.value = frequency;
-                appState.synth.triggerAttackRelease(noteDuration);
-                await new Promise(resolve => setTimeout(resolve, noteDuration * 1000));
-            }
-            
-            appState.isPlaying = false;
-            document.getElementById('statusText').textContent = 'Playback complete';
+                appState.isPlaying = false;
+                document.getElementById('statusText').textContent = 'Playback complete';
+            })();
         }
 
         function stopPlayback() {
             appState.isPlaying = false;
-            appState.synth.triggerRelease();
+            if (appState.synth) {
+                appState.synth.triggerRelease();
+            }
             document.getElementById('statusText').textContent = 'Playback stopped';
         }
 
