@@ -792,8 +792,8 @@
                     const frequency = getNoteFrequency(note.char, note.octave);
                     const noteDuration = beatDuration / note.speed;  // Faster speed = shorter duration
                     
-                    appState.synth.frequency.value = frequency;
-                    appState.synth.triggerAttackRelease(noteDuration);
+                    // Pass frequency directly to triggerAttackRelease (Tone.js API)
+                    appState.synth.triggerAttackRelease(frequency, noteDuration);
                     await new Promise(resolve => setTimeout(resolve, noteDuration * 1000));
                 }
                 
