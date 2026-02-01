@@ -221,6 +221,11 @@
             height: 320px;
             max-height: 600px;
         }
+        
+        .editor-section:nth-child(2) {
+            height: 550px;
+            max-height: 800px;
+        }
 
         .editor-title {
             font-size: 12px;
@@ -348,11 +353,43 @@
             <div class="control-group">
                 <label>Sruthi:</label>
                 <select id="sruthiSelect" onchange="handleSruthiChange(this.value)">
-                    <option value="261.63">C (Sa)</option>
-                    <option value="293.66">D (Ri)</option>
-                    <option value="329.63">E (Ga)</option>
-                    <option value="349.23">F (Ma)</option>
-                    <option value="392.00">G (Pa)</option>
+                    <option value="130.81">C1</option>
+                    <option value="138.59">C#1</option>
+                    <option value="146.83">D1</option>
+                    <option value="155.56">D#1</option>
+                    <option value="164.81">E1</option>
+                    <option value="174.61">F1</option>
+                    <option value="185.00">F#1</option>
+                    <option value="196.00">G1</option>
+                    <option value="207.65">G#1</option>
+                    <option value="220.00">A1</option>
+                    <option value="233.08">A#1</option>
+                    <option value="246.94">B1</option>
+                    <option value="261.63" selected>C2 (Sa)</option>
+                    <option value="277.18">C#2</option>
+                    <option value="293.66">D2</option>
+                    <option value="311.13">D#2</option>
+                    <option value="329.63">E2</option>
+                    <option value="349.23">F2</option>
+                    <option value="369.99">F#2</option>
+                    <option value="392.00">G2</option>
+                    <option value="415.30">G#2</option>
+                    <option value="440.00">A2</option>
+                    <option value="466.16">A#2</option>
+                    <option value="493.88">B2</option>
+                    <option value="523.25">C3</option>
+                    <option value="554.37">C#3</option>
+                    <option value="587.33">D3</option>
+                    <option value="622.25">D#3</option>
+                    <option value="659.25">E3</option>
+                    <option value="698.46">F3</option>
+                    <option value="739.99">F#3</option>
+                    <option value="783.99">G3</option>
+                    <option value="830.61">G#3</option>
+                    <option value="880.00">A3</option>
+                    <option value="932.33">A#3</option>
+                    <option value="987.77">B3</option>
+                    <option value="1046.50">C4</option>
                 </select>
             </div>
             <div class="control-group">
@@ -841,14 +878,16 @@
                 svgElement.innerHTML = '';
                 const newCanvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 newCanvas.id = 'vexflowCanvas';
-                newCanvas.setAttribute('width', '100%');
-                newCanvas.setAttribute('height', '180');
+                const containerWidth = svgElement.offsetWidth || 800;
+                const containerHeight = svgElement.offsetHeight || 250;
+                newCanvas.setAttribute('width', containerWidth);
+                newCanvas.setAttribute('height', containerHeight);
                 svgElement.appendChild(newCanvas);
 
                 const renderer = new Vex.Flow.Renderer(newCanvas, Vex.Flow.Renderer.Backends.SVG);
                 const context = renderer.getContext();
 
-                const stave = new Vex.Flow.Stave(10, 0, 300);
+                const stave = new Vex.Flow.Stave(10, 20, containerWidth - 40);
                 stave.addClef('treble').setContext(context).draw();
 
                 // Map Carnatic notes to Western staff with octave support
@@ -863,7 +902,7 @@
                 };
 
                 const vexNotes = atomicNotes
-                    .slice(0, 8)
+                    .slice(0, 16)
                     .map(note => {
                         const octave = note.octave.toString();
                         const key = noteMap[note.char]?.[octave] || 'D/4';
@@ -874,7 +913,7 @@
                 if (vexNotes.length > 0) {
                     const voice = new Vex.Flow.Voice({ num_beats: vexNotes.length, beat_value: 4 });
                     voice.addTickables(vexNotes);
-                    new Vex.Flow.Formatter().joinVoices([voice]).format([voice], 300);
+                    new Vex.Flow.Formatter().joinVoices([voice]).format([voice], containerWidth - 60);
                     voice.draw(context, stave);
                 }
             } catch (error) {
