@@ -636,6 +636,7 @@
             appState.octaveDown = false;
             document.getElementById('octaveUpBtn').classList.toggle('active', appState.octaveUp);
             document.getElementById('octaveDownBtn').classList.toggle('active', false);
+            updateStatusForMode();
         }
 
         function toggleOctaveDown() {
@@ -643,6 +644,17 @@
             appState.octaveUp = false;
             document.getElementById('octaveDownBtn').classList.toggle('active', appState.octaveDown);
             document.getElementById('octaveUpBtn').classList.toggle('active', false);
+            updateStatusForMode();
+        }
+
+        function updateStatusForMode() {
+            if (appState.octaveUp) {
+                document.getElementById('statusText').textContent = 'Click notes to add octave up (●)';
+            } else if (appState.octaveDown) {
+                document.getElementById('statusText').textContent = 'Click notes to add octave down (●)';
+            } else {
+                document.getElementById('statusText').textContent = 'Ready';
+            }
         }
 
         function toggleSpeed() {
@@ -694,26 +706,27 @@
                 pulseInJathi += pulsesForNote;
                 pulseCount += pulsesForNote;
 
-                // Create note display with octave dots above/below
+                // Create clickable note display with octave dots above/below
                 let noteDisplay = '';
+                const cursorStyle = (appState.octaveUp || appState.octaveDown) ? 'cursor: pointer;' : 'cursor: default;';
                 
                 if (note.octave === 1) {
                     // Octave up: dot above
-                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center;">
+                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center; ${cursorStyle}" onclick="toggleNoteOctave(${index})" title="Click to modify octave">
                         <span style="font-size: 12px; color: #ff6b6b; font-weight: bold;">●</span>
                         <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1;">${note.char}</span>
                         ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
                     </div>`;
                 } else if (note.octave === -1) {
                     // Octave down: dot below
-                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center;">
+                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center; ${cursorStyle}" onclick="toggleNoteOctave(${index})" title="Click to modify octave">
                         <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1;">${note.char}</span>
                         ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
                         <span style="font-size: 12px; color: #ff6b6b; font-weight: bold;">●</span>
                     </div>`;
                 } else {
                     // Normal: no dot
-                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center;">
+                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center; ${cursorStyle}" onclick="toggleNoteOctave(${index})" title="Click to modify octave">
                         <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1;">${note.char}</span>
                         ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
                     </div>`;
@@ -740,6 +753,36 @@
             }
             
             displayArea.innerHTML = html;
+        }
+
+        // Toggle octave for a specific note when clicked
+        function toggleNoteOctave(noteIndex) {
+            if (noteIndex < 0 || noteIndex >= appState.atomicNotes.length) return;
+            
+            const note = appState.atomicNotes[noteIndex];
+            
+            // If octave up mode is enabled
+            if (appState.octaveUp) {
+                if (note.octave === 1) {
+                    note.octave = 0;  // Remove octave up
+                } else if (note.octave === -1) {
+                    note.octave = 1;  // Switch from down to up
+                } else {
+                    note.octave = 1;  // Add octave up
+                }
+            }
+            // If octave down mode is enabled
+            else if (appState.octaveDown) {
+                if (note.octave === -1) {
+                    note.octave = 0;  // Remove octave down
+                } else if (note.octave === 1) {
+                    note.octave = -1;  // Switch from up to down
+                } else {
+                    note.octave = -1;  // Add octave down
+                }
+            }
+            
+            updatePreview();
         }
 
         function renderWesternStaff(atomicNotes) {
