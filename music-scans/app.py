@@ -142,13 +142,6 @@ def chrome_devtools_config():
     return jsonify({}), 404
 
 
-@app.get("/")
-def index():
-    """Serve main index.html"""
-    index_file = BASE_DIR / "index.html"
-    return send_from_directory(BASE_DIR, "index.html")
-
-
 @app.get("/brahmalayam.html")
 def brahmalayam():
     """Serve BrahmaLayam editor"""
