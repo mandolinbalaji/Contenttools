@@ -88,6 +88,26 @@
     
     <div class="controls">
         <div class="inline-controls">
+            <label for="avarthana">Avarthana:</label>
+            <input type="number" id="avarthana" value="0" min="0" max="100" onchange="setAvarthana(this.value)">
+        </div>
+    </div>
+    
+    <div class="controls">
+        <div class="inline-controls">
+            <label for="jathi">Jathi:</label>
+            <select id="jathi" onchange="setJathi(this.value)">
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+                <option value="9">9</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <div class="inline-controls">
             <label for="beats">Beats:</label>
             <input type="number" id="beats" value="8" min="1" max="16">
             <button onclick="setBeats(8, [0,4,6], [4,6])">Adhi 1</button>
@@ -120,6 +140,9 @@
         let beatsPerCycle = 8;
         let interval;
         let currentBeat = 0;
+        let currentCycle = 0;
+        let avarthana = 0;
+        let jathi = 4;
         let accentBeats = [0, 4, 6];
         let isMuted = false;
         let volume = 1;
@@ -139,6 +162,18 @@
             beatsPerCycle = value;
             accentBeats = accents;
             createBars(gaps);
+            restartMetronome();
+        }
+
+        function setAvarthana(value) {
+            avarthana = parseInt(value);
+            document.getElementById('avarthana').value = avarthana;
+            restartMetronome();
+        }
+
+        function setJathi(value) {
+            jathi = parseInt(value);
+            document.getElementById('jathi').value = jathi;
             restartMetronome();
         }
 
@@ -167,6 +202,7 @@
             if (interval) {
                 clearInterval(interval);
                 interval = null;
+                currentCycle = 0;
             } else {
                 startMetronome();
             }
@@ -175,6 +211,7 @@
         function startMetronome() {
             const bars = document.querySelectorAll('.bar');
             currentBeat = 0;
+            currentCycle = 0;
             interval = setInterval(() => {
                 bars.forEach(bar => bar.classList.remove('active', 'active-accent'));
                 bars[currentBeat].classList.add('active');
@@ -185,6 +222,16 @@
                     playSound(regularSound); // Play regular sound
                 }
                 currentBeat = (currentBeat + 1) % beatsPerCycle;
+                
+                // Check for cycle completion and avarthana
+                if (currentBeat === 0) {
+                    currentCycle++;
+                    if (avarthana > 0 && currentCycle >= avarthana) {
+                        clearInterval(interval);
+                        interval = null;
+                        currentCycle = 0;
+                    }
+                }
             }, (60000 / bpm));
         }
 
@@ -199,6 +246,7 @@
         function restartMetronome() {
             if (interval) {
                 clearInterval(interval);
+                currentCycle = 0;
                 startMetronome();
             }
         }
