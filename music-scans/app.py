@@ -7,7 +7,7 @@ from pathlib import Path
 from flask import Flask, send_from_directory, request, jsonify, Response
 
 # Everything lives here
-BASE_DIR = Path(r"G:\My Drive\Music_Scans")
+BASE_DIR = Path(r"g:\My Drive\ContentTools\music-scans")
 DATA_PATH = BASE_DIR / "songs.json"
 MEDIA_ROOT = BASE_DIR / "media"
 BACKUP_DIR = BASE_DIR / "backups"
@@ -132,6 +132,13 @@ def index():
 def favicon():
     svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='28' fill='#ea580c'/></svg>"
     return Response(svg, mimetype="image/svg+xml")
+
+
+@app.get("/.well-known/appspecific/com.chrome.devtools.json")
+def chrome_devtools_config():
+    # Chrome DevTools checks for app-specific configuration
+    # Return 404 since we don't have any special config
+    return jsonify({}), 404
 
 
 @app.get("/api/songs")

@@ -150,6 +150,7 @@
     <h1>Song Library</h1>
     <div class="actions" style="display:flex; gap:8px;">
       <button id="btnToggleList" class="btn white" title="Hide or show song list">Hide list</button>
+      <button id="btnMetronome" class="btn white" title="Open Metronome">Metronome</button>
       <button id="btnAdd" class="btn white">Add Song</button>
     </div>
   </div>
@@ -915,6 +916,11 @@ function setupCollapsible(card) {
       setCssVar("--list-w", "0px");
       btnToggleList.textContent = "Show list";
     }
+  });
+
+  // Open metronome
+  document.getElementById("btnMetronome").addEventListener("click", function () {
+    window.open("/media/Metronome.html", "_blank");
   });
 
   // Splitters
