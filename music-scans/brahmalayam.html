@@ -389,7 +389,14 @@
 
             <div class="editor-container">
                 <div class="editor-section" style="flex: 1.5;">
-                    <div class="editor-title">Carnatic Notes</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div class="editor-title">Carnatic Notes</div>
+                        <div style="font-size: 11px; color: #999;">
+                            <span style="margin-right: 12px;">● = Octave Up</span>
+                            <span style="margin-right: 12px;">· = Double Speed</span>
+                            <span>● = Octave Down</span>
+                        </div>
+                    </div>
                     <textarea class="note-input" id="noteInput" placeholder="Type notes: S R G M P D N (space-separated)&#10;Example: S R G M P D N S"></textarea>
                 </div>
 
@@ -678,7 +685,7 @@
             const container = document.querySelector('.carnatic-editor');
             if (!container) return;
 
-            let html = '<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">';
+            let html = '<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; line-height: 1.2;">';
             let pulseCount = 0;
             let pulseInJathi = 0;
 
@@ -687,14 +694,36 @@
                 pulseInJathi += pulsesForNote;
                 pulseCount += pulsesForNote;
 
-                // Add the note
-                const octaveIndicator = note.octave === 1 ? '↑' : (note.octave === -1 ? '↓' : '');
-                const speedIndicator = note.speed === 2 ? '.' : '';
-                html += `<span style="font-size: 18px; font-weight: bold; color: #667eea;">${note.char}${octaveIndicator}${speedIndicator}</span>`;
+                // Create note display with octave dots above/below
+                let noteDisplay = '';
+                
+                if (note.octave === 1) {
+                    // Octave up: dot above
+                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center;">
+                        <span style="font-size: 12px; color: #ff6b6b; font-weight: bold;">●</span>
+                        <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1;">${note.char}</span>
+                        ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
+                    </div>`;
+                } else if (note.octave === -1) {
+                    // Octave down: dot below
+                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center;">
+                        <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1;">${note.char}</span>
+                        ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
+                        <span style="font-size: 12px; color: #ff6b6b; font-weight: bold;">●</span>
+                    </div>`;
+                } else {
+                    // Normal: no dot
+                    noteDisplay = `<div style="display: flex; flex-direction: column; align-items: center;">
+                        <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1;">${note.char}</span>
+                        ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
+                    </div>`;
+                }
+                
+                html += noteDisplay;
 
                 // Add vertical line when Jathi is complete
                 if (pulseInJathi >= appState.selectedJathi - 0.001) {
-                    html += `<span style="width: 2px; height: 24px; background: #ff6b6b; margin: 0 4px;"></span>`;
+                    html += `<span style="width: 2px; height: 40px; background: #ff6b6b; margin: 0 4px;"></span>`;
                     pulseInJathi = 0;
                 }
             });
@@ -706,7 +735,7 @@
             if (!displayArea) {
                 displayArea = document.createElement('div');
                 displayArea.id = 'notationDisplay';
-                displayArea.style.cssText = 'margin-top: 12px; padding: 12px; background: #f9f9f9; border-radius: 6px; min-height: 40px;';
+                displayArea.style.cssText = 'margin-top: 12px; padding: 16px; background: #f9f9f9; border-radius: 6px; min-height: 60px; border: 1px solid #e0e0e0;';
                 container.appendChild(displayArea);
             }
             
