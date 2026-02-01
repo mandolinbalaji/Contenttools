@@ -435,10 +435,11 @@
                         <div style="font-size: 11px; color: #999;">
                             <span style="margin-right: 12px;">● = Octave Up</span>
                             <span style="margin-right: 12px;">· = Double Speed</span>
-                            <span>● = Octave Down</span>
+                            <span style="margin-right: 12px;">● = Octave Down</span>
+                            <span>, = Rest/Pause</span>
                         </div>
                     </div>
-                    <textarea class="note-input" id="noteInput" placeholder="Type notes: S R G M P D N (space-separated)&#10;Example: S R G M P D N S"></textarea>
+                    <textarea class="note-input" id="noteInput" placeholder="Type notes: S R G M P D N or S,R,G,M,P,D,N,S&#10;Comma (,) = Rest/Pause | Spaces are ignored"></textarea>
                     <div class="carnatic-editor" style="margin-top: 12px; padding: 16px; background: #f9f9f9; border-radius: 6px; min-height: 60px; border: 1px solid #e0e0e0;"></div>
                 </div>
 
@@ -510,14 +511,18 @@
 
         // Parse textarea into atomic notes
         function parseAtomicNotes(input) {
-            const validNotes = 'SRGMPDNS';
+            const validNotes = 'SRGMPDNS,';  // Added comma as a valid note
             const notes = [];
             const cleanInput = input.toUpperCase().trim();
             
             // Parse character by character to support "sssss" as 5 notes
-            // This way "S R G" and "SRG" both work as 3 notes
+            // Spaces are ignored as separators, comma is treated as a note
             for (let i = 0; i < cleanInput.length; i++) {
                 const char = cleanInput[i];
+                if (char === ' ') {
+                    // Skip spaces - they're just separators
+                    continue;
+                }
                 if (validNotes.includes(char)) {
                     // ONLY add the note, octave and speed are modified by clicking, not by mode
                     const octave = 0;  // Always start at 0, user clicks to modify
@@ -536,6 +541,10 @@
 
         // Get frequency for a note
         function getNoteFrequency(char, octave = 0) {
+            // Comma represents a rest/pause - return 0 frequency
+            if (char === ',') {
+                return 0;
+            }
             const baseFreq = appState.selectedSruthi * (CARNATIC_RATIOS[char] || 1.0);
             // Each octave multiplies/divides by 2
             return baseFreq * Math.pow(2, octave);
@@ -768,36 +777,42 @@
 
                 // Create clickable note display with octave dots above/below
                 let noteDisplay = '';
-                const isClickable = (appState.octaveUp || appState.octaveDown);
-                const hoverEffect = isClickable ? 'background: #f0f4ff; border-radius: 6px; padding: 4px 8px;' : '';
-                const cursorStyle = isClickable ? 'cursor: pointer;' : 'cursor: default;';
-                const hoverRule = isClickable ? `
-                    .note-btn:hover { background: #e0e8ff !important; }
-                ` : '';
                 
-                if (note.octave === 1) {
-                    // Octave up: dot above
-                    console.log(`Note ${index} has octave 1 (up) - rendering with dot above`);
-                    noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave up">
-                        <span style="font-size: 14px; color: #ff6b6b; font-weight: bold;">●</span>
-                        <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
-                        ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
-                    </div>`;
-                } else if (note.octave === -1) {
-                    // Octave down: dot below
-                    console.log(`Note ${index} has octave -1 (down) - rendering with dot below`);
-                    noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave down">
-                        <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
-                        ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
-                        <span style="font-size: 14px; color: #ff6b6b; font-weight: bold;">●</span>
+                // Comma is a space/pause - render differently
+                if (note.char === ',') {
+                    noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; width: 30px; height: 40px; border: 2px dashed #ccc; border-radius: 4px; justify-content: center;">
+                        <span style="font-size: 12px; color: #999;">pause</span>
                     </div>`;
                 } else {
-                    // Normal: no dot - clickable if mode is active
-                    console.log(`Note ${index} has octave 0 (normal) - rendering without dot`);
-                    noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="${isClickable ? 'Click to add octave modifier' : 'Enable Oct Up/Down first'}">
-                        <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
-                        ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
-                    </div>`;
+                    // Regular notes
+                    const isClickable = (appState.octaveUp || appState.octaveDown);
+                    const hoverEffect = isClickable ? 'background: #f0f4ff; border-radius: 6px; padding: 4px 8px;' : '';
+                    const cursorStyle = isClickable ? 'cursor: pointer;' : 'cursor: default;';
+                    
+                    if (note.octave === 1) {
+                        // Octave up: dot above
+                        console.log(`Note ${index} has octave 1 (up) - rendering with dot above`);
+                        noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave up">
+                            <span style="font-size: 14px; color: #ff6b6b; font-weight: bold;">●</span>
+                            <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
+                            ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
+                        </div>`;
+                    } else if (note.octave === -1) {
+                        // Octave down: dot below
+                        console.log(`Note ${index} has octave -1 (down) - rendering with dot below`);
+                        noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave down">
+                            <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
+                            ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
+                            <span style="font-size: 14px; color: #ff6b6b; font-weight: bold;">●</span>
+                        </div>`;
+                    } else {
+                        // Normal: no dot - clickable if mode is active
+                        console.log(`Note ${index} has octave 0 (normal) - rendering without dot`);
+                        noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="${isClickable ? 'Click to add octave modifier' : 'Enable Oct Up/Down first'}">
+                            <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
+                            ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
+                        </div>`;
+                    }
                 }
                 
                 html += noteDisplay;
@@ -945,8 +960,11 @@
                     const frequency = getNoteFrequency(note.char, note.octave);
                     const noteDuration = beatDuration / note.speed;  // Faster speed = shorter duration
                     
-                    // Pass frequency directly to triggerAttackRelease (Tone.js API)
-                    appState.synth.triggerAttackRelease(frequency, noteDuration);
+                    if (frequency > 0) {
+                        // Pass frequency directly to triggerAttackRelease (Tone.js API)
+                        appState.synth.triggerAttackRelease(frequency, noteDuration);
+                    }
+                    // For rests (comma), just wait the duration without playing
                     await new Promise(resolve => setTimeout(resolve, noteDuration * 1000));
                 }
                 
