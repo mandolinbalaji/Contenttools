@@ -353,43 +353,31 @@
             <div class="control-group">
                 <label>Sruthi:</label>
                 <select id="sruthiSelect" onchange="handleSruthiChange(this.value)">
-                    <option value="130.81">C1</option>
-                    <option value="138.59">C#1</option>
-                    <option value="146.83">D1</option>
-                    <option value="155.56">D#1</option>
-                    <option value="164.81">E1</option>
-                    <option value="174.61">F1</option>
-                    <option value="185.00">F#1</option>
-                    <option value="196.00">G1</option>
-                    <option value="207.65">G#1</option>
-                    <option value="220.00">A1</option>
-                    <option value="233.08">A#1</option>
-                    <option value="246.94">B1</option>
-                    <option value="261.63" selected>C2 (Sa)</option>
-                    <option value="277.18">C#2</option>
-                    <option value="293.66">D2</option>
-                    <option value="311.13">D#2</option>
-                    <option value="329.63">E2</option>
-                    <option value="349.23">F2</option>
-                    <option value="369.99">F#2</option>
-                    <option value="392.00">G2</option>
-                    <option value="415.30">G#2</option>
-                    <option value="440.00">A2</option>
-                    <option value="466.16">A#2</option>
-                    <option value="493.88">B2</option>
-                    <option value="523.25">C3</option>
-                    <option value="554.37">C#3</option>
-                    <option value="587.33">D3</option>
-                    <option value="622.25">D#3</option>
-                    <option value="659.25">E3</option>
-                    <option value="698.46">F3</option>
-                    <option value="739.99">F#3</option>
-                    <option value="783.99">G3</option>
-                    <option value="830.61">G#3</option>
-                    <option value="880.00">A3</option>
-                    <option value="932.33">A#3</option>
-                    <option value="987.77">B3</option>
-                    <option value="1046.50">C4</option>
+                    <option value="220.00">A3</option>
+                    <option value="233.08">A#3</option>
+                    <option value="246.94">B3</option>
+                    <option value="261.63">C4</option>
+                    <option value="277.18">C#4</option>
+                    <option value="293.66">D4</option>
+                    <option value="311.13">D#4</option>
+                    <option value="329.63">E4</option>
+                    <option value="349.23">F4</option>
+                    <option value="369.99">F#4</option>
+                    <option value="392.00">G4</option>
+                    <option value="415.30">G#4</option>
+                    <option value="440.00" selected>A4</option>
+                    <option value="466.16">A#4</option>
+                    <option value="493.88">B4</option>
+                    <option value="523.25">C5</option>
+                    <option value="554.37">C#5</option>
+                    <option value="587.33">D5</option>
+                    <option value="622.25">D#5</option>
+                    <option value="659.25">E5</option>
+                    <option value="698.46">F5</option>
+                    <option value="739.99">F#5</option>
+                    <option value="783.99">G5</option>
+                    <option value="830.61">G#5</option>
+                    <option value="880.00">A5</option>
                 </select>
             </div>
             <div class="control-group">
@@ -484,7 +472,7 @@
             speedMode: false,
             selectedJathi: 4,
             selectedThala: 8,
-            selectedSruthi: 261.63,
+            selectedSruthi: 440.00,
             bpm: 120,
             history: [],            // Stack of textarea values for undo
             historyIndex: -1,       // Current position in history
@@ -605,7 +593,7 @@
                 metadata: {
                     thala: 'adi',
                     jathi: 4,
-                    sruthi: 261.63,
+                    sruthi: 440.00,
                     bpm: 120,
                     createdAt: new Date().toISOString()
                 }
