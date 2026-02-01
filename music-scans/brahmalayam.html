@@ -436,8 +436,9 @@
             selectedThala: 8,
             selectedSruthi: 261.63,
             bpm: 120,
-            history: [],
-            historyIndex: -1,
+            history: [],            // Stack of textarea values for undo
+            historyIndex: -1,       // Current position in history
+            maxHistory: 50,         // Limit history to 50 states
             synth: null,
             isPlaying: false
         };
@@ -811,13 +812,46 @@
         }
 
         function undo() {
-            // Basic undo implementation
-            alert('Undo feature coming soon');
+            if (appState.historyIndex > 0) {
+                appState.historyIndex--;
+                const textarea = document.getElementById('noteInput');
+                textarea.value = appState.history[appState.historyIndex];
+                updatePreview();
+                document.getElementById('statusText').textContent = `Undo (${appState.historyIndex + 1}/${appState.history.length})`;
+            }
         }
 
         function redo() {
-            // Basic redo implementation
-            alert('Redo feature coming soon');
+            if (appState.historyIndex < appState.history.length - 1) {
+                appState.historyIndex++;
+                const textarea = document.getElementById('noteInput');
+                textarea.value = appState.history[appState.historyIndex];
+                updatePreview();
+                document.getElementById('statusText').textContent = `Redo (${appState.historyIndex + 1}/${appState.history.length})`;
+            }
+        }
+
+        // Record textarea change for undo/redo
+        function recordHistory() {
+            const textarea = document.getElementById('noteInput');
+            const currentValue = textarea.value;
+            
+            // If we're not at the end of history, remove future states
+            if (appState.historyIndex < appState.history.length - 1) {
+                appState.history = appState.history.slice(0, appState.historyIndex + 1);
+            }
+            
+            // Add new state if it's different from the current one
+            if (appState.history[appState.historyIndex] !== currentValue) {
+                appState.history.push(currentValue);
+                appState.historyIndex++;
+                
+                // Limit history size
+                if (appState.history.length > appState.maxHistory) {
+                    appState.history.shift();
+                    appState.historyIndex--;
+                }
+            }
         }
 
         // Golden Rule: Export to MusicXML for MuseScore compatibility
@@ -863,7 +897,10 @@
         }
 
         // Event listeners
-        document.getElementById('noteInput').addEventListener('input', updatePreview);
+        document.getElementById('noteInput').addEventListener('input', () => {
+            recordHistory();
+            updatePreview();
+        });
         document.getElementById('noteInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const notes = 'SRGMPDNS';
@@ -874,8 +911,21 @@
                     const start = textarea.selectionStart;
                     textarea.value = textarea.value.substring(0, start) + char + ' ' + textarea.value.substring(start);
                     textarea.selectionStart = start + 2;
+                    recordHistory();
                     updatePreview();
                 }
+            }
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault();
+                undo();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+                e.preventDefault();
+                redo();
             }
         });
 
@@ -883,6 +933,9 @@
         window.addEventListener('load', () => {
             initAudio();
             loadLessonLibrary();
+            // Initialize history with empty state
+            appState.history.push('');
+            appState.historyIndex = 0;
             document.getElementById('statusText').textContent = 'BrahmaLayam initialized';
         });
     </script>
