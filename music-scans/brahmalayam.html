@@ -633,12 +633,17 @@
 
         // UI handlers
         function toggleOctaveUp() {
+            console.log('=== toggleOctaveUp START ===');
+            console.log('appState.octaveUp before:', appState.octaveUp);
             appState.octaveUp = !appState.octaveUp;
+            console.log('appState.octaveUp after:', appState.octaveUp);
             appState.octaveDown = false;
             document.getElementById('octaveUpBtn').classList.toggle('active', appState.octaveUp);
             document.getElementById('octaveDownBtn').classList.toggle('active', false);
             updateStatusForMode();
+            console.log('About to call updatePreview()');
             updatePreview();
+            console.log('=== toggleOctaveUp END ===');
         }
 
         function toggleOctaveDown() {
@@ -680,8 +685,11 @@
         }
 
         function updatePreview() {
+            console.log('=== updatePreview START ===');
             const input = document.getElementById('noteInput').value;
+            console.log('Input:', input);
             appState.atomicNotes = parseAtomicNotes(input);
+            console.log('Parsed notes:', appState.atomicNotes);
             
             // Update note count - only count valid notes
             document.getElementById('noteCount').textContent = `Notes: ${appState.atomicNotes.length}`;
@@ -691,8 +699,11 @@
             const statusText = `Pulses: ${totalPulses.toFixed(1)} | Jathi: ${appState.selectedJathi} | Next line: ${appState.selectedJathi} pulses`;
             document.getElementById('statusText').textContent = statusText;
             
+            console.log('About to call renderCarnatiNotation with:', appState.atomicNotes);
             renderCarnatiNotation(appState.atomicNotes);
+            console.log('About to call renderWesternStaff');
             renderWesternStaff(appState.atomicNotes);
+            console.log('=== updatePreview END ===');
         }
 
         // Render Carnatic notation with vertical lines on Jathi count
