@@ -54,7 +54,13 @@
 
   .list { border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
   .search { padding: 12px; border-bottom: 1px solid var(--border); background: var(--card); }
-  .search input { width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 12px; }
+  .search-container { display: flex; gap: 8px; }
+  .search input { flex: 1; border: 1px solid var(--border); padding: 8px 12px; border-radius: 12px; }
+  .clear-btn { border: none; background: transparent; border-radius: 12px; padding: 8px 12px; cursor: pointer; font-size: 16px; color: var(--muted); display: none; }
+  .clear-btn:hover { background: var(--card); color: var(--text); }
+  .voice-btn { border: 1px solid var(--border); background: white; border-radius: 12px; padding: 8px 12px; cursor: pointer; font-size: 16px; }
+  .voice-btn:hover { background: var(--card); }
+  .voice-btn.listening { background: var(--orange-200); }
   .groups { flex: 1; overflow-y: auto; padding: 8px; }
   .group-title { position: sticky; top: 0; background: white; color: var(--accent-2); font-weight: 700; font-size: 12px; text-transform: uppercase; padding: 4px 8px; }
   .song-btn { width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: white; }
@@ -155,7 +161,11 @@
     <!-- Song list -->
     <aside class="list">
       <div class="search">
-        <input id="search" type="text" placeholder="Search title or lyrics"/>
+        <div class="search-container">
+          <input id="search" type="text" placeholder="Search title or lyrics"/>
+          <button id="clearSearch" class="clear-btn" title="Clear search">×</button>
+          <button id="voiceSearch" class="voice-btn" title="Voice search">🎤</button>
+        </div>
       </div>
       <div id="groups" class="groups"></div>
     </aside>
@@ -256,6 +266,8 @@
   var rail = document.getElementById("rail");
   var groupsEl = document.getElementById("groups");
   var searchEl = document.getElementById("search");
+  var clearSearchEl = document.getElementById("clearSearch");
+  var voiceSearchEl = document.getElementById("voiceSearch");
   var titleEl = document.getElementById("detailTitle");
   var ytList = document.getElementById("ytList");
   var otherList = document.getElementById("otherList");
@@ -303,6 +315,65 @@
   var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   function setCssVar(name, value) { document.documentElement.style.setProperty(name, value); }
   function px(n) { return Math.max(150, Math.round(n)) + "px"; }
+
+  // Speech Recognition
+  var recognition = null;
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-IN'; // Better for Indian accents
+    recognition.onstart = function() {
+      console.log('Speech recognition started');
+    };
+    recognition.onresult = function(event) {
+      var transcript = event.results[0][0].transcript;
+      console.log('Speech recognized:', transcript);
+      searchEl.value = transcript;
+      query = transcript;
+      clearSearchEl.style.display = transcript ? 'block' : 'none';
+      renderGroups();
+    };
+    recognition.onend = function() {
+      console.log('Speech recognition ended');
+      voiceSearchEl.classList.remove('listening');
+      voiceSearchEl.title = 'Voice search';
+    };
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error, event);
+      voiceSearchEl.classList.remove('listening');
+      voiceSearchEl.title = 'Voice search';
+      var message = 'Speech recognition failed.';
+      if (event.error === 'network') {
+        message = 'Speech recognition service is temporarily unavailable.\n\nTroubleshooting steps:\n• Check your internet connection\n• Try disabling VPN or proxy\n• Check firewall settings\n• Try a different browser\n• The Web Speech API requires HTTPS for security\n\nError details: ' + event.error;
+      } else if (event.error === 'not-allowed') {
+        message = 'Microphone access denied. Please allow microphone access in your browser settings and try again.';
+      } else if (event.error === 'no-speech') {
+        message = 'No speech detected. Please speak clearly into the microphone.';
+      } else if (event.error === 'audio-capture') {
+        message = 'Microphone access failed. Please check your microphone settings and try again.';
+      } else if (event.error === 'service-not-allowed') {
+        message = 'Speech recognition service is not allowed. Please check your browser settings.';
+      }
+      alert(message);
+    };
+  }
+
+  function startVoiceSearch() {
+    if (!recognition) {
+      alert('Speech recognition not supported in this browser.');
+      return;
+    }
+    if (voiceSearchEl.classList.contains('listening')) {
+      // Already listening, stop it
+      recognition.stop();
+      return;
+    }
+    voiceSearchEl.classList.add('listening');
+    voiceSearchEl.title = 'Click to stop voice search';
+    recognition.start();
+  }
 
   function startDragSplit(splitter, side) {
     var startX = 0;
@@ -486,6 +557,7 @@
 
   function renderGroups() {
     var base = filterSongs();
+    base.sort(function(a, b) { return (a.title || "").localeCompare(b.title || ""); });
     var g = groupSongs(base);
     var grouped = g.grouped;
     var hash = g.hash;
@@ -814,7 +886,19 @@ function setupCollapsible(card) {
   }
 
   // Events
-  searchEl.addEventListener("input", function (e) { query = e.target.value; renderGroups(); });
+  searchEl.addEventListener("input", function (e) {
+    query = e.target.value;
+    renderGroups();
+    clearSearchEl.style.display = e.target.value ? 'block' : 'none';
+  });
+  clearSearchEl.addEventListener("click", function() {
+    searchEl.value = '';
+    query = '';
+    renderGroups();
+    clearSearchEl.style.display = 'none';
+    searchEl.focus();
+  });
+  voiceSearchEl.addEventListener("click", startVoiceSearch);
   document.getElementById("btnCancel").addEventListener("click", function(){ closeModal(); });
   document.getElementById("btnSave").addEventListener("click", function(){ saveModal(); });
   btnAdd.addEventListener("click", function () { openModal("add"); });
@@ -864,6 +948,7 @@ setupCollapsible(document.getElementById("otherCard"));
 
   (function init() {
     renderRail();
+    clearSearchEl.style.display = 'none'; // Hide clear button initially
     loadSongs().then(function () {
       renderTagCloud();
       renderGroups();
