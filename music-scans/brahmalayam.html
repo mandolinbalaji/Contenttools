@@ -638,6 +638,7 @@
             document.getElementById('octaveUpBtn').classList.toggle('active', appState.octaveUp);
             document.getElementById('octaveDownBtn').classList.toggle('active', false);
             updateStatusForMode();
+            updatePreview();
         }
 
         function toggleOctaveDown() {
@@ -646,6 +647,7 @@
             document.getElementById('octaveDownBtn').classList.toggle('active', appState.octaveDown);
             document.getElementById('octaveUpBtn').classList.toggle('active', false);
             updateStatusForMode();
+            updatePreview();
         }
 
         function updateStatusForMode() {
@@ -698,11 +700,15 @@
             const container = document.querySelector('.carnatic-editor');
             if (!container) return;
 
+            console.log('renderCarnatiNotation called with:', atomicNotes);
+            console.log('octaveUp:', appState.octaveUp, 'octaveDown:', appState.octaveDown);
+
             let html = '<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; line-height: 1.2;">';
             let pulseCount = 0;
             let pulseInJathi = 0;
 
             atomicNotes.forEach((note, index) => {
+                console.log(`Note ${index}:`, note, 'octave value:', note.octave);
                 const pulsesForNote = 1 / note.speed;
                 pulseInJathi += pulsesForNote;
                 pulseCount += pulsesForNote;
@@ -718,6 +724,7 @@
                 
                 if (note.octave === 1) {
                     // Octave up: dot above
+                    console.log(`Note ${index} has octave 1 (up) - rendering with dot above`);
                     noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave up">
                         <span style="font-size: 14px; color: #ff6b6b; font-weight: bold;">●</span>
                         <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
@@ -725,6 +732,7 @@
                     </div>`;
                 } else if (note.octave === -1) {
                     // Octave down: dot below
+                    console.log(`Note ${index} has octave -1 (down) - rendering with dot below`);
                     noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave down">
                         <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
                         ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
@@ -732,6 +740,7 @@
                     </div>`;
                 } else {
                     // Normal: no dot - clickable if mode is active
+                    console.log(`Note ${index} has octave 0 (normal) - rendering without dot`);
                     noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="${isClickable ? 'Click to add octave modifier' : 'Enable Oct Up/Down first'}">
                         <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
                         ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
