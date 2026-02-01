@@ -1,0 +1,29 @@
+{
+  "_file_path": "projects\\Jagathjanani.json",
+  "audio_files": [
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Jagathjanani/Stems/Jagathjanani_Db_vocals.mp3",
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Jagathjanani/Stems/Jagathjanani_Db_minus.mp3"
+  ],
+  "created": "2026-01-05T14:43:10.329149",
+  "cslp_file": "C:\\balajiwebsite\\public\\LyricsTagged\\Jagathjanani_Db_minus.cslp",
+  "id": "d32a3df9-c15e-4b27-863c-650ce7a3e524",
+  "last_modified": "2026-01-06T14:49:20.240565",
+  "name": "Jagathjanani",
+  "track_settings": {
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Jagathjanani/Stems/Jagathjanani_Db_vocals.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "Jagathjanani_Db_vocals"
+    },
+    "C:/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/Jagathjanani/Stems/Jagathjanani_Db_minus.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "Jagathjanani_Db_minus"
+    }
+  },
+  "version": "1.0"
+}

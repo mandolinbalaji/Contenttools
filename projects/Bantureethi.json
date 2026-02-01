@@ -6,9 +6,32 @@
     "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/DeviNeeye/Stems/DeviNeeye_Db_vocals.mp3"
   ],
   "created": "2025-12-15T15:33:22.943516",
-  "cslp_file": "C:\\Users\\mando\\iCloudDrive\\BalajiMusicContent\\All_Backing_Tracks\\Bantureethi\\Assets\\Bantureethi_Db_minus.cslp",
+  "cslp_file": "C:\\balajiwebsite\\public\\LyricsTagged\\Bantureethi_Db_minus.cslp",
   "id": "0296c4a1-8d74-49c4-a186-8b92a301063f",
-  "last_modified": "2026-01-01T19:03:20.248908",
+  "last_modified": "2026-01-05T18:59:10.728287",
   "name": "Bantureethi",
-  "version": "1.0"
+  "version": "1.0",
+  "track_settings": {
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/DeviNeeye/Stems/DeviNeeye_Db_Minus.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "DeviNeeye_Db_Minus"
+    },
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/DeviNeeye/Stems/DeviNeeye_Db_Minus_click_track.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "DeviNeeye_Db_Minus_click_track"
+    },
+    "C:/Users/mando/iCloudDrive/BalajiMusicContent/All_Backing_Tracks/DeviNeeye/Stems/DeviNeeye_Db_vocals.mp3": {
+      "volume": 1.0,
+      "muted": false,
+      "solo": false,
+      "device": null,
+      "name": "DeviNeeye_Db_vocals"
+    }
+  }
 }

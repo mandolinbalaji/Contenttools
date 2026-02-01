@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anytune to LRC Converter</title>
+    <title>CSLP to VLC Subtitle Converter</title>
     <style>
         * {
             margin: 0;
@@ -301,10 +301,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎵 Anytune to LRC Converter</h1>
-            <p class="subtitle">Convert .atcfg files to LRC lyrics format with optional lyrics file support</p>
-            
+            <h1>📺 CSLP to VLC Subtitle Converter</h1>
+            <p class="subtitle">Convert .cslp files to VLC-compatible subtitle (.srt) format</p>
+
             <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Home</span>
+                </a>
                 <a href="process-lyrics.html" class="nav-link">
                     <span class="nav-icon">⚙️</span>
                     <span class="nav-text">Process Lyrics</span>
@@ -333,10 +337,6 @@
                     <span class="nav-icon">🎵</span>
                     <span class="nav-text">YouTube to MP3</span>
                 </a>
-                <a href="cslp-to-vlc.html" class="nav-link">
-                    <span class="nav-icon">📺</span>
-                    <span class="nav-text">CSLP to VLC</span>
-                </a>
                 <a href="generate-notation.html" class="nav-link">
                     <span class="nav-icon">📄</span>
                     <span class="nav-text">Generate Notation</span>
@@ -348,21 +348,13 @@
         <div class="success" id="success"></div>
 
         <div class="file-inputs">
-            <div class="file-input-group" id="atcfgGroup">
+            <div class="file-input-group" id="cslpGroup">
                 <div class="upload-icon">📁</div>
-                <div class="upload-text">Anytune .atcfg file</div>
+                <div class="upload-text">CSLP file</div>
                 <div class="upload-hint">Required</div>
-                <div class="file-name" id="atcfgFileName">No file selected</div>
-                <div class="file-status" id="atcfgStatus">Click to select</div>
-                <input type="file" id="atcfgInput" accept=".atcfg">
-            </div>
-            <div class="file-input-group" id="lyricsGroup">
-                <div class="upload-icon">📝</div>
-                <div class="upload-text">Lyrics .txt file</div>
-                <div class="upload-hint">Optional</div>
-                <div class="file-name" id="lyricsFileName">No file selected</div>
-                <div class="file-status" id="lyricsStatus">Click to select</div>
-                <input type="file" id="lyricsInput" accept=".txt">
+                <div class="file-name" id="cslpFileName">No file selected</div>
+                <div class="file-status" id="cslpStatus">Click to select or drag & drop</div>
+                <input type="file" id="cslpInput" accept=".cslp">
             </div>
         </div>
 
@@ -376,321 +368,229 @@
                 <span class="info-value" id="songTitle"></span>
             </div>
             <div class="info-row">
-                <span class="info-label">Artist:</span>
-                <span class="info-value" id="songArtist"></span>
+                <span class="info-label">Ragam:</span>
+                <span class="info-value" id="songRagam"></span>
             </div>
             <div class="info-row">
-                <span class="info-label">Album:</span>
-                <span class="info-value" id="songAlbum"></span>
+                <span class="info-label">Talam:</span>
+                <span class="info-value" id="songTalam"></span>
             </div>
             <div class="info-row">
-                <span class="info-label">Markers Found:</span>
-                <span class="info-value" id="markerCount"></span>
+                <span class="info-label">Timeline Entries:</span>
+                <span class="info-value" id="timelineCount"></span>
             </div>
         </div>
 
         <div class="output-area" id="outputArea">
-            <div class="output-label">LRC Output (editable)</div>
-            <textarea id="lrcOutput" placeholder="LRC content will appear here..."></textarea>
+            <div class="output-label">SRT Output (editable)</div>
+            <textarea id="srtOutput" placeholder="SRT content will appear here..."></textarea>
         </div>
 
         <div class="button-group">
             <button class="btn-secondary" id="clearBtn">🗑️ Clear All</button>
             <button class="btn-secondary" id="copyBtn" disabled>📋 Copy to Clipboard</button>
-            <button class="btn-secondary" id="downloadAtcfgBtn" disabled>💾 Download Modified .atcfg</button>
-            <button class="btn-primary" id="downloadBtn" disabled>💾 Download LRC File</button>
+            <button class="btn-primary" id="downloadBtn" disabled>💾 Download SRT File</button>
         </div>
     </div>
 
     <script>
-        const atcfgGroup = document.getElementById('atcfgGroup');
-        const lyricsGroup = document.getElementById('lyricsGroup');
-        const atcfgInput = document.getElementById('atcfgInput');
-        const lyricsInput = document.getElementById('lyricsInput');
-        const atcfgFileName = document.getElementById('atcfgFileName');
-        const lyricsFileName = document.getElementById('lyricsFileName');
-        const atcfgStatus = document.getElementById('atcfgStatus');
-        const lyricsStatus = document.getElementById('lyricsStatus');
+        // DOM elements
+        const cslpGroup = document.getElementById('cslpGroup');
+        const cslpInput = document.getElementById('cslpInput');
+        const cslpFileName = document.getElementById('cslpFileName');
+        const cslpStatus = document.getElementById('cslpStatus');
         const infoSection = document.getElementById('infoSection');
         const outputArea = document.getElementById('outputArea');
-        const lrcOutput = document.getElementById('lrcOutput');
+        const srtOutput = document.getElementById('srtOutput');
         const errorDiv = document.getElementById('error');
         const successDiv = document.getElementById('success');
         const copyBtn = document.getElementById('copyBtn');
         const downloadBtn = document.getElementById('downloadBtn');
-        const downloadAtcfgBtn = document.getElementById('downloadAtcfgBtn');
         const clearBtn = document.getElementById('clearBtn');
 
         let currentFileName = '';
-        let currentLrcContent = '';
-        let atcfgData = null;
-        let lyricsData = null;
-        let modifiedAtcfgData = null;
+        let currentSrtContent = '';
+        let cslpData = null;
 
-        // File input group click handlers
-        atcfgGroup.addEventListener('click', () => {
-            atcfgInput.click();
+        // Drag and drop functionality
+        cslpGroup.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            cslpGroup.classList.add('dragover');
         });
 
-        lyricsGroup.addEventListener('click', () => {
-            lyricsInput.click();
+        cslpGroup.addEventListener('dragleave', () => {
+            cslpGroup.classList.remove('dragover');
         });
 
-        // File input change handlers
-        atcfgInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleAtcfgFile(e.target.files[0]);
+        cslpGroup.addEventListener('drop', (e) => {
+            e.preventDefault();
+            cslpGroup.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleCslpFile(files[0]);
             }
         });
 
-        lyricsInput.addEventListener('change', (e) => {
+        // File input group click handler
+        cslpGroup.addEventListener('click', () => {
+            cslpInput.click();
+        });
+
+        // File input change handler
+        cslpInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                handleLyricsFile(e.target.files[0]);
+                handleCslpFile(e.target.files[0]);
             }
         });
 
-        // Handle .atcfg file
-        function handleAtcfgFile(file) {
+        // Handle .cslp file
+        function handleCslpFile(file) {
             hideMessages();
 
-            if (!file.name.endsWith('.atcfg')) {
-                showError('Please select a valid .atcfg file');
+            if (!file.name.endsWith('.cslp')) {
+                showError('Please select a valid .cslp file');
                 return;
             }
 
-            currentFileName = file.name.replace('.atcfg', '');
-            atcfgFileName.textContent = file.name;
-            atcfgStatus.textContent = 'Loaded ✓';
-            atcfgGroup.classList.add('loaded');
+            currentFileName = file.name.replace('.cslp', '');
+            cslpFileName.textContent = file.name;
+            cslpStatus.textContent = 'Loaded ✓';
+            cslpGroup.classList.add('loaded');
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const content = e.target.result;
-                    atcfgData = JSON.parse(content);
-                    checkAndProcess();
+                    cslpData = JSON.parse(content);
+                    processCslpData(cslpData);
                 } catch (error) {
-                    showError('Failed to parse .atcfg file: ' + error.message);
+                    showError('Failed to parse .cslp file: ' + error.message);
                 }
             };
             reader.readAsText(file);
         }
 
-        // Handle lyrics file
-        function handleLyricsFile(file) {
-            hideMessages();
-
-            if (!file.name.endsWith('.txt')) {
-                showError('Please select a valid .txt lyrics file');
-                return;
-            }
-
-            lyricsFileName.textContent = file.name;
-            lyricsStatus.textContent = 'Loaded ✓';
-            lyricsGroup.classList.add('loaded');
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const content = e.target.result;
-                    lyricsData = parseLyricsFile(content);
-                    checkAndProcess();
-                } catch (error) {
-                    showError('Failed to parse lyrics file: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // Parse lyrics file with tags like "PL1: lyrics here"
-        function parseLyricsFile(content) {
-            const lyricsMap = {};
-            const lines = content.split('\n');
-
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                if (trimmed && trimmed.includes(':')) {
-                    const colonIndex = trimmed.indexOf(':');
-                    const tag = trimmed.substring(0, colonIndex).trim();
-                    const lyrics = trimmed.substring(colonIndex + 1).trim();
-
-                    if (tag && lyrics) {
-                        // Normalize text: lowercase and remove special characters
-                        const normalizedLyrics = lyrics.toLowerCase().replace(/[^a-z0-9\s]/g, '');
-                        lyricsMap[tag] = normalizedLyrics;
-                    }
-                }
-            });
-
-            return lyricsMap;
-        }
-
-        // Replace tags in .atcfg JSON with lyrics
-        function replaceTagsInAtcfg(audioMarks, lyricsMap) {
-            audioMarks.forEach((mark, index) => {
-                // Try different tag patterns to find matching lyrics
-                const possibleTags = [
-                    `PL${index + 1}`,  // PL1, PL2, PL3...
-                    `AL${index + 1}`,  // AL1, AL2, AL3...
-                    `L${index + 1}`,   // L1, L2, L3...
-                    `${index + 1}`,    // 1, 2, 3...
-                ];
-
-                let lyrics = '';
-                for (const tag of possibleTags) {
-                    if (lyricsMap[tag]) {
-                        lyrics = lyricsMap[tag];
-                        break;
-                    }
-                }
-
-                // Add lyrics to the audioMark if found
-                if (lyrics) {
-                    mark.lyrics = lyrics;
-                }
-            });
-        }
-
-        // Check if we have both files and process
-        function checkAndProcess() {
-            if (atcfgData) {
-                processAtcfgData(atcfgData, lyricsData);
-            }
-        }
-
-        // Process .atcfg data with optional lyrics
-        function processAtcfgData(data, lyricsMap) {
+        // Process .cslp data
+        function processCslpData(data) {
             try {
-                // Create a deep copy of the data to modify
-                modifiedAtcfgData = JSON.parse(JSON.stringify(data));
-
-                // Extract track data
-                const trackData = modifiedAtcfgData.trackData?.[0];
-                if (!trackData) {
-                    throw new Error('No track data found in file');
-                }
-
-                // Replace tags in the .atcfg JSON with lyrics
-                if (lyricsMap && trackData.audioMarks) {
-                    replaceTagsInAtcfg(trackData.audioMarks, lyricsMap);
-                }
-
                 // Extract metadata
-                const title = trackData.title || currentFileName;
-                const artist = trackData.artist || '';
-                const album = trackData.albumTitle || '';
+                const metadata = data.data?.metadata || {};
+                const title = metadata.title || currentFileName;
+                const ragam = metadata.ragam || '';
+                const talam = metadata.talam || '';
 
-                // Extract audio marks
-                const audioMarks = trackData.audioMarks || [];
+                // Extract timeline
+                const timeline = data.data?.timeline || [];
 
-                if (audioMarks.length === 0) {
-                    showError('No audio markers found in file');
+                if (timeline.length === 0) {
+                    showError('No timeline entries found in file');
                     return;
                 }
 
                 // Sort by time
-                audioMarks.sort((a, b) => a.time - b.time);
+                timeline.sort((a, b) => a.time - b.time);
 
                 // Display file info
-                document.getElementById('fileName').textContent = currentFileName + '.atcfg';
+                document.getElementById('fileName').textContent = currentFileName + '.cslp';
                 document.getElementById('songTitle').textContent = title || 'N/A';
-                document.getElementById('songArtist').textContent = artist || 'N/A';
-                document.getElementById('songAlbum').textContent = album || 'N/A';
-                document.getElementById('markerCount').textContent = audioMarks.length;
+                document.getElementById('songRagam').textContent = ragam || 'N/A';
+                document.getElementById('songTalam').textContent = talam || 'N/A';
+                document.getElementById('timelineCount').textContent = timeline.length;
 
-                // Generate LRC content from modified data
-                currentLrcContent = generateLrcContent(audioMarks, title, artist, album);
-                lrcOutput.value = currentLrcContent;
+                // Generate SRT content
+                currentSrtContent = generateSrtContent(timeline);
+                srtOutput.value = currentSrtContent;
 
                 // Show results
                 infoSection.classList.add('visible');
                 outputArea.classList.add('visible');
                 copyBtn.disabled = false;
                 downloadBtn.disabled = false;
-                downloadAtcfgBtn.disabled = false;
 
-                const lyricsCount = lyricsMap ? Object.keys(lyricsMap).length : 0;
-                showSuccess(`Successfully processed ${audioMarks.length} markers${lyricsMap ? ` with ${lyricsCount} lyrics embedded` : ''}!`);
+                showSuccess(`Successfully processed ${timeline.length} timeline entries!`);
             } catch (error) {
                 showError('Error processing file: ' + error.message);
             }
         }
 
-        // Generate LRC content with optional lyrics
-        function generateLrcContent(audioMarks, title, artist, album) {
-            let lrc = '';
+        // Generate SRT content from timeline
+        function generateSrtContent(timeline) {
+            let srt = '';
 
-            // Add metadata headers
-            lrc += `[file:${currentFileName}.atcfg]\n`;
-            if (artist) lrc += `[ar:${artist}]\n`;
-            if (title) lrc += `[ti:${title}]\n`;
-            if (album) lrc += `[al:${album}]\n`;
-            lrc += '[by:AnytuneToLRC]\n\n';
+            timeline.forEach((entry, index) => {
+                const sequenceNumber = index + 1;
+                const startTime = formatSrtTimestamp(entry.time);
 
-            // Add time markers with lyrics if available
-            audioMarks.forEach((mark) => {
-                const timestamp = formatTimestamp(mark.time);
-                const lyrics = mark.lyrics || '';
-                lrc += `${timestamp}${lyrics ? '$' + lyrics : ''}\n`;
+                // Calculate end time - use next entry's time or add 5 seconds for last entry
+                let endTime;
+                if (index < timeline.length - 1) {
+                    endTime = formatSrtTimestamp(timeline[index + 1].time);
+                } else {
+                    // Last entry - add 5 seconds
+                    endTime = formatSrtTimestamp(entry.time + 5);
+                }
+
+                // Get text content (lyrics and/or notation)
+                const lyrics = entry.text || '';
+                const notation = entry.notation || '';
+
+                let content = '';
+                if (lyrics && notation) {
+                    content = `${lyrics}\n${notation}`;
+                } else if (lyrics) {
+                    content = lyrics;
+                } else if (notation) {
+                    content = notation;
+                }
+
+                // Add SRT entry
+                srt += `${sequenceNumber}\n`;
+                srt += `${startTime} --> ${endTime}\n`;
+                srt += `${content}\n\n`;
             });
 
-            return lrc;
+            return srt.trim();
         }
 
-        // Format timestamp to LRC format [mm:ss.xxx...] with full precision
-        function formatTimestamp(seconds) {
-            const minutes = Math.floor(seconds / 60);
+        // Format timestamp to SRT format (HH:MM:SS,mmm)
+        function formatSrtTimestamp(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
             const secs = seconds % 60;
+            const milliseconds = Math.floor((secs % 1) * 1000);
+
+            const hh = String(hours).padStart(2, '0');
             const mm = String(minutes).padStart(2, '0');
-            // Preserve all significant digits from the original time value
-            const ss = secs.toString().padStart(5, '0');
-            return `[${mm}:${ss}]`;
+            const ss = String(Math.floor(secs)).padStart(2, '0');
+            const mmm = String(milliseconds).padStart(3, '0');
+
+            return `${hh}:${mm}:${ss},${mmm}`;
         }
 
         // Copy to clipboard
         copyBtn.addEventListener('click', async () => {
             try {
-                const textToCopy = lrcOutput.value;
+                const textToCopy = srtOutput.value;
                 await navigator.clipboard.writeText(textToCopy);
-                showSuccess('LRC content copied to clipboard!');
+                showSuccess('SRT content copied to clipboard!');
             } catch (error) {
                 showError('Failed to copy to clipboard');
             }
         });
 
-        // Download LRC file
+        // Download SRT file
         downloadBtn.addEventListener('click', () => {
-            const textToDownload = lrcOutput.value;
+            const textToDownload = srtOutput.value;
             const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = currentFileName + '.lrc';
+            a.download = currentFileName + '.srt';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showSuccess('LRC file downloaded!');
-        });
-
-        // Download modified .atcfg file
-        downloadAtcfgBtn.addEventListener('click', () => {
-            if (!modifiedAtcfgData) {
-                showError('No modified .atcfg data available');
-                return;
-            }
-
-            const jsonToDownload = JSON.stringify(modifiedAtcfgData, null, 2);
-            const blob = new Blob([jsonToDownload], { type: 'application/json;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = currentFileName + '_with_lyrics.atcfg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showSuccess('Modified .atcfg file downloaded!');
+            showSuccess('SRT file downloaded!');
         });
 
         // Clear all data
@@ -720,36 +620,29 @@
 
         // Clear all data and reset UI
         function clearAll() {
-            // Reset file inputs
-            atcfgInput.value = '';
-            lyricsInput.value = '';
+            // Reset file input
+            cslpInput.value = '';
 
             // Reset file display
-            atcfgFileName.textContent = 'No file selected';
-            lyricsFileName.textContent = 'No file selected';
-            atcfgStatus.textContent = 'Click to select';
-            lyricsStatus.textContent = 'Click to select';
-            atcfgGroup.classList.remove('loaded');
-            lyricsGroup.classList.remove('loaded');
+            cslpFileName.textContent = 'No file selected';
+            cslpStatus.textContent = 'Click to select or drag & drop';
+            cslpGroup.classList.remove('loaded');
 
             // Hide sections
             infoSection.classList.remove('visible');
             outputArea.classList.remove('visible');
 
             // Clear textarea
-            lrcOutput.value = '';
+            srtOutput.value = '';
 
             // Disable buttons
             copyBtn.disabled = true;
             downloadBtn.disabled = true;
-            downloadAtcfgBtn.disabled = true;
 
             // Clear variables
             currentFileName = '';
-            currentLrcContent = '';
-            atcfgData = null;
-            lyricsData = null;
-            modifiedAtcfgData = null;
+            currentSrtContent = '';
+            cslpData = null;
 
             // Hide messages
             hideMessages();
