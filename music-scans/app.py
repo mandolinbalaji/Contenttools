@@ -304,6 +304,103 @@ def delete_lesson(lesson_id):
         return jsonify({"error": str(e)}), 400
 
 
+@app.post("/api/save")
+def save_to_file():
+    """Golden Rule: Save lesson to /data/ folder"""
+    DATA_DIR = BASE_DIR / "data"
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    
+    try:
+        lesson_data = request.json or {}
+        lesson_id = lesson_data.get("id") or str(uuid.uuid4())
+        
+        lesson_file = DATA_DIR / f"{lesson_id}.json"
+        lesson_file.write_text(json.dumps(lesson_data, indent=2), encoding="utf-8")
+        
+        return jsonify({"id": lesson_id, "status": "saved", "path": str(lesson_file)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.post("/api/export")
+def export_to_musicxml():
+    """Golden Rule: Convert JSON lesson to MusicXML format for MuseScore compatibility"""
+    try:
+        lesson_data = request.json or {}
+        atomic_notes = lesson_data.get("atomicNotes", [])
+        metadata = lesson_data.get("metadata", {})
+        
+        if not atomic_notes:
+            return jsonify({"error": "No notes to export"}), 400
+        
+        # Map Carnatic notes to Western notation
+        note_map = {
+            'S': 'D', 'R': 'E', 'G': 'F#', 'M': 'G',
+            'P': 'A', 'D': 'B', 'N': 'C'
+        }
+        
+        # Build MusicXML structure
+        musicxml = '''<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0 Partwise//EN" "http://www.musicxml.org/partwise.dtd">
+<score-partwise version="4.0">
+  <work>
+    <work-title>Carnatic Lesson Export</work-title>
+  </work>
+  <identification>
+    <creator type="software">BrahmaLayam</creator>
+  </identification>
+  <defaults>
+    <scaling>
+      <millimeters>7.05</millimeters>
+      <tenths>40</tenths>
+    </scaling>
+  </defaults>
+  <part-list>
+    <score-part id="P1">
+      <part-name>Carnatic Notation</part-name>
+    </score-part>
+  </part-list>
+  <part id="P1">
+    <measure number="1">
+      <attributes>
+        <divisions>4</divisions>
+        <time>
+          <beats>4</beats>
+          <beat-type>4</beat-type>
+        </time>
+        <clef>
+          <sign>treble</sign>
+          <line>2</line>
+        </clef>
+      </attributes>
+'''
+        
+        # Add notes
+        for note in atomic_notes[:32]:  # Limit to 32 notes per measure
+            char = note.get('char', 'S')
+            western_note = note_map.get(char, 'D')
+            octave = 4 + note.get('octave', 0)
+            duration = 2 if note.get('speed', 1) == 2 else 4  # Double speed = half duration
+            
+            musicxml += f'''      <note>
+        <pitch>
+          <step>{western_note[0]}</step>
+          <octave>{octave}</octave>
+        </pitch>
+        <duration>{duration}</duration>
+        <type>{'eighth' if duration == 2 else 'quarter'}</type>
+      </note>
+'''
+        
+        musicxml += '''    </measure>
+  </part>
+</score-partwise>'''
+        
+        return musicxml, 200, {'Content-Type': 'application/xml', 'Content-Disposition': 'attachment;filename=lesson.musicxml'}
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
 if __name__ == "__main__":
     print("Starting server at http://127.0.0.1:5000")
     BASE_DIR.mkdir(parents=True, exist_ok=True)

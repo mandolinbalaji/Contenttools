@@ -384,6 +384,7 @@
                 <button class="toolbar-btn" onclick="stopPlayback()" title="Stop">⏹ Stop</button>
                 <div class="toolbar-separator"></div>
                 <button class="toolbar-btn" onclick="saveLesson()" title="Save">💾 Save</button>
+                <button class="toolbar-btn" onclick="exportToMusicXML()" title="Export to MusicXML">📥 Export</button>
             </div>
 
             <div class="editor-container">
@@ -408,10 +409,26 @@
     </div>
 
     <script>
+        // GOLDEN RULES: Atomic Notes System
+        // Every note is an object { char: 'S', octave: 0, speed: 1 }
+        // Laya: Total Pulses = sum(1/speed) for vertical line placement
+        // Sruthi: Map S to selected frequency with Carnatic ratios
+
+        // Standard Carnatic Frequency Ratios (relative to Sa=1.0)
+        const CARNATIC_RATIOS = {
+            'S': 1.0,        // Sa
+            'R': 1.067,      // Ri (16/15)
+            'G': 1.125,      // Ga (9/8)
+            'M': 1.2,        // Ma (6/5)
+            'P': 1.333,      // Pa (4/3)
+            'D': 1.5,        // Da (3/2)
+            'N': 1.6875      // Ni (27/16)
+        };
+
         // Global state
         let appState = {
             currentLesson: null,
-            currentNotes: [],
+            atomicNotes: [],        // Array of { char, octave, speed }
             octaveUp: false,
             octaveDown: false,
             speedMode: false,
@@ -436,6 +453,38 @@
                     release: 0.1
                 }
             }).toDestination();
+        }
+
+        // Parse textarea into atomic notes
+        function parseAtomicNotes(input) {
+            const validNotes = 'SRGMPDNS';
+            const notes = [];
+            const tokens = input.toUpperCase().trim().split(/\s+/);
+            
+            tokens.forEach(token => {
+                if (token.length > 0) {
+                    const char = token[0];
+                    if (validNotes.includes(char)) {
+                        const octave = appState.octaveUp ? 1 : (appState.octaveDown ? -1 : 0);
+                        const speed = appState.speedMode ? 2 : 1;
+                        notes.push({ char, octave, speed });
+                    }
+                }
+            });
+            
+            return notes;
+        }
+
+        // Calculate total pulses for laya drawing
+        function calculateTotalPulses(atomicNotes) {
+            return atomicNotes.reduce((sum, note) => sum + (1 / note.speed), 0);
+        }
+
+        // Get frequency for a note
+        function getNoteFrequency(char, octave = 0) {
+            const baseFreq = appState.selectedSruthi * (CARNATIC_RATIOS[char] || 1.0);
+            // Each octave multiplies/divides by 2
+            return baseFreq * Math.pow(2, octave);
         }
 
         // Load lessons from server
@@ -524,12 +573,15 @@
                 return;
             }
 
+            // Store both the raw text AND atomic notes for proper reconstruction
             appState.currentLesson.notes = document.getElementById('noteInput').value;
+            appState.currentLesson.atomicNotes = appState.atomicNotes;  // Golden Rule: Store atomic structure
             appState.currentLesson.metadata = {
                 thala: document.getElementById('thalaSelect').value,
                 jathi: parseInt(document.getElementById('jathiSelect').value),
                 sruthi: parseFloat(document.getElementById('sruthiSelect').value),
                 bpm: parseInt(document.getElementById('bpmInput').value),
+                totalPulses: calculateTotalPulses(appState.atomicNotes),
                 updatedAt: new Date().toISOString()
             };
 
@@ -602,12 +654,62 @@
         }
 
         function updatePreview() {
-            const notes = document.getElementById('noteInput').value.trim().split(/\s+/);
-            document.getElementById('noteCount').textContent = `Notes: ${notes.length}`;
-            renderWesternStaff(notes);
+            const input = document.getElementById('noteInput').value;
+            appState.atomicNotes = parseAtomicNotes(input);
+            
+            // Update note count - only count valid notes
+            document.getElementById('noteCount').textContent = `Notes: ${appState.atomicNotes.length}`;
+            
+            // Calculate laya
+            const totalPulses = calculateTotalPulses(appState.atomicNotes);
+            const statusText = `Pulses: ${totalPulses.toFixed(1)} | Jathi: ${appState.selectedJathi} | Next line: ${appState.selectedJathi} pulses`;
+            document.getElementById('statusText').textContent = statusText;
+            
+            renderCarnatiNotation(appState.atomicNotes);
+            renderWesternStaff(appState.atomicNotes);
         }
 
-        function renderWesternStaff(notes) {
+        // Render Carnatic notation with vertical lines on Jathi count
+        function renderCarnatiNotation(atomicNotes) {
+            const container = document.querySelector('.carnatic-editor');
+            if (!container) return;
+
+            let html = '<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">';
+            let pulseCount = 0;
+            let pulseInJathi = 0;
+
+            atomicNotes.forEach((note, index) => {
+                const pulsesForNote = 1 / note.speed;
+                pulseInJathi += pulsesForNote;
+                pulseCount += pulsesForNote;
+
+                // Add the note
+                const octaveIndicator = note.octave === 1 ? '↑' : (note.octave === -1 ? '↓' : '');
+                const speedIndicator = note.speed === 2 ? '.' : '';
+                html += `<span style="font-size: 18px; font-weight: bold; color: #667eea;">${note.char}${octaveIndicator}${speedIndicator}</span>`;
+
+                // Add vertical line when Jathi is complete
+                if (pulseInJathi >= appState.selectedJathi - 0.001) {
+                    html += `<span style="width: 2px; height: 24px; background: #ff6b6b; margin: 0 4px;"></span>`;
+                    pulseInJathi = 0;
+                }
+            });
+
+            html += '</div>';
+            
+            // Find or create the display area
+            let displayArea = container.querySelector('#notationDisplay');
+            if (!displayArea) {
+                displayArea = document.createElement('div');
+                displayArea.id = 'notationDisplay';
+                displayArea.style.cssText = 'margin-top: 12px; padding: 12px; background: #f9f9f9; border-radius: 6px; min-height: 40px;';
+                container.appendChild(displayArea);
+            }
+            
+            displayArea.innerHTML = html;
+        }
+
+        function renderWesternStaff(atomicNotes) {
             const canvas = document.getElementById('vexflowCanvas');
             if (!canvas) return;
             
@@ -632,15 +734,25 @@
                 const stave = new Vex.Flow.Stave(10, 0, 300);
                 stave.addClef('treble').setContext(context).draw();
 
+                // Map Carnatic notes to Western staff with octave support
                 const noteMap = {
-                    'S': 'D/4', 'R': 'E/4', 'G': 'F#/4', 'M': 'G/4',
-                    'P': 'A/4', 'D': 'B/4', 'N': 'C#/5'
+                    'S': { '-1': 'D/3', '0': 'D/4', '1': 'D/5' },
+                    'R': { '-1': 'E/3', '0': 'E/4', '1': 'E/5' },
+                    'G': { '-1': 'F#/3', '0': 'F#/4', '1': 'F#/5' },
+                    'M': { '-1': 'G/3', '0': 'G/4', '1': 'G/5' },
+                    'P': { '-1': 'A/3', '0': 'A/4', '1': 'A/5' },
+                    'D': { '-1': 'B/3', '0': 'B/4', '1': 'B/5' },
+                    'N': { '-1': 'C#/4', '0': 'C#/5', '1': 'C#/6' }
                 };
 
-                const vexNotes = notes
-                    .filter(n => noteMap[n])
+                const vexNotes = atomicNotes
                     .slice(0, 8)
-                    .map(n => new Vex.Flow.StaveNote({ keys: [noteMap[n]], duration: 'q' }));
+                    .map(note => {
+                        const octave = note.octave.toString();
+                        const key = noteMap[note.char]?.[octave] || 'D/4';
+                        const duration = note.speed === 2 ? 'e' : 'q'; // 8th note for double speed
+                        return new Vex.Flow.StaveNote({ keys: [key], duration });
+                    });
 
                 if (vexNotes.length > 0) {
                     const voice = new Vex.Flow.Voice({ num_beats: vexNotes.length, beat_value: 4 });
@@ -656,34 +768,33 @@
         }
 
         async function playNotes() {
-            const notes = document.getElementById('noteInput').value.trim().split(/\s+/);
-            const beatDuration = 60 / appState.bpm;
+            if (appState.atomicNotes.length === 0) {
+                document.getElementById('statusText').textContent = 'No notes to play';
+                return;
+            }
             
             appState.isPlaying = true;
+            const beatDuration = 60 / appState.bpm;  // Duration of one beat in seconds
             
-            const noteFreq = {
-                'S': appState.selectedSruthi,
-                'R': appState.selectedSruthi * 1.067,
-                'G': appState.selectedSruthi * 1.125,
-                'M': appState.selectedSruthi * 1.2,
-                'P': appState.selectedSruthi * 1.333,
-                'D': appState.selectedSruthi * 1.5,
-                'N': appState.selectedSruthi * 1.6875
-            };
-
-            for (let note of notes) {
+            for (let note of appState.atomicNotes) {
                 if (!appState.isPlaying) break;
-                if (noteFreq[note]) {
-                    appState.synth.frequency.value = noteFreq[note];
-                    appState.synth.triggerAttackRelease(beatDuration);
-                    await new Promise(resolve => setTimeout(resolve, beatDuration * 1000));
-                }
+                
+                const frequency = getNoteFrequency(note.char, note.octave);
+                const noteDuration = beatDuration / note.speed;  // Faster speed = shorter duration
+                
+                appState.synth.frequency.value = frequency;
+                appState.synth.triggerAttackRelease(noteDuration);
+                await new Promise(resolve => setTimeout(resolve, noteDuration * 1000));
             }
+            
+            appState.isPlaying = false;
+            document.getElementById('statusText').textContent = 'Playback complete';
         }
 
         function stopPlayback() {
             appState.isPlaying = false;
             appState.synth.triggerRelease();
+            document.getElementById('statusText').textContent = 'Playback stopped';
         }
 
         function undo() {
@@ -694,6 +805,48 @@
         function redo() {
             // Basic redo implementation
             alert('Redo feature coming soon');
+        }
+
+        // Golden Rule: Export to MusicXML for MuseScore compatibility
+        async function exportToMusicXML() {
+            if (appState.atomicNotes.length === 0) {
+                alert('No notes to export');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        atomicNotes: appState.atomicNotes,
+                        metadata: {
+                            thala: document.getElementById('thalaSelect').value,
+                            jathi: parseInt(document.getElementById('jathiSelect').value),
+                            sruthi: parseFloat(document.getElementById('sruthiSelect').value),
+                            bpm: parseInt(document.getElementById('bpmInput').value)
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `lesson-${Date.now()}.musicxml`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    document.getElementById('statusText').textContent = 'Export complete - file downloaded';
+                } else {
+                    alert('Export failed');
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Error exporting lesson');
+            }
         }
 
         // Event listeners
