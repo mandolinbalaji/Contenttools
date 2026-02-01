@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrahmaLayam - Carnatic Notation Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/releases/vexflow-core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 16px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            min-width: 60px;
+        }
+
+        select, input[type="number"] {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 2px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .sidebar-header h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sidebar-btn {
+            flex: 1;
+            padding: 8px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-btn:hover {
+            background: #764ba2;
+            transform: translateY(-1px);
+        }
+
+        .lesson-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .lesson-item {
+            padding: 12px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .lesson-item:hover {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .lesson-item.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 12px 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            padding: 8px 14px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .toolbar-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            height: 24px;
+            background: #e0e0e0;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .editor-section {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .carnatic-editor {
+            flex: 1;
+            overflow: auto;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            line-height: 2;
+            letter-spacing: 0.5em;
+        }
+
+        .note-input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            padding: 12px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            line-height: 2;
+            letter-spacing: 0.5em;
+            resize: none;
+            background: white;
+        }
+
+        .error-highlight {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .western-staff {
+            flex: 0 0 180px;
+            overflow: auto;
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        #vexflowCanvas {
+            width: 100%;
+            height: auto;
+        }
+
+        .status-bar {
+            background: white;
+            border-top: 2px solid #e0e0e0;
+            padding: 12px 20px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .header-controls {
+                gap: 10px;
+            }
+
+            .control-group label {
+                min-width: 50px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 200px;
+                border-right: none;
+                border-bottom: 2px solid #e0e0e0;
+            }
+
+            .header-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">🎵 BrahmaLayam - Carnatic Notation Editor</div>
+        <div class="header-controls">
+            <div class="control-group">
+                <label>Thala:</label>
+                <select id="thalaSelect" onchange="handleThalaChange(this.value)">
+                    <option value="adi">Adi Tala (8)</option>
+                    <option value="rupaka">Rupaka Tala (3)</option>
+                    <option value="khanda">Khanda Tala (5)</option>
+                    <option value="misra">Misra Tala (7)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Jathi:</label>
+                <select id="jathiSelect" onchange="handleJathiChange(this.value)">
+                    <option value="3">Tisra (3)</option>
+                    <option value="4" selected>Chatusra (4)</option>
+                    <option value="5">Kanda (5)</option>
+                    <option value="7">Misra (7)</option>
+                    <option value="9">Sankirna (9)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Sruthi:</label>
+                <select id="sruthiSelect" onchange="handleSruthiChange(this.value)">
+                    <option value="261.63">C (Sa)</option>
+                    <option value="293.66">D (Ri)</option>
+                    <option value="329.63">E (Ga)</option>
+                    <option value="349.23">F (Ma)</option>
+                    <option value="392.00">G (Pa)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>BPM:</label>
+                <input type="number" id="bpmInput" value="120" min="30" max="300">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>📚 Lesson Library</h3>
+                <div class="sidebar-actions">
+                    <button class="sidebar-btn" onclick="createNewLesson()">New</button>
+                    <button class="sidebar-btn" onclick="deleteCurrentLesson()">Delete</button>
+                </div>
+            </div>
+            <div class="lesson-list" id="lessonList"></div>
+        </div>
+
+        <div class="content-area">
+            <div class="toolbar">
+                <button class="toolbar-btn" id="octaveUpBtn" onclick="toggleOctaveUp()" title="Octave Up">⬆ Oct</button>
+                <button class="toolbar-btn" id="octaveDownBtn" onclick="toggleOctaveDown()" title="Octave Down">⬇ Oct</button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn" onclick="toggleSpeed()" title="Speed (Kalam)">^ Speed</button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn" onclick="undo()" title="Undo">↶ Undo</button>
+                <button class="toolbar-btn" onclick="redo()" title="Redo">↷ Redo</button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn" onclick="playNotes()" title="Play">▶ Play</button>
+                <button class="toolbar-btn" onclick="stopPlayback()" title="Stop">⏹ Stop</button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn" onclick="saveLesson()" title="Save">💾 Save</button>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-section" style="flex: 1.5;">
+                    <div class="editor-title">Carnatic Notes</div>
+                    <textarea class="note-input" id="noteInput" placeholder="Type notes: S R G M P D N (space-separated)&#10;Example: S R G M P D N S"></textarea>
+                </div>
+
+                <div class="editor-section" style="flex: 1;">
+                    <div class="editor-title">Western Notation (Live Preview)</div>
+                    <div class="western-staff" id="westernStaff">
+                        <svg id="vexflowCanvas" width="100%" height="180"></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <span id="statusText">Ready</span>
+                <span id="noteCount">Notes: 0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let appState = {
+            currentLesson: null,
+            currentNotes: [],
+            octaveUp: false,
+            octaveDown: false,
+            speedMode: false,
+            selectedJathi: 4,
+            selectedThala: 8,
+            selectedSruthi: 261.63,
+            bpm: 120,
+            history: [],
+            historyIndex: -1,
+            synth: null,
+            isPlaying: false
+        };
+
+        // Initialize Tone.js
+        function initAudio() {
+            appState.synth = new Tone.Synth({
+                oscillator: { type: 'triangle' },
+                envelope: {
+                    attack: 0.005,
+                    decay: 0.1,
+                    sustain: 0,
+                    release: 0.1
+                }
+            }).toDestination();
+        }
+
+        // Load lessons from server
+        async function loadLessonLibrary() {
+            try {
+                const response = await fetch('/api/lessons');
+                const lessons = await response.json();
+                const listEl = document.getElementById('lessonList');
+                listEl.innerHTML = '';
+
+                lessons.forEach(lesson => {
+                    const item = document.createElement('div');
+                    item.className = 'lesson-item';
+                    item.textContent = lesson.name || lesson.id;
+                    item.onclick = () => loadLesson(lesson.id);
+                    listEl.appendChild(item);
+                });
+
+                if (lessons.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'lesson-item';
+                    empty.textContent = 'No lessons yet';
+                    empty.style.cursor = 'default';
+                    listEl.appendChild(empty);
+                }
+            } catch (error) {
+                console.error('Failed to load lessons:', error);
+                document.getElementById('statusText').textContent = 'Error loading lessons';
+            }
+        }
+
+        // Load a specific lesson
+        async function loadLesson(lessonId) {
+            try {
+                const response = await fetch(`/api/lesson/${lessonId}`);
+                const lesson = await response.json();
+                appState.currentLesson = lesson;
+                document.getElementById('noteInput').value = lesson.notes || '';
+                updatePreview();
+                document.getElementById('statusText').textContent = `Loaded: ${lesson.name || lessonId}`;
+            } catch (error) {
+                console.error('Failed to load lesson:', error);
+            }
+        }
+
+        // Create new lesson
+        async function createNewLesson() {
+            const name = prompt('Enter lesson name:');
+            if (!name) return;
+
+            const newLesson = {
+                id: Date.now().toString(),
+                name: name,
+                notes: '',
+                metadata: {
+                    thala: 'adi',
+                    jathi: 4,
+                    sruthi: 261.63,
+                    bpm: 120,
+                    createdAt: new Date().toISOString()
+                }
+            };
+
+            try {
+                const response = await fetch('/api/lesson', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newLesson)
+                });
+
+                if (response.ok) {
+                    appState.currentLesson = newLesson;
+                    document.getElementById('noteInput').value = '';
+                    loadLessonLibrary();
+                    document.getElementById('statusText').textContent = 'New lesson created';
+                }
+            } catch (error) {
+                console.error('Failed to create lesson:', error);
+            }
+        }
+
+        // Save current lesson
+        async function saveLesson() {
+            if (!appState.currentLesson) {
+                alert('Please create or select a lesson first');
+                return;
+            }
+
+            appState.currentLesson.notes = document.getElementById('noteInput').value;
+            appState.currentLesson.metadata = {
+                thala: document.getElementById('thalaSelect').value,
+                jathi: parseInt(document.getElementById('jathiSelect').value),
+                sruthi: parseFloat(document.getElementById('sruthiSelect').value),
+                bpm: parseInt(document.getElementById('bpmInput').value),
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/api/lesson', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appState.currentLesson)
+                });
+
+                if (response.ok) {
+                    document.getElementById('statusText').textContent = 'Lesson saved successfully';
+                } else {
+                    throw new Error('Save failed');
+                }
+            } catch (error) {
+                console.error('Failed to save lesson:', error);
+                document.getElementById('statusText').textContent = 'Error saving lesson';
+            }
+        }
+
+        // Delete current lesson
+        async function deleteCurrentLesson() {
+            if (!appState.currentLesson) return;
+            if (!confirm('Delete this lesson?')) return;
+
+            try {
+                await fetch(`/api/lesson/${appState.currentLesson.id}`, { method: 'DELETE' });
+                appState.currentLesson = null;
+                document.getElementById('noteInput').value = '';
+                loadLessonLibrary();
+                document.getElementById('statusText').textContent = 'Lesson deleted';
+            } catch (error) {
+                console.error('Failed to delete lesson:', error);
+            }
+        }
+
+        // UI handlers
+        function toggleOctaveUp() {
+            appState.octaveUp = !appState.octaveUp;
+            appState.octaveDown = false;
+            document.getElementById('octaveUpBtn').classList.toggle('active', appState.octaveUp);
+            document.getElementById('octaveDownBtn').classList.toggle('active', false);
+        }
+
+        function toggleOctaveDown() {
+            appState.octaveDown = !appState.octaveDown;
+            appState.octaveUp = false;
+            document.getElementById('octaveDownBtn').classList.toggle('active', appState.octaveDown);
+            document.getElementById('octaveUpBtn').classList.toggle('active', false);
+        }
+
+        function toggleSpeed() {
+            appState.speedMode = !appState.speedMode;
+            document.querySelector('[onclick="toggleSpeed()"]').classList.toggle('active', appState.speedMode);
+        }
+
+        function handleThalaChange(value) {
+            appState.selectedThala = value;
+            updatePreview();
+        }
+
+        function handleJathiChange(value) {
+            appState.selectedJathi = parseInt(value);
+            updatePreview();
+        }
+
+        function handleSruthiChange(value) {
+            appState.selectedSruthi = parseFloat(value);
+        }
+
+        function updatePreview() {
+            const notes = document.getElementById('noteInput').value.trim().split(/\s+/);
+            document.getElementById('noteCount').textContent = `Notes: ${notes.length}`;
+            renderWesternStaff(notes);
+        }
+
+        function renderWesternStaff(notes) {
+            const canvas = document.getElementById('vexflowCanvas');
+            const ctx = new Vex.IRenderContext(canvas, Vex.Flow.Renderer.Backends.SVG);
+            const renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.SVG);
+            ctx.clear();
+
+            const stave = new Vex.Flow.Stave(10, 0, 300);
+            stave.addClef('treble').setContext(ctx).draw();
+
+            const noteMap = {
+                'S': 'D/4', 'R': 'E/4', 'G': 'F#/4', 'M': 'G/4',
+                'P': 'A/4', 'D': 'B/4', 'N': 'C#/5'
+            };
+
+            const vexNotes = notes
+                .filter(n => noteMap[n])
+                .slice(0, 8)
+                .map(n => new Vex.Flow.StaveNote({ keys: [noteMap[n]], duration: 'q' }));
+
+            if (vexNotes.length > 0) {
+                Vex.Flow.Formatter.FormatAndDraw(ctx, stave, vexNotes);
+            }
+        }
+
+        async function playNotes() {
+            const notes = document.getElementById('noteInput').value.trim().split(/\s+/);
+            const beatDuration = 60 / appState.bpm;
+            
+            appState.isPlaying = true;
+            
+            const noteFreq = {
+                'S': appState.selectedSruthi,
+                'R': appState.selectedSruthi * 1.067,
+                'G': appState.selectedSruthi * 1.125,
+                'M': appState.selectedSruthi * 1.2,
+                'P': appState.selectedSruthi * 1.333,
+                'D': appState.selectedSruthi * 1.5,
+                'N': appState.selectedSruthi * 1.6875
+            };
+
+            for (let note of notes) {
+                if (!appState.isPlaying) break;
+                if (noteFreq[note]) {
+                    appState.synth.frequency.value = noteFreq[note];
+                    appState.synth.triggerAttackRelease(beatDuration);
+                    await new Promise(resolve => setTimeout(resolve, beatDuration * 1000));
+                }
+            }
+        }
+
+        function stopPlayback() {
+            appState.isPlaying = false;
+            appState.synth.triggerRelease();
+        }
+
+        function undo() {
+            // Basic undo implementation
+            alert('Undo feature coming soon');
+        }
+
+        function redo() {
+            // Basic redo implementation
+            alert('Redo feature coming soon');
+        }
+
+        // Event listeners
+        document.getElementById('noteInput').addEventListener('input', updatePreview);
+        document.getElementById('noteInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const notes = 'SRGMPDNS';
+                const char = e.key.toUpperCase();
+                if (notes.includes(char)) {
+                    e.preventDefault();
+                    const textarea = e.target;
+                    const start = textarea.selectionStart;
+                    textarea.value = textarea.value.substring(0, start) + char + ' ' + textarea.value.substring(start);
+                    textarea.selectionStart = start + 2;
+                    updatePreview();
+                }
+            }
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initAudio();
+            loadLessonLibrary();
+            document.getElementById('statusText').textContent = 'BrahmaLayam initialized';
+        });
+    </script>
+</body>
+</html>
