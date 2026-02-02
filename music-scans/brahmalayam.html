@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrahmaLayam - Carnatic Notation Editor</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/vexflow@4.2.2/build/vexflow.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,1089 +12,1233 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --border: #ddd;
+            --bg-light: #f9f9f9;
+            --text: #333;
+            --muted: #999;
+            --card-bg: #f5f5f5;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
         .header {
-            background: white;
-            border-bottom: 2px solid #e0e0e0;
-            padding: 16px 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
-        .header-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 12px;
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 4px;
         }
 
-        .header-controls {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .control-group label {
+        .header p {
             font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            min-width: 60px;
+            opacity: 0.9;
         }
 
-        select, input[type="number"] {
-            padding: 8px 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
-        }
-
-        select:focus, input[type="number"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .main-container {
-            display: flex;
+        .layout {
+            display: grid;
+            grid-template-columns: 350px 6px 1fr;
             flex: 1;
+            gap: 0;
             overflow: hidden;
         }
 
-        .sidebar {
-            width: 280px;
+        .splitter {
+            background: linear-gradient(to bottom, #f0f0f0, #e8e8e8);
+            cursor: col-resize;
+            user-select: none;
+        }
+
+        .splitter:hover {
+            background: #ddd;
+        }
+
+        .lessons-pane {
             background: white;
-            border-right: 2px solid #e0e0e0;
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        .sidebar-header {
-            padding: 16px;
-            background: #f9f9f9;
-            border-bottom: 1px solid #e8e8e8;
+        .search-box {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            background: var(--card-bg);
         }
 
-        .sidebar-header h3 {
-            font-size: 13px;
-            font-weight: 700;
-            color: #667eea;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .sidebar-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .sidebar-btn {
-            flex: 1;
-            padding: 8px;
-            background: #667eea;
-            color: white;
-            border: none;
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
             border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 13px;
+            font-family: inherit;
         }
 
-        .sidebar-btn:hover {
-            background: #764ba2;
-            transform: translateY(-1px);
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
         }
 
-        .lesson-list {
+        .lessons-list {
             flex: 1;
             overflow-y: auto;
             padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .lesson-item {
             padding: 12px;
             background: white;
-            border: 1px solid #e8e8e8;
+            border: 1px solid var(--border);
             border-radius: 6px;
-            margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .lesson-item:hover {
-            background: #f0f4ff;
-            border-color: #667eea;
+            background: var(--card-bg);
+            border-color: var(--primary);
         }
 
         .lesson-item.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+            background: #e8eeff;
+            border-color: var(--primary);
+            font-weight: 600;
         }
 
-        .content-area {
-            flex: 1;
+        .lesson-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .lesson-date {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .editor-pane {
+            background: white;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            padding: 30px;
+        }
+
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .header-section {
+            text-align: center;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        select, input[type="number"] {
+            padding: 8px 10px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .editor-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            min-height: 200px;
+        }
+
+        .editor-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .note-input {
+            width: 100%;
+            flex: 1;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            letter-spacing: 0.3em;
+            resize: none;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .note-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .dot-mode-indicator {
+            font-size: 11px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .dot-mode-indicator.active {
+            color: var(--primary);
+            font-weight: 600;
         }
 
         .toolbar {
-            background: white;
-            border-bottom: 2px solid #e0e0e0;
-            padding: 12px 20px;
             display: flex;
-            gap: 12px;
-            align-items: center;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .toolbar-btn {
             padding: 8px 14px;
             background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: var(--primary);
+            border: 2px solid var(--primary);
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .toolbar-btn:hover {
-            background: #667eea;
+            background: var(--primary);
             color: white;
+            transform: translateY(-1px);
         }
 
         .toolbar-btn.active {
-            background: #667eea;
+            background: var(--primary);
             color: white;
         }
 
-        .toolbar-separator {
-            width: 1px;
-            height: 24px;
-            background: #e0e0e0;
-        }
-
-        .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        .editor-section {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 16px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            flex: 0 0 auto;
-            min-width: 100%;
-            height: 320px;
-            max-height: 600px;
-        }
-        
-        .editor-section:nth-child(2) {
-            height: 2750px;
-            max-height: 4000px;
-        }
-
-        .editor-title {
+        #statusMessage {
+            padding: 10px 12px;
+            border-radius: 6px;
             font-size: 12px;
-            font-weight: 700;
-            color: #667eea;
+            min-height: 20px;
+            background: #f0f4ff;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .thalam-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+        }
+
+        .thalam-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 12px;
         }
 
-        .carnatic-editor {
-            flex: 1;
-            overflow: auto;
-            font-family: 'Courier Prime', monospace;
-            font-size: 16px;
-            line-height: 2;
-            letter-spacing: 0.5em;
-        }
-
-        .note-input {
-            width: 100%;
-            height: 150px;
-            border: none;
-            outline: none;
+        .thalam-table {
+            display: grid;
+            gap: 4px;
+            background: #fff;
             padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .thalam-row {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .thalam-header {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .beat-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            padding: 4px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .thalam-cell {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
             font-family: 'Courier Prime', monospace;
-            font-size: 16px;
-            line-height: 2;
-            letter-spacing: 0.5em;
-            resize: vertical;
-            background: white;
-        }
-
-        .error-highlight {
-            background: #ffebee;
-            border-left: 4px solid #f44336;
-        }
-
-        .western-staff {
-            flex: 1;
-            overflow: auto;
-            background: #fafafa;
-            border-radius: 8px;
-            padding: 12px;
-        }
-
-        #vexflowCanvas {
-            width: 100%;
-            height: auto;
-        }
-
-        .status-bar {
-            background: white;
-            border-top: 2px solid #e0e0e0;
-            padding: 12px 20px;
             font-size: 12px;
-            color: #666;
+            font-weight: 600;
+            background: #fafafa;
+            color: var(--text);
+            min-height: 30px;
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
         }
 
-        .controls-row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+        .thalam-cell.incomplete {
+            background-color: #ffcccc;
+            border-color: #ff6666;
+            color: #cc0000;
         }
 
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
+        .beat-label.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+            transition: all 0.1s ease;
+        }
+
+        .thalam-cell.active {
+            background-color: #e8eeff;
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+            transition: all 0.1s ease;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 250px 6px 1fr;
             }
 
-            .header-controls {
-                gap: 10px;
+            .controls {
+                grid-template-columns: 1fr 1fr;
             }
 
-            .control-group label {
-                min-width: 50px;
-                font-size: 11px;
+            .editor-pane {
+                padding: 20px;
             }
         }
 
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
+        @media (max-width: 600px) {
+            .layout {
+                grid-template-columns: 1fr;
             }
 
-            .sidebar {
-                width: 100%;
-                height: 200px;
-                border-right: none;
-                border-bottom: 2px solid #e0e0e0;
+            .lessons-pane {
+                display: none;
             }
 
-            .header-controls {
-                flex-direction: column;
-                align-items: flex-start;
+            .controls {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="header-title">🎵 BrahmaLayam - Carnatic Notation Editor</div>
-        <div class="header-controls">
-            <div class="control-group">
-                <label>Thala:</label>
-                <select id="thalaSelect" onchange="handleThalaChange(this.value)">
-                    <option value="adi">Adi Tala (8)</option>
-                    <option value="rupaka">Rupaka Tala (3)</option>
-                    <option value="khanda">Khanda Tala (5)</option>
-                    <option value="misra">Misra Tala (7)</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label>Jathi:</label>
-                <select id="jathiSelect" onchange="handleJathiChange(this.value)">
-                    <option value="3">Tisra (3)</option>
-                    <option value="4" selected>Chatusra (4)</option>
-                    <option value="5">Kanda (5)</option>
-                    <option value="7">Misra (7)</option>
-                    <option value="9">Sankirna (9)</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label>Sruthi:</label>
-                <select id="sruthiSelect" onchange="handleSruthiChange(this.value)">
-                    <option value="220.00">A3</option>
-                    <option value="233.08">A#3</option>
-                    <option value="246.94">B3</option>
-                    <option value="261.63">C4</option>
-                    <option value="277.18">C#4</option>
-                    <option value="293.66">D4</option>
-                    <option value="311.13">D#4</option>
-                    <option value="329.63">E4</option>
-                    <option value="349.23">F4</option>
-                    <option value="369.99">F#4</option>
-                    <option value="392.00">G4</option>
-                    <option value="415.30">G#4</option>
-                    <option value="440.00" selected>A4</option>
-                    <option value="466.16">A#4</option>
-                    <option value="493.88">B4</option>
-                    <option value="523.25">C5</option>
-                    <option value="554.37">C#5</option>
-                    <option value="587.33">D5</option>
-                    <option value="622.25">D#5</option>
-                    <option value="659.25">E5</option>
-                    <option value="698.46">F5</option>
-                    <option value="739.99">F#5</option>
-                    <option value="783.99">G5</option>
-                    <option value="830.61">G#5</option>
-                    <option value="880.00">A5</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label>BPM:</label>
-                <input type="number" id="bpmInput" value="120" min="30" max="300">
-            </div>
-        </div>
+        <h1>🎵 BrahmaLayam</h1>
+        <p>Carnatic Notation Editor</p>
     </div>
 
-    <div class="main-container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h3>📚 Lesson Library</h3>
-                <div class="sidebar-actions">
-                    <button class="sidebar-btn" onclick="createNewLesson()">New</button>
-                    <button class="sidebar-btn" onclick="deleteCurrentLesson()">Delete</button>
-                </div>
+    <div class="layout">
+        <div class="lessons-pane">
+            <div class="search-box">
+                <input type="text" id="lessonSearch" placeholder="Search lessons...">
             </div>
-            <div class="lesson-list" id="lessonList"></div>
+            <div class="lessons-list" id="lessonsList"></div>
         </div>
 
-        <div class="content-area">
-            <div class="toolbar">
-                <button class="toolbar-btn" id="octaveUpBtn" onclick="toggleOctaveUp()" title="Octave Up">⬆ Oct</button>
-                <button class="toolbar-btn" id="octaveDownBtn" onclick="toggleOctaveDown()" title="Octave Down">⬇ Oct</button>
-                <div class="toolbar-separator"></div>
-                <button class="toolbar-btn" onclick="toggleSpeed()" title="Speed (Kalam)">^ Speed</button>
-                <div class="toolbar-separator"></div>
-                <button class="toolbar-btn" onclick="undo()" title="Undo">↶ Undo</button>
-                <button class="toolbar-btn" onclick="redo()" title="Redo">↷ Redo</button>
-                <div class="toolbar-separator"></div>
-                <button class="toolbar-btn" onclick="playNotes()" title="Play">▶ Play</button>
-                <button class="toolbar-btn" onclick="stopPlayback()" title="Stop">⏹ Stop</button>
-                <div class="toolbar-separator"></div>
-                <button class="toolbar-btn" onclick="saveLesson()" title="Save">💾 Save</button>
-                <button class="toolbar-btn" onclick="exportToMusicXML()" title="Export to MusicXML">📥 Export</button>
-            </div>
+        <div class="splitter" id="splitter"></div>
 
-            <div class="editor-container">
-                <div class="editor-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <div class="editor-title">Carnatic Notes</div>
-                        <div style="font-size: 11px; color: #999;">
-                            <span style="margin-right: 12px;">● = Octave Up</span>
-                            <span style="margin-right: 12px;">· = Double Speed</span>
-                            <span style="margin-right: 12px;">● = Octave Down</span>
-                            <span>, = Rest/Pause</span>
-                        </div>
-                    </div>
-                    <textarea class="note-input" id="noteInput" placeholder="Type notes: S R G M P D N or S,R,G,M,P,D,N,S&#10;Comma (,) = Rest/Pause | Spaces are ignored"></textarea>
-                    </div>
-                    <div class="carnatic-editor" style="margin-top: 12px; padding: 16px; background: #f9f9f9; border-radius: 6px; min-height: 60px; border: 1px solid #e0e0e0;"></div>
-                
+        <div class="editor-pane">
+            <div class="container">
+                <div class="header-section">
+                    <div class="title" id="currentLessonTitle">New Lesson</div>
+                </div>
 
-                <div class="editor-section">
-                    <div class="editor-title">Western Notation (Live Preview)</div>
-                    <div class="western-staff" id="westernStaff">
-                        <svg id="vexflowCanvas" width="100%" height="180"></svg>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Thala:</label>
+                        <select id="thalaSelect" onchange="handleThalaChange(this.value)">
+                            <option value="adi" selected>Adi Tala</option>
+                            <option value="triputa">Triputa Tala</option>
+                            <option value="khanda">Khanda Tala</option>
+                            <option value="rupaka">Rupaka Tala</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Jathi:</label>
+                        <select id="jathiSelect" onchange="handleJathiChange(this.value)">
+                            <option value="3">Tisra (3)</option>
+                            <option value="4" selected>Chatusra (4)</option>
+                            <option value="5">Kanda (5)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Nadai:</label>
+                        <select id="nadaiSelect" onchange="handleNadaiChange(this.value)">
+                            <option value="3">Tisra (3)</option>
+                            <option value="4" selected>Chatusra (4)</option>
+                            <option value="5">Kanda (5)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Sruthi:</label>
+                        <select id="sruthiSelect" onchange="handleSruthiChange(this.value)">
+                            <option value="220.00">A3</option>
+                            <option value="233.08">A#3</option>
+                            <option value="246.94">B3</option>
+                            <option value="261.63">C4</option>
+                            <option value="277.18" selected>C#4</option>
+                            <option value="293.66">D4</option>
+                            <option value="311.13">D#4</option>
+                            <option value="329.63">E4</option>
+                            <option value="349.23">F4</option>
+                            <option value="369.99">F#4</option>
+                            <option value="392.00">G4</option>
+                            <option value="415.30">G#4</option>
+                            <option value="440.00">A4</option>
+                            <option value="466.16">A#4</option>
+                            <option value="493.88">B4</option>
+                            <option value="523.25">C5</option>
+                            <option value="554.37">C#5</option>
+                            <option value="587.33">D5</option>
+                            <option value="622.25">D#5</option>
+                            <option value="659.25">E5</option>
+                            <option value="698.46">F5</option>
+                            <option value="739.99">F#5</option>
+                            <option value="783.99">G5</option>
+                            <option value="830.61">G#5</option>
+                            <option value="880.00">A5</option>
+                        </select>
                     </div>
                 </div>
-            </div>
 
-            <div class="status-bar">
-                <span id="statusText">Ready</span>
-                <span id="noteCount">Notes: 0</span>
+                <div class="toolbar">
+                    <button class="toolbar-btn" id="dotAboveBtn" onclick="toggleDotAbove()" title="Toggle: Click notes to add dot above">⬆️ Dot Above</button>
+                    <button class="toolbar-btn" id="dotBelowBtn" onclick="toggleDotBelow()" title="Toggle: Click notes to add dot below">⬇️ Dot Below</button>
+                    <button class="toolbar-btn" onclick="undoNotes()" title="Undo (Ctrl+Z)">↶ Undo</button>
+                    <button class="toolbar-btn" onclick="redoNotes()" title="Redo (Ctrl+Y)">↷ Redo</button>
+                    <button class="toolbar-btn" onclick="saveLesson()">💾 Save</button>
+                    <button class="toolbar-btn" onclick="clearNotes()">🗑️ Clear</button>
+                </div>
+
+                <div class="toolbar">
+                    <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                        <div style="font-size: 13px; color: #666;">
+                            Notes: <span id="noteCount" style="font-weight: 600; color: #333;">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 13px; color: #666;">BPM:</label>
+                            <input type="number" id="bpmInput" value="80" min="40" max="300" style="width: 60px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                        </div>
+                        <button class="toolbar-btn" onclick="playNotes()" title="Play notes (Space)">▶️ Play</button>
+                    </div>
+                </div>
+
+                <div class="editor-section">
+                    <div class="editor-title">Enter Notes</div>
+                    <textarea class="note-input" id="noteInput" placeholder="Type notes: S R G M P D N&#10;Use buttons above to add dots above or below&#10;Example: SRGMPDNS"></textarea>
+                    <div class="dot-mode-indicator" id="dotModeIndicator">Ready</div>
+                </div>
+
+                <div class="thalam-section">
+                    <div class="thalam-title">Thalam Structure</div>
+                    <div class="thalam-table">
+                        <div class="thalam-header" id="beatHeader"></div>
+                        <div id="thalamGrid"></div>
+                    </div>
+                </div>
+
+                <div id="statusMessage"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // GOLDEN RULES: Atomic Notes System
-        // Every note is an object { char: 'S', octave: 0, speed: 1 }
-        // Laya: Total Pulses = sum(1/speed) for vertical line placement
-        // Sruthi: Map S to selected frequency with Carnatic ratios
-
-        // Standard Carnatic Frequency Ratios (relative to Sa=1.0)
-        const CARNATIC_RATIOS = {
-            'S': 1.0,        // Sa
-            'R': 1.067,      // Ri (16/15)
-            'G': 1.125,      // Ga (9/8)
-            'M': 1.2,        // Ma (6/5)
-            'P': 1.333,      // Pa (4/3)
-            'D': 1.5,        // Da (3/2)
-            'N': 1.6875      // Ni (27/16)
+        // Note frequency ratios relative to sruthi (S=1.0)
+        // Based on 12-tone equal temperament from Carnatic music
+        const noteFrequencies = {
+            'S': 1.0,      // Shadja
+            'R': 1.0595,   // Rishabh (1 semitone)
+            'G': 1.1225,   // Gandhara (2 semitones)
+            'M': 1.3348,   // Madhyama (5 semitones)
+            'P': 1.4983,   // Panchama (7 semitones)
+            'D': 1.6818,   // Dhaivat (9 semitones)
+            'N': 1.8877    // Nishada (11 semitones)
         };
 
-        // Global state
+        // Carnatic swara mappings with diacriticals
+        const swaraMap = {
+            'S': { plain: 'S', display: 'S' },
+            'R': { plain: 'R', display: 'R' },
+            'G': { plain: 'G', display: 'G' },
+            'M': { plain: 'M', display: 'M' },
+            'P': { plain: 'P', display: 'P' },
+            'D': { plain: 'D', display: 'D' },
+            'N': { plain: 'N', display: 'N' }
+        };
+
+        // App state
         let appState = {
+            thala: 'adi',
+            jathi: 4,
+            nadai: 4,
+            sruthi: 277.18,  // C#4 (default)
             currentLesson: null,
-            atomicNotes: [],        // Array of { char, octave, speed }
-            octaveUp: false,
-            octaveDown: false,
-            speedMode: false,
-            selectedJathi: 4,
-            selectedThala: 8,
-            selectedSruthi: 440.00,
-            bpm: 120,
-            history: [],            // Stack of textarea values for undo
-            historyIndex: -1,       // Current position in history
-            maxHistory: 50,         // Limit history to 50 states
-            synth: null,
-            isPlaying: false
+            dotAboveMode: false,
+            dotBelowMode: false,
+            allLessons: [],
+            filteredLessons: [],
+            thalaBeats: {},  // Will store thala-beat mappings
+            undoHistory: [],  // Stack for undo
+            redoHistory: [],   // Stack for redo
+            isPlaying: false   // Playback state
         };
 
-        // Initialize Tone.js
-        function initAudio() {
-            appState.synth = new Tone.PolySynth(Tone.Synth, {
-                oscillator: { type: 'triangle' },
-                envelope: {
-                    attack: 0.005,
-                    decay: 0.1,
-                    sustain: 0,
-                    release: 0.1
-                }
-            }).toDestination();
-            
-            // Set reasonable volume to prevent clipping
-            appState.synth.volume.value = -6;
-        }
+        const noteInput = document.getElementById('noteInput');
+        const dotModeIndicator = document.getElementById('dotModeIndicator');
+        const lessonsList = document.getElementById('lessonsList');
+        const lessonSearch = document.getElementById('lessonSearch');
+        const splitter = document.getElementById('splitter');
 
-        // Parse textarea into atomic notes
-        function parseAtomicNotes(input) {
-            const validNotes = 'SRGMPDNS,';  // Added comma as a valid note
-            const notes = [];
-            const cleanInput = input.toUpperCase().trim();
-            
-            // Parse character by character to support "sssss" as 5 notes
-            // Spaces are ignored as separators, comma is treated as a note
-            for (let i = 0; i < cleanInput.length; i++) {
-                const char = cleanInput[i];
-                if (char === ' ') {
-                    // Skip spaces - they're just separators
-                    continue;
-                }
-                if (validNotes.includes(char)) {
-                    // ONLY add the note, octave and speed are modified by clicking, not by mode
-                    const octave = 0;  // Always start at 0, user clicks to modify
-                    const speed = 1;   // Always start at 1, speed button is separate
-                    notes.push({ char, octave, speed });
-                }
-            }
-            
-            return notes;
-        }
-
-        // Calculate total pulses for laya drawing
-        function calculateTotalPulses(atomicNotes) {
-            return atomicNotes.reduce((sum, note) => sum + (1 / note.speed), 0);
-        }
-
-        // Get frequency for a note
-        function getNoteFrequency(char, octave = 0) {
-            // Comma represents a rest/pause - return 0 frequency
-            if (char === ',') {
-                return 0;
-            }
-            const baseFreq = appState.selectedSruthi * (CARNATIC_RATIOS[char] || 1.0);
-            // Each octave multiplies/divides by 2
-            return baseFreq * Math.pow(2, octave);
-        }
-
-        // Load lessons from server
-        async function loadLessonLibrary() {
+        // Load thala beats mapping
+        async function loadThalaBeats() {
             try {
-                const response = await fetch('/api/lessons');
-                const lessons = await response.json();
-                const listEl = document.getElementById('lessonList');
-                listEl.innerHTML = '';
-
-                lessons.forEach(lesson => {
-                    const item = document.createElement('div');
-                    item.className = 'lesson-item';
-                    item.textContent = lesson.name || lesson.id;
-                    item.onclick = () => loadLesson(lesson.id);
-                    listEl.appendChild(item);
+                const response = await fetch('/thala-beats.txt');
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim());
+                
+                lines.forEach(line => {
+                    const [key, beats] = line.split(':');
+                    if (key && beats) {
+                        appState.thalaBeats[key.trim()] = parseInt(beats.trim());
+                    }
                 });
-
-                if (lessons.length === 0) {
-                    const empty = document.createElement('div');
-                    empty.className = 'lesson-item';
-                    empty.textContent = 'No lessons yet';
-                    empty.style.cursor = 'default';
-                    listEl.appendChild(empty);
-                }
+                
+                console.log('Thala beats loaded:', appState.thalaBeats);
             } catch (error) {
-                console.error('Failed to load lessons:', error);
-                document.getElementById('statusText').textContent = 'Error loading lessons';
+                console.error('Error loading thala beats:', error);
             }
         }
 
-        // Load a specific lesson
-        async function loadLesson(lessonId) {
-            try {
-                const response = await fetch(`/api/lesson/${lessonId}`);
-                const lesson = await response.json();
-                appState.currentLesson = lesson;
-                document.getElementById('noteInput').value = lesson.notes || '';
-                updatePreview();
-                document.getElementById('statusText').textContent = `Loaded: ${lesson.name || lessonId}`;
-            } catch (error) {
-                console.error('Failed to load lesson:', error);
-            }
+        // Get number of beats for current thala-jathi combination
+        function getNumBeats() {
+            const key = `${getJathiName(appState.jathi)}-${getThalaName(appState.thala)}`;
+            return appState.thalaBeats[key] || 8;  // Default to 8 if not found
         }
 
-        // Create new lesson
-        async function createNewLesson() {
-            const name = prompt('Enter lesson name:');
-            if (!name) return;
+        // Convert jathi number to name
+        function getJathiName(jathi) {
+            const jathiMap = { 3: 'Tisra', 4: 'Chatusra', 5: 'Kanda' };
+            return jathiMap[jathi] || 'Chatusra';
+        }
 
-            const newLesson = {
-                id: Date.now().toString(),
-                name: name,
-                notes: '',
-                metadata: {
-                    thala: 'adi',
-                    jathi: 4,
-                    sruthi: 440.00,
-                    bpm: 120,
-                    createdAt: new Date().toISOString()
-                }
+        // Convert thala name (ensure proper case)
+        function getThalaName(thala) {
+            const thalaMap = {
+                'adi': 'Adi',
+                'triputa': 'Triputa',
+                'matya': 'Matya',
+                'rupaka': 'Rupaka',
+                'jhampa': 'Jhampa',
+                'dhruva': 'Dhruva'
             };
+            return thalaMap[thala.toLowerCase()] || 'Adi';
+        }
 
-            try {
-                const response = await fetch('/api/lesson', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newLesson)
-                });
-
-                if (response.ok) {
-                    appState.currentLesson = newLesson;
-                    document.getElementById('noteInput').value = '';
-                    loadLessonLibrary();
-                    document.getElementById('statusText').textContent = 'New lesson created';
-                }
-            } catch (error) {
-                console.error('Failed to create lesson:', error);
+        // Save current state to undo history
+        function saveToHistory() {
+            // Clear redo history when a new change is made
+            appState.redoHistory = [];
+            // Add current state to undo history
+            appState.undoHistory.push(noteInput.value);
+            // Limit history to 50 items to avoid memory issues
+            if (appState.undoHistory.length > 50) {
+                appState.undoHistory.shift();
             }
         }
 
-        // Save current lesson
-        async function saveLesson() {
-            if (!appState.currentLesson) {
-                alert('Please create or select a lesson first');
+        // Undo last action
+        function undoNotes() {
+            if (appState.undoHistory.length === 0) {
+                return; // Nothing to undo
+            }
+            // Save current state to redo history
+            appState.redoHistory.push(noteInput.value);
+            // Restore previous state
+            noteInput.value = appState.undoHistory.pop();
+            // Trigger render to update thalam table
+            renderThalamTable();
+        }
+
+        // Redo last undone action
+        function redoNotes() {
+            if (appState.redoHistory.length === 0) {
+                return; // Nothing to redo
+            }
+            // Save current state to undo history
+            appState.undoHistory.push(noteInput.value);
+            // Restore next state
+            noteInput.value = appState.redoHistory.pop();
+            // Trigger render to update thalam table
+            renderThalamTable();
+        }
+
+        // Update note count display
+        function updateNoteCount() {
+            const text = noteInput.value;
+            const noteCount = (text.match(/[SRGMPDNḌ]/gi) || []).length;
+            document.getElementById('noteCount').textContent = noteCount;
+        }
+
+        // Clear all beat highlights
+        function clearBeatHighlights() {
+            document.querySelectorAll('.beat-label.active').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.thalam-cell.active').forEach(el => el.classList.remove('active'));
+        }
+
+        // Highlight a beat column
+        function highlightBeat(beatNumber) {
+            clearBeatHighlights();
+            
+            // Highlight beat label
+            const beatLabel = document.querySelector(`[data-beat="${beatNumber}"].beat-label`);
+            if (beatLabel) {
+                beatLabel.classList.add('active');
+            }
+            
+            // Highlight all cells in that beat column
+            const beatCells = document.querySelectorAll(`[data-beat="${beatNumber}"].thalam-cell`);
+            beatCells.forEach(cell => {
+                cell.classList.add('active');
+            });
+        }
+
+        // Play notes with Web Audio API
+        async function playNotes() {
+            if (appState.isPlaying) return;
+
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const bpm = parseInt(document.getElementById('bpmInput').value) || 80;
+            const beatDuration = (60 / bpm) * 1000; // milliseconds per beat
+            const noteDuration = beatDuration * 0.8; // 80% of beat for note sound
+            const numBeats = getNumBeats();
+
+            appState.isPlaying = true;
+            const playBtn = document.querySelector('[onclick="playNotes()"]');
+            playBtn.textContent = '⏸️ Stop';
+            playBtn.style.opacity = '0.6';
+
+            try {
+                const text = noteInput.value;
+                const baseSruthi = appState.sruthi;
+
+                // Split by cells (separators are |)
+                const cells = text.split('|');
+                let currentTime = audioContext.currentTime;
+                let cellIndex = 0;
+
+                for (const cell of cells) {
+                    // Calculate which beat this cell belongs to
+                    const beatNumber = (cellIndex % numBeats) + 1;
+                    const cellStartTime = (cellIndex / numBeats) * beatDuration / 1000;
+                    const cellStartTimeMS = cellStartTime * 1000;
+
+                    // Schedule beat highlight
+                    setTimeout(() => {
+                        if (appState.isPlaying) {
+                            highlightBeat(beatNumber);
+                        }
+                    }, cellStartTimeMS);
+
+                    // Get notes in this cell (remove spaces and separators, keep letters and diacriticals)
+                    const noteMatches = cell.match(/[SRGMPDNḌ]/gi) || [];
+
+                    if (noteMatches.length > 0) {
+                        // Divide cell duration among notes in the cell
+                        const timeBetweenNotes = noteDuration / noteMatches.length;
+
+                        for (const note of noteMatches) {
+                            const plainNote = note.toUpperCase();
+                            const frequency = baseSruthi * (noteFrequencies[plainNote] || 1.0);
+
+                            // Create oscillator
+                            const osc = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+
+                            osc.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+
+                            osc.frequency.value = frequency;
+                            osc.type = 'sine';
+
+                            gainNode.gain.setValueAtTime(0.3, currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + timeBetweenNotes / 1000);
+
+                            osc.start(currentTime);
+                            osc.stop(currentTime + timeBetweenNotes / 1000);
+
+                            currentTime += timeBetweenNotes / 1000;
+                        }
+                    } else {
+                        // Empty cell or only spaces - just move time forward
+                        currentTime += beatDuration / 1000;
+                    }
+
+                    cellIndex++;
+                }
+
+                // Wait for playback to complete
+                const totalTime = currentTime - audioContext.currentTime;
+                await new Promise(resolve => setTimeout(resolve, totalTime * 1000 + 100));
+
+            } catch (error) {
+                console.error('Playback error:', error);
+            } finally {
+                appState.isPlaying = false;
+                playBtn.textContent = '▶️ Play';
+                playBtn.style.opacity = '1';
+                clearBeatHighlights();
+            }
+        }
+
+        // Load lessons on startup
+        function loadAllLessons() {
+            const apiUrl = '/api/lessons';
+            const fullUrl = new URL(apiUrl, window.location.origin).href;
+            console.log('[BRAHMALAYAM] Loading lessons from API...');
+            console.log('[BRAHMALAYAM] API URL:', apiUrl);
+            console.log('[BRAHMALAYAM] Full URL:', fullUrl);
+            console.log('[BRAHMALAYAM] Window location origin:', window.location.origin);
+            
+            fetch(apiUrl)
+                .then(res => {
+                    console.log('[BRAHMALAYAM] Response received. Status:', res.status);
+                    console.log('[BRAHMALAYAM] Response headers:', res.headers);
+                    // Get raw text first to see what we're getting
+                    return res.text().then(text => {
+                        console.log('[BRAHMALAYAM] Raw response text:', text);
+                        console.log('[BRAHMALAYAM] Raw response length:', text.length);
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            console.error('[BRAHMALAYAM] JSON parse error:', e);
+                            console.error('[BRAHMALAYAM] Text that failed to parse:', text);
+                            throw e;
+                        }
+                    });
+                })
+                .then(lessons => {
+                    console.log('[BRAHMALAYAM] JSON parsed successfully');
+                    console.log('[BRAHMALAYAM] All lessons loaded from API:', lessons);
+                    console.log('[BRAHMALAYAM] Total lessons received:', Array.isArray(lessons) ? lessons.length : 'Not an array');
+                    
+                    appState.allLessons = lessons || [];
+                    appState.filteredLessons = [...appState.allLessons];
+                    console.log('[BRAHMALAYAM] appState.allLessons:', appState.allLessons);
+                    console.log('[BRAHMALAYAM] appState.filteredLessons:', appState.filteredLessons);
+                    renderLessonsList();
+                })
+                .catch(err => {
+                    console.error('[BRAHMALAYAM] Error loading lessons:', err);
+                    console.error('[BRAHMALAYAM] Error stack:', err.stack);
+                    document.getElementById('statusMessage').textContent = `✗ Error loading lessons: ${err.message}`;
+                });
+        }
+
+        // Render lessons list
+        function renderLessonsList() {
+            lessonsList.innerHTML = '';
+            
+            console.log('Rendering lessons list. Total lessons:', appState.filteredLessons.length);
+            console.log('Current lesson:', appState.currentLesson);
+            
+            if (appState.filteredLessons.length === 0) {
+                lessonsList.innerHTML = '<div style="padding: 16px; text-align: center; color: #999; font-size: 12px;">No lessons found</div>';
                 return;
             }
 
-            // Store both the raw text AND atomic notes for proper reconstruction
-            appState.currentLesson.notes = document.getElementById('noteInput').value;
-            appState.currentLesson.atomicNotes = appState.atomicNotes;  // Golden Rule: Store atomic structure
-            appState.currentLesson.metadata = {
-                thala: document.getElementById('thalaSelect').value,
-                jathi: parseInt(document.getElementById('jathiSelect').value),
-                sruthi: parseFloat(document.getElementById('sruthiSelect').value),
-                bpm: parseInt(document.getElementById('bpmInput').value),
-                totalPulses: calculateTotalPulses(appState.atomicNotes),
-                updatedAt: new Date().toISOString()
-            };
-
-            try {
-                const response = await fetch('/api/lesson', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(appState.currentLesson)
-                });
-
-                if (response.ok) {
-                    document.getElementById('statusText').textContent = 'Lesson saved successfully';
-                } else {
-                    throw new Error('Save failed');
+            appState.filteredLessons.forEach((lesson, index) => {
+                console.log(`Lesson ${index}:`, lesson);
+                
+                const div = document.createElement('div');
+                div.className = 'lesson-item';
+                if (appState.currentLesson && appState.currentLesson.id === lesson.id) {
+                    div.classList.add('active');
+                    console.log('Marking as active:', lesson.name);
                 }
-            } catch (error) {
-                console.error('Failed to save lesson:', error);
-                document.getElementById('statusText').textContent = 'Error saving lesson';
+                
+                const date = lesson.timestamp ? lesson.timestamp.split('T')[0] : 'Unknown';
+                console.log(`Lesson ${lesson.name} - timestamp:`, lesson.timestamp, '- date:', date);
+                
+                div.innerHTML = `
+                    <div class="lesson-name">${lesson.name}</div>
+                    <div class="lesson-date">${date}</div>
+                `;
+                
+                div.onclick = () => {
+                    console.log('Clicked lesson:', lesson.name, lesson);
+                    loadLessonData(lesson);
+                };
+                
+                lessonsList.appendChild(div);
+            });
+        }
+
+        // Filter lessons by search
+        lessonSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            appState.filteredLessons = appState.allLessons.filter(lesson => 
+                lesson.name.toLowerCase().includes(query)
+            );
+            renderLessonsList();
+        });
+
+        // Resizable splitter
+        let isResizing = false;
+        splitter.addEventListener('mousedown', () => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            
+            const layout = document.querySelector('.layout');
+            const leftPane = document.querySelector('.lessons-pane');
+            const rect = layout.getBoundingClientRect();
+            const newWidth = e.clientX - rect.left;
+            
+            if (newWidth > 200 && newWidth < 600) {
+                layout.style.gridTemplateColumns = `${newWidth}px 6px 1fr`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+            document.body.style.userSelect = 'auto';
+        });
+
+        // Handle note input
+        noteInput.addEventListener('input', function() {
+            const input = this.value.toUpperCase();
+            if (this.value !== input) {
+                const cursorPos = this.selectionStart;
+                this.value = input;
+                this.setSelectionRange(cursorPos, cursorPos);
+            }
+            saveToHistory();
+            updateNoteCount();
+            renderThalamTable();
+            addNadaiSeparators();
+        });
+
+        // Add visual separators every nadai notes
+        function addNadaiSeparators() {
+            const nadai = appState.nadai || 4;
+            const input = noteInput.value;
+            const cursorPos = noteInput.selectionStart;
+            
+            // Remove existing separators to recalculate
+            let cleanInput = input.replace(/\|/g, '');
+            
+            // Count notes (commas + letters, ignore spaces)
+            let noteCount = 0;
+            let result = '';
+            let separatorCount = 0;
+            
+            for (let i = 0; i < cleanInput.length; i++) {
+                const char = cleanInput[i];
+                
+                // Skip spaces
+                if (char === ' ') {
+                    result += char;
+                    continue;
+                }
+                
+                // Count commas and letters as notes
+                if (/[A-Za-z,]/.test(char)) {
+                    if (noteCount > 0 && noteCount % nadai === 0) {
+                        result += '|';
+                        separatorCount++;
+                    }
+                    result += char;
+                    noteCount++;
+                } else {
+                    result += char;
+                }
+            }
+            
+            // Update textarea if it changed
+            if (result !== input) {
+                noteInput.value = result;
+                
+                // Adjust cursor position: count separators before original cursor position
+                let adjustedCursorPos = cursorPos;
+                let cleanCount = 0;
+                for (let i = 0; i < cursorPos && i < input.length; i++) {
+                    if (input[i] !== '|') {
+                        cleanCount++;
+                    }
+                }
+                
+                // Count how many separators would be before this position in the new string
+                let newNoteCount = 0;
+                for (let i = 0; i < result.length; i++) {
+                    if (/[A-Za-z,]/.test(result[i])) {
+                        newNoteCount++;
+                    }
+                    if (newNoteCount > cleanCount) {
+                        adjustedCursorPos = i + 1;
+                        break;
+                    }
+                    if (i === result.length - 1 && newNoteCount === cleanCount) {
+                        adjustedCursorPos = result.length;
+                    }
+                }
+                
+                noteInput.setSelectionRange(adjustedCursorPos, adjustedCursorPos);
             }
         }
 
-        // Delete current lesson
-        async function deleteCurrentLesson() {
-            if (!appState.currentLesson) return;
-            if (!confirm('Delete this lesson?')) return;
-
-            try {
-                await fetch(`/api/lesson/${appState.currentLesson.id}`, { method: 'DELETE' });
-                appState.currentLesson = null;
-                document.getElementById('noteInput').value = '';
-                loadLessonLibrary();
-                document.getElementById('statusText').textContent = 'Lesson deleted';
-            } catch (error) {
-                console.error('Failed to delete lesson:', error);
+        // Handle click when dot mode is active
+        noteInput.addEventListener('mouseup', function() {
+            if (appState.dotAboveMode || appState.dotBelowMode) {
+                const pos = noteInput.selectionStart;
+                
+                if (pos > 0 && pos <= noteInput.value.length) {
+                    const char = noteInput.value.charAt(pos - 1);
+                    
+                    if ('SRGMPDNS'.includes(char)) {
+                        const newChar = appState.dotAboveMode ? char + '\u0307' : char + '\u0323';
+                        const text = noteInput.value;
+                        const newText = text.substring(0, pos - 1) + newChar + text.substring(pos);
+                        noteInput.value = newText;
+                        noteInput.setSelectionRange(pos, pos);
+                    }
+                }
             }
-        }
+        });
 
-        // UI handlers
-        function toggleOctaveUp() {
-            console.log('=== toggleOctaveUp START ===');
-            console.log('appState.octaveUp before:', appState.octaveUp);
-            appState.octaveUp = !appState.octaveUp;
-            console.log('appState.octaveUp after:', appState.octaveUp);
-            appState.octaveDown = false;
-            document.getElementById('octaveUpBtn').classList.toggle('active', appState.octaveUp);
-            document.getElementById('octaveDownBtn').classList.toggle('active', false);
-            updateStatusForMode();
-            console.log('About to call updatePreview()');
-            updatePreview();
-            console.log('=== toggleOctaveUp END ===');
-        }
-
-        function toggleOctaveDown() {
-            appState.octaveDown = !appState.octaveDown;
-            appState.octaveUp = false;
-            document.getElementById('octaveDownBtn').classList.toggle('active', appState.octaveDown);
-            document.getElementById('octaveUpBtn').classList.toggle('active', false);
-            updateStatusForMode();
-            updatePreview();
-        }
-
-        function updateStatusForMode() {
-            if (appState.octaveUp) {
-                document.getElementById('statusText').textContent = 'Click notes to add octave up (●)';
-            } else if (appState.octaveDown) {
-                document.getElementById('statusText').textContent = 'Click notes to add octave down (●)';
-            } else {
-                document.getElementById('statusText').textContent = 'Ready';
+        // Handle keyboard shortcuts for undo/redo
+        noteInput.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault();
+                undoNotes();
+            } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+                e.preventDefault();
+                redoNotes();
+            } else if (e.code === 'Space' && !appState.isPlaying) {
+                e.preventDefault();
+                playNotes();
             }
+        });
+
+        // Toggle dot above mode
+        function toggleDotAbove() {
+            appState.dotAboveMode = !appState.dotAboveMode;
+            appState.dotBelowMode = false;
+            updateButtonStates();
         }
 
-        function toggleSpeed() {
-            appState.speedMode = !appState.speedMode;
-            document.querySelector('[onclick="toggleSpeed()"]').classList.toggle('active', appState.speedMode);
+        // Toggle dot below mode
+        function toggleDotBelow() {
+            appState.dotBelowMode = !appState.dotBelowMode;
+            appState.dotAboveMode = false;
+            updateButtonStates();
         }
 
+        // Update button visual states
+        function updateButtonStates() {
+            const dotAboveBtn = document.getElementById('dotAboveBtn');
+            const dotBelowBtn = document.getElementById('dotBelowBtn');
+            
+            dotAboveBtn.classList.toggle('active', appState.dotAboveMode);
+            dotBelowBtn.classList.toggle('active', appState.dotBelowMode);
+        }
+
+        // Handler functions
         function handleThalaChange(value) {
-            appState.selectedThala = value;
-            updatePreview();
+            appState.thala = value;
         }
 
         function handleJathiChange(value) {
-            appState.selectedJathi = parseInt(value);
-            updatePreview();
+            appState.jathi = parseInt(value);
+        }
+
+        function handleNadaiChange(value) {
+            appState.nadai = parseInt(value);
         }
 
         function handleSruthiChange(value) {
-            appState.selectedSruthi = parseFloat(value);
+            appState.sruthi = parseFloat(value);
         }
 
-        function updatePreview() {
-            console.log('=== updatePreview START ===');
-            const input = document.getElementById('noteInput').value;
-            console.log('Input:', input);
-            appState.atomicNotes = parseAtomicNotes(input);
-            console.log('Parsed notes:', appState.atomicNotes);
-            
-            // Update note count - only count valid notes
-            document.getElementById('noteCount').textContent = `Notes: ${appState.atomicNotes.length}`;
-            
-            // Calculate laya
-            const totalPulses = calculateTotalPulses(appState.atomicNotes);
-            const statusText = `Pulses: ${totalPulses.toFixed(1)} | Jathi: ${appState.selectedJathi} | Next line: ${appState.selectedJathi} pulses`;
-            document.getElementById('statusText').textContent = statusText;
-            
-            console.log('About to call renderCarnatiNotation with:', appState.atomicNotes);
-            renderCarnatiNotation(appState.atomicNotes);
-            console.log('About to call renderWesternStaff');
-            renderWesternStaff(appState.atomicNotes);
-            console.log('=== updatePreview END ===');
-        }
+        function saveLesson() {
+            // Use current lesson name if editing, otherwise prompt for new name
+            let name = appState.currentLesson ? appState.currentLesson.name : prompt('Enter lesson name:');
+            if (!name) return;
 
-        // Render Carnatic notation with vertical lines on Jathi count
-        function renderCarnatiNotation(atomicNotes) {
-            const container = document.querySelector('.carnatic-editor');
-            if (!container) return;
+            const lesson = {
+                name: name,
+                notes: noteInput.value,
+                thala: appState.thala,
+                jathi: appState.jathi,
+                nadai: appState.nadai,
+                sruthi: appState.sruthi,
+                timestamp: new Date().toISOString()
+            };
 
-            console.log('renderCarnatiNotation called with:', atomicNotes);
-            console.log('octaveUp:', appState.octaveUp, 'octaveDown:', appState.octaveDown);
-
-            let html = '<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; line-height: 1.2;">';
-            let pulseCount = 0;
-            let pulseInJathi = 0;
-
-            atomicNotes.forEach((note, index) => {
-                console.log(`Note ${index}:`, note, 'octave value:', note.octave);
-                const pulsesForNote = 1 / note.speed;
-                pulseInJathi += pulsesForNote;
-                pulseCount += pulsesForNote;
-
-                // Create clickable note display with octave dots above/below
-                let noteDisplay = '';
+            if (appState.currentLesson && appState.currentLesson.id) {
+                lesson.id = appState.currentLesson.id;
                 
-                // Comma is a space/pause - render like a note
-                if (note.char === ',') {
-                    noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <span style="font-size: 18px; font-weight: bold; color: #999;">${note.char}</span>
-                    </div>`;
-                } else {
-                    // Regular notes
-                    const isClickable = (appState.octaveUp || appState.octaveDown);
-                    const hoverEffect = isClickable ? 'background: #f0f4ff; border-radius: 6px; padding: 4px 8px;' : '';
-                    const cursorStyle = isClickable ? 'cursor: pointer;' : 'cursor: default;';
-                    
-                    if (note.octave === 1) {
-                        // Octave up: dot above
-                        console.log(`Note ${index} has octave 1 (up) - rendering with dot above`);
-                        noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave up">
-                            <span style="font-size: 14px; color: #ff6b6b; font-weight: bold;">●</span>
-                            <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
-                            ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
-                        </div>`;
-                    } else if (note.octave === -1) {
-                        // Octave down: dot below
-                        console.log(`Note ${index} has octave -1 (down) - rendering with dot below`);
-                        noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="Click to remove octave down">
-                            <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
-                            ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
-                            <span style="font-size: 14px; color: #ff6b6b; font-weight: bold;">●</span>
-                        </div>`;
-                    } else {
-                        // Normal: no dot - clickable if mode is active
-                        console.log(`Note ${index} has octave 0 (normal) - rendering without dot`);
-                        noteDisplay = `<div class="note-btn" style="display: flex; flex-direction: column; align-items: center; ${cursorStyle} ${hoverEffect} transition: all 0.15s ease;" onclick="toggleNoteOctave(${index})" title="${isClickable ? 'Click to add octave modifier' : 'Enable Oct Up/Down first'}">
-                            <span style="font-size: 18px; font-weight: bold; color: #667eea; line-height: 1.2;">${note.char}</span>
-                            ${note.speed === 2 ? '<span style="font-size: 10px; color: #999;">·</span>' : ''}
-                        </div>`;
-                    }
-                }
-                
-                html += noteDisplay;
-
-                // Add vertical line when Jathi is complete
-                if (pulseInJathi >= appState.selectedJathi - 0.001) {
-                    html += `<span style="width: 2px; height: 40px; background: #ff6b6b; margin: 0 4px;"></span>`;
-                    pulseInJathi = 0;
-                }
-            });
-
-            html += '</div>';
-            
-            // Find or create the display area
-            let displayArea = container.querySelector('#notationDisplay');
-            if (!displayArea) {
-                displayArea = document.createElement('div');
-                displayArea.id = 'notationDisplay';
-                displayArea.style.cssText = 'margin-top: 12px; padding: 16px; background: #f9f9f9; border-radius: 6px; min-height: 60px; border: 1px solid #e0e0e0;';
-                container.appendChild(displayArea);
-            }
-            
-            displayArea.innerHTML = html;
-        }
-
-        // Toggle octave for a specific note when clicked
-        function toggleNoteOctave(noteIndex) {
-            console.log('toggleNoteOctave called for index:', noteIndex, 'octaveUp:', appState.octaveUp, 'octaveDown:', appState.octaveDown);
-            
-            if (noteIndex < 0 || noteIndex >= appState.atomicNotes.length) {
-                console.log('Invalid index');
-                return;
-            }
-            
-            const note = appState.atomicNotes[noteIndex];
-            console.log('Before:', note);
-            
-            // If octave up mode is enabled
-            if (appState.octaveUp) {
-                if (note.octave === 1) {
-                    note.octave = 0;  // Remove octave up
-                } else if (note.octave === -1) {
-                    note.octave = 1;  // Switch from down to up
-                } else {
-                    note.octave = 1;  // Add octave up
-                }
-            }
-            // If octave down mode is enabled
-            else if (appState.octaveDown) {
-                if (note.octave === -1) {
-                    note.octave = 0;  // Remove octave down
-                } else if (note.octave === 1) {
-                    note.octave = -1;  // Switch from up to down
-                } else {
-                    note.octave = -1;  // Add octave down
-                }
-            }
-            
-            console.log('After:', note);
-            document.getElementById('statusText').textContent = `Modified: ${note.char} → octave ${note.octave}`;
-            // Only re-render, don't re-parse (which would lose octave changes)
-            renderCarnatiNotation(appState.atomicNotes);
-            renderWesternStaff(appState.atomicNotes);
-        }
-
-        function renderWesternStaff(atomicNotes) {
-            const canvas = document.getElementById('vexflowCanvas');
-            if (!canvas) return;
-            
-            try {
-                if (typeof Vex === 'undefined') {
-                    const svgElement = canvas.parentElement;
-                    svgElement.innerHTML = '<div style="padding: 12px; color: #999; font-size: 12px;">Loading notation library...</div>';
-                    return;
-                }
-
-                const svgElement = canvas.parentElement;
-                svgElement.innerHTML = '';
-                const newCanvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                newCanvas.id = 'vexflowCanvas';
-                const containerWidth = svgElement.offsetWidth || 800;
-                const containerHeight = svgElement.offsetHeight || 250;
-                newCanvas.setAttribute('width', containerWidth);
-                newCanvas.setAttribute('height', containerHeight);
-                svgElement.appendChild(newCanvas);
-
-                const renderer = new Vex.Flow.Renderer(newCanvas, Vex.Flow.Renderer.Backends.SVG);
-                const context = renderer.getContext();
-
-                const stave = new Vex.Flow.Stave(10, 20, containerWidth - 40);
-                stave.addClef('treble').setContext(context).draw();
-
-                // Map Carnatic notes to Western staff with octave support
-                const noteMap = {
-                    'S': { '-1': 'D/3', '0': 'D/4', '1': 'D/5' },
-                    'R': { '-1': 'E/3', '0': 'E/4', '1': 'E/5' },
-                    'G': { '-1': 'F#/3', '0': 'F#/4', '1': 'F#/5' },
-                    'M': { '-1': 'G/3', '0': 'G/4', '1': 'G/5' },
-                    'P': { '-1': 'A/3', '0': 'A/4', '1': 'A/5' },
-                    'D': { '-1': 'B/3', '0': 'B/4', '1': 'B/5' },
-                    'N': { '-1': 'C#/4', '0': 'C#/5', '1': 'C#/6' }
-                };
-
-                const vexNotes = atomicNotes
-                    .slice(0, 16)
-                    .map(note => {
-                        const octave = note.octave.toString();
-                        const key = noteMap[note.char]?.[octave] || 'D/4';
-                        const duration = note.speed === 2 ? 'e' : 'q'; // 8th note for double speed
-                        return new Vex.Flow.StaveNote({ keys: [key], duration });
-                    });
-
-                if (vexNotes.length > 0) {
-                    const voice = new Vex.Flow.Voice({ num_beats: vexNotes.length, beat_value: 4 });
-                    voice.addTickables(vexNotes);
-                    new Vex.Flow.Formatter().joinVoices([voice]).format([voice], containerWidth - 60);
-                    voice.draw(context, stave);
-                }
-            } catch (error) {
-                console.error('VexFlow error:', error);
-                const svgElement = canvas.parentElement;
-                svgElement.innerHTML = '<div style="padding: 12px; color: #999; font-size: 12px;">Unable to render notation</div>';
-            }
-        }
-
-        function playNotes() {
-            if (appState.atomicNotes.length === 0) {
-                document.getElementById('statusText').textContent = 'No notes to play';
-                return;
-            }
-            
-            // Resume AudioContext immediately on user gesture (synchronous)
-            Tone.start().catch(() => {
-                console.log('Audio context already started or not available');
-            });
-            
-            appState.isPlaying = true;
-            const beatDuration = 60 / appState.bpm;  // Duration of one beat in seconds
-            
-            // Use async IIFE to handle async playback after initial gesture
-            (async () => {
-                for (let note of appState.atomicNotes) {
-                    if (!appState.isPlaying) break;
-                    
-                    const frequency = getNoteFrequency(note.char, note.octave);
-                    const noteDuration = beatDuration / note.speed;  // Faster speed = shorter duration
-                    
-                    if (frequency > 0) {
-                        // Pass frequency directly to triggerAttackRelease (Tone.js API)
-                        appState.synth.triggerAttackRelease(frequency, noteDuration);
-                    }
-                    // For rests (comma), just wait the duration without playing
-                    await new Promise(resolve => setTimeout(resolve, noteDuration * 1000));
-                }
-                
-                appState.isPlaying = false;
-                document.getElementById('statusText').textContent = 'Playback complete';
-            })();
-        }
-
-        function stopPlayback() {
-            appState.isPlaying = false;
-            if (appState.synth) {
-                appState.synth.triggerRelease();
-            }
-            document.getElementById('statusText').textContent = 'Playback stopped';
-        }
-
-        function undo() {
-            if (appState.historyIndex > 0) {
-                appState.historyIndex--;
-                const textarea = document.getElementById('noteInput');
-                textarea.value = appState.history[appState.historyIndex];
-                updatePreview();
-                document.getElementById('statusText').textContent = `Undo (${appState.historyIndex + 1}/${appState.history.length})`;
-            }
-        }
-
-        function redo() {
-            if (appState.historyIndex < appState.history.length - 1) {
-                appState.historyIndex++;
-                const textarea = document.getElementById('noteInput');
-                textarea.value = appState.history[appState.historyIndex];
-                updatePreview();
-                document.getElementById('statusText').textContent = `Redo (${appState.historyIndex + 1}/${appState.history.length})`;
-            }
-        }
-
-        // Record textarea change for undo/redo
-        function recordHistory() {
-            const textarea = document.getElementById('noteInput');
-            const currentValue = textarea.value;
-            
-            // If we're not at the end of history, remove future states
-            if (appState.historyIndex < appState.history.length - 1) {
-                appState.history = appState.history.slice(0, appState.historyIndex + 1);
-            }
-            
-            // Add new state if it's different from the current one
-            if (appState.history[appState.historyIndex] !== currentValue) {
-                appState.history.push(currentValue);
-                appState.historyIndex++;
-                
-                // Limit history size
-                if (appState.history.length > appState.maxHistory) {
-                    appState.history.shift();
-                    appState.historyIndex--;
-                }
-            }
-        }
-
-        // Golden Rule: Export to MusicXML for MuseScore compatibility
-        async function exportToMusicXML() {
-            if (appState.atomicNotes.length === 0) {
-                alert('No notes to export');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/export', {
+                fetch(`/api/lesson/${lesson.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(lesson)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    appState.currentLesson = data;
+                    document.getElementById('statusMessage').textContent = `✓ Lesson updated: ${name}`;
+                    loadAllLessons();
+                })
+                .catch(err => {
+                    document.getElementById('statusMessage').textContent = `✗ Error: ${err.message}`;
+                });
+            } else {
+                fetch('/api/lesson', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        atomicNotes: appState.atomicNotes,
-                        metadata: {
-                            thala: document.getElementById('thalaSelect').value,
-                            jathi: parseInt(document.getElementById('jathiSelect').value),
-                            sruthi: parseFloat(document.getElementById('sruthiSelect').value),
-                            bpm: parseInt(document.getElementById('bpmInput').value)
-                        }
-                    })
+                    body: JSON.stringify(lesson)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    appState.currentLesson = data;
+                    document.getElementById('statusMessage').textContent = `✓ Lesson saved: ${name}`;
+                    loadAllLessons();
+                })
+                .catch(err => {
+                    document.getElementById('statusMessage').textContent = `✗ Error: ${err.message}`;
                 });
-
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `lesson-${Date.now()}.musicxml`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                    document.getElementById('statusText').textContent = 'Export complete - file downloaded';
-                } else {
-                    alert('Export failed');
-                }
-            } catch (error) {
-                console.error('Export error:', error);
-                alert('Error exporting lesson');
             }
         }
 
-        // Event listeners
-        document.getElementById('noteInput').addEventListener('input', () => {
-            recordHistory();
-            updatePreview();
-        });
-        document.getElementById('noteInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const notes = 'SRGMPDNS';
-                const char = e.key.toUpperCase();
-                if (notes.includes(char)) {
-                    e.preventDefault();
-                    const textarea = e.target;
-                    const start = textarea.selectionStart;
-                    textarea.value = textarea.value.substring(0, start) + char + ' ' + textarea.value.substring(start);
-                    textarea.selectionStart = start + 2;
-                    recordHistory();
-                    updatePreview();
+        function loadLessonData(lesson) {
+            console.log('=== Loading Lesson Data ===');
+            console.log('Full lesson object:', lesson);
+            console.log('lesson.notes:', lesson.notes);
+            console.log('lesson.thala:', lesson.thala);
+            console.log('lesson.jathi:', lesson.jathi);
+            console.log('lesson.nadai:', lesson.nadai);
+            console.log('lesson.sruthi:', lesson.sruthi);
+            console.log('lesson.name:', lesson.name);
+            console.log('lesson.timestamp:', lesson.timestamp);
+            
+            noteInput.value = lesson.notes || '';
+            console.log('noteInput.value set to:', noteInput.value);
+            
+            document.getElementById('thalaSelect').value = lesson.thala || 'adi';
+            console.log('thalaSelect set to:', lesson.thala);
+            
+            document.getElementById('jathiSelect').value = lesson.jathi || 4;
+            console.log('jathiSelect set to:', lesson.jathi);
+            
+            document.getElementById('nadaiSelect').value = lesson.nadai || 4;
+            console.log('nadaiSelect set to:', lesson.nadai);
+            
+            document.getElementById('sruthiSelect').value = lesson.sruthi || 440;
+            console.log('sruthiSelect set to:', lesson.sruthi);
+            
+            document.getElementById('currentLessonTitle').textContent = lesson.name || 'Untitled';
+            console.log('currentLessonTitle set to:', lesson.name);
+            
+            appState.currentLesson = lesson;
+            appState.thala = lesson.thala || 'adi';
+            appState.jathi = lesson.jathi || 4;
+            appState.nadai = lesson.nadai || 4;
+            appState.sruthi = lesson.sruthi || 440;
+            
+            console.log('appState updated:', appState);
+            
+            document.getElementById('statusMessage').textContent = `✓ Loaded: ${lesson.name}`;
+            updateNoteCount();
+            renderLessonsList();
+            renderThalamTable();
+        }
+
+        function clearNotes() {
+            if (confirm('Clear all notes?')) {
+                noteInput.value = '';
+                appState.currentLesson = null;
+                document.getElementById('currentLessonTitle').textContent = 'New Lesson';
+                renderThalamTable();
+            }
+        }
+
+        // Render thalam table
+        function renderThalamTable() {
+            const input = noteInput.value;
+            const numBeats = getNumBeats();  // Get beats from thala-jathi combination
+            const nadai = appState.nadai || 4;
+            const cellsPerRow = numBeats;
+
+            // Initialize beat header
+            const beatHeader = document.getElementById('beatHeader');
+            beatHeader.innerHTML = '';
+            for (let i = 1; i <= numBeats; i++) {
+                const label = document.createElement('div');
+                label.className = 'beat-label';
+                label.textContent = `Beat ${i}`;
+                label.setAttribute('data-beat', i);
+                beatHeader.appendChild(label);
+            }
+
+            // Parse input: split by | to get cell contents
+            const cellContents = input.split('|').map(s => s.trim()).filter(s => s.length > 0);
+            console.log('Parsed cells:', cellContents);
+            console.log('Number of cells:', cellContents.length);
+            console.log('Beats per row:', numBeats);
+
+            // Create grid container
+            const grid = document.getElementById('thalamGrid');
+            grid.innerHTML = '';
+
+            // Create rows with 8 columns each
+            let cellIndex = 0;
+            let rowIndex = 0;
+            if (cellContents.length === 0) {
+                // Show one empty row if no notes
+                const row = document.createElement('div');
+                row.className = 'thalam-row';
+                for (let col = 0; col < cellsPerRow; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'thalam-cell';
+                    cell.textContent = '-';
+                    cell.setAttribute('data-row', rowIndex);
+                    cell.setAttribute('data-beat', col + 1);
+                    row.appendChild(cell);
+                }
+                grid.appendChild(row);
+            } else {
+                while (cellIndex < cellContents.length) {
+                    const row = document.createElement('div');
+                    row.className = 'thalam-row';
+
+                    for (let col = 0; col < cellsPerRow && cellIndex < cellContents.length; col++) {
+                        const content = cellContents[cellIndex];
+                        const cell = document.createElement('div');
+                        cell.className = 'thalam-cell';
+                        cell.textContent = content;
+                        cell.setAttribute('data-row', rowIndex);
+                        cell.setAttribute('data-beat', col + 1);
+
+                        // Count actual notes (commas + letters, ignore spaces)
+                        const noteCount = (content.match(/[A-Za-z,]/g) || []).length;
+
+                        // Highlight red if fewer than nadai notes
+                        if (noteCount > 0 && noteCount < nadai) {
+                            cell.classList.add('incomplete');
+                        }
+
+                        row.appendChild(cell);
+                        cellIndex++;
+                    }
+
+                    // Fill remaining columns with empty cells
+                    while (row.children.length < cellsPerRow) {
+                        const cell = document.createElement('div');
+                        cell.className = 'thalam-cell';
+                        cell.textContent = '-';
+                        cell.setAttribute('data-row', rowIndex);
+                        cell.setAttribute('data-beat', row.children.length + 1);
+                        row.appendChild(cell);
+                    }
+
+                    grid.appendChild(row);
+                    rowIndex++;
                 }
             }
-        });
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-                e.preventDefault();
-                undo();
-            }
-            if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
-                e.preventDefault();
-                redo();
-            }
-        });
+        }
 
         // Initialize
-        window.addEventListener('load', () => {
-            initAudio();
-            loadLessonLibrary();
-            // Initialize history with empty state
-            appState.history.push('');
-            appState.historyIndex = 0;
-            document.getElementById('statusText').textContent = 'BrahmaLayam initialized';
-        });
+        loadThalaBeats();
+        updateButtonStates();
+        loadAllLessons();
     </script>
 </body>
 </html>

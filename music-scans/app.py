@@ -6,8 +6,12 @@ from datetime import datetime
 from pathlib import Path
 from flask import Flask, send_from_directory, request, jsonify, Response
 
-# Everything lives here
-BASE_DIR = Path(r"g:\My Drive\ContentTools\music-scans")
+# Everything lives here - use the directory where this script is located
+# This ensures it works regardless of where the batch file is run from
+BASE_DIR = Path(__file__).parent.absolute()
+print(f"[STARTUP] BASE_DIR: {BASE_DIR}")
+print(f"[STARTUP] Script location: {Path(__file__).absolute()}")
+
 DATA_PATH = BASE_DIR / "songs.json"
 LESSONS_DIR = BASE_DIR / "lessons"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -15,6 +19,26 @@ BACKUP_DIR = BASE_DIR / "backups"
 
 app = Flask(__name__, static_folder=None)
 _write_lock = False  # single process guard
+
+# Add request logging middleware
+@app.before_request
+def log_request():
+    import sys
+    try:
+        sys.stderr.write(f"\n[REQUEST] {request.method} {request.path}\n")
+        sys.stderr.flush()
+    except:
+        pass
+
+@app.after_request
+def log_response(response):
+    import sys
+    try:
+        sys.stderr.write(f"[RESPONSE] Status: {response.status_code}\n")
+        sys.stderr.flush()
+    except:
+        pass
+    return response
 
 
 def _ensure_json_file():
@@ -216,93 +240,7 @@ def media(relpath):
     return send_from_directory(MEDIA_ROOT, rel, mimetype=guessed, as_attachment=False)
 
 
-# BrahmaLayam API endpoints
-@app.get("/api/lessons")
-def get_lessons():
-    """List all lessons"""
-    LESSONS_DIR.mkdir(parents=True, exist_ok=True)
-    lessons = []
-    for json_file in LESSONS_DIR.glob("*.json"):
-        try:
-            lesson_data = json.loads(json_file.read_text(encoding="utf-8"))
-            lessons.append({
-                "id": json_file.stem,
-                "name": lesson_data.get("name", json_file.stem)
-            })
-        except:
-            pass
-    return jsonify(sorted(lessons, key=lambda x: x["name"]))
-
-
-@app.get("/api/lesson/<lesson_id>")
-def get_lesson(lesson_id):
-    """Get a specific lesson"""
-    LESSONS_DIR.mkdir(parents=True, exist_ok=True)
-    lesson_file = LESSONS_DIR / f"{lesson_id}.json"
-    if not lesson_file.exists():
-        return jsonify({"error": "Lesson not found"}), 404
-    
-    try:
-        lesson_data = json.loads(lesson_file.read_text(encoding="utf-8"))
-        return jsonify(lesson_data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-
-@app.post("/api/lesson")
-def save_lesson():
-    """Create or update a lesson"""
-    LESSONS_DIR.mkdir(parents=True, exist_ok=True)
-    
-    try:
-        lesson_data = request.json or {}
-        lesson_id = lesson_data.get("id") or str(uuid.uuid4())
-        
-        # Validate required fields
-        if not lesson_data.get("name"):
-            lesson_data["name"] = f"Lesson {datetime.now().strftime('%Y-%m-%d %H:%M')}"
-        
-        lesson_data["id"] = lesson_id
-        lesson_file = LESSONS_DIR / f"{lesson_id}.json"
-        lesson_file.write_text(json.dumps(lesson_data, indent=2), encoding="utf-8")
-        
-        return jsonify({"id": lesson_id, "status": "created"})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-
-@app.put("/api/lesson/<lesson_id>")
-def update_lesson(lesson_id):
-    """Update an existing lesson"""
-    LESSONS_DIR.mkdir(parents=True, exist_ok=True)
-    
-    try:
-        lesson_data = request.json or {}
-        lesson_file = LESSONS_DIR / f"{lesson_id}.json"
-        
-        lesson_data["id"] = lesson_id
-        lesson_file.write_text(json.dumps(lesson_data, indent=2), encoding="utf-8")
-        
-        return jsonify({"id": lesson_id, "status": "updated"})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-
-@app.delete("/api/lesson/<lesson_id>")
-def delete_lesson(lesson_id):
-    """Delete a lesson"""
-    LESSONS_DIR.mkdir(parents=True, exist_ok=True)
-    lesson_file = LESSONS_DIR / f"{lesson_id}.json"
-    
-    if not lesson_file.exists():
-        return jsonify({"error": "Lesson not found"}), 404
-    
-    try:
-        lesson_file.unlink()
-        return jsonify({"status": "deleted"})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
+# BrahmaLayam API endpoints - using lessons directory
 
 @app.post("/api/save")
 def save_to_file():
@@ -401,7 +339,161 @@ def export_to_musicxml():
         return jsonify({"error": str(e)}), 400
 
 
+# Lessons API endpoints - read/write to single lessons.json file
+LESSONS_FILE = BASE_DIR / "lessons.json"
+print(f"[STARTUP] LESSONS_FILE: {LESSONS_FILE}")
+print(f"[STARTUP] LESSONS_FILE exists: {LESSONS_FILE.exists()}")
+
+def _load_lessons():
+    """Load all lessons from lessons.json"""
+    try:
+        print(f"DEBUG: Loading lessons from: {LESSONS_FILE}", flush=True)
+    except:
+        pass
+    
+    if not LESSONS_FILE.exists():
+        try:
+            print("DEBUG: lessons.json does not exist, returning empty list", flush=True)
+        except:
+            pass
+        return []
+    try:
+        content = LESSONS_FILE.read_text(encoding="utf-8").strip()
+        try:
+            print(f"DEBUG: File content length: {len(content)} characters", flush=True)
+        except:
+            pass
+        if not content:
+            try:
+                print("DEBUG: File is empty", flush=True)
+            except:
+                pass
+            return []
+        data = json.loads(content)
+        try:
+            print(f"DEBUG: Loaded {len(data)} lessons", flush=True)
+        except:
+            pass
+        return data
+    except Exception as e:
+        try:
+            print(f"ERROR loading lessons: {e}", flush=True)
+        except:
+            import sys
+            sys.stderr.write(f"ERROR loading lessons: {str(e)}\n")
+        return []
+
+def _save_lessons(lessons):
+    """Save lessons to lessons.json"""
+    try:
+        LESSONS_FILE.write_text(json.dumps(lessons, indent=2, ensure_ascii=False), encoding="utf-8")
+    except Exception as e:
+        print(f"Error saving lessons: {e}")
+
+@app.route('/api/lessons', methods=['GET'])
+def get_lessons():
+    """Get all lessons - returns raw JSON from file"""
+    print("\n" + "="*70, flush=True)
+    print("[ENDPOINT CALLED] GET /api/lessons", flush=True)
+    
+    # Read the file directly and return as-is
+    try:
+        file_path = Path(__file__).parent / "lessons.json"
+        print(f"[ENDPOINT] Reading from: {file_path}", flush=True)
+        print(f"[ENDPOINT] File exists: {file_path.exists()}", flush=True)
+        
+        if file_path.exists():
+            content = file_path.read_text(encoding='utf-8').strip()
+            print(f"[ENDPOINT] File content length: {len(content)}", flush=True)
+            print(f"[ENDPOINT] First 50 chars: {content[:50]}", flush=True)
+            print(f"[ENDPOINT] Returning file content", flush=True)
+            return content, 200, {'Content-Type': 'application/json'}
+        else:
+            print(f"[ENDPOINT] File NOT found!", flush=True)
+            return '[]', 200, {'Content-Type': 'application/json'}
+    except Exception as e:
+        print(f"[ENDPOINT] ERROR: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
+        return '[]', 200, {'Content-Type': 'application/json'}
+    finally:
+        print("="*70, flush=True)
+
+@app.route('/api/lesson/<lesson_id>', methods=['GET'])
+def get_lesson(lesson_id):
+    """Get a specific lesson"""
+    lessons = _load_lessons()
+    for lesson in lessons:
+        if lesson.get('id') == lesson_id:
+            return jsonify(lesson)
+    return jsonify({"error": "Lesson not found"}), 404
+
+@app.route('/api/lesson', methods=['POST'])
+def create_lesson():
+    """Create a new lesson"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    # Ensure ID
+    if 'id' not in data or not data['id']:
+        data['id'] = str(uuid.uuid4())
+    
+    # Ensure timestamp
+    if 'timestamp' not in data:
+        data['timestamp'] = datetime.now().isoformat()
+    
+    lessons = _load_lessons()
+    lessons.append(data)
+    _save_lessons(lessons)
+    
+    return jsonify(data), 201
+
+@app.route('/api/lesson/<lesson_id>', methods=['PUT'])
+def update_lesson(lesson_id):
+    """Update an existing lesson"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    lessons = _load_lessons()
+    for i, lesson in enumerate(lessons):
+        if lesson.get('id') == lesson_id:
+            data['id'] = lesson_id  # Preserve ID
+            data['timestamp'] = lesson.get('timestamp', datetime.now().isoformat())  # Preserve original timestamp
+            data['updatedAt'] = datetime.now().isoformat()
+            lessons[i] = data
+            _save_lessons(lessons)
+            return jsonify(data)
+    
+    return jsonify({"error": "Lesson not found"}), 404
+
+@app.route('/api/lesson/<lesson_id>', methods=['DELETE'])
+def delete_lesson(lesson_id):
+    """Delete a lesson"""
+    lessons = _load_lessons()
+    lessons = [l for l in lessons if l.get('id') != lesson_id]
+    _save_lessons(lessons)
+    return jsonify({"success": True})
+
+
+
+
 if __name__ == "__main__":
+    print("\n" + "="*70)
+    print("FLASK APP INITIALIZATION")
+    print("="*70)
+    print(f"BASE_DIR: {BASE_DIR}")
+    print(f"LESSONS_FILE: {LESSONS_FILE}")
+    print(f"LESSONS_FILE exists: {LESSONS_FILE.exists()}")
+    
+    # Test loading lessons
+    test_lessons = _load_lessons()
+    print(f"Test load: Got {len(test_lessons)} lessons")
+    if test_lessons:
+        print(f"First lesson: {test_lessons[0].get('name', 'Unknown')}")
+    
+    print("="*70 + "\n")
     print("Starting server at http://127.0.0.1:5000")
     BASE_DIR.mkdir(parents=True, exist_ok=True)
     _ensure_json_file()

@@ -334,7 +334,7 @@
       "https://www.karnatik.com/c1007.shtml",
       "/ennathavam.jpg"
     ],
-    "lyrics": "ennatavam seydanai yasOda\nraagam: kaapi\n22 kharaharapriya janya\nAa: S R2 M1 P N3 S\nAv: S N2 D2 N2 P M1 G2 R2 S\n\ntaaLam: aadi\nComposer: Paapanaasam Shivan\nLanguage: Tamil\n\npallavi\n\nenna tavam sheidanai yasOdA\n engum nirai parabhrammam\n ammAvenr-azhaikka\n(enna tavam)\n\nanupallavi\n\nIrEzu bhuvanangaL paDaittavanaik-\nkaiyil Endi shIrATTi pAlUTi tAlATTa nI\n(enna tavam)\n\ncaraNam 1\n\nbhramanum indranum manadil porAmai koLLa\nuralil kaTTi vAi pottik-kenjavaittAi tAyE\n(enna tavam)\n\ncaraNam 2\n\nsanakAdiyar tava yOgam sheidu varundi\nsAdhittadai punita mAdE eLidil pera\n(enna tavam)",
+    "lyrics": "ennatavam seydanai yasOda\nraagam: kaapi\n22 kharaharapriya janya\nAa: S R2 M1 P N3 S\nAv: S N2 D2 N2 P M1 G2 R2 S\n\ntaaLam: aadi\nComposer: Paapanaasam Shivan\nLanguage: Tamil\n\npallavi\n\nenna tavam sheidanai yasOdA engum nirai parabhrammam ammAvenr-azhaikka\n(enna tavam)\n\nanupallavi\n\nIrEzu bhuvanangaL paDaittavanaik-kaiyil Endi shIrATTi pAlUTi tAlATTa nI\n(enna tavam)\n\ncaraNam 1\n\nbhramanum indranum manadil porAmai koLLa\nuralil kaTTi vAi pottik-kenjavaittAi tAyE\n(enna tavam)\n\ncaraNam 2\n\nsanakAdiyar tava yOgam sheidu varundi\nsAdhittadai punita mAdE eLidil pera\n(enna tavam)",
     "id": "1e3baad9-b0bd-4a47-89a8-8daa61407594",
     "tags": [
       "Papanasam"
@@ -1012,7 +1012,7 @@
       "/RaghuvamsaSudha.png",
       "https://www.karnatik.com/c1031.shtml"
     ],
-    "lyrics": "raghu vamsa\nraagam: katanakutoohalam\n29 shankaraabharaNam janya\nAa: S R2 M1 D2 N3 G3 P S\nAv: S N3 D2 P M1 G3 R2 S\n\ntaaLam: aadi\nComposer: PaTNam Subramanya Aiyyar\nLanguage: Sanskrit\n\npallavi\n\nraghuvamsha sudhAmbudhi candra shrI \nrAma rAja rAjEshvara\n\nanupallavi\n\nagha mEgha mAruta shrIkara \nasurEndra mrgEndra vara jagannAtha\n\nciTTaswaram\n\n;;;s, rmg, rsr, rmd, dng, gpS, Sndp || mgpmgr\nsr rmmd dngp pSSR RMMG GRRS Snnd || dppmgr\n\ncaraNam 1\n\njamadagnija garva khaNDana\n jaya rudrAdi vismita bhaNDana\nkamalAp-tAnvaya maNDana\n agaNita arputa shurya shrI venkatEshvara\n\ncaraNam 2\n\nbhrgunandanA kavibhanjanA brndArakA brndAhitA\nnigamAntava su-budhAvanA nIrajAkSa shrI venkaTEshvara",
+    "lyrics": "raghu vamsa\nraagam: katanakutoohalam\n29 shankaraabharaNam janya\nAa: S R2 M1 D2 N3 G3 P S\nAv: S N3 D2 P M1 G3 R2 S\n\ntaaLam: aadi\nComposer: PaTNam Subramanya Aiyyar\nLanguage: Sanskrit\n\npallavi\n\nraghuvamsha sudhAmbudhi candra shrI rAma rAja rAjEshvara\n\nanupallavi\n\nagha mEgha mAruta shrIkara asurEndra mrgEndra vara jagannAtha\n\nciTTaswaram\n\n;;;s, rmg, rsr, rmd, dng, gpS, Sndp || mgpmgr\nsr rmmd dngp pSSR RMMG GRRS Snnd || dppmgr\n\ncaraNam 1\n\njamadagnija garva khaNDana jaya rudrAdi vismita bhaNDana\nkamalAp-tAnvaya maNDana agaNita arputa shurya shrI venkatEshvara\n\ncaraNam 2\n\nbhrgunandanA kavibhanjanA brndArakA brndAhitA\nnigamAntava su-budhAvanA nIrajAkSa shrI venkaTEshvara",
     "id": "e36df9dc-c4c0-40f0-9a69-aec1906e4b12",
     "tags": [
       "patnam"
@@ -2117,14 +2117,5 @@
     ],
     "tags": [],
     "id": "ff79b861-353c-4690-8b68-3af0beea6e41"
-  },
-  {
-    "title": "srI raama padhama",
-    "lyrics": "srI raama padhama\nraagam: amritavaahini\n20 naTabhairavi janya\nAa: S R2 M1 P D1 N2 S\nAv: S N2 D1 M1 G2 R2 S\n\ntaaLam: aadi\nComposer: Tyaagaraaja\nLanguage: Telugu\n\npallavi\n\nshrI rAma pAdamA nI krpa jAlunE cittAniki rAvE\n\nanupallavi\n\nvArijabhava sanaka sanandana vAsavAdi nAradAdu lella pUjince\n\ncaraNam\n\ndArini silayai tApamu tALaka vAramu kannIrunu rAlcaga\nshUra ahalyanu jUci brOcitivi A rIti dhanyu sEyavE tyAgarAja bhAgyamA",
-    "links": [],
-    "tags": [
-      "Thyagaraja"
-    ],
-    "id": "8b20dcce-18b1-4067-9acf-c0d1e09c00b0"
   }
 ]

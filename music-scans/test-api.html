@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        body { font-family: monospace; margin: 20px; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testAPI()">Test /api/lessons</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testAPI() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Loading...';
+            
+            try {
+                const res = await fetch('/api/lessons');
+                result.innerHTML += `<p>Status: ${res.status}</p>`;
+                result.innerHTML += `<p>Content-Type: ${res.headers.get('content-type')}</p>`;
+                
+                const text = await res.text();
+                result.innerHTML += `<p>Response length: ${text.length}</p>`;
+                result.innerHTML += `<pre>${JSON.stringify(JSON.parse(text), null, 2)}</pre>`;
+            } catch (err) {
+                result.innerHTML += `<p style="color: red;">Error: ${err.message}</p>`;
+                result.innerHTML += `<pre>${err.stack}</pre>`;
+            }
+        }
+        
+        // Auto-test on load
+        window.addEventListener('load', testAPI);
+    </script>
+</body>
+</html>
