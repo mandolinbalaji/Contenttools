@@ -1,5 +1,14 @@
 [
   {
+    "name": "Alakalalla-Madhyamavathi",
+    "phrase": "p,m,r,rrsṇp,ṇsr,r,r,rsr,p,m,r,pmrsṇpṇsr,r,r,rsr,",
+    "beats": 6,
+    "nadai": 4,
+    "eduppu": 1,
+    "sruthi": "C#",
+    "id": "07a7f021-66cd-494c-b215-61f34567ada8"
+  },
+  {
     "name": "Mohana Varnam",
     "phrase": "g,g,r,r,ssrrggrrsrgrsrsḍsrgpgrsr",
     "beats": 8,

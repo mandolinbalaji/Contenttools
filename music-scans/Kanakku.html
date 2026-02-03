@@ -596,7 +596,7 @@
 
                     <span style="font-weight: 600; color: #667eea; font-size: 0.75em; white-space: nowrap; margin-top: 16px;">Thalas:</span>
                     <a class="thala-link" data-beats="8">Adhi (8)</a>
-                    <a class="thala-link" data-beats="3">Rupakam (3)</a>
+                    <a class="thala-link" data-beats="6">Rupakam (6)</a>
                     <a class="thala-link" data-beats="5">Kanda (5)</a>
                     <a class="thala-link" data-beats="7">Misra (7)</a>
 
@@ -620,6 +620,8 @@
                         <button class="toolbar-btn" id="clearBtn" title="Clear">Clear</button>
                         <button class="toolbar-btn" id="formatBtn" title="Format: lowercase letters, ; → ,,">Format</button>
                         <button class="toolbar-btn" id="resetBtn" title="Reset All">Reset</button>
+                        <button class="toolbar-btn" id="numberingToggleBtn" title="Toggle numbering direction (Reverse/Forward)">Rev</button>
+                        <button class="toolbar-btn" id="exportBtn" title="Export as Text">Export</button>
                     </div>
                     <input type="text" class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" style="flex: 1;">
                     <div style="display: flex; gap: 6px;">
@@ -687,6 +689,8 @@
         const clearBtn = document.getElementById('clearBtn');
         const formatBtn = document.getElementById('formatBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const numberingToggleBtn = document.getElementById('numberingToggleBtn');
+        const exportBtn = document.getElementById('exportBtn');
         const checkCalcBtn = document.getElementById('checkCalcBtn');
         const patternInput = document.getElementById('patternInput');
         const saveBtn = document.getElementById('saveBtn');
@@ -697,6 +701,7 @@
         let historyIndex = 0;
         let savedKanakkus = [];
         let currentKanakkuId = null;  // Track which kanakku is loaded
+        let numberingDirection = 'reverse';  // 'reverse' or 'forward'
 
         const dotsAbove = {
             's': 'ṡ', 'S': 'Ṡ', 'r': 'ṙ', 'R': 'Ṙ', 'g': 'ġ', 'G': 'Ġ', 
@@ -829,25 +834,16 @@
         });
 
         formatBtn.addEventListener('click', () => {
-            // Format: convert to lowercase, remove pipes/spaces, add commas between different notes
+            // Format: remove spaces and pipes, replace capital letters with lowercase + comma
             let text = phraseInput.value;
-            text = text.toLocaleLowerCase();  // Convert to lowercase
-            text = text.replace(/\|/g, '');    // Remove | symbols
-            text = text.replace(/ /g, '');     // Remove all spaces
-            text = text.replace(/;/g, ',,');   // Replace ; with ,,
+            text = text.replace(/ /g, '');        // Remove all spaces
+            text = text.replace(/\|/g, '');       // Remove all pipes
+            text = text.replace(/([A-Z])/g, function(match) {
+                return match.toLowerCase() + ',';  // Replace capital with lowercase + comma
+            });
             
-            // Add commas only between different consecutive note characters
-            let result = '';
-            for (let i = 0; i < text.length; i++) {
-                result += text[i];
-                // Add comma if next character is different and current is a note
-                if (i < text.length - 1 && /[srgmpdnS,]/.test(text[i]) && text[i] !== text[i + 1]) {
-                    result += ',';
-                }
-            }
-            
-            phraseInput.value = result;
-            history.push(result);
+            phraseInput.value = text;
+            history.push(text);
             historyIndex = history.length - 1;
             updateUndoRedo();
             calculate();
@@ -870,6 +866,77 @@
             dotBelowBtn.classList.remove('active');
             calculate();
             updateUndoRedo();
+        });
+
+        numberingToggleBtn.addEventListener('click', () => {
+            // Toggle between reverse and forward numbering
+            if (numberingDirection === 'reverse') {
+                numberingDirection = 'forward';
+                numberingToggleBtn.textContent = 'Fwd';
+                numberingToggleBtn.title = 'Numbering: Forward (1 to n)';
+            } else {
+                numberingDirection = 'reverse';
+                numberingToggleBtn.textContent = 'Rev';
+                numberingToggleBtn.title = 'Numbering: Reverse (n to 1)';
+            }
+            calculate();  // Refresh the display with new numbering
+        });
+
+        exportBtn.addEventListener('click', () => {
+            // Export as text file with vertical lines marking beats and nadai
+            const name = kanakkuNameInput.value || 'Kanakku';
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const phrase = phraseInput.value;
+            
+            if (!phrase.trim()) {
+                alert('Please enter a phrase first');
+                return;
+            }
+            
+            // Treat phrase as a string of individual note characters
+            const notes = phrase.replace(/\s/g, '');  // Remove spaces
+            
+            // Each cycle has beats * nadai notes
+            const notesPerCycle = beats * nadai;
+            
+            let output = `${name}\nBeats: ${beats}, Nadai: ${nadai}\n\n`;
+            
+            let noteIndex = 0;
+            let cycleNum = 1;
+            
+            while (noteIndex < notes.length) {
+                let cycleLine = `${cycleNum}: `;
+                let noteInBeat = 0;
+                
+                // Add notes for this cycle
+                for (let i = 0; i < notesPerCycle && noteIndex < notes.length; i++) {
+                    cycleLine += notes[noteIndex];
+                    noteInBeat++;
+                    noteIndex++;
+                    
+                    // Add single vertical line after each beat (after nadai notes)
+                    if (noteInBeat === nadai && i + 1 < notesPerCycle) {
+                        cycleLine += '|';
+                        noteInBeat = 0;
+                    }
+                }
+                
+                // Add double vertical line at end of cycle
+                cycleLine += '||';
+                
+                output += cycleLine + '\n';
+                cycleNum++;
+            }
+            
+            // Create and download file
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(output));
+            element.setAttribute('download', `${name.replace(/\\s+/g, '_')}_export.txt`);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
         });
 
         // Thala quick select links
@@ -1077,9 +1144,13 @@
                         let bgColor = 'white';
                         let displayNum = null;
 
-                        // Show descending numbers on first row only
+                        // Show numbers on first row based on direction
                         if (cycleNum === 1) {
-                            displayNum = cycleLengthVal - posInCycle + 1;
+                            if (numberingDirection === 'reverse') {
+                                displayNum = cycleLengthVal - posInCycle + 1;
+                            } else {
+                                displayNum = posInCycle;
+                            }
                         }
 
                         if (globalPos >= startingPos && globalPos < startingPos + phrase.length) {
