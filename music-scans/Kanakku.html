@@ -829,10 +829,11 @@
         });
 
         formatBtn.addEventListener('click', () => {
-            // Format: replace capital letters with lowercase, semicolons with double commas
+            // Format: replace capital letters with lowercase, semicolons with double commas, remove spaces
             let text = phraseInput.value;
             text = text.toLocaleLowerCase();  // Convert to lowercase
             text = text.replace(/;/g, ',,');   // Replace ; with ,,
+            text = text.replace(/ /g, '');     // Remove all spaces
             phraseInput.value = text;
             history.push(text);
             historyIndex = history.length - 1;
