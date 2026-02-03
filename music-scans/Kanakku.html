@@ -620,7 +620,11 @@
                         <button class="toolbar-btn" id="clearBtn" title="Clear">Clear</button>
                         <button class="toolbar-btn" id="resetBtn" title="Reset All">Reset</button>
                     </div>
-                    <input type="text" class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n" autocomplete="off">
+                    <input type="text" class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" style="flex: 1;">
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" id="patternInput" placeholder="e.g., 52525" style="padding: 4px 6px; border: 2px solid #ddd; border-radius: 3px; font-size: 0.75em; width: 70px;">
+                        <button class="toolbar-btn" id="checkCalcBtn" title="Check Calculation" style="padding: 4px 8px; font-size: 0.7em;">Check Calc</button>
+                    </div>
                     <div class="phrase-info">
                         <div class="phrase-info-item">
                             <span class="phrase-info-label">Notes:</span>
@@ -681,6 +685,8 @@
         const redoBtn = document.getElementById('redoBtn');
         const clearBtn = document.getElementById('clearBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const checkCalcBtn = document.getElementById('checkCalcBtn');
+        const patternInput = document.getElementById('patternInput');
         const saveBtn = document.getElementById('saveBtn');
 
         // State
@@ -847,6 +853,39 @@
                 beatsInput.value = beats;
                 calculate();
             });
+        });
+
+        checkCalcBtn.addEventListener('click', () => {
+            const pattern = patternInput.value.trim();
+            if (!pattern) {
+                alert('Please enter a pattern (e.g., 52525 or 535)');
+                return;
+            }
+
+            // Split each digit and create sequence for each
+            const sequence = '1234567';
+            let filledPhrase = '';
+            
+            for (let char of pattern) {
+                if (!isNaN(char)) {
+                    const count = parseInt(char);
+                    // Take first 'count' characters from sequence
+                    filledPhrase += sequence.substring(0, count);
+                }
+            }
+
+            if (filledPhrase.length === 0) {
+                alert('Pattern must contain digits');
+                return;
+            }
+
+            // Fill the phrase input
+            phraseInput.value = filledPhrase;
+            notesEnteredSpan.textContent = filledPhrase.length;
+            history = [filledPhrase];
+            historyIndex = 0;
+            updateUndoRedo();
+            calculate();
         });
 
         saveBtn.addEventListener('click', async () => {
