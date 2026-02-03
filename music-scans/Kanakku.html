@@ -1730,24 +1730,23 @@
             
             midiData.notes.forEach((note, index) => {
                 // Calculate tick position and duration
-                const noteTick = Math.round(note.startTime * 1000 / midiData.bpm * ticksPerQuarter);
-                const noteDurationTick = Math.round(note.duration * 1000 / midiData.bpm * ticksPerQuarter);
+                // Formula: time_in_seconds * (bpm / 60) * ticksPerQuarter = ticks
+                // BPM is beats per minute, so bpm/60 = beats per second
+                // Each beat = 1 quarter note = ticksPerQuarter ticks
+                const noteTick = Math.round(note.startTime * (midiData.bpm / 60) * ticksPerQuarter);
+                const noteDurationTick = Math.round(note.duration * (midiData.bpm / 60) * ticksPerQuarter);
                 
                 // Delta time (time since last event)
                 const deltaTime = noteTick - currentTick;
                 const deltaBytes = encodeVariableLength(deltaTime);
                 
-                // Note On event (90 = Note On, velocity = 100)
+                // Note On event (90 = Note On, channel 0, velocity = 100)
                 trackData.push(...deltaBytes, 0x90, note.note, note.velocity || 100);
                 
                 // Update current tick
                 currentTick = noteTick;
                 
-                // Note Off event
-                const nextNoteTime = (index + 1 < midiData.notes.length) 
-                    ? Math.round(midiData.notes[index + 1].startTime * 1000 / midiData.bpm * ticksPerQuarter)
-                    : currentTick + noteDurationTick;
-                    
+                // Note Off event - use delta time for note duration
                 const offDeltaTime = noteDurationTick;
                 const offDeltaBytes = encodeVariableLength(offDeltaTime);
                 
