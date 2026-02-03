@@ -194,17 +194,21 @@
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .header h1 {
             font-size: 1.8em;
             margin: 0;
+            flex-shrink: 0;
         }
 
         .header-buttons {
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .header-btn {
@@ -217,6 +221,8 @@
             font-size: 0.9em;
             font-weight: 600;
             transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .header-btn:hover {
@@ -231,6 +237,7 @@
             font-size: 0.85em;
             background: rgba(255,255,255,0.9);
             color: #333;
+            white-space: nowrap;
         }
 
         .content {
@@ -1024,7 +1031,7 @@
             // Create audio context
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
-            // Map swaras to frequencies for octave 4
+            // Map swaras to semitone offsets for octave 4
             // C4 = 261.63 Hz, C#4 = 277.18 Hz, D4 = 293.66 Hz, etc.
             const sruthiFrequencies = {
                 'C': { baseFreq: 261.63, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
@@ -1041,6 +1048,12 @@
                 'B': { baseFreq: 493.88, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } }
             };
             
+            // Dot marks for octave adjustment
+            // Dot above (combining diaeresis, U+0308): ̇ moves to next octave (+12 semitones)
+            // Dot below (combining dot below, U+0323): ̣ moves to previous octave (-12 semitones)
+            const dotAboveMarks = new Set(['\u0307', '\u0308']);  // Combining dot above, combining diaeresis
+            const dotBelowMarks = new Set(['\u0323', '\u0325']);  // Combining dot below, combining ring below
+            
             const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
             const beatDuration = 60 / bpm;  // Duration of one beat in seconds
             const noteDuration = beatDuration / (parseInt(nadaiInput.value) || 4);  // Duration per note
@@ -1048,14 +1061,12 @@
             let currentTime = audioContext.currentTime;
             let oscArray = [];  // Keep references to prevent garbage collection
             
-            // Normalize Unicode string to remove combining marks, keeping only base characters
-            const normalized = phrase.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-            
-            // Function to get western note name from frequency
-            const getWesternNote = (freq) => {
+            // Function to get western note name and octave from frequency
+            const getWesternNote = (freq, octave) => {
                 const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
                 const noteIndex = Math.round(12 * Math.log2(freq / 261.63)) % 12;  // C4 = 261.63 Hz
-                return notes[noteIndex < 0 ? noteIndex + 12 : noteIndex] + '4';  // Always octave 4
+                const idx = noteIndex < 0 ? noteIndex + 12 : noteIndex;
+                return notes[idx] + octave;
             };
             
             // Map carnatic swara names
@@ -1065,21 +1076,43 @@
             console.log(`Sruthi: ${sruthi} | BPM: ${bpm} | Nadai: ${nadaiInput.value}`);
             console.log(`Note Duration: ${(noteDuration * 1000).toFixed(0)}ms\n`);
             
-            for (let i = 0; i < normalized.length; i++) {
-                const char = normalized[i];
+            let i = 0;
+            let noteIndex = 1;
+            while (i < phrase.length) {
+                const char = phrase[i].toLowerCase();
                 
-                if (char === ',') {
-                    // Rest - no sound
-                    console.log(`${i + 1}. Rest (,)`);
-                    currentTime += noteDuration;
-                } else if (sruthiInfo.notes.hasOwnProperty(char)) {
+                // Check if this is a swara (not a dot or comma)
+                if (sruthiInfo.notes.hasOwnProperty(char)) {
+                    // Look ahead for dot marks
+                    let octaveOffset = 0;
+                    let j = i + 1;
+                    while (j < phrase.length) {
+                        const nextChar = phrase[j];
+                        if (dotAboveMarks.has(nextChar)) {
+                            octaveOffset += 12;  // Dot above = one octave up
+                            j++;
+                        } else if (dotBelowMarks.has(nextChar)) {
+                            octaveOffset -= 12;  // Dot below = one octave down
+                            j++;
+                        } else if (nextChar === '\u0300' || nextChar === '\u0301' || nextChar === '\u0302' || nextChar === '\u0303' || nextChar === '\u0304' || nextChar === '\u0305' || nextChar === '\u0306') {
+                            // Other combining marks, skip
+                            j++;
+                        } else {
+                            break;
+                        }
+                    }
+                    i = j - 1;  // Move i to skip all combining marks
+                    
                     // Play note
-                    const semitones = sruthiInfo.notes[char];
+                    const semitones = sruthiInfo.notes[char] + octaveOffset;
                     const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
-                    const westernNote = getWesternNote(frequency);
+                    
+                    // Calculate octave for display
+                    const octaveNum = 4 + Math.floor((sruthiInfo.notes[char] + octaveOffset) / 12);
+                    const westernNote = getWesternNote(frequency, octaveNum);
                     const swaraName = swaraNames[char];
                     
-                    console.log(`${i + 1}. ${swaraName} (${char}) | Freq: ${frequency.toFixed(2)} Hz | ${westernNote}`);
+                    console.log(`${noteIndex}. ${swaraName} (${char}) | Octave: ${octaveNum} | Freq: ${frequency.toFixed(2)} Hz | ${westernNote}`);
                     
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
@@ -1105,10 +1138,18 @@
                     oscArray.push(osc);  // Keep reference
                     
                     currentTime += noteDuration;
-                } else {
-                    // Unknown character - skip
+                    noteIndex++;
+                    
+                } else if (char === ',') {
+                    // Rest - no sound
+                    console.log(`${noteIndex}. Rest (,)`);
                     currentTime += noteDuration;
+                    noteIndex++;
+                } else {
+                    // Unknown character or combining mark - skip
                 }
+                
+                i++;
             }
         });
 
