@@ -754,6 +754,19 @@
             'n': 'ṇ', 'N': 'Ṇ', ',': '·'
         };
 
+        // Reverse mappings to convert dotted characters back to base
+        const reverseDotsAbove = Object.fromEntries(Object.entries(dotsAbove).map(([k, v]) => [v, k]));
+        const reverseDotsBelow = Object.fromEntries(Object.entries(dotsBelow).map(([k, v]) => [v, k]));
+        
+        // Combined reverse mapping to get base character from any dotted variant
+        const charToBase = {
+            ...reverseDotsAbove,
+            ...reverseDotsBelow,
+            's': 's', 'S': 'S', 'r': 'r', 'R': 'R', 'g': 'g', 'G': 'G',
+            'm': 'm', 'M': 'M', 'p': 'p', 'P': 'P', 'd': 'd', 'D': 'D',
+            'n': 'n', 'N': 'N', ',': ','
+        };
+
         // Sidebar resizing
         let isResizing = false;
         splitter.addEventListener('mousedown', () => isResizing = true);
@@ -801,12 +814,16 @@
                     const charAtPos = phrase[charIndex];
                     
                     if (charAtPos) {
-                        let newChar = charAtPos;
+                        // First, get the base character (remove any existing dots)
+                        const baseChar = charToBase[charAtPos] || charAtPos;
                         
-                        if (dotMode === 'above' && dotsAbove[charAtPos]) {
-                            newChar = dotsAbove[charAtPos];
-                        } else if (dotMode === 'below' && dotsBelow[charAtPos]) {
-                            newChar = dotsBelow[charAtPos];
+                        // Now apply the requested dot to the base character
+                        let newChar = baseChar;
+                        
+                        if (dotMode === 'above' && dotsAbove[baseChar]) {
+                            newChar = dotsAbove[baseChar];
+                        } else if (dotMode === 'below' && dotsBelow[baseChar]) {
+                            newChar = dotsBelow[baseChar];
                         }
                         
                         if (newChar !== charAtPos) {
