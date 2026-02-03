@@ -545,6 +545,19 @@
                     <option value="A#">A#</option>
                     <option value="B">B</option>
                 </select>
+                <select id="bpmSelect" class="header-select" title="Beats Per Minute">
+                    <option value="60">60 BPM</option>
+                    <option value="70">70 BPM</option>
+                    <option value="80" selected>80 BPM</option>
+                    <option value="90">90 BPM</option>
+                    <option value="100">100 BPM</option>
+                    <option value="120">120 BPM</option>
+                    <option value="140">140 BPM</option>
+                    <option value="160">160 BPM</option>
+                </select>
+                <button class="header-btn" id="playBtn" title="Play notes">▶ Play</button>
+                <button class="header-btn" id="renderMidiBtn" title="Render MIDI">🎹 MIDI</button>
+                <button class="header-btn" id="openMidiBtn" title="Open MIDI">📂 MIDI</button>
                 <button class="header-btn" id="saveBtn" title="Save phrase (Ctrl+S)">💾 Save</button>
             </div>
         </div>
@@ -651,6 +664,12 @@
                         <div style="color: #999; font-style: italic;">Enter a phrase to see the staff notation</div>
                     </div>
                 </div>
+
+                <!-- MIDI DISPLAY -->
+                <div class="midi-section" id="midiSection" style="display: none; margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+                    <h3 style="margin-top: 0;">MIDI Notation</h3>
+                    <div id="midiContainer" style="background: white; padding: 15px; border-radius: 4px; min-height: 200px; border: 1px solid #e9ecef;"></div>
+                </div>
             </div>
         </div>
 
@@ -667,6 +686,12 @@
         const phraseInput = document.getElementById('phrase');
         const kanakkuNameInput = document.getElementById('kanakkuName');
         const sruthiSelect = document.getElementById('sruthi');
+        const bpmSelect = document.getElementById('bpmSelect');
+        const playBtn = document.getElementById('playBtn');
+        const renderMidiBtn = document.getElementById('renderMidiBtn');
+        const openMidiBtn = document.getElementById('openMidiBtn');
+        const midiSection = document.getElementById('midiSection');
+        const midiContainer = document.getElementById('midiContainer');
         const staffContainer = document.getElementById('staffContainer');
         const sidebarSearch = document.getElementById('sidebarSearch');
         const kanakkuList = document.getElementById('kanakkuList');
@@ -701,6 +726,8 @@
         let historyIndex = 0;
         let savedKanakkus = [];
         let currentKanakkuId = null;  // Track which kanakku is loaded
+        let currentEditingKanakkuId = null;  // Track kanakku being edited
+        let currentMidiData = null;  // Track current MIDI data
         let numberingDirection = 'reverse';  // 'reverse' or 'forward'
 
         const dotsAbove = {
@@ -982,6 +1009,107 @@
             calculate();
         });
 
+        playBtn.addEventListener('click', async () => {
+            const phrase = phraseInput.value;
+            if (!phrase.trim()) {
+                alert('Please enter a phrase first');
+                return;
+            }
+            
+            const sruthi = sruthiSelect.value;
+            const bpm = parseInt(bpmSelect.value) || 80;
+            
+            // Create audio context
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Map swaras to frequencies for octave 4
+            // C4 = 261.63 Hz, C#4 = 277.18 Hz, D4 = 293.66 Hz, etc.
+            const sruthiFrequencies = {
+                'C': { baseFreq: 261.63, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'C#': { baseFreq: 277.18, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'D': { baseFreq: 293.66, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'D#': { baseFreq: 311.13, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'E': { baseFreq: 329.63, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'F': { baseFreq: 349.23, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'F#': { baseFreq: 369.99, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'G': { baseFreq: 392.00, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'G#': { baseFreq: 415.30, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'A': { baseFreq: 440.00, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'A#': { baseFreq: 466.16, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'B': { baseFreq: 493.88, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } }
+            };
+            
+            const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
+            const beatDuration = 60 / bpm;  // Duration of one beat in seconds
+            const noteDuration = beatDuration / (parseInt(nadaiInput.value) || 4);  // Duration per note
+            
+            let currentTime = audioContext.currentTime;
+            let oscArray = [];  // Keep references to prevent garbage collection
+            
+            // Normalize Unicode string to remove combining marks, keeping only base characters
+            const normalized = phrase.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+            
+            // Function to get western note name from frequency
+            const getWesternNote = (freq) => {
+                const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+                const noteIndex = Math.round(12 * Math.log2(freq / 261.63)) % 12;  // C4 = 261.63 Hz
+                return notes[noteIndex < 0 ? noteIndex + 12 : noteIndex] + '4';  // Always octave 4
+            };
+            
+            // Map carnatic swara names
+            const swaraNames = { 's': 'Sa', 'r': 'Ri', 'g': 'Ga', 'm': 'Ma', 'p': 'Pa', 'd': 'Dha', 'n': 'Ni' };
+            
+            console.log(`\n=== Playing: ${phrase} ===`);
+            console.log(`Sruthi: ${sruthi} | BPM: ${bpm} | Nadai: ${nadaiInput.value}`);
+            console.log(`Note Duration: ${(noteDuration * 1000).toFixed(0)}ms\n`);
+            
+            for (let i = 0; i < normalized.length; i++) {
+                const char = normalized[i];
+                
+                if (char === ',') {
+                    // Rest - no sound
+                    console.log(`${i + 1}. Rest (,)`);
+                    currentTime += noteDuration;
+                } else if (sruthiInfo.notes.hasOwnProperty(char)) {
+                    // Play note
+                    const semitones = sruthiInfo.notes[char];
+                    const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
+                    const westernNote = getWesternNote(frequency);
+                    const swaraName = swaraNames[char];
+                    
+                    console.log(`${i + 1}. ${swaraName} (${char}) | Freq: ${frequency.toFixed(2)} Hz | ${westernNote}`);
+                    
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    
+                    osc.frequency.value = frequency;
+                    osc.type = 'sine';
+                    
+                    // Better envelope: quick attack, sustain, gentle release
+                    const attackTime = Math.min(0.01, noteDuration * 0.1);
+                    const releaseTime = Math.min(0.05, noteDuration * 0.2);
+                    const sustainEnd = Math.max(currentTime + noteDuration - releaseTime, currentTime + attackTime);
+                    
+                    gain.gain.setValueAtTime(0, currentTime);
+                    gain.gain.linearRampToValueAtTime(0.3, currentTime + attackTime);
+                    gain.gain.setValueAtTime(0.3, sustainEnd);
+                    gain.gain.linearRampToValueAtTime(0.01, currentTime + noteDuration);
+                    
+                    osc.start(currentTime);
+                    osc.stop(currentTime + noteDuration);
+                    oscArray.push(osc);  // Keep reference
+                    
+                    currentTime += noteDuration;
+                } else {
+                    // Unknown character - skip
+                    currentTime += noteDuration;
+                }
+            }
+        });
+
         saveBtn.addEventListener('click', async () => {
             const phrase = phraseInput.value;
 
@@ -1000,6 +1128,11 @@
             const sruthi = sruthiSelect.value;
 
             const kanakku = { name, phrase, beats, nadai, eduppu, sruthi };
+            
+            // Include MIDI data if it exists
+            if (currentMidiData) {
+                kanakku.midiData = currentMidiData;
+            }
             
             try {
                 let response;
@@ -1242,11 +1375,19 @@
                                 kanakkuNameInput.value = k.name;
                                 sruthiSelect.value = k.sruthi || 'C#';
                                 currentKanakkuId = k.id;
+                                currentEditingKanakkuId = k.id;
+                                currentMidiData = k.midiData || null;  // Load MIDI data if available
                                 history = [k.phrase];
                                 historyIndex = 0;
                                 notesEnteredSpan.textContent = k.phrase.length;
                                 updateUndoRedo();
                                 calculate();
+                                // Display MIDI if available
+                                if (currentMidiData) {
+                                    displayMidiStaff(currentMidiData);
+                                } else {
+                                    midiSection.style.display = 'none';
+                                }
                             });
                             groupDiv.appendChild(div);
                         });
@@ -1303,6 +1444,184 @@
                     kanakkuList.innerHTML = '<div style="padding: 10px; color: #c33; font-size: 0.8em;">Error: ' + err.message + '</div>';
                 });
         }
+
+        // MIDI Generation Function
+        function generateMidiData() {
+            const phrase = phraseInput.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const sruthi = sruthiSelect.value;
+            const bpm = parseInt(bpmSelect.value) || 80;
+            
+            if (!phrase.trim()) {
+                alert('Please enter a phrase first');
+                return null;
+            }
+
+            // Map sruthi to MIDI base pitch (C=0, C#=1, ... B=11 in octave 4)
+            const sruthiMap = {
+                'C': 60, 'C#': 61, 'D': 62, 'D#': 63, 'E': 64,
+                'F': 65, 'F#': 66, 'G': 67, 'G#': 68, 'A': 69,
+                'A#': 70, 'B': 71
+            };
+            
+            // Swara intervals (semitones from base note in Indian music)
+            // Sa=0, Ri=2, Ga=4, Ma=5, Pa=7, Dha=9, Ni=11
+            const swaraOffsets = {
+                's': 0,    // Sa
+                'r': 2,    // Ri
+                'g': 4,    // Ga
+                'm': 5,    // Ma
+                'p': 7,    // Pa
+                'd': 9,    // Dha
+                'n': 11    // Ni
+            };
+            
+            const baseNote = sruthiMap[sruthi] || sruthiMap['C'];
+            
+            // Generate MIDI events
+            const notes = [];
+            const beatDuration = 60 / (bpm * nadai);  // Duration in seconds for each nadai unit
+            
+            let currentTime = 0;
+            for (let char of phrase) {
+                const offset = swaraOffsets[char.toLowerCase()];
+                if (offset !== undefined) {
+                    const midiNote = baseNote + offset;
+                    notes.push({
+                        note: midiNote,
+                        startTime: currentTime,
+                        duration: beatDuration,
+                        velocity: 100
+                    });
+                    currentTime += beatDuration;
+                }
+            }
+            
+            return {
+                notes: notes,
+                bpm: bpm,
+                sruthi: sruthi,
+                phrase: phrase,
+                beats: beats,
+                nadai: nadai
+            };
+        }
+
+        // MIDI Display using SVG (simple staff notation)
+        function displayMidiStaff(midiData) {
+            if (!midiData) return;
+            
+            const container = midiContainer;
+            container.innerHTML = '';
+            
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '300');
+            svg.setAttribute('viewBox', '0 0 1200 300');
+            svg.style.border = '1px solid #ddd';
+            
+            // Draw staff (5 lines)
+            const staffTop = 50;
+            const lineSpacing = 15;
+            for (let i = 0; i < 5; i++) {
+                const y = staffTop + i * lineSpacing;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', '50');
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', '1150');
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#999');
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+            }
+            
+            // Draw treble clef (simplified)
+            const clef = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            clef.setAttribute('x', '20');
+            clef.setAttribute('y', '100');
+            clef.setAttribute('font-size', '40');
+            clef.setAttribute('fill', '#000');
+            clef.textContent = '𝄞';
+            svg.appendChild(clef);
+            
+            // Add metadata
+            const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            title.setAttribute('x', '50');
+            title.setAttribute('y', '30');
+            title.setAttribute('font-size', '14');
+            title.setAttribute('fill', '#333');
+            title.textContent = `Sruthi: ${midiData.sruthi} | BPM: ${midiData.bpm} | Beats: ${midiData.beats} | Nadai: ${midiData.nadai}`;
+            svg.appendChild(title);
+            
+            // Draw notes
+            const notes = midiData.notes;
+            const noteWidth = 900 / notes.length;
+            const staffCenter = staffTop + 30;
+            
+            // MIDI note to staff position (treble clef: E4=71 is on line)
+            // Higher notes go up, lower notes go down
+            function midiToYPos(midiNote) {
+                // E4=71 should be at center, each semitone is 1 line/space
+                const distanceFromE4 = midiNote - 71;
+                return staffCenter - (distanceFromE4 * lineSpacing / 2);
+            }
+            
+            notes.forEach((note, index) => {
+                const x = 100 + index * noteWidth;
+                const y = midiToYPos(note.note);
+                
+                // Draw note head
+                const noteHead = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                noteHead.setAttribute('cx', x);
+                noteHead.setAttribute('cy', y);
+                noteHead.setAttribute('r', '6');
+                noteHead.setAttribute('fill', '#000');
+                svg.appendChild(noteHead);
+                
+                // Draw stem
+                const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                stem.setAttribute('x1', x + 6);
+                stem.setAttribute('y1', y);
+                stem.setAttribute('x2', x + 6);
+                stem.setAttribute('y2', y - 35);
+                stem.setAttribute('stroke', '#000');
+                stem.setAttribute('stroke-width', '2');
+                svg.appendChild(stem);
+            });
+            
+            container.appendChild(svg);
+            midiSection.style.display = 'block';
+        }
+
+        // Render MIDI button handler
+        renderMidiBtn.addEventListener('click', () => {
+            const midiData = generateMidiData();
+            if (midiData) {
+                // Store MIDI data in current kanakku
+                currentMidiData = midiData;
+                displayMidiStaff(midiData);
+                
+                // Also save to current kanakku if editing
+                if (currentEditingKanakkuId) {
+                    // Will be saved when user clicks Save button
+                    console.log('MIDI generated and ready to save');
+                } else {
+                    // Create a temporary kanakku entry
+                    currentEditingKanakkuId = Date.now().toString();
+                }
+                alert('MIDI generated! Click Save to persist.');
+            }
+        });
+
+        // Open MIDI button handler (display existing MIDI from saved kanakku)
+        openMidiBtn.addEventListener('click', () => {
+            if (currentMidiData) {
+                displayMidiStaff(currentMidiData);
+            } else {
+                alert('No MIDI data available. Generate MIDI first using the Render button.');
+            }
+        });
 
         // Initialize
         updateUndoRedo();
