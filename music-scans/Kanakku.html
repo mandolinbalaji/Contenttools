@@ -829,19 +829,25 @@
         });
 
         formatBtn.addEventListener('click', () => {
-            // Format: replace capital letters with lowercase, semicolons with double commas, remove spaces and pipes
+            // Format: convert to lowercase, remove pipes/spaces, add commas between different notes
             let text = phraseInput.value;
             text = text.toLocaleLowerCase();  // Convert to lowercase
-            text = text.replace(/;/g, ',,');   // Replace ; with ,,
             text = text.replace(/\|/g, '');    // Remove | symbols
             text = text.replace(/ /g, '');     // Remove all spaces
-            // Add comma after each note character (s, r, g, m, p, d, n)
-            text = text.replace(/([srgmpdnS,])/g, '$1,');
-            // Clean up: remove trailing comma and double commas
-            text = text.replace(/,+$/, '');
-            text = text.replace(/,,+/g, ',');
-            phraseInput.value = text;
-            history.push(text);
+            text = text.replace(/;/g, ',,');   // Replace ; with ,,
+            
+            // Add commas only between different consecutive note characters
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                result += text[i];
+                // Add comma if next character is different and current is a note
+                if (i < text.length - 1 && /[srgmpdnS,]/.test(text[i]) && text[i] !== text[i + 1]) {
+                    result += ',';
+                }
+            }
+            
+            phraseInput.value = result;
+            history.push(result);
             historyIndex = history.length - 1;
             updateUndoRedo();
             calculate();
