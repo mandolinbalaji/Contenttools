@@ -16,6 +16,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .app-container {
@@ -24,16 +25,16 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            overflow: visible;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .main-layout {
             display: flex;
             flex: 1;
-            overflow: hidden;
+            overflow: visible;
         }
 
         /* ===== LEFT SIDEBAR ===== */
@@ -182,7 +183,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .header {
@@ -234,9 +235,10 @@
 
         .content {
             flex: 1;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
+            padding: 15px;
+            background: white;
         }
 
         /* CONTROLS */
