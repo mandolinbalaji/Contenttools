@@ -618,6 +618,7 @@
                         <button class="toolbar-btn" id="redoBtn" title="Redo">↷</button>
                         <div class="toolbar-separator"></div>
                         <button class="toolbar-btn" id="clearBtn" title="Clear">Clear</button>
+                        <button class="toolbar-btn" id="formatBtn" title="Format: lowercase letters, ; → ,,">Format</button>
                         <button class="toolbar-btn" id="resetBtn" title="Reset All">Reset</button>
                     </div>
                     <input type="text" class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" style="flex: 1;">
@@ -684,6 +685,7 @@
         const undoBtn = document.getElementById('undoBtn');
         const redoBtn = document.getElementById('redoBtn');
         const clearBtn = document.getElementById('clearBtn');
+        const formatBtn = document.getElementById('formatBtn');
         const resetBtn = document.getElementById('resetBtn');
         const checkCalcBtn = document.getElementById('checkCalcBtn');
         const patternInput = document.getElementById('patternInput');
@@ -824,6 +826,18 @@
             currentKanakkuId = null;  // Clear the loaded kanakku reference
             calculate();
             updateUndoRedo();
+        });
+
+        formatBtn.addEventListener('click', () => {
+            // Format: replace capital letters with lowercase, semicolons with double commas
+            let text = phraseInput.value;
+            text = text.toLocaleLowerCase();  // Convert to lowercase
+            text = text.replace(/;/g, ',,');   // Replace ; with ,,
+            phraseInput.value = text;
+            history.push(text);
+            historyIndex = history.length - 1;
+            updateUndoRedo();
+            calculate();
         });
 
         resetBtn.addEventListener('click', () => {
