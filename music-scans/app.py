@@ -175,6 +175,15 @@ def brahmalayam():
     return send_from_directory(BASE_DIR, "brahmalayam.html")
 
 
+@app.get("/Kanakku.html")
+def kanakku():
+    """Serve Kanakku phrase timing calculator"""
+    kanakku_file = BASE_DIR / "Kanakku.html"
+    if not kanakku_file.exists():
+        return jsonify({"error": "File not found"}), 404
+    return send_from_directory(BASE_DIR, "Kanakku.html")
+
+
 @app.get("/api/songs")
 def api_list():
     try:
@@ -370,6 +379,9 @@ def _load_lessons():
                 pass
             return []
         data = json.loads(content)
+        # Handle both old array format and new object format with thala-beats
+        if isinstance(data, dict) and "lessons" in data:
+            data = data.get("lessons", [])
         try:
             print(f"DEBUG: Loaded {len(data)} lessons", flush=True)
         except:
@@ -384,19 +396,33 @@ def _load_lessons():
         return []
 
 def _save_lessons(lessons):
-    """Save lessons to lessons.json"""
+    """Save lessons to lessons.json, preserving thala-beats if present"""
     try:
-        LESSONS_FILE.write_text(json.dumps(lessons, indent=2, ensure_ascii=False), encoding="utf-8")
+        # Check if existing file has thala-beats data
+        thala_beats = None
+        if LESSONS_FILE.exists():
+            try:
+                existing = json.loads(LESSONS_FILE.read_text(encoding="utf-8"))
+                if isinstance(existing, dict) and "thala-beats" in existing:
+                    thala_beats = existing["thala-beats"]
+            except:
+                pass
+        
+        # Build output structure
+        output = {"lessons": lessons}
+        if thala_beats:
+            output["thala-beats"] = thala_beats
+        
+        LESSONS_FILE.write_text(json.dumps(output, indent=2, ensure_ascii=False), encoding="utf-8")
     except Exception as e:
         print(f"Error saving lessons: {e}")
 
 @app.route('/api/lessons', methods=['GET'])
 def get_lessons():
-    """Get all lessons - returns raw JSON from file"""
+    """Get all lessons - returns just the lessons array"""
     print("\n" + "="*70, flush=True)
     print("[ENDPOINT CALLED] GET /api/lessons", flush=True)
     
-    # Read the file directly and return as-is
     try:
         file_path = Path(__file__).parent / "lessons.json"
         print(f"[ENDPOINT] Reading from: {file_path}", flush=True)
@@ -405,17 +431,24 @@ def get_lessons():
         if file_path.exists():
             content = file_path.read_text(encoding='utf-8').strip()
             print(f"[ENDPOINT] File content length: {len(content)}", flush=True)
-            print(f"[ENDPOINT] First 50 chars: {content[:50]}", flush=True)
-            print(f"[ENDPOINT] Returning file content", flush=True)
-            return content, 200, {'Content-Type': 'application/json'}
+            data = json.loads(content)
+            
+            # Extract lessons array from the new format
+            if isinstance(data, dict) and "lessons" in data:
+                lessons = data["lessons"]
+            else:
+                lessons = data if isinstance(data, list) else []
+            
+            print(f"[ENDPOINT] Returning {len(lessons)} lessons", flush=True)
+            return jsonify(lessons), 200
         else:
             print(f"[ENDPOINT] File NOT found!", flush=True)
-            return '[]', 200, {'Content-Type': 'application/json'}
+            return jsonify([]), 200
     except Exception as e:
         print(f"[ENDPOINT] ERROR: {e}", flush=True)
         import traceback
         traceback.print_exc()
-        return '[]', 200, {'Content-Type': 'application/json'}
+        return jsonify([]), 200
     finally:
         print("="*70, flush=True)
 
@@ -427,6 +460,27 @@ def get_lesson(lesson_id):
         if lesson.get('id') == lesson_id:
             return jsonify(lesson)
     return jsonify({"error": "Lesson not found"}), 404
+
+@app.route('/api/thala-beats', methods=['GET'])
+def get_thala_beats():
+    """Get thala-beats from lessons.json"""
+    try:
+        if not LESSONS_FILE.exists():
+            return jsonify({"error": "Data file not found"}), 404
+        
+        content = LESSONS_FILE.read_text(encoding="utf-8").strip()
+        if not content:
+            return jsonify({"error": "Data file is empty"}), 404
+        
+        data = json.loads(content)
+        # Handle both old array format and new object format
+        if isinstance(data, dict) and "thala-beats" in data:
+            return jsonify(data["thala-beats"]), 200
+        else:
+            return jsonify({"error": "Thala-beats data not found"}), 404
+    except Exception as e:
+        print(f"Error loading thala-beats: {e}", flush=True)
+        return jsonify({"error": "Error loading thala beats"}), 500
 
 @app.route('/api/lesson', methods=['POST'])
 def create_lesson():
@@ -477,6 +531,70 @@ def delete_lesson(lesson_id):
     return jsonify({"success": True})
 
 
+# ===== KANAKKU ENDPOINTS =====
+KANAKKU_FILE = BASE_DIR / "kanakku.json"
+
+def _load_kanakkus():
+    """Load all saved kanakkus from kanakku.json"""
+    if not KANAKKU_FILE.exists():
+        return []
+    try:
+        with open(KANAKKU_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return []
+
+def _save_kanakkus(kanakkus):
+    """Save kanakkus to kanakku.json"""
+    with open(KANAKKU_FILE, 'w', encoding='utf-8') as f:
+        json.dump(kanakkus, f, indent=2, ensure_ascii=False)
+
+@app.route('/api/kanakkus', methods=['GET'])
+def get_kanakkus():
+    """Get all saved kanakkus"""
+    kanakkus = _load_kanakkus()
+    return jsonify(kanakkus)
+
+@app.route('/api/kanakkus', methods=['POST'])
+def save_kanakku():
+    """Save a new kanakku"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    # Generate unique ID
+    data['id'] = str(uuid.uuid4())
+    
+    kanakkus = _load_kanakkus()
+    kanakkus.insert(0, data)  # Add to front of list
+    _save_kanakkus(kanakkus)
+    
+    return jsonify(data), 201
+
+@app.route('/api/kanakkus/<kanakku_id>', methods=['PUT'])
+def update_kanakku(kanakku_id):
+    """Update an existing kanakku"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    kanakkus = _load_kanakkus()
+    for i, kanakku in enumerate(kanakkus):
+        if kanakku.get('id') == kanakku_id:
+            data['id'] = kanakku_id  # Preserve ID
+            kanakkus[i] = data
+            _save_kanakkus(kanakkus)
+            return jsonify(data)
+    
+    return jsonify({"error": "Kanakku not found"}), 404
+
+@app.route('/api/kanakkus/<kanakku_id>', methods=['DELETE'])
+def delete_kanakku(kanakku_id):
+    """Delete a kanakku"""
+    kanakkus = _load_kanakkus()
+    kanakkus = [k for k in kanakkus if k.get('id') != kanakku_id]
+    _save_kanakkus(kanakkus)
+    return jsonify({"success": True})
 
 
 if __name__ == "__main__":

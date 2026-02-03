@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanakku - Phrase Timing Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ===== LEFT SIDEBAR ===== */
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 2px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95em;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .sidebar-search {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .sidebar-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .kanakku-item {
+            padding: 10px;
+            margin-bottom: 6px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85em;
+        }
+
+        .kanakku-item:hover {
+            background: #e8eeff;
+            border-color: #667eea;
+        }
+
+        .kanakku-item-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .kanakku-item-info {
+            font-size: 0.75em;
+            color: #666;
+        }
+
+        .kanakku-delete-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 0 4px;
+            transition: all 0.2s;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-left: 6px;
+        }
+
+        .kanakku-delete-btn:hover {
+            color: #c33;
+            transform: scale(1.2);
+        }
+
+        .sidebar-index {
+            padding: 8px 4px;
+            background: white;
+            border-top: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            font-size: 0.65em;
+            font-weight: 600;
+        }
+
+        .index-letter {
+            width: 100%;
+            text-align: center;
+            color: #667eea;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .index-letter:hover {
+            background: #e8eeff;
+        }
+
+        .splitter {
+            width: 6px;
+            background: #ddd;
+            cursor: col-resize;
+            user-select: none;
+        }
+
+        .splitter:hover {
+            background: #667eea;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-btn {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .header-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .header-select {
+            padding: 6px 10px;
+            border: 2px solid white;
+            border-radius: 4px;
+            font-size: 0.85em;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* CONTROLS */
+        .controls-section {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-bottom: 2px solid #e9ecef;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            align-items: end;
+            flex-shrink: 0;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-item label {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #333;
+            font-size: 0.75em;
+        }
+
+        .control-item input,
+        .control-item select {
+            padding: 6px 8px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85em;
+            transition: border-color 0.3s;
+        }
+
+        .control-item input:focus,
+        .control-item select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .info-text {
+            font-size: 0.65em;
+            color: #666;
+            margin-top: 1px;
+        }
+
+        /* PHRASE EDITOR */
+        .phrase-section {
+            background: white;
+            padding: 12px 20px;
+            border-bottom: 2px solid #e9ecef;
+            flex-shrink: 0;
+        }
+
+        .phrase-toolbar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            padding: 6px 10px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 4px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .toolbar-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .toolbar-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .toolbar-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            height: 24px;
+            background: #ddd;
+            margin: 0 3px;
+        }
+
+        .phrase-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            background: #fafafa;
+            transition: border-color 0.3s;
+        }
+
+        .phrase-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .phrase-info {
+            display: flex;
+            gap: 15px;
+            margin-top: 6px;
+            font-size: 0.75em;
+        }
+
+        .phrase-info-item {
+            display: flex;
+            gap: 4px;
+        }
+
+        .phrase-info-label {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* STAFF NOTATION */
+        .staff-section {
+            flex: 1;
+            overflow: auto;
+            padding: 15px 20px;
+            background: white;
+        }
+
+        .staff-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+            margin-top: 12px;
+        }
+
+        .staff-title:first-child {
+            margin-top: 0;
+        }
+
+        .staff-grid {
+            display: inline-block;
+            border: 2px solid #333;
+            background: white;
+            margin-bottom: 20px;
+        }
+
+        .staff-row {
+            display: flex;
+            height: 40px;
+        }
+
+        .beat-group {
+            display: flex;
+            border-right: 3px solid #667eea;
+            position: relative;
+        }
+
+        .subdivision {
+            width: 50px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #333;
+            background: white;
+            cursor: text;
+            gap: 2px;
+        }
+
+        .subdivision-number {
+            font-size: 0.65em;
+            color: #999;
+            line-height: 1;
+        }
+
+        .subdivision-char {
+            font-size: 0.9em;
+            line-height: 1;
+        }
+
+        .subdivision.beat-end {
+            border-right: 3px solid #667eea;
+        }
+
+        .subdivision.cycle-end {
+            border-right: 5px solid #333;
+        }
+
+        .beat-label {
+            position: absolute;
+            top: -22px;
+            left: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #667eea;
+            white-space: nowrap;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-top: 2px solid #e9ecef;
+            font-size: 0.75em;
+            color: #666;
+            flex-shrink: 0;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-top: 6px;
+            border: 1px solid #f5c6cb;
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .subdivision {
+                width: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>♪ Kanakku ♪</h1>
+            <div class="header-buttons">
+                <select id="sruthi" class="header-select">
+                    <option value="C">C</option>
+                    <option value="C#">C# (Default)</option>
+                    <option value="D">D</option>
+                    <option value="D#">D#</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                    <option value="A">A</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                </select>
+                <button class="header-btn" id="saveBtn" title="Save phrase (Ctrl+S)">💾 Save</button>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <!-- LEFT SIDEBAR -->
+            <div class="sidebar">
+                <div class="sidebar-header">Saved Kanakkus</div>
+                <div class="sidebar-search">
+                    <input type="text" id="sidebarSearch" placeholder="Search...">
+                </div>
+                <div class="sidebar-list" id="kanakkuList"></div>
+                <div class="sidebar-index" id="sidebarIndex"></div>
+            </div>
+
+            <div class="splitter" id="splitter"></div>
+
+            <!-- MAIN CONTENT -->
+            <div class="content-area">
+                <!-- CONTROLS -->
+                <div class="controls-section">
+                    <div class="control-item">
+                        <label for="beats">Beats:</label>
+                        <input type="number" id="beats" min="3" max="21" value="8">
+                        <div class="info-text">Cycle: <span id="cycleLength">32</span></div>
+                    </div>
+
+                    <div class="control-item">
+                        <label for="nadai">Nadai:</label>
+                        <select id="nadai">
+                            <option value="3">Tisra (3)</option>
+                            <option value="4" selected>Chatusra (4)</option>
+                            <option value="5">Khandam (5)</option>
+                            <option value="7">Misra (7)</option>
+                            <option value="9">Sankirna (9)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <label for="eduppu">Eduppu:</label>
+                        <input type="number" id="eduppu" min="1" value="1">
+                        <div class="info-text">Position: <span id="eduppuDisplay">1</span></div>
+                    </div>
+
+                    <div class="control-item">
+                        <div style="font-weight: 600; color: #333; font-size: 0.75em; margin-bottom: 3px;">Calculations</div>
+                        <div style="font-size: 0.9em; font-weight: bold; color: #667eea; font-family: 'Courier New', monospace;">
+                            L:<span id="phraseLength">0</span> S:<span id="startingPos">-</span> E:<span id="landingBeat">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHRASE EDITOR -->
+                <div class="phrase-section">
+                    <div class="phrase-toolbar">
+                        <button class="toolbar-btn" id="dotAboveBtn" title="Dot Above">⬆️</button>
+                        <button class="toolbar-btn" id="dotBelowBtn" title="Dot Below">⬇️</button>
+                        <div class="toolbar-separator"></div>
+                        <button class="toolbar-btn" id="undoBtn" title="Undo">↶</button>
+                        <button class="toolbar-btn" id="redoBtn" title="Redo">↷</button>
+                        <div class="toolbar-separator"></div>
+                        <button class="toolbar-btn" id="clearBtn" title="Clear">Clear</button>
+                    </div>
+                    <input type="text" class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n" autocomplete="off">
+                    <div class="phrase-info">
+                        <div class="phrase-info-item">
+                            <span class="phrase-info-label">Notes:</span>
+                            <span id="notesEntered">0</span>
+                        </div>
+                        <div class="phrase-info-item">
+                            <span class="phrase-info-label">Name:</span>
+                            <input type="text" id="kanakkuName" placeholder="e.g., Palavi" style="padding: 3px; font-size: 0.85em; border: 1px solid #ddd; border-radius: 3px; width: 120px;">
+                        </div>
+                    </div>
+                    <div id="errorMessage"></div>
+                </div>
+
+                <!-- STAFF NOTATION -->
+                <div class="staff-section">
+                    <div id="staffContainer">
+                        <div style="color: #999; font-style: italic;">Enter a phrase to see the staff notation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Kanakku calculates phrase placement. Use ⬆️/⬇️ for dots. Ctrl+S to save.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const beatsInput = document.getElementById('beats');
+        const nadaiInput = document.getElementById('nadai');
+        const eduppuInput = document.getElementById('eduppu');
+        const phraseInput = document.getElementById('phrase');
+        const kanakkuNameInput = document.getElementById('kanakkuName');
+        const sruthiSelect = document.getElementById('sruthi');
+        const staffContainer = document.getElementById('staffContainer');
+        const sidebarSearch = document.getElementById('sidebarSearch');
+        const kanakkuList = document.getElementById('kanakkuList');
+        const sidebarIndex = document.getElementById('sidebarIndex');
+        const splitter = document.getElementById('splitter');
+        const sidebar = document.querySelector('.sidebar');
+
+        const cycleLength = document.getElementById('cycleLength');
+        const eduppuDisplay = document.getElementById('eduppuDisplay');
+        const phraseLengthSpan = document.getElementById('phraseLength');
+        const startingPosSpan = document.getElementById('startingPos');
+        const landingBeatSpan = document.getElementById('landingBeat');
+        const notesEnteredSpan = document.getElementById('notesEntered');
+        const errorMessageDiv = document.getElementById('errorMessage');
+
+        const dotAboveBtn = document.getElementById('dotAboveBtn');
+        const dotBelowBtn = document.getElementById('dotBelowBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveBtn = document.getElementById('saveBtn');
+
+        // State
+        let dotMode = null;
+        let history = [''];
+        let historyIndex = 0;
+        let savedKanakkus = [];
+        let currentKanakkuId = null;  // Track which kanakku is loaded
+
+        const dotsAbove = {
+            's': 'ṡ', 'S': 'Ṡ', 'r': 'ṙ', 'R': 'Ṙ', 'g': 'ġ', 'G': 'Ġ', 
+            'm': 'ṁ', 'M': 'Ṁ', 'p': 'ṗ', 'P': 'Ṗ', 'd': 'ḋ', 'D': 'Ḋ',
+            'n': 'ṅ', 'N': 'Ṅ', ',': '·'
+        };
+
+        const dotsBelow = {
+            's': 'ṣ', 'S': 'Ṣ', 'r': 'ṛ', 'R': 'Ṛ', 'g': 'ģ', 'G': 'Ģ',
+            'm': 'ṃ', 'M': 'Ṃ', 'p': 'ṕ', 'P': 'Ṕ', 'd': 'ḍ', 'D': 'Ḍ',
+            'n': 'ṇ', 'N': 'Ṇ', ',': '·'
+        };
+
+        // Sidebar resizing
+        let isResizing = false;
+        splitter.addEventListener('mousedown', () => isResizing = true);
+        document.addEventListener('mouseup', () => isResizing = false);
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            const newWidth = e.clientX - sidebar.getBoundingClientRect().left;
+            if (newWidth > 200 && newWidth < 600) {
+                sidebar.style.width = newWidth + 'px';
+            }
+        });
+
+        // Event Listeners
+        beatsInput.addEventListener('input', () => {
+            calculate();
+        });
+
+        nadaiInput.addEventListener('change', () => {
+            calculate();
+        });
+
+        eduppuInput.addEventListener('input', () => {
+            updateEduppuDisplay();
+            calculate();
+        });
+
+        phraseInput.addEventListener('input', () => {
+            const phrase = phraseInput.value;
+            notesEnteredSpan.textContent = phrase.length;
+            if (history[historyIndex] !== phrase) {
+                history = history.slice(0, historyIndex + 1);
+                history.push(phrase);
+                historyIndex++;
+                updateUndoRedo();
+            }
+            calculate();
+        });
+
+        phraseInput.addEventListener('click', () => {
+            if (dotMode) {
+                const cursorPos = phraseInput.selectionStart;
+                if (cursorPos > 0) {
+                    const phrase = phraseInput.value;
+                    const charIndex = cursorPos - 1;
+                    const charAtPos = phrase[charIndex];
+                    
+                    if (charAtPos) {
+                        let newChar = charAtPos;
+                        
+                        if (dotMode === 'above' && dotsAbove[charAtPos]) {
+                            newChar = dotsAbove[charAtPos];
+                        } else if (dotMode === 'below' && dotsBelow[charAtPos]) {
+                            newChar = dotsBelow[charAtPos];
+                        }
+                        
+                        if (newChar !== charAtPos) {
+                            const newPhrase = phrase.substring(0, charIndex) + newChar + phrase.substring(charIndex + 1);
+                            phraseInput.value = newPhrase;
+                            
+                            history = history.slice(0, historyIndex + 1);
+                            history.push(newPhrase);
+                            historyIndex++;
+                            updateUndoRedo();
+                            
+                            notesEnteredSpan.textContent = newPhrase.length;
+                            calculate();
+                            
+                            phraseInput.setSelectionRange(cursorPos, cursorPos);
+                        }
+                    }
+                }
+            }
+        });
+
+        dotAboveBtn.addEventListener('click', () => {
+            dotMode = dotMode === 'above' ? null : 'above';
+            dotAboveBtn.classList.toggle('active');
+            dotBelowBtn.classList.remove('active');
+            phraseInput.focus();
+        });
+
+        dotBelowBtn.addEventListener('click', () => {
+            dotMode = dotMode === 'below' ? null : 'below';
+            dotBelowBtn.classList.toggle('active');
+            dotAboveBtn.classList.remove('active');
+            phraseInput.focus();
+        });
+
+        undoBtn.addEventListener('click', () => {
+            if (historyIndex > 0) {
+                historyIndex--;
+                phraseInput.value = history[historyIndex];
+                notesEnteredSpan.textContent = phraseInput.value.length;
+                calculate();
+                updateUndoRedo();
+            }
+        });
+
+        redoBtn.addEventListener('click', () => {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                phraseInput.value = history[historyIndex];
+                notesEnteredSpan.textContent = phraseInput.value.length;
+                calculate();
+                updateUndoRedo();
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            phraseInput.value = '';
+            notesEnteredSpan.textContent = '0';
+            history = [''];
+            historyIndex = 0;
+            currentKanakkuId = null;  // Clear the loaded kanakku reference
+            calculate();
+            updateUndoRedo();
+        });
+
+        saveBtn.addEventListener('click', async () => {
+            const phrase = phraseInput.value;
+
+            if (!phrase) {
+                alert('Please enter a phrase first');
+                return;
+            }
+
+            // Prompt for name
+            const name = prompt('Name for this kanakku:', kanakkuNameInput.value || '');
+            if (!name) return;  // User cancelled
+
+            const beats = parseInt(beatsInput.value);
+            const nadai = parseInt(nadaiInput.value);
+            const eduppu = parseInt(eduppuInput.value);
+            const sruthi = sruthiSelect.value;
+
+            const kanakku = { name, phrase, beats, nadai, eduppu, sruthi };
+            
+            try {
+                let response;
+                if (currentKanakkuId) {
+                    // Update existing
+                    response = await fetch(`/api/kanakkus/${currentKanakkuId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(kanakku)
+                    });
+                } else {
+                    // Create new
+                    response = await fetch('/api/kanakkus', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(kanakku)
+                    });
+                }
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    currentKanakkuId = saved.id;
+                    kanakkuNameInput.value = name;
+                    await loadSavedKanakkus();
+                    alert('Saved: ' + name);
+                } else {
+                    alert('Error saving kanakku');
+                }
+            } catch (err) {
+                console.error('Save error:', err);
+                alert('Error saving kanakku');
+            }
+        });
+
+        sidebarSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.kanakku-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveBtn.click();
+            }
+            if (e.ctrlKey && e.key === 'z') {
+                e.preventDefault();
+                undoBtn.click();
+            }
+            if (e.ctrlKey && e.key === 'y') {
+                e.preventDefault();
+                redoBtn.click();
+            }
+        });
+
+        function updateUndoRedo() {
+            undoBtn.disabled = historyIndex === 0;
+            redoBtn.disabled = historyIndex === history.length - 1;
+        }
+
+        function updateEduppuDisplay() {
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            let eduppu = parseInt(eduppuInput.value) || 1;
+            const cycleLengthVal = beats * nadai;
+
+            if (eduppu < 1 || eduppu > cycleLengthVal) {
+                eduppu = 1;
+                eduppuInput.value = 1;
+            }
+            eduppuInput.max = cycleLengthVal;
+
+            const beatNum = Math.ceil(eduppu / nadai);
+            eduppuDisplay.textContent = eduppu;
+        }
+
+        function calculate() {
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const eduppu = parseInt(eduppuInput.value) || 1;
+            const phrase = phraseInput.value;
+
+            errorMessageDiv.innerHTML = '';
+
+            const cycleLengthVal = beats * nadai;
+            cycleLength.textContent = cycleLengthVal;
+
+            updateEduppuDisplay();
+
+            if (phrase.length === 0) {
+                phraseLengthSpan.textContent = '0';
+                startingPosSpan.textContent = '-';
+                landingBeatSpan.textContent = '-';
+                staffContainer.innerHTML = '<div style="color: #999; font-style: italic;">Enter a phrase to see the staff notation</div>';
+                return;
+            }
+
+            const phraseLength = phrase.length;
+            phraseLengthSpan.textContent = phraseLength;
+
+            let startingPos = eduppu - phraseLength;
+            while (startingPos <= 0) {
+                startingPos += cycleLengthVal;
+            }
+
+            startingPosSpan.textContent = startingPos;
+
+            const beatNum = Math.ceil(eduppu / nadai);
+            landingBeatSpan.textContent = eduppu;
+
+            displayStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu);
+        }
+
+        function displayStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu) {
+            let html = '';
+
+            const totalNotes = startingPos - 1 + phrase.length;
+            const totalCycles = Math.ceil(totalNotes / cycleLengthVal);
+
+            for (let cycleNum = 1; cycleNum <= totalCycles; cycleNum++) {
+                html += `<div class="staff-title">Cycle ${cycleNum}</div>`;
+                html += '<div class="staff-grid"><div class="staff-row" style="position: relative; margin-top: 25px;">';
+
+                for (let beat = 1; beat <= beats; beat++) {
+                    html += '<div class="beat-group">';
+                    
+                    if (beat === 1 && cycleNum === 1) {
+                        html += `<div class="beat-label">B${beat}</div>`;
+                    }
+
+                    for (let sub = 1; sub <= nadai; sub++) {
+                        const posInCycle = (beat - 1) * nadai + sub;
+                        const globalPos = (cycleNum - 1) * cycleLengthVal + posInCycle;
+
+                        let character = ',';
+                        let bgColor = 'white';
+                        let displayNum = null;
+
+                        // Show descending numbers on first row only
+                        if (cycleNum === 1) {
+                            displayNum = cycleLengthVal - posInCycle + 1;
+                        }
+
+                        if (globalPos >= startingPos && globalPos < startingPos + phrase.length) {
+                            const phraseIndex = globalPos - startingPos;
+                            character = phrase[phraseIndex];
+                            
+                            if (phraseIndex === 0) {
+                                bgColor = '#e8f5e9';
+                            } else if (posInCycle === eduppu || (cycleNum > 1 && globalPos % cycleLengthVal === eduppu % cycleLengthVal)) {
+                                bgColor = '#ffebee';
+                            } else if (character !== ',') {
+                                bgColor = '#f5f5f5';
+                            }
+                        }
+
+                        let cellClass = 'subdivision';
+                        if (sub === nadai) cellClass += ' beat-end';
+                        if (posInCycle === cycleLengthVal) cellClass += ' cycle-end';
+
+                        html += `<div class="${cellClass}" style="background: ${bgColor};">
+                            ${displayNum ? `<div class="subdivision-number">${displayNum}</div>` : ''}
+                            <div class="subdivision-char">${character}</div>
+                        </div>`;
+                    }
+
+                    html += '</div>';
+                }
+
+                html += '</div></div>';
+            }
+
+            staffContainer.innerHTML = html;
+        }
+
+        function loadSavedKanakkus() {
+            return fetch('/api/kanakkus')
+                .then(res => res.json())
+                .then(data => {
+                    savedKanakkus = data;
+                    
+                    kanakkuList.innerHTML = '';
+                    if (savedKanakkus.length === 0) {
+                        kanakkuList.innerHTML = '<div style="padding: 10px; color: #999; font-size: 0.8em;">No saved kanakkus</div>';
+                        sidebarIndex.innerHTML = '';
+                        return;
+                    }
+
+                    // Group by first letter
+                    const grouped = {};
+                    savedKanakkus.forEach(k => {
+                        const letter = k.name[0].toUpperCase();
+                        if (!grouped[letter]) grouped[letter] = [];
+                        grouped[letter].push(k);
+                    });
+
+                    // Populate list
+                    Object.keys(grouped).sort().forEach(letter => {
+                        grouped[letter].forEach(k => {
+                            const div = document.createElement('div');
+                            div.className = 'kanakku-item';
+                            div.innerHTML = `
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="flex: 1;">
+                                        <div class="kanakku-item-title">${k.name}</div>
+                                        <div class="kanakku-item-info">${k.beats}B ${k.nadai}N | ${k.phrase.substring(0, 20)}${k.phrase.length > 20 ? '...' : ''}</div>
+                                    </div>
+                                    <button class="kanakku-delete-btn" data-id="${k.id}" title="Delete">✕</button>
+                                </div>
+                            `;
+                            div.addEventListener('click', (e) => {
+                                if (e.target.closest('.kanakku-delete-btn')) return;  // Don't load if clicking delete
+                                beatsInput.value = k.beats;
+                                nadaiInput.value = k.nadai;
+                                eduppuInput.value = k.eduppu;
+                                phraseInput.value = k.phrase;
+                                kanakkuNameInput.value = k.name;
+                                sruthiSelect.value = k.sruthi || 'C#';
+                                currentKanakkuId = k.id;  // Track which kanakku is loaded
+                                history = [k.phrase];
+                                historyIndex = 0;
+                                notesEnteredSpan.textContent = k.phrase.length;
+                                updateUndoRedo();
+                                calculate();
+                            });
+                            kanakkuList.appendChild(div);
+                        });
+                    });
+
+                    // Add delete listeners
+                    kanakkuList.querySelectorAll('.kanakku-delete-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            const kanakkuId = btn.dataset.id;
+                            if (confirm('Delete this kanakku?')) {
+                                try {
+                                    const response = await fetch(`/api/kanakkus/${kanakkuId}`, {
+                                        method: 'DELETE'
+                                    });
+                                    if (response.ok) {
+                                        await loadSavedKanakkus();
+                                        // Clear if this was the current one
+                                        if (currentKanakkuId === kanakkuId) {
+                                            phraseInput.value = '';
+                                            kanakkuNameInput.value = '';
+                                            currentKanakkuId = null;
+                                            notesEnteredSpan.textContent = '0';
+                                            calculate();
+                                        }
+                                    }
+                                } catch (err) {
+                                    console.error('Delete error:', err);
+                                    alert('Error deleting kanakku');
+                                }
+                            }
+                        });
+                    });
+
+                    // Index
+                    sidebarIndex.innerHTML = Object.keys(grouped).sort().map(letter => 
+                        `<div class="index-letter">${letter}</div>`
+                    ).join('');
+
+                    sidebarIndex.querySelectorAll('.index-letter').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const letter = btn.textContent;
+                            const firstItem = kanakkuList.querySelector(`[data-letter="${letter}"]`);
+                            if (firstItem) firstItem.scrollIntoView({ behavior: 'smooth' });
+                        });
+                    });
+                })
+                .catch(err => {
+                    console.error('Error loading kanakkus:', err);
+                    kanakkuList.innerHTML = '<div style="padding: 10px; color: #c33; font-size: 0.8em;">Error loading kanakkus</div>';
+                });
+        }
+
+        // Initialize
+        updateUndoRedo();
+        updateEduppuDisplay();
+        sruthiSelect.value = 'C#';
+        loadSavedKanakkus();
+    </script>
+</body>
+</html>
