@@ -749,8 +749,8 @@
         };
 
         const dotsBelow = {
-            's': 'ṣ', 'S': 'Ṣ', 'r': 'ṛ', 'R': 'Ṛ', 'g': 'ģ', 'G': 'Ģ',
-            'm': 'ṃ', 'M': 'Ṃ', 'p': 'ṕ', 'P': 'Ṕ', 'd': 'ḍ', 'D': 'Ḍ',
+            's': 'ṣ', 'S': 'Ṣ', 'r': 'ṛ', 'R': 'Ṛ', 'g': 'g\u0323', 'G': 'G\u0323',
+            'm': 'ṃ', 'M': 'Ṃ', 'p': 'p\u0323', 'P': 'P\u0323', 'd': 'ḍ', 'D': 'Ḍ',
             'n': 'ṇ', 'N': 'Ṇ', ',': '·'
         };
 
@@ -810,12 +810,33 @@
                 const cursorPos = phraseInput.selectionStart;
                 if (cursorPos > 0) {
                     const phrase = phraseInput.value;
-                    const charIndex = cursorPos - 1;
-                    const charAtPos = phrase[charIndex];
+                    let charIndex = cursorPos - 1;
+                    let charAtPos = phrase[charIndex];
                     
                     if (charAtPos) {
-                        // First, get the base character (remove any existing dots)
-                        const baseChar = charToBase[charAtPos] || charAtPos;
+                        // Check if next character is a combining mark and include it
+                        let nextCharIsCombining = false;
+                        if (charIndex + 1 < phrase.length) {
+                            const nextChar = phrase[charIndex + 1];
+                            if (nextChar === '\u0323' || nextChar === '\u0308' || nextChar === '\u0307') {
+                                // Combining dot below or above marks
+                                charAtPos = charAtPos + nextChar;
+                                nextCharIsCombining = true;
+                            }
+                        }
+                        
+                        // Get the base character (remove any existing dots)
+                        let baseChar = charToBase[charAtPos];
+                        
+                        // If not in mapping, try to extract just the first character as base
+                        if (!baseChar) {
+                            baseChar = charAtPos[0];  // Take first char, ignore combining marks
+                            if (!charToBase[baseChar]) {
+                                baseChar = charAtPos;  // Use as-is if still not found
+                            } else {
+                                baseChar = charToBase[baseChar];
+                            }
+                        }
                         
                         // Now apply the requested dot to the base character
                         let newChar = baseChar;
@@ -827,7 +848,9 @@
                         }
                         
                         if (newChar !== charAtPos) {
-                            const newPhrase = phrase.substring(0, charIndex) + newChar + phrase.substring(charIndex + 1);
+                            // Replace the original character (and combining mark if present)
+                            const replacementLength = nextCharIsCombining ? 2 : 1;
+                            const newPhrase = phrase.substring(0, charIndex) + newChar + phrase.substring(charIndex + replacementLength);
                             phraseInput.value = newPhrase;
                             
                             history = history.slice(0, historyIndex + 1);
