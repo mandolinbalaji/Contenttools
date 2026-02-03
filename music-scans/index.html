@@ -151,7 +151,7 @@
     <div class="actions" style="display:flex; gap:8px;">
       <button id="btnToggleList" class="btn white" title="Hide or show song list">Hide list</button>
       <button id="btnMetronome" class="btn white" title="Open Metronome">Metronome</button>
-      <button id="btnBrahmaLayam" class="btn white" title="Open BrahmaLayam Notation Editor">BrahmaLayam</button>
+      <button id="btnKanakku" class="btn white" title="Open Kanakku - Phrase Timing Calculator">Kanakku</button>
       <button id="btnAdd" class="btn white">Add Song</button>
     </div>
   </div>
@@ -919,9 +919,9 @@ function setupCollapsible(card) {
     }
   });
 
-  // Open BrahmaLayam
-  document.getElementById("btnBrahmaLayam").addEventListener("click", function () {
-    window.open("/brahmalayam.html", "_blank");
+  // Open Kanakku
+  document.getElementById("btnKanakku").addEventListener("click", function () {
+    window.open("/Kanakku.html", "_blank");
   });
 
   // Open metronome
