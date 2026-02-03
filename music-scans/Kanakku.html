@@ -68,21 +68,67 @@
             font-size: 0.85em;
         }
 
+        .sidebar-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar-index {
+            width: 30px;
+            background: #f0f0f0;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 2px 0;
+        }
+
+        .index-letter {
+            width: 100%;
+            text-align: center;
+            color: #667eea;
+            cursor: pointer;
+            padding: 3px 0;
+            font-size: 0.65em;
+            font-weight: 600;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .index-letter:hover {
+            background: #e8eeff;
+            font-weight: 700;
+        }
+
         .sidebar-list {
             flex: 1;
             overflow-y: auto;
             padding: 8px;
         }
 
+        .kanakku-group {
+            margin-bottom: 8px;
+        }
+
+        .kanakku-group-letter {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 0.75em;
+            padding: 3px 4px;
+            margin-bottom: 3px;
+            border-bottom: 1px solid #ddd;
+        }
+
         .kanakku-item {
-            padding: 10px;
-            margin-bottom: 6px;
+            padding: 8px;
+            margin-bottom: 4px;
             background: white;
             border: 1px solid #ddd;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.85em;
+            font-size: 0.8em;
         }
 
         .kanakku-item:hover {
@@ -94,10 +140,11 @@
             font-weight: 600;
             color: #333;
             margin-bottom: 2px;
+            font-size: 0.9em;
         }
 
         .kanakku-item-info {
-            font-size: 0.75em;
+            font-size: 0.7em;
             color: #666;
         }
 
@@ -105,41 +152,18 @@
             background: none;
             border: none;
             color: #999;
-            font-size: 1.2em;
+            font-size: 1em;
             cursor: pointer;
-            padding: 0 4px;
+            padding: 0 2px;
             transition: all 0.2s;
             line-height: 1;
             flex-shrink: 0;
-            margin-left: 6px;
+            margin-left: 4px;
         }
 
         .kanakku-delete-btn:hover {
             color: #c33;
             transform: scale(1.2);
-        }
-
-        .sidebar-index {
-            padding: 8px 4px;
-            background: white;
-            border-top: 1px solid #ddd;
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-            font-size: 0.65em;
-            font-weight: 600;
-        }
-
-        .index-letter {
-            width: 100%;
-            text-align: center;
-            color: #667eea;
-            cursor: pointer;
-            padding: 2px;
-        }
-
-        .index-letter:hover {
-            background: #e8eeff;
         }
 
         .splitter {
@@ -218,34 +242,72 @@
         /* CONTROLS */
         .controls-section {
             background: #f8f9fa;
-            padding: 12px 20px;
+            padding: 8px 12px;
             border-bottom: 2px solid #e9ecef;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-            align-items: end;
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
             flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .thalas-section {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .thalas-label {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
+        .thala-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 3px 6px;
+            border: 1px solid #667eea;
+            border-radius: 3px;
+            font-size: 0.75em;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .thala-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
         }
 
         .control-item {
             display: flex;
             flex-direction: column;
+            gap: 2px;
         }
 
         .control-item label {
             font-weight: 600;
-            margin-bottom: 3px;
             color: #333;
-            font-size: 0.75em;
+            font-size: 0.7em;
         }
 
         .control-item input,
         .control-item select {
-            padding: 6px 8px;
+            padding: 4px 6px;
             border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.85em;
+            border-radius: 3px;
+            font-size: 0.75em;
             transition: border-color 0.3s;
+            min-width: 60px;
         }
 
         .control-item input:focus,
@@ -256,9 +318,9 @@
         }
 
         .info-text {
-            font-size: 0.65em;
+            font-size: 0.6em;
             color: #666;
-            margin-top: 1px;
+            margin-top: 0px;
         }
 
         /* PHRASE EDITOR */
@@ -494,42 +556,53 @@
                 <div class="sidebar-search">
                     <input type="text" id="sidebarSearch" placeholder="Search...">
                 </div>
-                <div class="sidebar-list" id="kanakkuList"></div>
-                <div class="sidebar-index" id="sidebarIndex"></div>
+                <div class="sidebar-content">
+                    <div class="sidebar-index" id="sidebarIndex"></div>
+                    <div class="sidebar-list" id="kanakkuList"></div>
+                </div>
             </div>
 
             <div class="splitter" id="splitter"></div>
 
             <!-- MAIN CONTENT -->
             <div class="content-area">
-                <!-- CONTROLS -->
+                <!-- CONTROLS & THALAS -->
                 <div class="controls-section">
                     <div class="control-item">
                         <label for="beats">Beats:</label>
                         <input type="number" id="beats" min="3" max="21" value="8">
-                        <div class="info-text">Cycle: <span id="cycleLength">32</span></div>
                     </div>
 
                     <div class="control-item">
                         <label for="nadai">Nadai:</label>
                         <select id="nadai">
-                            <option value="3">Tisra (3)</option>
-                            <option value="4" selected>Chatusra (4)</option>
-                            <option value="5">Khandam (5)</option>
-                            <option value="7">Misra (7)</option>
-                            <option value="9">Sankirna (9)</option>
+                            <option value="3">3</option>
+                            <option value="4" selected>4</option>
+                            <option value="5">5</option>
+                            <option value="7">7</option>
+                            <option value="9">9</option>
                         </select>
                     </div>
 
                     <div class="control-item">
                         <label for="eduppu">Eduppu:</label>
-                        <input type="number" id="eduppu" min="1" value="1">
-                        <div class="info-text">Position: <span id="eduppuDisplay">1</span></div>
+                        <input type="number" id="eduppu" min="1" value="1" style="min-width: 50px;">
                     </div>
 
                     <div class="control-item">
-                        <div style="font-weight: 600; color: #333; font-size: 0.75em; margin-bottom: 3px;">Calculations</div>
-                        <div style="font-size: 0.9em; font-weight: bold; color: #667eea; font-family: 'Courier New', monospace;">
+                        <label>Cycle:</label>
+                        <div style="font-size: 0.8em; font-weight: bold; color: #667eea;"><span id="cycleLength">32</span></div>
+                    </div>
+
+                    <span style="font-weight: 600; color: #667eea; font-size: 0.75em; white-space: nowrap; margin-top: 16px;">Thalas:</span>
+                    <a class="thala-link" data-beats="8">Adhi (8)</a>
+                    <a class="thala-link" data-beats="3">Rupakam (3)</a>
+                    <a class="thala-link" data-beats="5">Kanda (5)</a>
+                    <a class="thala-link" data-beats="7">Misra (7)</a>
+
+                    <div class="control-item" style="margin-left: auto;">
+                        <label>Calc:</label>
+                        <div style="font-size: 0.75em; font-weight: bold; color: #667eea; font-family: 'Courier New', monospace;">
                             L:<span id="phraseLength">0</span> S:<span id="startingPos">-</span> E:<span id="landingBeat">-</span>
                         </div>
                     </div>
@@ -545,6 +618,7 @@
                         <button class="toolbar-btn" id="redoBtn" title="Redo">↷</button>
                         <div class="toolbar-separator"></div>
                         <button class="toolbar-btn" id="clearBtn" title="Clear">Clear</button>
+                        <button class="toolbar-btn" id="resetBtn" title="Reset All">Reset</button>
                     </div>
                     <input type="text" class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n" autocomplete="off">
                     <div class="phrase-info">
@@ -555,6 +629,10 @@
                         <div class="phrase-info-item">
                             <span class="phrase-info-label">Name:</span>
                             <input type="text" id="kanakkuName" placeholder="e.g., Palavi" style="padding: 3px; font-size: 0.85em; border: 1px solid #ddd; border-radius: 3px; width: 120px;">
+                        </div>
+                        <div class="phrase-info-item">
+                            <span class="phrase-info-label">Calc:</span>
+                            <span style="font-family: 'Courier New', monospace; font-weight: bold; color: #667eea;">L:<span id="phraseLength">0</span> S:<span id="startingPos">-</span> E:<span id="landingBeat">-</span></span>
                         </div>
                     </div>
                     <div id="errorMessage"></div>
@@ -602,6 +680,7 @@
         const undoBtn = document.getElementById('undoBtn');
         const redoBtn = document.getElementById('redoBtn');
         const clearBtn = document.getElementById('clearBtn');
+        const resetBtn = document.getElementById('resetBtn');
         const saveBtn = document.getElementById('saveBtn');
 
         // State
@@ -741,6 +820,35 @@
             updateUndoRedo();
         });
 
+        resetBtn.addEventListener('click', () => {
+            // Reset all to defaults
+            phraseInput.value = '';
+            kanakkuNameInput.value = '';
+            beatsInput.value = '8';
+            nadaiInput.value = '4';
+            eduppuInput.value = '1';
+            sruthiSelect.value = 'C#';
+            notesEnteredSpan.textContent = '0';
+            history = [''];
+            historyIndex = 0;
+            currentKanakkuId = null;
+            dotMode = null;
+            dotAboveBtn.classList.remove('active');
+            dotBelowBtn.classList.remove('active');
+            calculate();
+            updateUndoRedo();
+        });
+
+        // Thala quick select links
+        document.querySelectorAll('.thala-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const beats = link.dataset.beats;
+                beatsInput.value = beats;
+                calculate();
+            });
+        });
+
         saveBtn.addEventListener('click', async () => {
             const phrase = phraseInput.value;
 
@@ -835,7 +943,10 @@
             eduppuInput.max = cycleLengthVal;
 
             const beatNum = Math.ceil(eduppu / nadai);
-            eduppuDisplay.textContent = eduppu;
+            // eduppuDisplay is no longer in the compact layout, so skip if it doesn't exist
+            if (eduppuDisplay) {
+                eduppuDisplay.textContent = eduppu;
+            }
         }
 
         function calculate() {
@@ -939,8 +1050,12 @@
 
         function loadSavedKanakkus() {
             return fetch('/api/kanakkus')
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
+                    console.log('Loaded kanakkus:', data);
                     savedKanakkus = data;
                     
                     kanakkuList.innerHTML = '';
@@ -958,37 +1073,48 @@
                         grouped[letter].push(k);
                     });
 
-                    // Populate list
+                    // Populate list with groups
                     Object.keys(grouped).sort().forEach(letter => {
+                        const groupDiv = document.createElement('div');
+                        groupDiv.className = 'kanakku-group';
+                        groupDiv.setAttribute('data-letter', letter);
+                        
+                        const letterHeader = document.createElement('div');
+                        letterHeader.className = 'kanakku-group-letter';
+                        letterHeader.textContent = letter;
+                        groupDiv.appendChild(letterHeader);
+
                         grouped[letter].forEach(k => {
                             const div = document.createElement('div');
                             div.className = 'kanakku-item';
                             div.innerHTML = `
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 4px;">
                                     <div style="flex: 1;">
                                         <div class="kanakku-item-title">${k.name}</div>
-                                        <div class="kanakku-item-info">${k.beats}B ${k.nadai}N | ${k.phrase.substring(0, 20)}${k.phrase.length > 20 ? '...' : ''}</div>
+                                        <div class="kanakku-item-info">${k.beats}B ${k.nadai}N</div>
                                     </div>
                                     <button class="kanakku-delete-btn" data-id="${k.id}" title="Delete">✕</button>
                                 </div>
                             `;
                             div.addEventListener('click', (e) => {
-                                if (e.target.closest('.kanakku-delete-btn')) return;  // Don't load if clicking delete
+                                if (e.target.closest('.kanakku-delete-btn')) return;
                                 beatsInput.value = k.beats;
                                 nadaiInput.value = k.nadai;
                                 eduppuInput.value = k.eduppu;
                                 phraseInput.value = k.phrase;
                                 kanakkuNameInput.value = k.name;
                                 sruthiSelect.value = k.sruthi || 'C#';
-                                currentKanakkuId = k.id;  // Track which kanakku is loaded
+                                currentKanakkuId = k.id;
                                 history = [k.phrase];
                                 historyIndex = 0;
                                 notesEnteredSpan.textContent = k.phrase.length;
                                 updateUndoRedo();
                                 calculate();
                             });
-                            kanakkuList.appendChild(div);
+                            groupDiv.appendChild(div);
                         });
+
+                        kanakkuList.appendChild(groupDiv);
                     });
 
                     // Add delete listeners
@@ -1003,7 +1129,6 @@
                                     });
                                     if (response.ok) {
                                         await loadSavedKanakkus();
-                                        // Clear if this was the current one
                                         if (currentKanakkuId === kanakkuId) {
                                             phraseInput.value = '';
                                             kanakkuNameInput.value = '';
@@ -1020,22 +1145,25 @@
                         });
                     });
 
-                    // Index
+                    // Populate index
                     sidebarIndex.innerHTML = Object.keys(grouped).sort().map(letter => 
-                        `<div class="index-letter">${letter}</div>`
+                        `<div class="index-letter" data-letter="${letter}">${letter}</div>`
                     ).join('');
 
+                    // Index click to scroll to group
                     sidebarIndex.querySelectorAll('.index-letter').forEach(btn => {
                         btn.addEventListener('click', () => {
-                            const letter = btn.textContent;
-                            const firstItem = kanakkuList.querySelector(`[data-letter="${letter}"]`);
-                            if (firstItem) firstItem.scrollIntoView({ behavior: 'smooth' });
+                            const letter = btn.dataset.letter;
+                            const group = kanakkuList.querySelector(`[data-letter="${letter}"]`);
+                            if (group) {
+                                kanakkuList.scrollTop = group.offsetTop - kanakkuList.offsetTop;
+                            }
                         });
                     });
                 })
                 .catch(err => {
                     console.error('Error loading kanakkus:', err);
-                    kanakkuList.innerHTML = '<div style="padding: 10px; color: #c33; font-size: 0.8em;">Error loading kanakkus</div>';
+                    kanakkuList.innerHTML = '<div style="padding: 10px; color: #c33; font-size: 0.8em;">Error: ' + err.message + '</div>';
                 });
         }
 
