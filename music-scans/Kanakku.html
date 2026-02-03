@@ -679,7 +679,10 @@
 
                 <!-- MIDI DISPLAY -->
                 <div class="midi-section" id="midiSection" style="display: none; margin-top: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
-                    <h3 style="margin-top: 0;">MIDI Notation</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin-top: 0;">MIDI Notation</h3>
+                        <button class="header-btn" id="downloadMidiBtn" title="Download as MIDI file for MuseScore">⬇️ Download MIDI</button>
+                    </div>
                     <div id="midiContainer" style="background: white; padding: 15px; border-radius: 4px; min-height: 200px; border: 1px solid #e9ecef;"></div>
                 </div>
             </div>
@@ -702,6 +705,7 @@
         const playBtn = document.getElementById('playBtn');
         const renderMidiBtn = document.getElementById('renderMidiBtn');
         const openMidiBtn = document.getElementById('openMidiBtn');
+        const downloadMidiBtn = document.getElementById('downloadMidiBtn');
         const midiSection = document.getElementById('midiSection');
         const midiContainer = document.getElementById('midiContainer');
         const staffContainer = document.getElementById('staffContainer');
@@ -1680,6 +1684,123 @@
             midiSection.style.display = 'block';
         }
 
+        // MIDI File Generation Function (converts MIDI data to .mid file)
+        function generateMidiFile(midiData) {
+            if (!midiData || !midiData.notes || midiData.notes.length === 0) {
+                alert('No MIDI data available');
+                return;
+            }
+
+            // MIDI file header
+            const header = [0x4D, 0x54, 0x68, 0x64]; // "MThd"
+            const headerLength = [0x00, 0x00, 0x00, 0x06]; // Header length = 6
+            const format = [0x00, 0x00]; // Format 0 (single track)
+            const tracks = [0x00, 0x01]; // 1 track
+            
+            // Ticks per quarter note (standard: 480)
+            const ticksPerQuarter = 480;
+            const ticksPerByte = [
+                (ticksPerQuarter >> 8) & 0xFF,
+                ticksPerQuarter & 0xFF
+            ];
+
+            // Build header
+            let midiFile = [...header, ...headerLength, ...format, ...tracks, ...ticksPerByte];
+
+            // Build track data
+            let trackData = [];
+
+            // Set tempo (microseconds per quarter note)
+            // BPM to microseconds: tempo = 60,000,000 / BPM
+            const tempo = Math.round(60000000 / midiData.bpm);
+            const tempoBytes = [
+                (tempo >> 16) & 0xFF,
+                (tempo >> 8) & 0xFF,
+                tempo & 0xFF
+            ];
+            
+            // Meta event: Set Tempo (FF 51 03)
+            trackData.push(0xFF, 0x51, 0x03, ...tempoBytes);
+
+            // Set time signature (4/4) - meta event FF 58 04
+            trackData.push(0xFF, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08);
+
+            // Convert notes to MIDI events
+            let currentTick = 0;
+            
+            midiData.notes.forEach((note, index) => {
+                // Calculate tick position and duration
+                const noteTick = Math.round(note.startTime * 1000 / midiData.bpm * ticksPerQuarter);
+                const noteDurationTick = Math.round(note.duration * 1000 / midiData.bpm * ticksPerQuarter);
+                
+                // Delta time (time since last event)
+                const deltaTime = noteTick - currentTick;
+                const deltaBytes = encodeVariableLength(deltaTime);
+                
+                // Note On event (90 = Note On, velocity = 100)
+                trackData.push(...deltaBytes, 0x90, note.note, note.velocity || 100);
+                
+                // Update current tick
+                currentTick = noteTick;
+                
+                // Note Off event
+                const nextNoteTime = (index + 1 < midiData.notes.length) 
+                    ? Math.round(midiData.notes[index + 1].startTime * 1000 / midiData.bpm * ticksPerQuarter)
+                    : currentTick + noteDurationTick;
+                    
+                const offDeltaTime = noteDurationTick;
+                const offDeltaBytes = encodeVariableLength(offDeltaTime);
+                
+                trackData.push(...offDeltaBytes, 0x80, note.note, 0x40); // Note Off
+                currentTick = noteTick + noteDurationTick;
+            });
+
+            // End of track meta event (FF 2F 00)
+            trackData.push(0xFF, 0x2F, 0x00);
+
+            // Track header
+            const trackHeader = [0x4D, 0x54, 0x72, 0x6B]; // "MTrk"
+            const trackLength = [
+                (trackData.length >> 24) & 0xFF,
+                (trackData.length >> 16) & 0xFF,
+                (trackData.length >> 8) & 0xFF,
+                trackData.length & 0xFF
+            ];
+
+            // Combine all
+            midiFile.push(...trackHeader, ...trackLength, ...trackData);
+
+            // Convert to binary and create blob
+            const uint8Array = new Uint8Array(midiFile);
+            const blob = new Blob([uint8Array], { type: 'audio/midi' });
+
+            // Create download link
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${midiData.sruthi}-${midiData.bpm}bpm.mid`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Helper function to encode variable length quantity (used in MIDI)
+        function encodeVariableLength(value) {
+            const bytes = [];
+            let v = value & 0x7F;
+            value >>= 7;
+            
+            while (value > 0) {
+                bytes.unshift((v | 0x80) & 0xFF);
+                v = value & 0x7F;
+                value >>= 7;
+            }
+            
+            bytes.push(v & 0xFF);
+            return bytes;
+        }
+
         // Render MIDI button handler
         renderMidiBtn.addEventListener('click', () => {
             const midiData = generateMidiData();
@@ -1704,6 +1825,15 @@
         openMidiBtn.addEventListener('click', () => {
             if (currentMidiData) {
                 displayMidiStaff(currentMidiData);
+            } else {
+                alert('No MIDI data available. Generate MIDI first using the Render button.');
+            }
+        });
+
+        // Download MIDI button handler
+        downloadMidiBtn.addEventListener('click', () => {
+            if (currentMidiData) {
+                generateMidiFile(currentMidiData);
             } else {
                 alert('No MIDI data available. Generate MIDI first using the Render button.');
             }
