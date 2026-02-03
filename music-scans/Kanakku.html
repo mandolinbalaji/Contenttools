@@ -1719,10 +1719,12 @@
                 tempo & 0xFF
             ];
             
-            // Meta event: Set Tempo (FF 51 03)
+            // Meta event: Set Tempo (FF 51 03) with delta time 0
+            trackData.push(0x00);  // Delta time = 0 (first event)
             trackData.push(0xFF, 0x51, 0x03, ...tempoBytes);
 
-            // Set time signature (4/4) - meta event FF 58 04
+            // Set time signature (4/4) - meta event FF 58 04 with delta time 0
+            trackData.push(0x00);  // Delta time = 0
             trackData.push(0xFF, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08);
 
             // Convert notes to MIDI events
@@ -1754,7 +1756,8 @@
                 currentTick = noteTick + noteDurationTick;
             });
 
-            // End of track meta event (FF 2F 00)
+            // End of track meta event (FF 2F 00) with delta time 0
+            trackData.push(0x00);  // Delta time = 0
             trackData.push(0xFF, 0x2F, 0x00);
 
             // Track header
