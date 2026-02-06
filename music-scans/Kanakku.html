@@ -1136,14 +1136,14 @@
                 return;
             }
 
-            // Split each digit and create sequence for each
-            const sequence = '1234567';
+            // Split each digit and create sequence for each using swaras
+            const sequence = 'srgmpdnS';  // Use swaras instead of numbers
             let filledPhrase = '';
             
             for (let char of pattern) {
                 if (!isNaN(char)) {
                     const count = parseInt(char);
-                    // Take first 'count' characters from sequence
+                    // Take first 'count' characters from swara sequence
                     filledPhrase += sequence.substring(0, count);
                 }
             }
