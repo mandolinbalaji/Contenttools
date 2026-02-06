@@ -658,9 +658,17 @@
                             <span class="phrase-info-label">Notes:</span>
                             <span id="notesEntered" style="font-weight: bold; font-size: 1.3em;">0</span>
                         </div>
+                        <div style="font-size: 0.75em; color: #999; margin-top: 4px;">
+                            Format keeps: a-z, 0-9, commas only
+                        </div>
                         <div class="phrase-info-item">
                             <span class="phrase-info-label">Name:</span>
                             <input type="text" id="kanakkuName" placeholder="e.g., Palavi" style="padding: 3px; font-size: 0.85em; border: 1px solid #ddd; border-radius: 3px; width: 120px;">
+                        </div>
+                        <div class="phrase-info-item">
+                            <span class="phrase-info-label">Swaras:</span>
+                            <input type="text" id="ragaNotesInput" placeholder="e.g., g2m1n2 (notation: swara+octave)" style="padding: 3px; font-size: 0.85em; border: 1px solid #ddd; border-radius: 3px; width: 150px;">
+                            <div style="font-size: 0.7em; color: #999; margin-top: 2px;">Maps s=0, r/g/m/p/d/n to octave 1-3</div>
                         </div>
                         <div class="phrase-info-item">
                             <span class="phrase-info-label">Calc:</span>
@@ -720,6 +728,7 @@
         const phraseLengthSpan = document.getElementById('phraseLength');
         const startingPosSpan = document.getElementById('startingPos');
         const landingBeatSpan = document.getElementById('landingBeat');
+        const ragaNotesInput = document.getElementById('ragaNotesInput');
         const notesEnteredSpan = document.getElementById('notesEntered');
         const errorMessageDiv = document.getElementById('errorMessage');
 
@@ -745,6 +754,10 @@
         let currentEditingKanakkuId = null;  // Track kanakku being edited
         let currentMidiData = null;  // Track current MIDI data
         let numberingDirection = 'reverse';  // 'reverse' or 'forward'
+        let ragaNotesMap = {};  // Map of swara+octave to semitone offset (e.g., 'r1': 2, 'r2': 4, 'r3': 6)
+        let isPlaying = false;  // Track if audio is currently playing
+        let currentAudioContext = null;  // Store reference to current audio context
+        let currentOscillators = [];  // Store oscillators to stop them
 
         const dotsAbove = {
             's': 'ṡ', 'S': 'Ṡ', 'r': 'ṙ', 'R': 'Ṙ', 'g': 'ġ', 'G': 'Ġ', 
@@ -792,6 +805,60 @@
             calculate();
         });
 
+        // Helper function to parse raga notes (e.g., "g2m1n2" -> {g: 2, m: 1, n: 2})
+        function parseRagaNotes(ragaString) {
+            const map = {};
+            const regex = /([srgmpdnSRGMPDN])(\d)/g;
+            let match;
+            while ((match = regex.exec(ragaString)) !== null) {
+                const swara = match[1].toLowerCase();
+                const octave = parseInt(match[2]);
+                map[swara] = octave;
+            }
+            return map;
+        }
+
+        // Helper function to get semitone offset for a note with optional raga mapping
+        // If raga notes are defined, use those; otherwise use standard intervals
+        function getNoteOffset(swara, octaveNum = null) {
+            const standardOffsets = { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 };
+            
+            // If raga notes are defined and this swara has a number, use raga mapping
+            if (Object.keys(ragaNotesMap).length > 0 && octaveNum !== null) {
+                const ragaOctave = ragaNotesMap[swara];
+                if (ragaOctave !== undefined) {
+                    // If the note has a specific octave number, use that octave from raga
+                    if (octaveNum === ragaOctave) {
+                        return standardOffsets[swara];
+                    }
+                }
+            }
+            
+            return standardOffsets[swara] || 0;
+        }
+
+        ragaNotesInput.addEventListener('input', () => {
+            ragaNotesMap = parseRagaNotes(ragaNotesInput.value);
+            calculate();
+        });
+
+        // Helper function to count only valid swara characters (including precomposed dotted versions)
+        // Counts: s, r, g, m, p, d, n, commas, and their dotted variants (ṡ, ṙ, ġ, ṁ, ṗ, ḋ, ṅ, etc)
+        function countSwaras(phrase) {
+            const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n', ',',
+                // Precomposed dotted variants
+                'ṡ', 'ṙ', 'ġ', 'ṁ', 'ṗ', 'ḋ', 'ṅ',  // dots above
+                'ṣ', 'ṛ', 'ṃ', 'ḍ', 'ṇ',  // dots below (precomposed)
+                '\u0323']);  // combining dot below (for g\u0323, p\u0323)
+            let count = 0;
+            for (let char of phrase) {
+                if (validSwaras.has(char)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         eduppuInput.addEventListener('input', () => {
             updateEduppuDisplay();
             calculate();
@@ -799,7 +866,7 @@
 
         phraseInput.addEventListener('input', () => {
             const phrase = phraseInput.value;
-            notesEnteredSpan.textContent = phrase.length;
+            notesEnteredSpan.textContent = countSwaras(phrase);
             if (history[historyIndex] !== phrase) {
                 history = history.slice(0, historyIndex + 1);
                 history.push(phrase);
@@ -812,62 +879,71 @@
         phraseInput.addEventListener('click', () => {
             if (dotMode) {
                 const cursorPos = phraseInput.selectionStart;
-                if (cursorPos > 0) {
-                    const phrase = phraseInput.value;
-                    let charIndex = cursorPos - 1;
-                    let charAtPos = phrase[charIndex];
-                    
-                    if (charAtPos) {
-                        // Check if next character is a combining mark and include it
-                        let nextCharIsCombining = false;
-                        if (charIndex + 1 < phrase.length) {
-                            const nextChar = phrase[charIndex + 1];
-                            if (nextChar === '\u0323' || nextChar === '\u0308' || nextChar === '\u0307') {
-                                // Combining dot below or above marks
-                                charAtPos = charAtPos + nextChar;
-                                nextCharIsCombining = true;
-                            }
-                        }
-                        
-                        // Get the base character (remove any existing dots)
-                        let baseChar = charToBase[charAtPos];
-                        
-                        // If not in mapping, try to extract just the first character as base
-                        if (!baseChar) {
-                            baseChar = charAtPos[0];  // Take first char, ignore combining marks
-                            if (!charToBase[baseChar]) {
-                                baseChar = charAtPos;  // Use as-is if still not found
-                            } else {
-                                baseChar = charToBase[baseChar];
-                            }
-                        }
-                        
-                        // Now apply the requested dot to the base character
-                        let newChar = baseChar;
-                        
-                        if (dotMode === 'above' && dotsAbove[baseChar]) {
-                            newChar = dotsAbove[baseChar];
-                        } else if (dotMode === 'below' && dotsBelow[baseChar]) {
-                            newChar = dotsBelow[baseChar];
-                        }
-                        
-                        if (newChar !== charAtPos) {
-                            // Replace the original character (and combining mark if present)
-                            const replacementLength = nextCharIsCombining ? 2 : 1;
-                            const newPhrase = phrase.substring(0, charIndex) + newChar + phrase.substring(charIndex + replacementLength);
-                            phraseInput.value = newPhrase;
-                            
-                            history = history.slice(0, historyIndex + 1);
-                            history.push(newPhrase);
-                            historyIndex++;
-                            updateUndoRedo();
-                            
-                            notesEnteredSpan.textContent = newPhrase.length;
-                            calculate();
-                            
-                            phraseInput.setSelectionRange(cursorPos, cursorPos);
-                        }
+                const phrase = phraseInput.value;
+                
+                // Determine which character to modify
+                // If cursor is at position 0, modify character at 0 (if it exists)
+                // Otherwise, modify the character BEFORE the cursor
+                let charIndex;
+                if (cursorPos === 0 && phrase.length > 0) {
+                    charIndex = 0;  // Apply to first character
+                } else if (cursorPos > 0) {
+                    charIndex = cursorPos - 1;  // Apply to character before cursor
+                } else {
+                    return;  // No character to modify
+                }
+                
+                let charAtPos = phrase[charIndex];
+                if (!charAtPos) return;  // No character at this position
+                
+                // Check if next character is a combining mark and include it
+                let nextCharIsCombining = false;
+                if (charIndex + 1 < phrase.length) {
+                    const nextChar = phrase[charIndex + 1];
+                    if (nextChar === '\u0323' || nextChar === '\u0308' || nextChar === '\u0307') {
+                        charAtPos = charAtPos + nextChar;
+                        nextCharIsCombining = true;
                     }
+                }
+                
+                // Get the base character (remove any existing dots)
+                let baseChar = charToBase[charAtPos];
+                
+                // If not found in mapping, try just the first character
+                if (!baseChar) {
+                    baseChar = charToBase[charAtPos[0]];
+                    if (!baseChar) {
+                        baseChar = charAtPos[0];  // Use first char as-is
+                    }
+                }
+                
+                // Only apply dot if we have a valid base character with a dot mapping
+                let newChar = baseChar;
+                
+                if (dotMode === 'above' && dotsAbove[baseChar]) {
+                    newChar = dotsAbove[baseChar];
+                } else if (dotMode === 'below' && dotsBelow[baseChar]) {
+                    newChar = dotsBelow[baseChar];
+                } else {
+                    return;  // No dot mapping for this character, don't modify
+                }
+                
+                // Only replace if the character actually changed
+                if (newChar !== charAtPos) {
+                    const replacementLength = nextCharIsCombining ? 2 : 1;
+                    const newPhrase = phrase.substring(0, charIndex) + newChar + phrase.substring(charIndex + replacementLength);
+                    phraseInput.value = newPhrase;
+                    
+                    history = history.slice(0, historyIndex + 1);
+                    history.push(newPhrase);
+                    historyIndex++;
+                    updateUndoRedo();
+                    
+                    notesEnteredSpan.textContent = countSwaras(newPhrase);
+                    calculate();
+                    
+                    // Position cursor after the modified character
+                    phraseInput.setSelectionRange(charIndex + 1, charIndex + 1);
                 }
             }
         });
@@ -886,11 +962,17 @@
             phraseInput.focus();
         });
 
+        // Prevent dot mode from interfering with staff display clicks
+        staffContainer.addEventListener('click', (e) => {
+            // Don't do anything when clicking the staff - just prevent propagation
+            e.stopPropagation();
+        }, true);
+
         undoBtn.addEventListener('click', () => {
             if (historyIndex > 0) {
                 historyIndex--;
                 phraseInput.value = history[historyIndex];
-                notesEnteredSpan.textContent = phraseInput.value.length;
+                notesEnteredSpan.textContent = countSwaras(phraseInput.value);
                 calculate();
                 updateUndoRedo();
             }
@@ -900,7 +982,7 @@
             if (historyIndex < history.length - 1) {
                 historyIndex++;
                 phraseInput.value = history[historyIndex];
-                notesEnteredSpan.textContent = phraseInput.value.length;
+                notesEnteredSpan.textContent = countSwaras(phraseInput.value);
                 calculate();
                 updateUndoRedo();
             }
@@ -917,13 +999,28 @@
         });
 
         formatBtn.addEventListener('click', () => {
-            // Format: remove spaces and pipes, replace capital letters with lowercase + comma
+            // Format: keep swaras (including dotted variants), numbers, and commas; remove everything else
             let text = phraseInput.value;
-            text = text.replace(/ /g, '');        // Remove all spaces
-            text = text.replace(/\|/g, '');       // Remove all pipes
-            text = text.replace(/([A-Z])/g, function(match) {
-                return match.toLowerCase() + ',';  // Replace capital with lowercase + comma
-            });
+            // Valid swaras include base (s,r,g,m,p,d,n), dotted variants (precomposed), combining marks, and numbers/commas
+            const validChars = new Set([
+                // Base swaras
+                's','r','g','m','p','d','n',',',
+                // Precomposed dots above
+                'ṡ','ṙ','ġ','ṁ','ṗ','ḋ','ṅ',
+                // Precomposed dots below
+                'ṣ','ṛ','ṃ','ḍ','ṇ',
+                // Combining mark: dot below (U+0323) - used for g\u0323, p\u0323
+                '\u0323',
+                // Numbers
+                '0','1','2','3','4','5','6','7','8','9'
+            ]);
+            let formatted = '';
+            for (let char of text) {
+                if (validChars.has(char)) {
+                    formatted += char;
+                }
+            }
+            text = formatted.toLowerCase();
             
             phraseInput.value = text;
             history.push(text);
@@ -1058,12 +1155,36 @@
 
             // Fill the phrase input
             phraseInput.value = filledPhrase;
-            notesEnteredSpan.textContent = filledPhrase.length;
+            notesEnteredSpan.textContent = countSwaras(filledPhrase);
             history = [filledPhrase];
             historyIndex = 0;
             updateUndoRedo();
             calculate();
         });
+
+        // Dot marks for octave adjustment - defined globally for use in multiple functions
+        // Dot above (combining diaeresis, U+0308): ̇ moves to next octave (+12 semitones)
+        // Dot below (combining dot below, U+0323): ̣ moves to previous octave (-12 semitones)
+        const dotAboveMarks = new Set(['\u0307', '\u0308']);  // Combining dot above, combining diaeresis
+        const dotBelowMarks = new Set(['\u0323', '\u0325']);  // Combining dot below, combining ring below
+        
+        // Map precomposed characters with dots to their base characters and dot type
+        const precomposedDots = {
+            // Dots above
+            'ṡ': { base: 's', dotType: 'above' }, 'Ṡ': { base: 'S', dotType: 'above' },
+            'ṙ': { base: 'r', dotType: 'above' }, 'Ṙ': { base: 'R', dotType: 'above' },
+            'ġ': { base: 'g', dotType: 'above' }, 'Ġ': { base: 'G', dotType: 'above' },
+            'ṁ': { base: 'm', dotType: 'above' }, 'Ṁ': { base: 'M', dotType: 'above' },
+            'ṗ': { base: 'p', dotType: 'above' }, 'Ṗ': { base: 'P', dotType: 'above' },
+            'ḋ': { base: 'd', dotType: 'above' }, 'Ḋ': { base: 'D', dotType: 'above' },
+            'ṅ': { base: 'n', dotType: 'above' }, 'Ṅ': { base: 'N', dotType: 'above' },
+            // Dots below
+            'ṣ': { base: 's', dotType: 'below' }, 'Ṣ': { base: 'S', dotType: 'below' },
+            'ṛ': { base: 'r', dotType: 'below' }, 'Ṛ': { base: 'R', dotType: 'below' },
+            'ṃ': { base: 'm', dotType: 'below' }, 'Ṃ': { base: 'M', dotType: 'below' },
+            'ḍ': { base: 'd', dotType: 'below' }, 'Ḍ': { base: 'D', dotType: 'below' },
+            'ṇ': { base: 'n', dotType: 'below' }, 'Ṇ': { base: 'N', dotType: 'below' }
+        };
 
         playBtn.addEventListener('click', async () => {
             const phrase = phraseInput.value;
@@ -1072,11 +1193,44 @@
                 return;
             }
             
+            // If already playing, stop it
+            if (isPlaying) {
+                isPlaying = false;
+                playBtn.textContent = '▶️ Play';
+                // Stop all oscillators
+                if (currentOscillators) {
+                    currentOscillators.forEach(osc => {
+                        try {
+                            osc.stop();
+                        } catch (e) {
+                            // Already stopped
+                        }
+                    });
+                    currentOscillators = [];
+                }
+                // Close audio context if it exists
+                if (currentAudioContext) {
+                    try {
+                        currentAudioContext.close();
+                    } catch (e) {
+                        // Already closed
+                    }
+                    currentAudioContext = null;
+                }
+                return;
+            }
+            
+            // Start playing
+            isPlaying = true;
+            playBtn.textContent = '⏸️ Stop';
+            
             const sruthi = sruthiSelect.value;
             const bpm = parseInt(bpmSelect.value) || 80;
             
             // Create audio context
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            currentAudioContext = audioContext;
+            currentOscillators = [];
             
             // Map swaras to semitone offsets for octave 4
             // C4 = 261.63 Hz, C#4 = 277.18 Hz, D4 = 293.66 Hz, etc.
@@ -1094,12 +1248,6 @@
                 'A#': { baseFreq: 466.16, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
                 'B': { baseFreq: 493.88, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } }
             };
-            
-            // Dot marks for octave adjustment
-            // Dot above (combining diaeresis, U+0308): ̇ moves to next octave (+12 semitones)
-            // Dot below (combining dot below, U+0323): ̣ moves to previous octave (-12 semitones)
-            const dotAboveMarks = new Set(['\u0307', '\u0308']);  // Combining dot above, combining diaeresis
-            const dotBelowMarks = new Set(['\u0323', '\u0325']);  // Combining dot below, combining ring below
             
             const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
             const beatDuration = 60 / bpm;  // Duration of one beat in seconds
@@ -1127,12 +1275,22 @@
             let noteIndex = 1;
             while (i < phrase.length) {
                 const char = phrase[i].toLowerCase();
+                let actualChar = char;
+                let octaveOffset = 0;
+                
+                // Check if this is a precomposed character with a dot
+                if (precomposedDots[char]) {
+                    const dotInfo = precomposedDots[char];
+                    actualChar = dotInfo.base.toLowerCase();
+                    octaveOffset = dotInfo.dotType === 'above' ? 12 : -12;
+                }
                 
                 // Check if this is a swara (not a dot or comma)
-                if (sruthiInfo.notes.hasOwnProperty(char)) {
-                    // Look ahead for dot marks
-                    let octaveOffset = 0;
+                if (sruthiInfo.notes.hasOwnProperty(actualChar)) {
+                    // Look ahead for additional combining dot marks and numbers (for decomposed forms like g\u0323 or r1, r2, r3)
                     let j = i + 1;
+                    let ragaOctaveNum = null;  // Will store if note has a raga octave number
+                    
                     while (j < phrase.length) {
                         const nextChar = phrase[j];
                         if (dotAboveMarks.has(nextChar)) {
@@ -1144,25 +1302,43 @@
                         } else if (nextChar === '\u0300' || nextChar === '\u0301' || nextChar === '\u0302' || nextChar === '\u0303' || nextChar === '\u0304' || nextChar === '\u0305' || nextChar === '\u0306') {
                             // Other combining marks, skip
                             j++;
+                        } else if (/\d/.test(nextChar)) {
+                            // Found a digit - this is a raga octave number (1, 2, or 3)
+                            ragaOctaveNum = parseInt(nextChar);
+                            j++;
                         } else {
                             break;
                         }
                     }
-                    i = j - 1;  // Move i to skip all combining marks
+                    i = j - 1;  // Move i to skip all combining marks and digit
                     
                     // Play note
-                    const semitones = sruthiInfo.notes[char] + octaveOffset;
+                    // Check if this note has a raga octave specified and raga notes are defined
+                    let baseSemitones = sruthiInfo.notes[actualChar];
+                    if (ragaOctaveNum !== null && Object.keys(ragaNotesMap).length > 0) {
+                        // Note has a raga octave number - use raga mapping
+                        const ragaOctave = ragaNotesMap[actualChar];
+                        if (ragaOctave !== undefined && ragaOctave === ragaOctaveNum) {
+                            // Use the raga note's interval for this octave
+                            baseSemitones = sruthiInfo.notes[actualChar];
+                        }
+                    }
+                    
+                    const semitones = baseSemitones + octaveOffset;
                     const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
                     
                     // Calculate octave for display
-                    const octaveNum = 4 + Math.floor((sruthiInfo.notes[char] + octaveOffset) / 12);
+                    const octaveNum = 4 + Math.floor((baseSemitones + octaveOffset) / 12);
                     const westernNote = getWesternNote(frequency, octaveNum);
-                    const swaraName = swaraNames[char];
+                    const swaraName = swaraNames[actualChar];
                     
                     console.log(`${noteIndex}. ${swaraName} (${char}) | Octave: ${octaveNum} | Freq: ${frequency.toFixed(2)} Hz | ${westernNote}`);
                     
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
+                    
+                    // Store oscillator so we can stop it later
+                    currentOscillators.push(osc);
                     
                     osc.connect(gain);
                     gain.connect(audioContext.destination);
@@ -1198,6 +1374,16 @@
                 
                 i++;
             }
+            
+            // Schedule reset of playing state after all notes finish
+            const totalPlaybackTime = currentTime;
+            setTimeout(() => {
+                if (isPlaying) {
+                    isPlaying = false;
+                    playBtn.textContent = '▶️ Play';
+                    currentOscillators = [];
+                }
+            }, totalPlaybackTime * 1000);
         });
 
         saveBtn.addEventListener('click', async () => {
@@ -1216,8 +1402,9 @@
             const nadai = parseInt(nadaiInput.value);
             const eduppu = parseInt(eduppuInput.value);
             const sruthi = sruthiSelect.value;
+            const ragaNotes = ragaNotesInput.value;  // Get raga notes
 
-            const kanakku = { name, phrase, beats, nadai, eduppu, sruthi };
+            const kanakku = { name, phrase, beats, nadai, eduppu, sruthi, ragaNotes };
             
             // Include MIDI data if it exists
             if (currentMidiData) {
@@ -1326,7 +1513,7 @@
                 return;
             }
 
-            const phraseLength = phrase.length;
+            const phraseLength = countSwaras(phrase);  // Count only swaras and commas, ignore numbers
             phraseLengthSpan.textContent = phraseLength;
 
             let startingPos = eduppu - phraseLength;
@@ -1376,11 +1563,28 @@
                             }
                         }
 
-                        if (globalPos >= startingPos && globalPos < startingPos + phrase.length) {
-                            const phraseIndex = globalPos - startingPos;
-                            character = phrase[phraseIndex];
+                        // Find the note at this position, skipping numbers in the phrase
+                        let noteCount = 0;  // Count only valid notes (swaras and commas), not numbers
+                        let phraseCharacter = null;
+                        
+                        for (let i = 0; i < phrase.length; i++) {
+                            const char = phrase[i];
+                            // Only count swaras (including dotted variants) and commas, skip numbers
+                            // Valid: s,r,g,m,p,d,n (base) + ṡ,ṙ,ġ,ṁ,ṗ,ḋ,ṅ (dots above) + ṣ,ṛ,ṃ,ḍ,ṇ (dots below) + combining mark \u0323 + comma
+                            if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u0323]/.test(char)) {
+                                noteCount++;
+                                if (noteCount === globalPos - startingPos + 1) {
+                                    phraseCharacter = char;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (phraseCharacter !== null) {
+                            character = phraseCharacter;
+                            const phraseNoteIndex = globalPos - startingPos;
                             
-                            if (phraseIndex === 0) {
+                            if (phraseNoteIndex === 0) {
                                 bgColor = '#e8f5e9';
                             } else if (posInCycle === eduppu || (cycleNum > 1 && globalPos % cycleLengthVal === eduppu % cycleLengthVal)) {
                                 bgColor = '#ffebee';
@@ -1464,12 +1668,14 @@
                                 phraseInput.value = k.phrase;
                                 kanakkuNameInput.value = k.name;
                                 sruthiSelect.value = k.sruthi || 'C#';
+                                ragaNotesInput.value = k.ragaNotes || '';  // Load raga notes
+                                ragaNotesMap = parseRagaNotes(k.ragaNotes || '');  // Parse raga notes
                                 currentKanakkuId = k.id;
                                 currentEditingKanakkuId = k.id;
                                 currentMidiData = k.midiData || null;  // Load MIDI data if available
                                 history = [k.phrase];
                                 historyIndex = 0;
-                                notesEnteredSpan.textContent = k.phrase.length;
+                                notesEnteredSpan.textContent = countSwaras(k.phrase);
                                 updateUndoRedo();
                                 calculate();
                                 // Display MIDI if available
@@ -1537,13 +1743,13 @@
 
         // MIDI Generation Function
         function generateMidiData() {
-            const phrase = phraseInput.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const phraseRaw = phraseInput.value;  // Keep original with dots
             const beats = parseInt(beatsInput.value) || 8;
             const nadai = parseInt(nadaiInput.value) || 4;
             const sruthi = sruthiSelect.value;
             const bpm = parseInt(bpmSelect.value) || 80;
             
-            if (!phrase.trim()) {
+            if (!phraseRaw.trim()) {
                 alert('Please enter a phrase first');
                 return null;
             }
@@ -1569,15 +1775,54 @@
             
             const baseNote = sruthiMap[sruthi] || sruthiMap['C'];
             
-            // Generate MIDI events
+            // Generate MIDI events with octave detection
             const notes = [];
             const beatDuration = 60 / (bpm * nadai);  // Duration in seconds for each nadai unit
             
             let currentTime = 0;
-            for (let char of phrase) {
-                const offset = swaraOffsets[char.toLowerCase()];
-                if (offset !== undefined) {
-                    const midiNote = baseNote + offset;
+            let i = 0;
+            while (i < phraseRaw.length) {
+                const char = phraseRaw[i].toLowerCase();
+                let actualChar = char;
+                let octaveOffset = 0;
+                
+                // Check if this is a precomposed character with a dot
+                if (precomposedDots[char]) {
+                    const dotInfo = precomposedDots[char];
+                    actualChar = dotInfo.base.toLowerCase();
+                    octaveOffset = dotInfo.dotType === 'above' ? 12 : -12;
+                }
+                
+                // Check if this is a swara
+                if (swaraOffsets[actualChar] !== undefined) {
+                    // Look ahead for combining dot marks and numbers (for decomposed forms and raga octaves)
+                    let j = i + 1;
+                    let ragaOctaveNum = null;
+                    
+                    while (j < phraseRaw.length) {
+                        const nextChar = phraseRaw[j];
+                        if (dotAboveMarks.has(nextChar)) {
+                            octaveOffset += 12;
+                            j++;
+                        } else if (dotBelowMarks.has(nextChar)) {
+                            octaveOffset -= 12;
+                            j++;
+                        } else if (nextChar === '\u0300' || nextChar === '\u0301' || nextChar === '\u0302' || nextChar === '\u0303' || nextChar === '\u0304' || nextChar === '\u0305' || nextChar === '\u0306') {
+                            j++;
+                        } else if (/\d/.test(nextChar)) {
+                            // Found a digit - this is a raga octave number
+                            ragaOctaveNum = parseInt(nextChar);
+                            j++;
+                        } else {
+                            break;
+                        }
+                    }
+                    i = j - 1;  // Move i to skip combining marks and digit
+                    
+                    // Create MIDI note with octave offset
+                    // For now, raga notes don't change the MIDI note (same as standard)
+                    // In future, could modify behavior based on ragaNotesMap
+                    const midiNote = baseNote + swaraOffsets[actualChar] + octaveOffset;
                     notes.push({
                         note: midiNote,
                         startTime: currentTime,
@@ -1586,20 +1831,21 @@
                     });
                     currentTime += beatDuration;
                 }
+                i++;
             }
             
             return {
                 notes: notes,
                 bpm: bpm,
                 sruthi: sruthi,
-                phrase: phrase,
+                phrase: phraseRaw,
                 beats: beats,
                 nadai: nadai
             };
         }
 
         // MIDI Display using SVG (simple staff notation)
-        function displayMidiStaff(midiData) {
+        function displayMidiStaff(midiData, scrollIntoView = false) {
             if (!midiData) return;
             
             const container = midiContainer;
@@ -1682,6 +1928,10 @@
             
             container.appendChild(svg);
             midiSection.style.display = 'block';
+            // Only scroll if explicitly requested (e.g., when clicking "Open MIDI")
+            if (scrollIntoView) {
+                midiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         // MIDI File Generation Function (converts MIDI data to .mid file)
@@ -1780,7 +2030,8 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `${midiData.sruthi}-${midiData.bpm}bpm.mid`;
+            const kanakkuName = kanakkuNameInput.value || 'Kanakku';
+            link.download = `${kanakkuName}.mid`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1825,8 +2076,9 @@
 
         // Open MIDI button handler (display existing MIDI from saved kanakku)
         openMidiBtn.addEventListener('click', () => {
+            console.log('Open MIDI clicked. currentMidiData:', currentMidiData);
             if (currentMidiData) {
-                displayMidiStaff(currentMidiData);
+                displayMidiStaff(currentMidiData, true);  // Pass true to scroll into view
             } else {
                 alert('No MIDI data available. Generate MIDI first using the Render button.');
             }

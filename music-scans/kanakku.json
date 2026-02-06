@@ -1,5 +1,913 @@
 [
   {
+    "name": "srgm",
+    "phrase": "ṡṙġṁ",
+    "beats": 4,
+    "nadai": 4,
+    "eduppu": 1,
+    "sruthi": "C#",
+    "ragaNotes": "",
+    "midiData": {
+      "beats": 8,
+      "bpm": 80,
+      "nadai": 4,
+      "notes": [
+        {
+          "duration": 0.1875,
+          "note": 77,
+          "startTime": 0,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 75,
+          "startTime": 0.1875,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 73,
+          "startTime": 0.375,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 72,
+          "startTime": 0.5625,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 70,
+          "startTime": 0.75,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 75,
+          "startTime": 0.9375,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 73,
+          "startTime": 1.125,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 72,
+          "startTime": 1.3125,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 70,
+          "startTime": 1.5,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 68,
+          "startTime": 1.6875,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 73,
+          "startTime": 1.875,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 72,
+          "startTime": 2.0625,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 70,
+          "startTime": 2.25,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 68,
+          "startTime": 2.4375,
+          "velocity": 100
+        },
+        {
+          "duration": 0.1875,
+          "note": 66,
+          "startTime": 2.625,
+          "velocity": 100
+        }
+      ],
+      "phrase": "ġṙṡndṙṡndpṡndpm",
+      "sruthi": "C#"
+    },
+    "id": "25621710-0b02-4343-aa4f-873054f55f59"
+  },
+  {
+    "name": "Dhanasri-Thillana",
+    "phrase": "ṇs,gs,gmp,ṇsgmpnpmgmnp,ṡn,ġṙṡ,,,p,n,ṡ,nṡġṙṡṙnṡ,ndpg,mp,,ggmgrsṇsmg,g,ggmnp,npnṡnṡn,ṡnṡġṡġṡġ,,,ġṡnṙṡnpnpn,,pṡnṡpnpmgmgm,psnspnmnp",
+    "beats": 8,
+    "nadai": 4,
+    "eduppu": 1,
+    "sruthi": "C#",
+    "ragaNotes": "g2m1n2d2",
+    "midiData": {
+      "notes": [
+        {
+          "note": 60,
+          "startTime": 0,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 0.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 0.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 0.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 0.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 0.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 1.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 60,
+          "startTime": 1.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 1.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 1.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 1.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 2.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 2.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 2.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 2.625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 2.8125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 3,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 3.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 3.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 3.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 3.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 77,
+          "startTime": 3.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 75,
+          "startTime": 4.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 4.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 4.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 4.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 4.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 5.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 5.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 77,
+          "startTime": 5.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 75,
+          "startTime": 5.625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 5.8125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 75,
+          "startTime": 6,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 6.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 6.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 6.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 6.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 6.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 7.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 7.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 7.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 7.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 7.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 8.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 8.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 63,
+          "startTime": 8.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 8.625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 60,
+          "startTime": 8.8125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 9,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 9.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 9.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 9.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 9.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 9.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 10.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 10.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 10.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 10.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 10.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 11.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 11.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 11.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 11.625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 11.8125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 12,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 12.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 12.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 77,
+          "startTime": 12.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 12.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 77,
+          "startTime": 12.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 13.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 77,
+          "startTime": 13.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 77,
+          "startTime": 13.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 13.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 13.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 75,
+          "startTime": 14.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 14.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 14.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 14.625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 14.8125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 15,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 15.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 15.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 15.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 15.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 15.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 16.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 16.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 16.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 16.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 16.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 17.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 17.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 17.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 17.625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 17.8125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 18,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 18.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 18.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 18.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 18.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 18.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 19.125,
+          "duration": 0.1875,
+          "velocity": 100
+        }
+      ],
+      "bpm": 80,
+      "sruthi": "C#",
+      "phrase": "ṇs,gs,gmp,ṇsgmpnpmgmnp,ṡn,ġṙṡ,,,p,n,ṡ,nṡġṙṡṙnṡ,ndpg,mp,,ggmgrsṇsmg,g,ggmnp,npnṡnṡn,ṡnṡġṡġṡġ,,,ġṡnṙṡnpnpn,,pṡnṡpnpmgmgm,psnspnmnp",
+      "beats": 8,
+      "nadai": 4
+    },
+    "id": "fb2261ab-d33a-433c-bffc-9eb3337557cc"
+  },
+  {
+    "name": "Octaves",
+    "phrase": "ṣṛg̣ṃp̣ḍṇssrgmpdnṡṡṙġṁṗḋṅṡ",
+    "beats": 8,
+    "nadai": 4,
+    "eduppu": 1,
+    "sruthi": "C#",
+    "midiData": {
+      "notes": [
+        {
+          "note": 61,
+          "startTime": 0,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 63,
+          "startTime": 0.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 0.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 0.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 0.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 0.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 1.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 1.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 1.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 63,
+          "startTime": 1.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 1.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 2.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 2.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 2.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 2.625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 2.8125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 3,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 63,
+          "startTime": 3.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 65,
+          "startTime": 3.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 3.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 3.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 3.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 4.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 61,
+          "startTime": 4.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        }
+      ],
+      "bpm": 80,
+      "sruthi": "C#",
+      "phrase": "srgmpdnssrgmpdnssrgmpdns",
+      "beats": 8,
+      "nadai": 4
+    },
+    "id": "11ef7017-9cc0-422b-955d-d21506c8b5cf"
+  },
+  {
     "name": "Alakalalla-Madhyamavathi",
     "phrase": "p,m,r,rrsṇp,ṇsr,r,r,rsr,p,m,r,pmrsṇpṇsr,r,r,rsr,",
     "beats": 6,
@@ -25,6 +933,105 @@
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
+    "midiData": {
+      "notes": [
+        {
+          "note": 77,
+          "startTime": 0,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 75,
+          "startTime": 0.1875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 0.375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 0.5625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 0.75,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 75,
+          "startTime": 0.9375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 1.125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 1.3125,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 1.5,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 1.6875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 1.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 2.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 2.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 2.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 66,
+          "startTime": 2.625,
+          "duration": 0.1875,
+          "velocity": 100
+        }
+      ],
+      "bpm": 80,
+      "sruthi": "C#",
+      "phrase": "ġṙṡndṙṡndpṡndpm",
+      "beats": 8,
+      "nadai": 4
+    },
     "id": "f166ba12-8035-47de-8b80-8facc5c9438f"
   }
 ]
