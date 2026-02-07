@@ -818,36 +818,34 @@
             calculate();
         });
 
+        // Chromatic variants for each swara (semitone offsets)
+        // These represent different chromatic notes available for each swara
+        const swaraVariants = {
+            's': { 1: -1, 2: 0, 3: 1 },      // C#4, C4, B3 (relative to base C)... wait, should be relative to S note
+            'r': { 1: -1, 2: 0, 3: 1 },      // ri can be -1 (C#), 0 (D), +1 (D#) semitones  
+            'g': { 1: -2, 2: -1, 3: 0 },     // ga can be -2 (D), -1 (D#), 0 (E) semitones
+            'm': { 1: 0, 2: 1 },             // ma can be 0 (F), +1 (F#) semitones
+            'p': { 1: 0, 2: 0, 3: 0 },       // pa: no variants mentioned, default
+            'd': { 1: -1, 2: 0, 3: 1 },      // dha can be -1 (G#), 0 (A), +1 (A#) semitones
+            'n': { 1: -2, 2: -1, 3: 0 }      // ni can be -2 (A), -1 (A#), 0 (B) semitones
+        };
+
         nadaiInput.addEventListener('change', () => {
             calculate();
         });
 
-        // Helper function to parse raga notes (e.g., "g2m1n2" -> {g: 2, m: 1, n: 2})
+        // Helper function to parse raga notes (e.g., "g2m1n3" -> {g: 2, m: 1, n: 3})
         function parseRagaNotes(ragaString) {
             const map = {};
             const regex = /([srgmpdnSRGMPDN])(\d)/g;
             let match;
             while ((match = regex.exec(ragaString)) !== null) {
                 const swara = match[1].toLowerCase();
-                const octave = parseInt(match[2]);
-                map[swara] = octave;
+                const variant = parseInt(match[2]);
+                map[swara] = variant;
             }
             return map;
         }
-
-        // Helper function to get semitone offset for a note with optional raga mapping
-        // If raga notes are defined, use those; otherwise use standard intervals
-        function getNoteOffset(swara, octaveNum = null) {
-            const standardOffsets = { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 };
-            
-            // If raga notes are defined and this swara has a number, use raga mapping
-            if (Object.keys(ragaNotesMap).length > 0 && octaveNum !== null) {
-                const ragaOctave = ragaNotesMap[swara];
-                if (ragaOctave !== undefined) {
-                    // If the note has a specific octave number, use that octave from raga
-                    if (octaveNum === ragaOctave) {
-                        return standardOffsets[swara];
-                    }
                 }
             }
             
@@ -1324,7 +1322,7 @@
                     }
                     i = j - 1;  // Move i to skip all combining marks and digit
                     
-                    // Determine octave: use notation number, or fall back to raga notes map
+                    // Determine chromatic variant: use notation number, or fall back to raga notes map
                     if (ragaOctaveNum === null && Object.keys(ragaNotesMap).length > 0) {
                         // No notation number, check raga notes map
                         if (ragaNotesMap[actualChar] !== undefined) {
@@ -1332,12 +1330,14 @@
                         }
                     }
                     
-                    // Apply octave offset based on number
+                    // Apply chromatic variant offset based on number
                     let octaveAdjustment = 0;
-                    if (ragaOctaveNum !== null) {
-                        // Number represents absolute octave: 1=low, 2=middle/default, 3=high
-                        // Using (n-2)*12: 1->-12, 2->0, 3->+12
-                        octaveAdjustment = (ragaOctaveNum - 2) * 12;
+                    if (ragaOctaveNum !== null && swaraVariants[actualChar]) {
+                        // Number selects a chromatic variant (e.g., r1=C#, r2=D, r3=D#)
+                        const variantOffset = swaraVariants[actualChar][ragaOctaveNum];
+                        if (variantOffset !== undefined) {
+                            octaveAdjustment = variantOffset;
+                        }
                     }
                     
                     // Play note
@@ -1895,7 +1895,7 @@
                     }
                     i = j - 1;  // Move i to skip combining marks and digit
                     
-                    // Determine octave offset: use notation number, or fall back to raga notes map
+                    // Determine chromatic variant: use notation number, or fall back to raga notes map
                     if (ragaOctaveNum === null && Object.keys(ragaNotesMap).length > 0) {
                         // No notation number, check raga notes map
                         if (ragaNotesMap[actualChar] !== undefined) {
@@ -1903,13 +1903,13 @@
                         }
                     }
                     
-                    // Apply octave offset based on number
-                    if (ragaOctaveNum !== null) {
-                        // Number represents absolute octave: 1=low, 2=middle/default, 3=high
-                        // Using (n-2)*12: 1->-12, 2->0, 3->+12
-                        // Precomposed dots already set octaveOffset, so raga number is added relative to that
-                        const octaveShift = (ragaOctaveNum - 2) * 12;
-                        octaveOffset += octaveShift;
+                    // Apply chromatic variant offset based on number
+                    if (ragaOctaveNum !== null && swaraVariants[actualChar]) {
+                        // Number selects a chromatic variant (e.g., r1=C#, r2=D, r3=D#)
+                        const variantOffset = swaraVariants[actualChar][ragaOctaveNum];
+                        if (variantOffset !== undefined) {
+                            octaveOffset += variantOffset;
+                        }
                     }
                     
                     // Create MIDI note with octave offset
