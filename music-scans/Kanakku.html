@@ -1210,6 +1210,7 @@
             const name = kanakkuNameInput.value || 'Kanakku';
             const beats = parseInt(beatsInput.value) || 8;
             const nadai = parseInt(nadaiInput.value) || 4;
+            const eduppu = parseInt(eduppuInput.value) || 1;
             const phrase = phraseInput.value;
             
             if (!phrase.trim()) {
@@ -1226,6 +1227,14 @@
                 }
             }
             
+            // Calculate starting position (matching MIDI logic)
+            const phraseLength = countSwaras(phrase);
+            const cycleLengthVal = beats * nadai;
+            let startingPos = eduppu - phraseLength;
+            while (startingPos <= 0) {
+                startingPos += cycleLengthVal;
+            }
+            
             // Each cycle has beats * nadai notes
             const notesPerCycle = beats * nadai;
             
@@ -1233,19 +1242,37 @@
             
             let noteIndex = 0;
             let cycleNum = 1;
+            let isFirstCycle = true;
+            let posInCycle = isFirstCycle ? startingPos : 1;
             
-            while (noteIndex < notes.length) {
+            while (noteIndex < notes.length || (isFirstCycle && startingPos > 1)) {
                 let cycleLine = `${cycleNum}: `;
                 let noteInBeat = 0;
                 
+                // For first cycle, add leading commas up to starting position
+                if (isFirstCycle) {
+                    for (let i = 1; i < startingPos; i++) {
+                        cycleLine += ',';
+                        noteInBeat++;
+                        
+                        // Add single vertical line after each beat (after nadai notes)
+                        if (noteInBeat === nadai && i < notesPerCycle) {
+                            cycleLine += '|';
+                            noteInBeat = 0;
+                        }
+                    }
+                    isFirstCycle = false;
+                    posInCycle = startingPos;
+                }
+                
                 // Add notes for this cycle
-                for (let i = 0; i < notesPerCycle && noteIndex < notes.length; i++) {
+                for (let i = posInCycle; i <= notesPerCycle && noteIndex < notes.length; i++) {
                     cycleLine += notes[noteIndex];
                     noteInBeat++;
                     noteIndex++;
                     
                     // Add single vertical line after each beat (after nadai notes)
-                    if (noteInBeat === nadai && i + 1 < notesPerCycle) {
+                    if (noteInBeat === nadai && i < notesPerCycle) {
                         cycleLine += '|';
                         noteInBeat = 0;
                     }
@@ -1256,6 +1283,7 @@
                 
                 output += cycleLine + '\n';
                 cycleNum++;
+                posInCycle = 1;  // Reset for subsequent cycles
             }
             
             // Create and download file
