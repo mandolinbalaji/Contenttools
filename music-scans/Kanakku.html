@@ -2016,16 +2016,7 @@
             let currentTick = 0;
             
             midiData.notes.forEach((note, index) => {
-                // Skip rest entries - rests are represented as gaps/silence in MIDI
-                // Don't update currentTick for rests - let notes calculate deltaTime from their absolute startTime
-                if (note.type === 'rest') {
-                    return;  // Skip this entry, move to next note/rest
-                }
-                
-                // Calculate tick position and duration
-                // Formula: time_in_seconds * (bpm / 60) * ticksPerQuarter = ticks
-                // BPM is beats per minute, so bpm/60 = beats per second
-                // Each beat = 1 quarter note = ticksPerQuarter ticks
+                // Calculate tick position and duration for all entries
                 const noteTick = Math.round(note.startTime * (midiData.bpm / 60) * ticksPerQuarter);
                 const noteDurationTick = Math.round(note.duration * (midiData.bpm / 60) * ticksPerQuarter);
                 
@@ -2033,6 +2024,21 @@
                 const deltaTime = noteTick - currentTick;
                 const deltaBytes = encodeVariableLength(deltaTime);
                 
+                // Handle rest entries - use Note On with velocity=0 (MuseScore recognizes as rest)
+                if (note.type === 'rest') {
+                    // Use middle C (note 60) as placeholder for rest with velocity=0
+                    trackData.push(...deltaBytes, 0x90, 60, 0x00);  // Note On, middle C, velocity=0
+                    currentTick = noteTick;
+                    
+                    // Note Off event for rest
+                    const offDeltaTime = noteDurationTick;
+                    const offDeltaBytes = encodeVariableLength(offDeltaTime);
+                    trackData.push(...offDeltaBytes, 0x80, 60, 0x40);  // Note Off, middle C
+                    currentTick = noteTick + noteDurationTick;
+                    return;
+                }
+                
+                // Regular note entry
                 // Note On event (90 = Note On, channel 0, velocity = 100)
                 trackData.push(...deltaBytes, 0x90, note.note, note.velocity || 100);
                 
