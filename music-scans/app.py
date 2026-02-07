@@ -428,6 +428,26 @@ def open_midi():
         return jsonify({"error": f"Failed to open file: {str(e)}"}), 500
 
 
+@app.route('/<path:filename>')
+def serve_static(filename):
+    """Serve static HTML files from the base directory"""
+    file_path = BASE_DIR / filename
+    
+    # Security check: prevent directory traversal
+    try:
+        file_path = file_path.resolve()
+        if not str(file_path).startswith(str(BASE_DIR.resolve())):
+            return jsonify({"error": "Access denied"}), 403
+    except:
+        return jsonify({"error": "Invalid path"}), 400
+    
+    # Check if file exists
+    if file_path.exists() and file_path.is_file():
+        return send_from_directory(BASE_DIR, filename)
+    
+    return jsonify({"error": "File not found"}), 404
+
+
 if __name__ == "__main__":
     print("\n" + "="*70)
     print("FLASK APP INITIALIZATION")
