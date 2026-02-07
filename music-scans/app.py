@@ -436,6 +436,31 @@ def open_midi():
         return jsonify({"error": f"Failed to open file: {str(e)}"}), 500
 
 
+@app.route('/api/test-audio', methods=['POST'])
+def test_audio():
+    """Test endpoint - saves audio file for debugging"""
+    try:
+        audio_data = request.get_data()
+        
+        if not audio_data:
+            return jsonify({"error": "No audio data", "size": 0}), 200
+        
+        # Save to temp file
+        test_file = BASE_DIR / "test_audio.wav"
+        test_file.write_bytes(audio_data)
+        
+        print(f"[DEBUG] Saved test audio: {test_file} ({len(audio_data)} bytes)")
+        
+        return jsonify({
+            "success": True,
+            "size": len(audio_data),
+            "message": f"Saved {len(audio_data)} bytes to test_audio.wav"
+        })
+    except Exception as e:
+        print(f"[ERROR] Test audio error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/transcribe', methods=['POST'])
 def transcribe_audio():
     """Transcribe audio data to text using speech recognition"""
@@ -445,9 +470,12 @@ def transcribe_audio():
     try:
         # Get audio data from request
         audio_data = request.get_data()
+        audio_size = len(audio_data)
         
-        if not audio_data or len(audio_data) < 100:
-            return jsonify({"error": "No audio data provided", "success": False}), 200
+        print(f"[DEBUG] Received audio: {audio_size} bytes")
+        
+        if not audio_data or audio_size < 100:
+            return jsonify({"error": f"Audio too small ({audio_size} bytes) - needs at least 100 bytes", "success": False}), 200
         
         # Create recognizer
         recognizer = sr.Recognizer()
@@ -459,55 +487,77 @@ def transcribe_audio():
             
             # Try to detect format and convert to WAV
             try:
+                print(f"[DEBUG] Attempting to load audio with pydub...")
                 audio = AudioSegment.from_file(io.BytesIO(audio_data))
+                print(f"[DEBUG] Audio loaded: {audio.channels} channels, {audio.frame_rate}Hz, {len(audio)}ms")
             except Exception as e:
-                print(f"[DEBUG] Pydub failed to auto-detect format: {e}, trying WAV...")
-                # If auto-detect fails, try WAV specifically
-                audio = AudioSegment.from_wav(io.BytesIO(audio_data))
+                print(f"[DEBUG] Pydub auto-detect failed: {e}, trying WAV specifically...")
+                try:
+                    audio = AudioSegment.from_wav(io.BytesIO(audio_data))
+                    print(f"[DEBUG] WAV load successful: {audio.channels} channels, {audio.frame_rate}Hz")
+                except Exception as e2:
+                    print(f"[DEBUG] WAV load failed: {e2}")
+                    raise
             
             # Convert to mono, 16-bit, 16kHz for better recognition
+            print(f"[DEBUG] Converting to 16kHz mono 16-bit...")
             audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
             
             # Export to WAV bytes
             wav_bytes = io.BytesIO()
             audio.export(wav_bytes, format="wav")
             wav_bytes.seek(0)
+            wav_data = wav_bytes.getvalue()
+            print(f"[DEBUG] Converted audio: {len(wav_data)} bytes")
             
             # Load with speech_recognition
             try:
+                print(f"[DEBUG] Loading with speech_recognition...")
                 audio_sr = recognizer.record(wav_bytes)
+                print(f"[DEBUG] Audio loaded into recognizer: {audio_sr.sample_rate}Hz")
             except Exception as e:
                 print(f"[DEBUG] Failed to load with speech_recognition: {e}")
-                return jsonify({"error": f"Could not process audio: {str(e)}", "success": False}), 200
+                return jsonify({"error": f"Could not process audio: {str(e)}", "success": False, "stage": "sr_load"}), 200
             
         except ImportError:
             # Fallback if pydub not available - try raw bytes
             print("[DEBUG] Pydub not available, trying raw audio data...")
             try:
                 audio_sr = sr.AudioData(audio_data, 16000, 2)
+                print(f"[DEBUG] Created AudioData from raw bytes")
             except Exception as e:
                 print(f"[ERROR] Failed to create AudioData: {e}")
-                return jsonify({"error": "Could not process audio format", "success": False}), 200
+                return jsonify({"error": "Could not process audio format", "success": False, "stage": "raw_audio"}), 200
         
         # Try Google Web Speech API
         try:
-            print(f"[DEBUG] Attempting transcription, audio length: {len(audio_data)} bytes")
+            print(f"[DEBUG] Attempting Google Speech API transcription...")
             text = recognizer.recognize_google(audio_sr, language='en-US')
-            print(f"[DEBUG] Transcription success: {text}")
+            print(f"[DEBUG] ✓ Transcription success: '{text}'")
             return jsonify({"text": text, "success": True})
         except sr.UnknownValueError:
-            print(f"[DEBUG] Could not understand audio")
-            return jsonify({"error": "Could not understand audio - try speaking clearer or check microphone", "success": False}), 200
+            print(f"[DEBUG] ✗ Could not understand audio - speech not clear enough")
+            return jsonify({
+                "error": "Could not understand - try speaking clearer, slower, or closer to the microphone",
+                "success": False,
+                "stage": "recognition"
+            }), 200
         except sr.RequestError as e:
-            print(f"[WARNING] Google Speech API error: {e}")
-            return jsonify({"error": f"Speech service unavailable: check internet connection", "success": False}), 200
+            print(f"[WARNING] Google Speech API unavailable: {e}")
+            return jsonify({
+                "error": f"Speech service unavailable - check internet connection",
+                "success": False,
+                "stage": "api_request"
+            }), 200
         except Exception as e:
             print(f"[ERROR] Unexpected transcription error: {e}")
-            return jsonify({"error": f"Transcription error: {str(e)}", "success": False}), 200
+            return jsonify({"error": f"Error: {str(e)}", "success": False, "stage": "transcription"}), 200
             
     except Exception as e:
         print(f"[ERROR] Transcribe endpoint error: {e}")
-        return jsonify({"error": f"Server error: {str(e)}", "success": False}), 500
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Server error: {str(e)}", "success": False, "stage": "server"}), 500
 
 
 @app.route('/<path:filename>')

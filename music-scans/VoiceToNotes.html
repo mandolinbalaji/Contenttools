@@ -95,6 +95,25 @@
             animation: pulse 1.5s infinite;
         }
 
+        #testBtn {
+            background: #ff9800;
+            color: white;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        #testBtn:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        #testBtn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         #clearBtn {
             background: #95a5a6;
             color: white;
@@ -127,21 +146,33 @@
             font-size: 14px;
             color: #666;
             background: #f5f5f5;
+            line-height: 1.5;
+            word-wrap: break-word;
         }
 
         #status.recording {
             background: #ffe6e6;
             color: #c14141;
+            font-weight: 600;
         }
 
         #status.success {
             background: #e6f7e6;
             color: #2d5016;
+            font-weight: 600;
         }
 
         #status.error {
             background: #ffe6e6;
             color: #c14141;
+            font-weight: 600;
+        }
+        
+        #status small {
+            font-weight: normal;
+            font-size: 12px;
+            display: block;
+            margin-top: 5px;
         }
 
         .result-section {
@@ -363,10 +394,12 @@
 
         <div class="control-section">
             <button id="listenBtn">🎤 Listen</button>
+            <button id="testBtn">🧪 Test Mic</button>
             <button id="clearBtn">🗑️ Clear</button>
         </div>
 
         <div id="status"></div>
+        <div id="debugInfo" style="display: none; background: #f5f5f5; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 12px; color: #666; font-family: monospace; line-height: 1.4;"></div>
 
         <div class="audio-monitor" id="audioMonitor">
             <div class="monitor-label">📊 Input Level</div>
@@ -389,10 +422,12 @@
     <script>
         (function() {
             const listenBtn = document.getElementById('listenBtn');
+            const testBtn = document.getElementById('testBtn');
             const clearBtn = document.getElementById('clearBtn');
             const resultSwaras = document.getElementById('resultSwaras');
             const commentSection = document.getElementById('commentSection');
             const status = document.getElementById('status');
+            const debugInfo = document.getElementById('debugInfo');
             const deviceSelect = document.getElementById('deviceSelect');
 
             let mediaRecorder = null;
@@ -401,6 +436,7 @@
             let fullInputText = '';
             let audioStream = null;
             let selectedDeviceId = null;
+            let testAudioBlob = null;
             
             // Audio monitoring
             let audioContext = null;
@@ -409,6 +445,24 @@
             let animationId = null;
             
             const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n']);
+
+            // Debug logging function
+            function debug(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const debugLine = `[${timestamp}] ${message}`;
+                console.log(debugLine);
+                
+                // Add to debug info display
+                const existing = debugInfo.innerHTML;
+                debugInfo.innerHTML = existing + debugLine + '\n';
+                debugInfo.parentElement.style.display = 'block';
+                debugInfo.parentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function clearDebug() {
+                debugInfo.innerHTML = '';
+                debugInfo.parentElement.style.display = 'none';
+            }
 
             // Enumerate and populate audio input devices
             async function loadDevices() {
@@ -655,11 +709,16 @@
 
                         mediaRecorder.onstop = async () => {
                             const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/wav' });
+                            const audioSize = blob.size;
+                            
+                            debug(`Audio recorded: ${audioSize} bytes, format: ${blob.type}`);
                             status.textContent = '📤 Sending to server...';
                             status.classList.remove('recording');
 
                             try {
                                 const arrayBuffer = await blob.arrayBuffer();
+                                debug(`Sending ${arrayBuffer.byteLength} bytes to /api/transcribe`);
+                                
                                 const response = await fetch('/api/transcribe', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/octet-stream' },
@@ -667,19 +726,25 @@
                                 });
 
                                 const result = await response.json();
+                                debug(`Server response: ${JSON.stringify(result)}`);
 
                                 if (result.success && result.text) {
                                     fullInputText = result.text;
+                                    debug(`✅ Transcription success: "${result.text}"`);
                                     status.textContent = '✅ Done!';
                                     status.classList.add('success');
                                 } else {
-                                    status.textContent = '❌ ' + (result.error || 'Error');
+                                    const errorMsg = result.error || 'Unknown error';
+                                    const stage = result.stage ? ` (${result.stage})` : '';
+                                    debug(`❌ Error: ${errorMsg}${stage}`);
+                                    status.innerHTML = `❌ <strong>${errorMsg}${stage}</strong><br><small>Check debug info below</small>`;
                                     status.classList.add('error');
                                     fullInputText = '';
                                 }
                             } catch (error) {
+                                debug(`❌ Network/fetch error: ${error.message}`);
                                 console.error(error);
-                                status.textContent = '❌ Network error';
+                                status.textContent = '❌ Network error - check your connection';
                                 status.classList.add('error');
                                 fullInputText = '';
                             }
@@ -725,6 +790,105 @@
                 if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
                 if (audioStream) audioStream.getTracks().forEach(t => t.stop());
                 updateDisplay();
+                clearDebug();
+            });
+
+            // Test microphone button - records 3 seconds for debugging
+            testBtn.addEventListener('click', async () => {
+                if (testBtn.textContent.includes('Stop')) {
+                    // Stop recording
+                    testBtn.textContent = '🧪 Test Mic';
+                    testBtn.disabled = true;
+                    mediaRecorder.stop();
+                    status.textContent = '📤 Saving test audio...';
+                    debug('Test recording stopped');
+                    
+                    // Re-enable button after stop completes
+                    setTimeout(() => { testBtn.disabled = false; }, 500);
+                    return;
+                }
+
+                try {
+                    clearDebug();
+                    debug('🧪 Starting 3-second test recording...');
+                    
+                    const audioConstraints = selectedDeviceId 
+                        ? { audio: { deviceId: { exact: selectedDeviceId } } }
+                        : { audio: true };
+                    
+                    audioStream = await navigator.mediaDevices.getUserMedia(audioConstraints);
+                    debug(`✅ Microphone accessed`);
+
+                    let mimeType = 'audio/wav';
+                    const supportedMimes = ['audio/wav', 'audio/webm', 'audio/mp4', 'audio/ogg'];
+                    
+                    for (const mime of supportedMimes) {
+                        if (MediaRecorder.isTypeSupported(mime)) {
+                            mimeType = mime;
+                            break;
+                        }
+                    }
+                    debug(`Using format: ${mimeType}`);
+                    
+                    mediaRecorder = new MediaRecorder(audioStream, { mimeType: mimeType });
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        testAudioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/wav' });
+                        const audioSize = testAudioBlob.size;
+                        
+                        debug(`Test audio saved: ${audioSize} bytes`);
+                        
+                        // Create download link
+                        const url = URL.createObjectURL(testAudioBlob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `test-audio-${Date.now()}.wav`;
+                        
+                        status.innerHTML = `
+                            💾 Test audio ready (${audioSize} bytes)<br>
+                            <button id="downloadBtn" style="margin-top: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">⬇️ Download Test Audio</button>
+                            <small style="display: block; margin-top: 5px; color: #666;">Use this to verify your microphone is working</small>
+                        `;
+                        status.classList.add('success');
+                        
+                        document.getElementById('downloadBtn').addEventListener('click', () => {
+                            link.click();
+                            debug('Downloaded test audio');
+                        });
+
+                        if (audioStream) audioStream.getTracks().forEach(t => t.stop());
+                        testBtn.textContent = '🧪 Test Mic';
+                    };
+
+                    mediaRecorder.start();
+                    setupAudioMonitor(audioStream);
+                    document.getElementById('audioMonitor').classList.add('active');
+                    testBtn.textContent = '🛑 Stop (3s)';
+                    status.textContent = '🔴 Recording test audio...';
+                    status.classList.remove('error', 'success');
+                    status.classList.add('recording');
+
+                    // Auto-stop after 3 seconds
+                    setTimeout(() => {
+                        if (mediaRecorder && mediaRecorder.state === 'recording') {
+                            debug('Auto-stopping after 3 seconds');
+                            mediaRecorder.stop();
+                            stopMonitoring();
+                            document.getElementById('audioMonitor').classList.remove('active');
+                            testBtn.textContent = '🧪 Test Mic';
+                        }
+                    }, 3000);
+
+                } catch (error) {
+                    debug(`❌ Microphone error: ${error.message}`);
+                    status.textContent = `⚠️ Microphone error: ${error.message}`;
+                    status.classList.add('error');
+                }
             });
 
             // Load devices on page init
