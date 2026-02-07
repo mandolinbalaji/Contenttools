@@ -4,9 +4,17 @@ import uuid
 import mimetypes
 import subprocess
 import base64
+import io
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, send_from_directory, request, jsonify, Response
+
+try:
+    import speech_recognition as sr
+    SPEECH_RECOGNITION_AVAILABLE = True
+except ImportError:
+    SPEECH_RECOGNITION_AVAILABLE = False
+    print("[WARNING] speech_recognition library not installed. Install with: pip install SpeechRecognition")
 
 # Everything lives here - use the directory where this script is located
 # This ensures it works regardless of where the batch file is run from
@@ -426,6 +434,49 @@ def open_midi():
     except Exception as e:
         print(f"[ERROR] Failed to open MIDI file in MuseScore: {e}")
         return jsonify({"error": f"Failed to open file: {str(e)}"}), 500
+
+
+@app.route('/api/transcribe', methods=['POST'])
+def transcribe_audio():
+    """Transcribe audio data to text using speech recognition"""
+    if not SPEECH_RECOGNITION_AVAILABLE:
+        return jsonify({"error": "Speech recognition not available. Install: pip install SpeechRecognition"}), 500
+    
+    try:
+        # Get audio data from request
+        audio_data = request.get_data()
+        
+        if not audio_data:
+            return jsonify({"error": "No audio data provided"}), 400
+        
+        # Create recognizer
+        recognizer = sr.Recognizer()
+        
+        # Convert bytes to AudioData
+        try:
+            # Assume audio is 16-bit PCM wav data (44.1kHz)
+            audio = sr.AudioData(audio_data, 44100, 2)
+        except Exception as e:
+            print(f"[ERROR] Failed to parse audio data: {e}")
+            return jsonify({"error": "Invalid audio format"}), 400
+        
+        # Try Google Web Speech API first (requires internet)
+        try:
+            text = recognizer.recognize_google(audio, language='en-US')
+            return jsonify({"text": text, "success": True})
+        except sr.UnknownValueError:
+            return jsonify({"error": "Could not understand audio", "success": False}), 200
+        except sr.RequestError as e:
+            # Fallback: return error but don't crash
+            print(f"[WARNING] Google Speech API error: {e}")
+            return jsonify({"error": f"Speech service error: {str(e)}", "success": False}), 200
+        except Exception as e:
+            print(f"[ERROR] Transcription error: {e}")
+            return jsonify({"error": f"Transcription error: {str(e)}", "success": False}), 200
+            
+    except Exception as e:
+        print(f"[ERROR] Transcribe endpoint error: {e}")
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 
 @app.route('/<path:filename>')
