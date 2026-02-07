@@ -263,6 +263,42 @@
             width: 0%;
             transition: width 0.1s ease;
         }
+
+        .device-selector {
+            margin-bottom: 20px;
+        }
+
+        .device-selector label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .device-selector select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .device-selector select:hover {
+            border-color: #667eea;
+        }
+
+        .device-selector select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -272,6 +308,13 @@
 
         <div class="instructions">
             <strong>How to use:</strong> Click "Listen", speak your swaras clearly (s, r, g, m, p, d, n), then click "Listen" again to stop. The app will send to the server for transcription and extract only the valid swaras.
+        </div>
+
+        <div class="device-selector">
+            <label for="deviceSelect">🎙️ Input Device</label>
+            <select id="deviceSelect">
+                <option value="">Loading devices...</option>
+            </select>
         </div>
 
         <div class="control-section">
@@ -299,14 +342,52 @@
             const resultSwaras = document.getElementById('resultSwaras');
             const commentSection = document.getElementById('commentSection');
             const status = document.getElementById('status');
+            const deviceSelect = document.getElementById('deviceSelect');
 
             let mediaRecorder = null;
             let audioChunks = [];
             let isRecording = false;
             let fullInputText = '';
             let audioStream = null;
+            let selectedDeviceId = null;
             
             const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n']);
+
+            // Enumerate and populate audio input devices
+            async function loadDevices() {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const audioInputs = devices.filter(device => device.kind === 'audioinput');
+                    
+                    deviceSelect.innerHTML = '';
+                    
+                    if (audioInputs.length === 0) {
+                        deviceSelect.innerHTML = '<option value="">No microphones found</option>';
+                        return;
+                    }
+
+                    audioInputs.forEach((device, index) => {
+                        const option = document.createElement('option');
+                        option.value = device.deviceId;
+                        option.textContent = device.label || `Microphone ${index + 1}`;
+                        deviceSelect.appendChild(option);
+                    });
+
+                    // Set first device as default
+                    if (audioInputs.length > 0) {
+                        selectedDeviceId = audioInputs[0].deviceId;
+                        deviceSelect.value = selectedDeviceId;
+                    }
+                } catch (error) {
+                    console.error('Error enumerating devices:', error);
+                    deviceSelect.innerHTML = '<option value="">Error loading devices</option>';
+                }
+            }
+
+            // Update selected device
+            deviceSelect.addEventListener('change', () => {
+                selectedDeviceId = deviceSelect.value;
+            });
 
             function extractSwaras(text) {
                 const cleaned = text.toLowerCase().replace(/\s+/g, '');
@@ -408,7 +489,11 @@
             listenBtn.addEventListener('click', async () => {
                 if (!isRecording) {
                     try {
-                        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        const audioConstraints = selectedDeviceId 
+                            ? { audio: { deviceId: { exact: selectedDeviceId } } }
+                            : { audio: true };
+                        
+                        audioStream = await navigator.mediaDevices.getUserMedia(audioConstraints);
                         mediaRecorder = new MediaRecorder(audioStream);
                         audioChunks = [];
 
@@ -484,6 +569,8 @@
                 updateDisplay();
             });
 
+            // Load devices on page init
+            loadDevices();
             updateDisplay();
         })();
     </script>
