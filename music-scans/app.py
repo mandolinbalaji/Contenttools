@@ -477,6 +477,11 @@ def transcribe_audio():
         if not audio_data or audio_size < 100:
             return jsonify({"error": f"Audio too small ({audio_size} bytes) - needs at least 100 bytes", "success": False}), 200
         
+        # Save raw audio for debugging
+        debug_raw = BASE_DIR / "debug_raw_audio.wav"
+        debug_raw.write_bytes(audio_data)
+        print(f"[DEBUG] Saved raw audio to: {debug_raw}")
+        
         # Create recognizer
         recognizer = sr.Recognizer()
         audio_sr = None
@@ -486,132 +491,140 @@ def transcribe_audio():
         print(f"[DEBUG] Audio format detection: WAV={is_wav}")
         
         if is_wav:
-            # Try to load WAV directly without ffmpeg
+            # Parse WAV directly to check specs
             try:
-                print(f"[DEBUG] Loading WAV file directly...")
-                import wave
-                wav_file = io.BytesIO(audio_data)
-                with wave.open(wav_file, 'rb') as wav:
+                print(f"[DEBUG] Parsing WAV file...")
+                wav_stream = io.BytesIO(audio_data)
+                with wave.open(wav_stream, 'rb') as wav:
                     frames = wav.readframes(wav.getnframes())
                     sample_rate = wav.getframerate()
                     channels = wav.getnchannels()
                     sample_width = wav.getsampwidth()
-                    print(f"[DEBUG] WAV loaded: {channels}ch, {sample_rate}Hz, {sample_width} bytes/sample")
+                    num_frames = wav.getnframes()
+                    
+                    print(f"[DEBUG] WAV specs: {channels}ch, {sample_rate}Hz, {sample_width}B/sample, {num_frames} frames ({len(frames)} bytes)")
+                    print(f"[DEBUG] Duration: {num_frames / sample_rate:.2f} seconds")
                 
                 # If it's already 16kHz mono 16-bit, use it directly
                 if sample_rate == 16000 and channels == 1 and sample_width == 2:
-                    print(f"[DEBUG] Audio already in correct format, using directly")
+                    print(f"[DEBUG] ✓ Audio already in correct format (16kHz mono 16-bit)")
                     audio_sr = sr.AudioData(frames, 16000, 2)
                 else:
-                    # Need to convert - use pydub but be careful
-                    print(f"[DEBUG] Converting audio to 16kHz mono 16-bit...")
+                    # Need to resample/convert
+                    print(f"[DEBUG] Converting {channels}ch {sample_rate}Hz {sample_width}B → 16kHz mono 16-bit")
+                    
                     try:
                         from pydub import AudioSegment
-                        # Try with simpleaudio first (no ffmpeg)
-                        audio = AudioSegment.from_wav(io.BytesIO(audio_data))
+                        # Don't use pydub.from_wav - it needs ffmpeg
+                        # Instead, create AudioSegment from raw bytes
+                        audio = AudioSegment(
+                            data=frames,
+                            sample_width=sample_width,
+                            frame_rate=sample_rate,
+                            channels=channels
+                        )
+                        
+                        # Convert to 16kHz mono 16-bit
                         audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
                         
-                        # Export to WAV manually to avoid ffmpeg
-                        wav_out = io.BytesIO()
-                        audio.export(wav_out, format="wav", parameters=["-c:a", "pcm_s16le"])
-                        wav_out.seek(0)
-                        
-                        # Read the converted WAV
-                        with wave.open(wav_out, 'rb') as wav:
-                            converted_frames = wav.readframes(wav.getnframes())
-                        
+                        # Get the raw audio bytes
+                        converted_frames = audio.raw_data
                         audio_sr = sr.AudioData(converted_frames, 16000, 2)
-                        print(f"[DEBUG] Audio converted successfully")
+                        print(f"[DEBUG] ✓ Audio converted to 16kHz mono 16-bit ({len(converted_frames)} bytes)")
+                        
+                        # Save converted audio for debugging
+                        debug_converted = BASE_DIR / "debug_converted_audio.wav"
+                        with wave.open(debug_converted, 'wb') as wav:
+                            wav.setnchannels(1)
+                            wav.setsampwidth(2)
+                            wav.setframerate(16000)
+                            wav.writeframes(converted_frames)
+                        print(f"[DEBUG] Saved converted audio to: {debug_converted}")
+                        
                     except Exception as e:
-                        print(f"[WARNING] Pydub conversion failed: {e}, trying direct resampling...")
-                        # Last resort: create AudioData and let speech_recognition handle it
+                        print(f"[WARNING] Pydub conversion failed: {e}")
+                        # Fallback: try to use the frames as-is
+                        print(f"[DEBUG] Using frames directly at {sample_rate}Hz")
                         audio_sr = sr.AudioData(frames, sample_rate, sample_width)
-                        print(f"[DEBUG] Using raw audio with original sample rate")
             
             except Exception as e:
-                print(f"[DEBUG] WAV parsing failed: {e}")
-                # Fall back to raw bytes
-                try:
-                    audio_sr = sr.AudioData(audio_data, 16000, 2)
-                    print(f"[DEBUG] Created AudioData from raw bytes (assuming 16kHz 16-bit)")
-                except Exception as e2:
-                    print(f"[ERROR] Failed to create AudioData: {e2}")
-                    return jsonify({"error": f"Could not process audio: {str(e2)}", "success": False, "stage": "audio_parse"}), 200
+                print(f"[ERROR] WAV parsing failed: {e}")
+                import traceback
+                traceback.print_exc()
+                return jsonify({"error": f"Could not parse audio: {str(e)}", "success": False, "stage": "wav_parse"}), 200
         else:
             # Non-WAV format - try pydub as fallback
             print(f"[DEBUG] Non-WAV audio detected, attempting format conversion...")
             try:
                 from pydub import AudioSegment
-                # Try to detect format - disable ffmpeg if possible
+                # Try to auto-detect
                 try:
-                    audio = AudioSegment.from_file(io.BytesIO(audio_data), codec="libmp3lame")
-                except:
-                    try:
-                        audio = AudioSegment.from_mp3(io.BytesIO(audio_data))
-                    except:
+                    audio = AudioSegment.from_file(io.BytesIO(audio_data))
+                    print(f"[DEBUG] Loaded non-WAV: {audio.channels}ch {audio.frame_rate}Hz")
+                except Exception as e:
+                    print(f"[DEBUG] Auto-detect failed ({e}), trying specific formats...")
+                    audio = None
+                    for fmt in ['mp3', 'ogg', 'webm', 'm4a']:
                         try:
-                            audio = AudioSegment.from_ogg(io.BytesIO(audio_data))
+                            audio = AudioSegment.from_file(io.BytesIO(audio_data), format=fmt)
+                            print(f"[DEBUG] Successfully loaded as {fmt}")
+                            break
                         except:
-                            # Try generic from_file
-                            audio = AudioSegment.from_file(io.BytesIO(audio_data))
-                
-                print(f"[DEBUG] Audio loaded: {audio.channels} channels, {audio.frame_rate}Hz")
+                            continue
+                    
+                    if not audio:
+                        raise ValueError("Could not detect audio format")
                 
                 # Convert to mono, 16-bit, 16kHz
                 audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                converted_frames = audio.raw_data
+                audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                print(f"[DEBUG] ✓ Non-WAV converted to 16kHz mono 16-bit ({len(converted_frames)} bytes)")
                 
-                # Extract frames
-                wav_out = io.BytesIO()
-                audio.export(wav_out, format="wav")
-                wav_out.seek(0)
-                
-                with wave.open(wav_out, 'rb') as wav:
-                    frames = wav.readframes(wav.getnframes())
-                
-                audio_sr = sr.AudioData(frames, 16000, 2)
-                print(f"[DEBUG] Audio converted successfully")
             except Exception as e:
-                print(f"[WARNING] Format conversion failed: {e}")
-                # Fallback: assume it's raw 16kHz 16-bit audio
-                try:
-                    audio_sr = sr.AudioData(audio_data, 16000, 2)
-                    print(f"[DEBUG] Using raw audio data directly")
-                except Exception as e2:
-                    print(f"[ERROR] Failed: {e2}")
-                    return jsonify({"error": f"Unsupported audio format: {str(e)}", "success": False, "stage": "format"}), 200
+                print(f"[ERROR] Format conversion failed: {e}")
+                import traceback
+                traceback.print_exc()
+                return jsonify({"error": f"Unsupported audio format: {str(e)}", "success": False, "stage": "format"}), 200
         
         if not audio_sr:
             return jsonify({"error": "Failed to process audio", "success": False, "stage": "audio_load"}), 200
         
+        print(f"[DEBUG] Audio ready for recognition: {audio_sr.sample_rate}Hz, {len(audio_sr.frame_data)} bytes")
+        
         # Try Google Web Speech API
         try:
-            print(f"[DEBUG] Attempting Google Speech API transcription...")
+            print(f"[DEBUG] Sending to Google Speech API...")
             text = recognizer.recognize_google(audio_sr, language='en-US')
-            print(f"[DEBUG] ✓ Transcription success: '{text}'")
+            print(f"[DEBUG] ✓✓✓ Transcription success: '{text}'")
             return jsonify({"text": text, "success": True})
-        except sr.UnknownValueError:
-            print(f"[DEBUG] ✗ Could not understand audio - speech not clear enough")
+        except sr.UnknownValueError as e:
+            print(f"[ERROR] ✗✗✗ Google could not understand audio")
+            print(f"[ERROR] UnknownValueError: {e}")
             return jsonify({
-                "error": "Could not understand - try speaking clearer, slower, or closer to the microphone",
+                "error": "Google could not understand your speech - try speaking clearer, slower, or check microphone quality",
                 "success": False,
-                "stage": "recognition"
+                "stage": "recognition",
+                "debug": "Check debug_raw_audio.wav and debug_converted_audio.wav files"
             }), 200
         except sr.RequestError as e:
-            print(f"[WARNING] Google Speech API unavailable: {e}")
+            print(f"[ERROR] Google Speech API request failed: {e}")
             return jsonify({
-                "error": f"Speech service unavailable - check internet connection",
+                "error": f"Speech service error - {str(e)[:100]}",
                 "success": False,
                 "stage": "api_request"
             }), 200
         except Exception as e:
-            print(f"[ERROR] Unexpected transcription error: {e}")
-            return jsonify({"error": f"Error: {str(e)}", "success": False, "stage": "transcription"}), 200
+            print(f"[ERROR] Unexpected transcription error: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({"error": f"Error: {str(e)[:100]}", "success": False, "stage": "transcription"}), 200
             
     except Exception as e:
-        print(f"[ERROR] Transcribe endpoint error: {e}")
+        print(f"[ERROR] Transcribe endpoint fatal error: {e}")
         import traceback
         traceback.print_exc()
-        return jsonify({"error": f"Server error: {str(e)}", "success": False, "stage": "server"}), 500
+        return jsonify({"error": f"Server error: {str(e)[:100]}", "success": False, "stage": "server"}), 500
 
 
 @app.route('/<path:filename>')
