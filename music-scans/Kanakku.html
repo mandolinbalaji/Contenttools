@@ -1738,12 +1738,23 @@
             const phraseRaw = phraseInput.value;  // Keep original with dots
             const beats = parseInt(beatsInput.value) || 8;
             const nadai = parseInt(nadaiInput.value) || 4;
+            const eduppu = parseInt(eduppuInput.value) || 1;
             const sruthi = sruthiSelect.value;
             const bpm = parseInt(bpmSelect.value) || 80;
             
             if (!phraseRaw.trim()) {
                 alert('Please enter a phrase first');
                 return null;
+            }
+
+            // Calculate phrase length (count valid swaras only, not numbers)
+            const phraseLength = countSwaras(phraseRaw);
+            
+            // Calculate starting position (matching the staff calculation)
+            const cycleLengthVal = beats * nadai;
+            let startingPos = eduppu - phraseLength;
+            while (startingPos <= 0) {
+                startingPos += cycleLengthVal;
             }
 
             // Map sruthi to MIDI base pitch (C=0, C#=1, ... B=11 in octave 4)
@@ -1767,11 +1778,22 @@
             
             const baseNote = sruthiMap[sruthi] || sruthiMap['C'];
             
-            // Generate MIDI events with octave detection
+            // Build MIDI notes with leading rests to match staff layout
             const notes = [];
             const beatDuration = 60 / (bpm * nadai);  // Duration in seconds for each nadai unit
-            
             let currentTime = 0;
+            
+            // Add leading rests for starting position
+            for (let restCount = 1; restCount < startingPos; restCount++) {
+                notes.push({
+                    type: 'rest',
+                    startTime: currentTime,
+                    duration: beatDuration
+                });
+                currentTime += beatDuration;
+            }
+            
+            // Now add the actual notes from the phrase
             let i = 0;
             while (i < phraseRaw.length) {
                 const char = phraseRaw[i].toLowerCase();
@@ -1812,8 +1834,6 @@
                     i = j - 1;  // Move i to skip combining marks and digit
                     
                     // Create MIDI note with octave offset
-                    // For now, raga notes don't change the MIDI note (same as standard)
-                    // In future, could modify behavior based on ragaNotesMap
                     const midiNote = baseNote + swaraOffsets[actualChar] + octaveOffset;
                     notes.push({
                         note: midiNote,
