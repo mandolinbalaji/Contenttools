@@ -1823,13 +1823,15 @@
                     });
                     currentTime += beatDuration;
                 } else if (char === ',') {
-                    // Rest - advance time without creating a note
+                    // Rest - add as a rest entry
+                    notes.push({
+                        type: 'rest',
+                        startTime: currentTime,
+                        duration: beatDuration
+                    });
                     currentTime += beatDuration;
                 }
                 i++;
-            }
-            
-            return {
                 notes: notes,
                 bpm: bpm,
                 sruthi: sruthi,
@@ -1900,25 +1902,40 @@
             
             notes.forEach((note, index) => {
                 const x = 100 + index * noteWidth;
-                const y = midiToYPos(note.note);
                 
-                // Draw note head
-                const noteHead = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                noteHead.setAttribute('cx', x);
-                noteHead.setAttribute('cy', y);
-                noteHead.setAttribute('r', '6');
-                noteHead.setAttribute('fill', '#000');
-                svg.appendChild(noteHead);
-                
-                // Draw stem
-                const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                stem.setAttribute('x1', x + 6);
-                stem.setAttribute('y1', y);
-                stem.setAttribute('x2', x + 6);
-                stem.setAttribute('y2', y - 35);
-                stem.setAttribute('stroke', '#000');
-                stem.setAttribute('stroke-width', '2');
-                svg.appendChild(stem);
+                // Check if this is a rest
+                if (note.type === 'rest') {
+                    // Draw rest symbol (vertical line with hooks)
+                    const restSymbol = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    restSymbol.setAttribute('x', x);
+                    restSymbol.setAttribute('y', staffCenter + 10);
+                    restSymbol.setAttribute('font-size', '20');
+                    restSymbol.setAttribute('fill', '#000');
+                    restSymbol.setAttribute('text-anchor', 'middle');
+                    restSymbol.textContent = '𝄽';  // Quarter rest symbol
+                    svg.appendChild(restSymbol);
+                } else {
+                    // Draw note
+                    const y = midiToYPos(note.note);
+                    
+                    // Draw note head
+                    const noteHead = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    noteHead.setAttribute('cx', x);
+                    noteHead.setAttribute('cy', y);
+                    noteHead.setAttribute('r', '6');
+                    noteHead.setAttribute('fill', '#000');
+                    svg.appendChild(noteHead);
+                    
+                    // Draw stem
+                    const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    stem.setAttribute('x1', x + 6);
+                    stem.setAttribute('y1', y);
+                    stem.setAttribute('x2', x + 6);
+                    stem.setAttribute('y2', y - 35);
+                    stem.setAttribute('stroke', '#000');
+                    stem.setAttribute('stroke-width', '2');
+                    svg.appendChild(stem);
+                }
             });
             
             container.appendChild(svg);
@@ -1976,6 +1993,15 @@
             let currentTick = 0;
             
             midiData.notes.forEach((note, index) => {
+                // Skip rest entries - MIDI doesn't have rest events, timing gaps represent rests
+                if (note.type === 'rest') {
+                    // Just update timing to account for the rest duration
+                    const restTick = Math.round(note.startTime * (midiData.bpm / 60) * ticksPerQuarter);
+                    const restDurationTick = Math.round(note.duration * (midiData.bpm / 60) * ticksPerQuarter);
+                    currentTick = restTick + restDurationTick;
+                    return;
+                }
+                
                 // Calculate tick position and duration
                 // Formula: time_in_seconds * (bpm / 60) * ticksPerQuarter = ticks
                 // BPM is beats per minute, so bpm/60 = beats per second
