@@ -1264,12 +1264,7 @@
                 return notes[idx] + octave;
             };
             
-            // Map carnatic swara names
             const swaraNames = { 's': 'Sa', 'r': 'Ri', 'g': 'Ga', 'm': 'Ma', 'p': 'Pa', 'd': 'Dha', 'n': 'Ni' };
-            
-            console.log(`\n=== Playing: ${phrase} ===`);
-            console.log(`Sruthi: ${sruthi} | BPM: ${bpm} | Nadai: ${nadaiInput.value}`);
-            console.log(`Note Duration: ${(noteDuration * 1000).toFixed(0)}ms\n`);
             
             let i = 0;
             let noteIndex = 1;
@@ -1332,8 +1327,6 @@
                     const westernNote = getWesternNote(frequency, octaveNum);
                     const swaraName = swaraNames[actualChar];
                     
-                    console.log(`${noteIndex}. ${swaraName} (${char}) | Octave: ${octaveNum} | Freq: ${frequency.toFixed(2)} Hz | ${westernNote}`);
-                    
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
                     
@@ -1365,7 +1358,6 @@
                     
                 } else if (char === ',') {
                     // Rest - no sound
-                    console.log(`${noteIndex}. Rest (,)`);
                     currentTime += noteDuration;
                     noteIndex++;
                 } else {
@@ -1496,7 +1488,7 @@
             const beats = parseInt(beatsInput.value) || 8;
             const nadai = parseInt(nadaiInput.value) || 4;
             const eduppu = parseInt(eduppuInput.value) || 1;
-            const phrase = phraseInput.value;
+            let phrase = phraseInput.value;
 
             errorMessageDiv.innerHTML = '';
 
@@ -1505,7 +1497,7 @@
 
             updateEduppuDisplay();
 
-            if (phrase.length === 0) {
+            if (!phrase || phrase.length === 0) {
                 phraseLengthSpan.textContent = '0';
                 startingPosSpan.textContent = '-';
                 landingBeatSpan.textContent = '-';
@@ -1829,6 +1821,9 @@
                         duration: beatDuration,
                         velocity: 100
                     });
+                    currentTime += beatDuration;
+                } else if (char === ',') {
+                    // Rest - advance time without creating a note
                     currentTime += beatDuration;
                 }
                 i++;
