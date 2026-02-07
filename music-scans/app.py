@@ -495,7 +495,7 @@ def test_transcribe_file(filename):
         is_webm = len(audio_data) > 4 and audio_data[0] == 0x1a and audio_data[1] == 0x45 and audio_data[2] == 0xdf and audio_data[3] == 0xa3
         print(f"[TEST] Format check: WAV={is_wav}, WebM={is_webm}")
         
-        if is_wav or is_webm:
+        if is_wav:
             try:
                 print(f"[TEST] Parsing WAV...")
                 wav_stream = io.BytesIO(audio_data)
@@ -535,6 +535,25 @@ def test_transcribe_file(filename):
             except Exception as e:
                 print(f"[TEST] Parse error: {e}")
                 return jsonify({"error": f"Parse error: {str(e)}", "success": False}), 200
+        
+        elif is_webm:
+            # WebM file - use pydub conversion
+            print(f"[TEST] Processing WebM file with pydub...")
+            try:
+                from pydub import AudioSegment
+                audio = AudioSegment.from_file(io.BytesIO(audio_data), format="webm")
+                print(f"[TEST] Loaded: {audio.channels}ch, {audio.frame_rate}Hz")
+                
+                # Convert to 16kHz mono 16-bit
+                audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                converted_frames = audio.raw_data
+                audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                print(f"[TEST] ✓ Converted to 16kHz mono 16-bit ({len(converted_frames)} bytes)")
+            except Exception as e:
+                print(f"[TEST] WebM processing error: {e}")
+                import traceback
+                traceback.print_exc()
+                return jsonify({"error": f"WebM error: {str(e)}", "success": False}), 200
         
         if not audio_sr:
             return jsonify({"error": "Failed to load audio", "success": False}), 200
@@ -603,7 +622,7 @@ def transcribe_audio():
         is_webm = len(audio_data) > 4 and audio_data[0] == 0x1a and audio_data[1] == 0x45 and audio_data[2] == 0xdf and audio_data[3] == 0xa3
         print(f"[DEBUG] Audio format detection: WAV={is_wav}, WebM={is_webm}")
         
-        if is_wav or is_webm:
+        if is_wav:
             # Parse WAV directly to check specs
             try:
                 print(f"[DEBUG] Parsing WAV file...")
@@ -665,8 +684,27 @@ def transcribe_audio():
                 import traceback
                 traceback.print_exc()
                 return jsonify({"error": f"Could not parse audio: {str(e)}", "success": False, "stage": "wav_parse"}), 200
+        
+        elif is_webm:
+            # WebM file - use pydub conversion  
+            print(f"[DEBUG] Processing WebM file with pydub...")
+            try:
+                from pydub import AudioSegment
+                audio = AudioSegment.from_file(io.BytesIO(audio_data), format="webm")
+                print(f"[DEBUG] WebM loaded: {audio.channels}ch, {audio.frame_rate}Hz")
+                
+                # Convert to 16kHz mono 16-bit
+                audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                converted_frames = audio.raw_data
+                audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                print(f"[DEBUG] ✓ Converted to 16kHz mono 16-bit ({len(converted_frames)} bytes)")
+            except Exception as e:
+                print(f"[ERROR] WebM processing error: {e}")
+                import traceback
+                traceback.print_exc()
+                return jsonify({"error": f"WebM error: {str(e)}", "success": False, "stage": "webm_parse"}), 200
+        
         else:
-            # Non-WAV format - try pydub as fallback
             print(f"[DEBUG] Non-WAV audio detected, attempting format conversion...")
             try:
                 from pydub import AudioSegment
