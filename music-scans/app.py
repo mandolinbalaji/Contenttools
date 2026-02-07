@@ -491,9 +491,10 @@ def test_transcribe_file(filename):
         
         # Check if WAV
         is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
-        print(f"[TEST] Format check: WAV={is_wav}")
+        is_webm = audio_data[:4] == b'\x1aEDF\xa3'  # EBML/WebM signature
+        print(f"[TEST] Format check: WAV={is_wav}, WebM={is_webm}")
         
-        if is_wav:
+        if is_wav or is_webm:
             try:
                 print(f"[TEST] Parsing WAV...")
                 wav_stream = io.BytesIO(audio_data)
@@ -598,9 +599,10 @@ def transcribe_audio():
         
         # Check if this is a WAV file (check RIFF header)
         is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
-        print(f"[DEBUG] Audio format detection: WAV={is_wav}")
+        is_webm = audio_data[:4] == b'\x1aEDF\xa3'  # EBML/WebM signature
+        print(f"[DEBUG] Audio format detection: WAV={is_wav}, WebM={is_webm}")
         
-        if is_wav:
+        if is_wav or is_webm:
             # Parse WAV directly to check specs
             try:
                 print(f"[DEBUG] Parsing WAV file...")
