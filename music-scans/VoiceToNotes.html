@@ -414,6 +414,16 @@
         <div class="result-section">
             <div class="result-label">Extracted Swaras</div>
             <div id="resultSwaras">—</div>
+            <div style="text-align: center; margin-top: 10px;">
+                <button id="editSwraasBtn" style="padding: 6px 12px; font-size: 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Edit</button>
+            </div>
+            <div id="editSwarasPanel" style="display: none; margin-top: 15px; padding: 15px; background: #f0f4ff; border-radius: 6px; border: 2px solid #667eea;">
+                <input id="swraasEdit" type="text" placeholder="Edit swaras here" style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; letter-spacing: 2px; margin-bottom: 10px;">
+                <div style="text-align: center; gap: 8px; display: flex; justify-content: center;">
+                    <button id="saveSwraasBtn" style="padding: 8px 16px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">✓ Save</button>
+                    <button id="cancelSwraasBtn" style="padding: 8px 16px; background: #999; color: white; border: none; border-radius: 4px; cursor: pointer;">✕ Cancel</button>
+                </div>
+            </div>
         </div>
 
         <div id="commentSection" class="comment-section"></div>
@@ -669,6 +679,46 @@
 
                 commentSection.innerHTML = commentsHTML;
             }
+
+            // Edit swaras functionality
+            const editSwarasBtn = document.getElementById('editSwraasBtn');
+            const editSwarasPanel = document.getElementById('editSwarasPanel');
+            const swraasEdit = document.getElementById('swraasEdit');
+            const saveSwraasBtn = document.getElementById('saveSwraasBtn');
+            const cancelSwraasBtn = document.getElementById('cancelSwraasBtn');
+
+            editSwarasBtn.addEventListener('click', () => {
+                const { extracted } = extractSwaras(fullInputText);
+                swraasEdit.value = extracted;
+                editSwarasPanel.style.display = 'block';
+            });
+
+            saveSwraasBtn.addEventListener('click', () => {
+                // Validate input - only allow valid swaras
+                const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n']);
+                let cleanedInput = swraasEdit.value.toLowerCase().replace(/\s+/g, '');
+                
+                let validChars = '';
+                for (let char of cleanedInput) {
+                    if (validSwaras.has(char)) {
+                        validChars += char;
+                    }
+                }
+                
+                // Update the display with manually corrected swaras
+                resultSwaras.textContent = validChars || '—';
+                editSwarasPanel.style.display = 'none';
+                
+                // Update fullInputText to reflect the manual correction
+                fullInputText = validChars;
+                updateDisplay();
+                
+                debug(`✏️ Swaras manually corrected to: "${validChars}"`);
+            });
+
+            cancelSwraasBtn.addEventListener('click', () => {
+                editSwarasPanel.style.display = 'none';
+            });
 
             // Check browser support
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
