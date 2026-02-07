@@ -2016,13 +2016,10 @@
             let currentTick = 0;
             
             midiData.notes.forEach((note, index) => {
-                // Skip rest entries - MIDI doesn't have rest events, timing gaps represent rests
+                // Skip rest entries - rests are represented as gaps/silence in MIDI
+                // Don't update currentTick for rests - let notes calculate deltaTime from their absolute startTime
                 if (note.type === 'rest') {
-                    // Just update timing to account for the rest duration
-                    const restTick = Math.round(note.startTime * (midiData.bpm / 60) * ticksPerQuarter);
-                    const restDurationTick = Math.round(note.duration * (midiData.bpm / 60) * ticksPerQuarter);
-                    currentTick = restTick + restDurationTick;
-                    return;
+                    return;  // Skip this entry, move to next note/rest
                 }
                 
                 // Calculate tick position and duration
