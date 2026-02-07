@@ -269,14 +269,14 @@ def _save_kanakkus(kanakkus):
 
 def _save_midi_file(kanakku_name, midi_file_data_b64):
     """
-    Save MIDI file from base64 data.
+    Save MIDI file from base64 data. Overwrites existing file if present.
     
     Args:
         kanakku_name: Name of the kanakku (used in filename)
         midi_file_data_b64: Base64-encoded binary MIDI data
     
     Returns:
-        Relative path to saved file, e.g., "midi_files/name-1234567890.mid"
+        Relative path to saved file, e.g., "midi_files/kanakku-name.mid"
     """
     # Ensure midi_files directory exists
     MIDI_DIR.mkdir(parents=True, exist_ok=True)
@@ -306,14 +306,13 @@ def _save_midi_file(kanakku_name, midi_file_data_b64):
     
     print(f"[INFO] MIDI validation passed: {len(midi_binary)} bytes, contains MThd and MTrk")
     
-    # Create filename with timestamp
-    timestamp = int(datetime.now().timestamp() * 1000)  # milliseconds
+    # Create filename without timestamp (will overwrite existing file)
     sanitized_name = ''.join(c if c.isalnum() or c in ' -_' else '' for c in kanakku_name)[:50]
     sanitized_name = sanitized_name.replace(' ', '-')
-    filename = f"{sanitized_name}-{timestamp}.mid"
+    filename = f"{sanitized_name}.mid"
     filepath = MIDI_DIR / filename
     
-    # Save to file
+    # Save to file (overwrites if exists)
     try:
         with open(filepath, 'wb') as f:
             f.write(midi_binary)
