@@ -598,6 +598,51 @@
                 <div class="sidebar-search">
                     <input type="text" id="sidebarSearch" placeholder="Search...">
                 </div>
+                
+                <!-- FILTERS -->
+                <div style="padding: 8px 6px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;">
+                    <div style="font-size: 0.75em; font-weight: bold; margin-bottom: 6px; color: #667;">FILTERS</div>
+                    
+                    <!-- Tags Filter -->
+                    <div style="margin-bottom: 8px; font-size: 0.8em;">
+                        <div style="font-weight: bold; margin-bottom: 3px; color: #555;">Tags</div>
+                        <input type="text" id="filterTags" placeholder="Enter tags..." style="width: 100%; padding: 3px; font-size: 0.75em; border: 1px solid #ddd; border-radius: 3px;">
+                        <div id="filterTagsList" style="display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px;"></div>
+                    </div>
+                    
+                    <!-- Beats Filter -->
+                    <div style="margin-bottom: 8px; font-size: 0.8em;">
+                        <label style="font-weight: bold; color: #555;">Beats</label>
+                        <select id="filterBeats" style="width: 100%; padding: 3px; font-size: 0.75em; border: 1px solid #ddd; border-radius: 3px;">
+                            <option value="">All beats</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="12">12</option>
+                            <option value="16">16</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Nadai Filter -->
+                    <div style="margin-bottom: 8px; font-size: 0.8em;">
+                        <label style="font-weight: bold; color: #555;">Nadai</label>
+                        <select id="filterNadai" style="width: 100%; padding: 3px; font-size: 0.75em; border: 1px solid #ddd; border-radius: 3px;">
+                            <option value="">All nadai</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="7">7</option>
+                            <option value="9">9</option>
+                        </select>
+                    </div>
+                    
+                    <button id="clearFiltersBtn" style="width: 100%; padding: 4px; font-size: 0.75em; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px; cursor: pointer;">Clear Filters</button>
+                </div>
+                
                 <div class="sidebar-content">
                     <div class="sidebar-index" id="sidebarIndex"></div>
                     <div class="sidebar-list" id="kanakkuList"></div>
@@ -688,6 +733,10 @@
                             <div style="font-size: 0.7em; color: #999; margin-top: 2px;">Maps s=0, r/g/m/p/d/n to octave 1-3</div>
                         </div>
                         <div class="phrase-info-item">
+                            <span class="phrase-info-label">Tags:</span>
+                            <input type="text" id="kanakkuTags" placeholder="e.g., varnam, palavi, thani (comma-separated)" style="padding: 3px; font-size: 0.85em; border: 1px solid #ddd; border-radius: 3px; width: 180px;">
+                        </div>
+                        <div class="phrase-info-item">
                             <span class="phrase-info-label">Calc:</span>
                             <span style="font-family: 'Courier New', monospace; font-weight: bold; color: #667eea;">L:<span id="phraseLength">0</span> S:<span id="startingPos">-</span> E:<span id="landingBeat">-</span></span>
                         </div>
@@ -725,6 +774,7 @@
         const eduppuInput = document.getElementById('eduppu');
         const phraseInput = document.getElementById('phrase');
         const kanakkuNameInput = document.getElementById('kanakkuName');
+        const kanakkuTagsInput = document.getElementById('kanakkuTags');
         const sruthiSelect = document.getElementById('sruthi');
         const bpmSelect = document.getElementById('bpmSelect');
         const playBtn = document.getElementById('playBtn');
@@ -847,6 +897,88 @@
             return map;
         }
 
+        ragaNotesInput.addEventListener('input', () => {
+            ragaNotesMap = parseRagaNotes(ragaNotesInput.value);
+            calculate();
+        });
+
+        // Filter controls
+        const filterTags = document.getElementById('filterTags');
+        const filterBeats = document.getElementById('filterBeats');
+        const filterNadai = document.getElementById('filterNadai');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+        const filterTagsList = document.getElementById('filterTagsList');
+        
+        let activeFilters = {
+            tags: [],
+            beats: '',
+            nadai: '',
+            search: ''
+        };
+        
+        // Function to apply filters to kanakku list
+        function applyFilters() {
+            const items = document.querySelectorAll('.kanakku-item');
+            items.forEach(item => {
+                const kanakku = JSON.parse(item.dataset.kanakku);
+                let show = true;
+                
+                // Filter by search text (name and phrase)
+                if (activeFilters.search) {
+                    const searchLower = activeFilters.search.toLowerCase();
+                    const name = (kanakku.name || '').toLowerCase();
+                    const phrase = (kanakku.phrase || '').toLowerCase();
+                    show = show && (name.includes(searchLower) || phrase.includes(searchLower));
+                }
+                
+                // Filter by tags
+                if (activeFilters.tags.length > 0) {
+                    const kanakkuTags = (kanakku.tags || []).map(t => t.toLowerCase());
+                    const hasTag = activeFilters.tags.some(ft => kanakkuTags.includes(ft.toLowerCase()));
+                    show = show && hasTag;
+                }
+                
+                // Filter by beats
+                if (activeFilters.beats) {
+                    show = show && kanakku.beats === parseInt(activeFilters.beats);
+                }
+                
+                // Filter by nadai
+                if (activeFilters.nadai) {
+                    show = show && kanakku.nadai === parseInt(activeFilters.nadai);
+                }
+                
+                item.parentElement.style.display = show ? 'block' : 'none';
+            });
+        }
+        
+        // Event listeners for filters
+        filterTags.addEventListener('input', (e) => {
+            const tagInput = e.target.value.trim();
+            activeFilters.tags = tagInput ? tagInput.split(',').map(t => t.trim()).filter(t => t) : [];
+            applyFilters();
+        });
+        
+        filterBeats.addEventListener('change', (e) => {
+            activeFilters.beats = e.target.value;
+            applyFilters();
+        });
+        
+        filterNadai.addEventListener('change', (e) => {
+            activeFilters.nadai = e.target.value;
+            applyFilters();
+        });
+        
+        clearFiltersBtn.addEventListener('click', () => {
+            filterTags.value = '';
+            filterBeats.value = '';
+            filterNadai.value = '';
+            sidebarSearch.value = '';
+            filterTagsList.innerHTML = '';
+            activeFilters = { tags: [], beats: '', nadai: '', search: '' };
+            applyFilters();
+        });
+        
         ragaNotesInput.addEventListener('input', () => {
             ragaNotesMap = parseRagaNotes(ragaNotesInput.value);
             calculate();
@@ -1043,6 +1175,7 @@
             // Reset all to defaults
             phraseInput.value = '';
             kanakkuNameInput.value = '';
+            kanakkuTagsInput.value = '';
             beatsInput.value = '8';
             nadaiInput.value = '4';
             eduppuInput.value = '1';
@@ -1413,8 +1546,9 @@
             const eduppu = parseInt(eduppuInput.value);
             const sruthi = sruthiSelect.value;
             const ragaNotes = ragaNotesInput.value;  // Get raga notes
+            const tags = kanakkuTagsInput.value.split(',').map(t => t.trim()).filter(t => t);  // Parse tags
 
-            const kanakku = { name, phrase, beats, nadai, eduppu, sruthi, ragaNotes };
+            const kanakku = { name, phrase, beats, nadai, eduppu, sruthi, ragaNotes, tags };
             
             // Include MIDI file data if it exists
             if (currentMidiData) {
@@ -1466,12 +1600,8 @@
         });
 
         sidebarSearch.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const items = document.querySelectorAll('.kanakku-item');
-            items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(query) ? 'block' : 'none';
-            });
+            activeFilters.search = e.target.value;
+            applyFilters();
         });
 
         document.addEventListener('keydown', (e) => {
@@ -1692,6 +1822,7 @@
                                 phraseInput.value = k.phrase;
                                 kanakkuNameInput.value = k.name;
                                 sruthiSelect.value = k.sruthi || 'C#';
+                                kanakkuTagsInput.value = (k.tags || []).join(', ');  // Load tags
                                 ragaNotesInput.value = k.ragaNotes || '';  // Load raga notes
                                 ragaNotesMap = parseRagaNotes(k.ragaNotes || '');  // Parse raga notes
                                 currentKanakkuId = k.id;
@@ -1783,6 +1914,14 @@
                             }
                         });
                     });
+                    
+                    // Store kanakku data in items for filtering
+                    kanakkuList.querySelectorAll('.kanakku-item').forEach((item, idx) => {
+                        item.dataset.kanakku = JSON.stringify(savedKanakkus[idx] || {});
+                    });
+                    
+                    // Apply filters
+                    applyFilters();
                 })
                 .catch(err => {
                     console.error('Error loading kanakkus:', err);
