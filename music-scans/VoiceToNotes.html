@@ -458,8 +458,17 @@
 
         recognition.addEventListener('end', () => {
             if (isListening) {
-                // Auto-restart if still marked as listening
-                recognition.start();
+                // Auto-restart if still marked as listening (with a small delay to avoid rapid restarts)
+                setTimeout(() => {
+                    if (isListening) {
+                        try {
+                            recognition.start();
+                        } catch (e) {
+                            console.log('Could not restart recognition:', e);
+                            status.textContent = '⚠️ Unable to connect. Check internet and microphone.';
+                        }
+                    }
+                }, 100);
             } else {
                 status.textContent = '';
                 status.classList.remove('recording');
@@ -469,9 +478,23 @@
         recognition.addEventListener('error', (event) => {
             console.error('Speech recognition error:', event.error);
             status.textContent = `⚠️ Error: ${event.error}`;
-            isListening = false;
-            listenBtn.classList.remove('listening');
-            listenBtn.textContent = '🎤 Listen';
+            
+            // Instead of stopping, retry if still listening
+            if (isListening) {
+                setTimeout(() => {
+                    if (isListening) {
+                        try {
+                            status.textContent = '🔴 Recording... (retrying)';
+                            recognition.start();
+                        } catch (e) {
+                            console.log('Retry failed:', e);
+                        }
+                    }
+                }, 1500);
+            } else {
+                listenBtn.classList.remove('listening');
+                listenBtn.textContent = '🎤 Listen';
+            }
         });
 
         // Initial display
