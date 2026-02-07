@@ -461,6 +461,116 @@ def test_audio():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/test-transcribe/<filename>', methods=['GET'])
+def test_transcribe_file(filename):
+    """Test transcription with a file from media folder"""
+    try:
+        # Security: only allow files from media folder
+        file_path = MEDIA_ROOT / filename
+        
+        # Verify the file exists and is in media folder
+        if not file_path.exists():
+            return jsonify({"error": f"File not found: {filename}"}), 404
+        
+        if not str(file_path.resolve()).startswith(str(MEDIA_ROOT.resolve())):
+            return jsonify({"error": "Access denied"}), 403
+        
+        print(f"\n{'='*70}")
+        print(f"[TEST] Transcribing file: {file_path}")
+        print(f"{'='*70}")
+        
+        # Read the file
+        audio_data = file_path.read_bytes()
+        print(f"[TEST] File size: {len(audio_data)} bytes")
+        
+        if not SPEECH_RECOGNITION_AVAILABLE:
+            return jsonify({"error": "Speech recognition not available"}), 500
+        
+        recognizer = sr.Recognizer()
+        audio_sr = None
+        
+        # Check if WAV
+        is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
+        print(f"[TEST] Format check: WAV={is_wav}")
+        
+        if is_wav:
+            try:
+                print(f"[TEST] Parsing WAV...")
+                wav_stream = io.BytesIO(audio_data)
+                with wave.open(wav_stream, 'rb') as wav:
+                    frames = wav.readframes(wav.getnframes())
+                    sample_rate = wav.getframerate()
+                    channels = wav.getnchannels()
+                    sample_width = wav.getsampwidth()
+                    num_frames = wav.getnframes()
+                    
+                    print(f"[TEST] WAV specs: {channels}ch, {sample_rate}Hz, {sample_width}B/sample, {num_frames} frames")
+                    print(f"[TEST] Duration: {num_frames / sample_rate:.2f}s, Data: {len(frames)} bytes")
+                
+                # If 16kHz mono 16-bit, use directly
+                if sample_rate == 16000 and channels == 1 and sample_width == 2:
+                    print(f"[TEST] ✓ Already correct format")
+                    audio_sr = sr.AudioData(frames, 16000, 2)
+                else:
+                    # Convert
+                    print(f"[TEST] Converting to 16kHz mono 16-bit...")
+                    try:
+                        from pydub import AudioSegment
+                        audio = AudioSegment(
+                            data=frames,
+                            sample_width=sample_width,
+                            frame_rate=sample_rate,
+                            channels=channels
+                        )
+                        audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                        converted_frames = audio.raw_data
+                        audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                        print(f"[TEST] ✓ Converted ({len(converted_frames)} bytes)")
+                    except Exception as e:
+                        print(f"[TEST] Conversion failed: {e}, using original")
+                        audio_sr = sr.AudioData(frames, sample_rate, sample_width)
+            
+            except Exception as e:
+                print(f"[TEST] Parse error: {e}")
+                return jsonify({"error": f"Parse error: {str(e)}", "success": False}), 200
+        
+        if not audio_sr:
+            return jsonify({"error": "Failed to load audio", "success": False}), 200
+        
+        # Transcribe
+        try:
+            print(f"[TEST] Sending to Google Speech API...")
+            text = recognizer.recognize_google(audio_sr, language='en-US')
+            print(f"[TEST] ✓✓✓ SUCCESS: '{text}'")
+            print(f"{'='*70}\n")
+            return jsonify({"text": text, "success": True, "file": filename})
+        except sr.UnknownValueError:
+            print(f"[TEST] ✗✗✗ FAILED: Google could not understand")
+            print(f"{'='*70}\n")
+            return jsonify({
+                "error": "Google could not understand this audio",
+                "success": False,
+                "file": filename
+            }), 200
+        except sr.RequestError as e:
+            print(f"[TEST] API error: {e}")
+            print(f"{'='*70}\n")
+            return jsonify({
+                "error": f"API error: {str(e)[:100]}",
+                "success": False
+            }), 200
+        except Exception as e:
+            print(f"[TEST] Error: {e}")
+            print(f"{'='*70}\n")
+            return jsonify({"error": str(e)[:100], "success": False}), 200
+            
+    except Exception as e:
+        print(f"[TEST] Fatal error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Server error: {str(e)}", "success": False}), 500
+
+
 @app.route('/api/transcribe', methods=['POST'])
 def transcribe_audio():
     """Transcribe audio data to text using speech recognition"""
