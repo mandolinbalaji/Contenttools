@@ -462,6 +462,7 @@
                 setTimeout(() => {
                     if (isListening) {
                         try {
+                            recognition.abort();  // Clear any previous state
                             recognition.start();
                         } catch (e) {
                             console.log('Could not restart recognition:', e);
@@ -485,6 +486,7 @@
                     if (isListening) {
                         try {
                             status.textContent = '🔴 Recording... (retrying)';
+                            recognition.abort();  // Clear state before restarting
                             recognition.start();
                         } catch (e) {
                             console.log('Retry failed:', e);
