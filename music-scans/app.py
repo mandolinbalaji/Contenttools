@@ -479,55 +479,109 @@ def transcribe_audio():
         
         # Create recognizer
         recognizer = sr.Recognizer()
+        audio_sr = None
         
-        # Try to process the audio
-        try:
-            # Try to load audio with pydub first (handles multiple formats)
-            from pydub import AudioSegment
-            
-            # Try to detect format and convert to WAV
+        # Check if this is a WAV file (check RIFF header)
+        is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
+        print(f"[DEBUG] Audio format detection: WAV={is_wav}")
+        
+        if is_wav:
+            # Try to load WAV directly without ffmpeg
             try:
-                print(f"[DEBUG] Attempting to load audio with pydub...")
-                audio = AudioSegment.from_file(io.BytesIO(audio_data))
-                print(f"[DEBUG] Audio loaded: {audio.channels} channels, {audio.frame_rate}Hz, {len(audio)}ms")
+                print(f"[DEBUG] Loading WAV file directly...")
+                import wave
+                wav_file = io.BytesIO(audio_data)
+                with wave.open(wav_file, 'rb') as wav:
+                    frames = wav.readframes(wav.getnframes())
+                    sample_rate = wav.getframerate()
+                    channels = wav.getnchannels()
+                    sample_width = wav.getsampwidth()
+                    print(f"[DEBUG] WAV loaded: {channels}ch, {sample_rate}Hz, {sample_width} bytes/sample")
+                
+                # If it's already 16kHz mono 16-bit, use it directly
+                if sample_rate == 16000 and channels == 1 and sample_width == 2:
+                    print(f"[DEBUG] Audio already in correct format, using directly")
+                    audio_sr = sr.AudioData(frames, 16000, 2)
+                else:
+                    # Need to convert - use pydub but be careful
+                    print(f"[DEBUG] Converting audio to 16kHz mono 16-bit...")
+                    try:
+                        from pydub import AudioSegment
+                        # Try with simpleaudio first (no ffmpeg)
+                        audio = AudioSegment.from_wav(io.BytesIO(audio_data))
+                        audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                        
+                        # Export to WAV manually to avoid ffmpeg
+                        wav_out = io.BytesIO()
+                        audio.export(wav_out, format="wav", parameters=["-c:a", "pcm_s16le"])
+                        wav_out.seek(0)
+                        
+                        # Read the converted WAV
+                        with wave.open(wav_out, 'rb') as wav:
+                            converted_frames = wav.readframes(wav.getnframes())
+                        
+                        audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                        print(f"[DEBUG] Audio converted successfully")
+                    except Exception as e:
+                        print(f"[WARNING] Pydub conversion failed: {e}, trying direct resampling...")
+                        # Last resort: create AudioData and let speech_recognition handle it
+                        audio_sr = sr.AudioData(frames, sample_rate, sample_width)
+                        print(f"[DEBUG] Using raw audio with original sample rate")
+            
             except Exception as e:
-                print(f"[DEBUG] Pydub auto-detect failed: {e}, trying WAV specifically...")
+                print(f"[DEBUG] WAV parsing failed: {e}")
+                # Fall back to raw bytes
                 try:
-                    audio = AudioSegment.from_wav(io.BytesIO(audio_data))
-                    print(f"[DEBUG] WAV load successful: {audio.channels} channels, {audio.frame_rate}Hz")
+                    audio_sr = sr.AudioData(audio_data, 16000, 2)
+                    print(f"[DEBUG] Created AudioData from raw bytes (assuming 16kHz 16-bit)")
                 except Exception as e2:
-                    print(f"[DEBUG] WAV load failed: {e2}")
-                    raise
-            
-            # Convert to mono, 16-bit, 16kHz for better recognition
-            print(f"[DEBUG] Converting to 16kHz mono 16-bit...")
-            audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
-            
-            # Export to WAV bytes
-            wav_bytes = io.BytesIO()
-            audio.export(wav_bytes, format="wav")
-            wav_bytes.seek(0)
-            wav_data = wav_bytes.getvalue()
-            print(f"[DEBUG] Converted audio: {len(wav_data)} bytes")
-            
-            # Load with speech_recognition
+                    print(f"[ERROR] Failed to create AudioData: {e2}")
+                    return jsonify({"error": f"Could not process audio: {str(e2)}", "success": False, "stage": "audio_parse"}), 200
+        else:
+            # Non-WAV format - try pydub as fallback
+            print(f"[DEBUG] Non-WAV audio detected, attempting format conversion...")
             try:
-                print(f"[DEBUG] Loading with speech_recognition...")
-                audio_sr = recognizer.record(wav_bytes)
-                print(f"[DEBUG] Audio loaded into recognizer: {audio_sr.sample_rate}Hz")
+                from pydub import AudioSegment
+                # Try to detect format - disable ffmpeg if possible
+                try:
+                    audio = AudioSegment.from_file(io.BytesIO(audio_data), codec="libmp3lame")
+                except:
+                    try:
+                        audio = AudioSegment.from_mp3(io.BytesIO(audio_data))
+                    except:
+                        try:
+                            audio = AudioSegment.from_ogg(io.BytesIO(audio_data))
+                        except:
+                            # Try generic from_file
+                            audio = AudioSegment.from_file(io.BytesIO(audio_data))
+                
+                print(f"[DEBUG] Audio loaded: {audio.channels} channels, {audio.frame_rate}Hz")
+                
+                # Convert to mono, 16-bit, 16kHz
+                audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                
+                # Extract frames
+                wav_out = io.BytesIO()
+                audio.export(wav_out, format="wav")
+                wav_out.seek(0)
+                
+                with wave.open(wav_out, 'rb') as wav:
+                    frames = wav.readframes(wav.getnframes())
+                
+                audio_sr = sr.AudioData(frames, 16000, 2)
+                print(f"[DEBUG] Audio converted successfully")
             except Exception as e:
-                print(f"[DEBUG] Failed to load with speech_recognition: {e}")
-                return jsonify({"error": f"Could not process audio: {str(e)}", "success": False, "stage": "sr_load"}), 200
-            
-        except ImportError:
-            # Fallback if pydub not available - try raw bytes
-            print("[DEBUG] Pydub not available, trying raw audio data...")
-            try:
-                audio_sr = sr.AudioData(audio_data, 16000, 2)
-                print(f"[DEBUG] Created AudioData from raw bytes")
-            except Exception as e:
-                print(f"[ERROR] Failed to create AudioData: {e}")
-                return jsonify({"error": "Could not process audio format", "success": False, "stage": "raw_audio"}), 200
+                print(f"[WARNING] Format conversion failed: {e}")
+                # Fallback: assume it's raw 16kHz 16-bit audio
+                try:
+                    audio_sr = sr.AudioData(audio_data, 16000, 2)
+                    print(f"[DEBUG] Using raw audio data directly")
+                except Exception as e2:
+                    print(f"[ERROR] Failed: {e2}")
+                    return jsonify({"error": f"Unsupported audio format: {str(e)}", "success": False, "stage": "format"}), 200
+        
+        if not audio_sr:
+            return jsonify({"error": "Failed to process audio", "success": False, "stage": "audio_load"}), 200
         
         # Try Google Web Speech API
         try:
