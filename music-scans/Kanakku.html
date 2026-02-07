@@ -1324,19 +1324,24 @@
                     }
                     i = j - 1;  // Move i to skip all combining marks and digit
                     
-                    // Play note
-                    // Check if this note has a raga octave specified and raga notes are defined
-                    let baseSemitones = sruthiInfo.notes[actualChar];
-                    if (ragaOctaveNum !== null && Object.keys(ragaNotesMap).length > 0) {
-                        // Note has a raga octave number - use raga mapping
-                        const ragaOctave = ragaNotesMap[actualChar];
-                        if (ragaOctave !== undefined && ragaOctave === ragaOctaveNum) {
-                            // Use the raga note's interval for this octave
-                            baseSemitones = sruthiInfo.notes[actualChar];
+                    // Determine octave: use notation number, or fall back to raga notes map
+                    if (ragaOctaveNum === null && Object.keys(ragaNotesMap).length > 0) {
+                        // No notation number, check raga notes map
+                        if (ragaNotesMap[actualChar] !== undefined) {
+                            ragaOctaveNum = ragaNotesMap[actualChar];
                         }
                     }
                     
-                    const semitones = baseSemitones + octaveOffset;
+                    // Apply octave offset based on number
+                    let octaveAdjustment = 0;
+                    if (ragaOctaveNum !== null) {
+                        // Number represents octave: 1=default, 2=+12 (up octave), 0=-12 (down octave)
+                        octaveAdjustment = (ragaOctaveNum - 1) * 12;
+                    }
+                    
+                    // Play note
+                    let baseSemitones = sruthiInfo.notes[actualChar];
+                    const semitones = baseSemitones + octaveOffset + octaveAdjustment;
                     const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
                     
                     // Calculate octave for display
@@ -1880,7 +1885,7 @@
                         } else if (nextChar === '\u0300' || nextChar === '\u0301' || nextChar === '\u0302' || nextChar === '\u0303' || nextChar === '\u0304' || nextChar === '\u0305' || nextChar === '\u0306') {
                             j++;
                         } else if (/\d/.test(nextChar)) {
-                            // Found a digit - this is a raga octave number
+                            // Found a digit - this is a raga octave number (takes precedence)
                             ragaOctaveNum = parseInt(nextChar);
                             j++;
                         } else {
@@ -1888,6 +1893,21 @@
                         }
                     }
                     i = j - 1;  // Move i to skip combining marks and digit
+                    
+                    // Determine octave offset: use notation number, or fall back to raga notes map
+                    if (ragaOctaveNum === null && Object.keys(ragaNotesMap).length > 0) {
+                        // No notation number, check raga notes map
+                        if (ragaNotesMap[actualChar] !== undefined) {
+                            ragaOctaveNum = ragaNotesMap[actualChar];
+                        }
+                    }
+                    
+                    // Apply octave offset based on number
+                    if (ragaOctaveNum !== null) {
+                        // Number represents octave: 1=default, 2=+12, 0=-12
+                        const octaveShift = (ragaOctaveNum - 1) * 12;
+                        octaveOffset += octaveShift;
+                    }
                     
                     // Create MIDI note with octave offset
                     const midiNote = baseNote + swaraOffsets[actualChar] + octaveOffset;

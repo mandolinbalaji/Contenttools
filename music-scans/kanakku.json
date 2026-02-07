@@ -63,7 +63,7 @@
     "sruthi": "C#",
     "ragaNotes": "g2m1n2d2",
     "id": "fb2261ab-d33a-433c-bffc-9eb3337557cc",
-    "midiFilePath": "midi_files/Dhanasri-Thillana-1770473410881.mid"
+    "midiFilePath": "midi_files/Dhanasri-Thillana-1770477563098.mid"
   },
   {
     "name": "Octaves",
@@ -254,8 +254,8 @@
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
-    "ragaNotes": "",
+    "ragaNotes": "g2r2d1n3",
     "id": "f166ba12-8035-47de-8b80-8facc5c9438f",
-    "midiFilePath": "midi_files/Kanakku-15-1770473484234.mid"
+    "midiFilePath": "midi_files/Kanakku-15.mid"
   }
 ]
