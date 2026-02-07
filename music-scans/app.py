@@ -487,34 +487,46 @@ def extract_swaras_from_text(text, recognized_text=""):
     # Strategy 2: Phonetic extraction - break words into syllables
     # First, apply common patterns
     phonetic_corrections = {
+        # Named swaras (Indian classical music notation)
+        'sa re ga': 'srg',        # first three swaras as a phrase
+        'dhani': 'dn',             # "dha-ni" -> d-n
+        'dhana': 'dn',
+        'duni': 'dn',
+        'song': '',                # endings like "song" that aren't swaras
+        'ponies': 'pn',           # "ponies" -> p-n (common misheard)
+        'pie': 'p',               # "pie" -> p (common ending)
+        'pagal': 'pg',            # "pagal" -> p-g
+        'pagan': 'pgn',
+        'magan': 'mgn',
+        
         # Double/triple patterns
-        'nini': 'nn',      # "nini" -> n-n
-        'ninini': 'nnn',   # triple n  
-        'panini': 'pnn',   # "pa-ni-ni" -> p-n-n
-        'panp': 'pnp',     # if followed by p
+        'nini': 'nn',             # "nini" -> n-n
+        'ninini': 'nnn',          # triple n  
+        'panini': 'pnn',          # "pa-ni-ni" -> p-n-n
+        'panp': 'pnp',
         'panpan': 'pnpn',
-        'pani': 'pn',      # pa-ni -> p-n
-        'mana': 'mn',
+        'pani': 'pn',             # pa-ni -> p-n
         'mani': 'mn',
+        'mana': 'mn',
         'papa': 'pp',
         'mama': 'mm',
         'riri': 'rr',
         'gaga': 'gg',
         'dada': 'dd',
         'sasa': 'ss',
-        # Common syllable patterns
+        
+        # Syllable patterns with endings
         'nip': 'np',
         'nap': 'np',
         'nis': 'ns',
         'nas': 'ns',
-        'nit': 'n',        # nis/nit often just means n
+        'nit': 'n',
         'pit': 'p',
         'pan': 'pn',
-        'pans': 'pn',      # plural doesn't add swara
+        'pans': 'pn',
         'man': 'mn',
         'mans': 'mn',
         'ran': 'rn',
-        'dans': 'dn',
         'dans': 'dn',
         'dan': 'dn',
         'dun': 'dn',
@@ -526,11 +538,6 @@ def extract_swaras_from_text(text, recognized_text=""):
         'gap': 'gp',
         'rap': 'rp',
         'dap': 'dp',
-        'ponies': 'pn',    # "ponies" -> p-n (common misheard)
-        'pie': 'p',        # "pie" -> p (common ending)
-        'pagal': 'pg',     # "pagal" -> p-g
-        'pagan': 'pgn',
-        'magan': 'mgn',
     }
     
     phonetic_swaras = text_lower
