@@ -1335,8 +1335,9 @@
                     // Apply octave offset based on number
                     let octaveAdjustment = 0;
                     if (ragaOctaveNum !== null) {
-                        // Number represents octave: 1=default, 2=+12 (up octave), 0=-12 (down octave)
-                        octaveAdjustment = (ragaOctaveNum - 1) * 12;
+                        // Number represents absolute octave: 1=low, 2=middle/default, 3=high
+                        // Using (n-2)*12: 1->-12, 2->0, 3->+12
+                        octaveAdjustment = (ragaOctaveNum - 2) * 12;
                     }
                     
                     // Play note
@@ -1904,8 +1905,10 @@
                     
                     // Apply octave offset based on number
                     if (ragaOctaveNum !== null) {
-                        // Number represents octave: 1=default, 2=+12, 0=-12
-                        const octaveShift = (ragaOctaveNum - 1) * 12;
+                        // Number represents absolute octave: 1=low, 2=middle/default, 3=high
+                        // Using (n-2)*12: 1->-12, 2->0, 3->+12
+                        // Precomposed dots already set octaveOffset, so raga number is added relative to that
+                        const octaveShift = (ragaOctaveNum - 2) * 12;
                         octaveOffset += octaveShift;
                     }
                     
