@@ -1217,8 +1217,14 @@
                 return;
             }
             
-            // Treat phrase as a string of individual note characters
-            const notes = phrase.replace(/\s/g, '');  // Remove spaces
+            // Parse phrase preserving all characters (including commas for rests)
+            const notes = [];
+            for (let char of phrase) {
+                // Include swaras, dots, numbers, and commas (rests)
+                if (char !== ' ') {  // Skip only spaces
+                    notes.push(char);
+                }
+            }
             
             // Each cycle has beats * nadai notes
             const notesPerCycle = beats * nadai;
