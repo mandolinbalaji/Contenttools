@@ -1,110 +1,56 @@
 [
   {
+    "name": "Test Kanakku",
+    "phrase": "srgm",
+    "beats": 8,
+    "nadai": 4,
+    "eduppu": 0,
+    "sruthi": "C#",
+    "ragaNotes": "C# D# F# G# A#",
+    "id": "8cd17edc-bfac-4002-a326-e16b4c492406",
+    "midiFilePath": "midi_files/Test-Kanakku-1770473007089.mid"
+  },
+  {
     "name": "srgm",
-    "phrase": "ṡṙġṁ",
+    "phrase": ",,,,,",
     "beats": 4,
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
     "ragaNotes": "",
     "midiData": {
-      "beats": 8,
-      "bpm": 80,
-      "nadai": 4,
       "notes": [
         {
-          "duration": 0.1875,
-          "note": 77,
+          "type": "rest",
           "startTime": 0,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "duration": 0.1875,
-          "note": 75,
+          "type": "rest",
           "startTime": 0.1875,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "duration": 0.1875,
-          "note": 73,
+          "type": "rest",
           "startTime": 0.375,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "duration": 0.1875,
-          "note": 72,
+          "type": "rest",
           "startTime": 0.5625,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "duration": 0.1875,
-          "note": 70,
+          "type": "rest",
           "startTime": 0.75,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 75,
-          "startTime": 0.9375,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 73,
-          "startTime": 1.125,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 72,
-          "startTime": 1.3125,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 70,
-          "startTime": 1.5,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 68,
-          "startTime": 1.6875,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 73,
-          "startTime": 1.875,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 72,
-          "startTime": 2.0625,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 70,
-          "startTime": 2.25,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 68,
-          "startTime": 2.4375,
-          "velocity": 100
-        },
-        {
-          "duration": 0.1875,
-          "note": 66,
-          "startTime": 2.625,
-          "velocity": 100
+          "duration": 0.1875
         }
       ],
-      "phrase": "ġṙṡndṙṡndpṡndpm",
-      "sruthi": "C#"
+      "bpm": 80,
+      "sruthi": "C#",
+      "phrase": ",,,,,",
+      "beats": 4,
+      "nadai": 4
     },
     "id": "25621710-0b02-4343-aa4f-873054f55f59"
   },
@@ -933,95 +879,181 @@
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
+    "ragaNotes": "",
     "midiData": {
       "notes": [
         {
-          "note": 77,
+          "type": "rest",
           "startTime": 0,
-          "duration": 0.1875,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "note": 75,
+          "type": "rest",
           "startTime": 0.1875,
-          "duration": 0.1875,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "note": 73,
+          "type": "rest",
           "startTime": 0.375,
-          "duration": 0.1875,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "note": 72,
+          "type": "rest",
           "startTime": 0.5625,
-          "duration": 0.1875,
-          "velocity": 100
+          "duration": 0.1875
         },
         {
-          "note": 70,
+          "type": "rest",
           "startTime": 0.75,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 0.9375,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 1.125,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 1.3125,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 1.5,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 1.6875,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 1.875,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 2.0625,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 2.25,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 2.4375,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 2.625,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 2.8125,
+          "duration": 0.1875
+        },
+        {
+          "type": "rest",
+          "startTime": 3,
+          "duration": 0.1875
+        },
+        {
+          "note": 77,
+          "startTime": 3.1875,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 75,
-          "startTime": 0.9375,
+          "startTime": 3.375,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 73,
-          "startTime": 1.125,
+          "startTime": 3.5625,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 72,
-          "startTime": 1.3125,
+          "startTime": 3.75,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 70,
-          "startTime": 1.5,
+          "startTime": 3.9375,
           "duration": 0.1875,
           "velocity": 100
         },
         {
-          "note": 68,
-          "startTime": 1.6875,
+          "note": 75,
+          "startTime": 4.125,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 73,
-          "startTime": 1.875,
+          "startTime": 4.3125,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 72,
-          "startTime": 2.0625,
+          "startTime": 4.5,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 70,
-          "startTime": 2.25,
+          "startTime": 4.6875,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 68,
-          "startTime": 2.4375,
+          "startTime": 4.875,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 73,
+          "startTime": 5.0625,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 72,
+          "startTime": 5.25,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 70,
+          "startTime": 5.4375,
+          "duration": 0.1875,
+          "velocity": 100
+        },
+        {
+          "note": 68,
+          "startTime": 5.625,
           "duration": 0.1875,
           "velocity": 100
         },
         {
           "note": 66,
-          "startTime": 2.625,
+          "startTime": 5.8125,
           "duration": 0.1875,
           "velocity": 100
         }

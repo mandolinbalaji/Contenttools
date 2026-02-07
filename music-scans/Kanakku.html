@@ -168,6 +168,23 @@
             transform: scale(1.2);
         }
 
+        .kanakku-midi-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 1em;
+            cursor: pointer;
+            padding: 0 2px;
+            transition: all 0.2s;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .kanakku-midi-btn:hover {
+            color: #4c5fcc;
+            transform: scale(1.2);
+        }
+
         .splitter {
             width: 6px;
             background: #ddd;
@@ -1398,9 +1415,12 @@
 
             const kanakku = { name, phrase, beats, nadai, eduppu, sruthi, ragaNotes };
             
-            // Include MIDI data if it exists
+            // Include MIDI file data if it exists
             if (currentMidiData) {
-                kanakku.midiData = currentMidiData;
+                const midiFileData = getMidiFileData(currentMidiData);
+                if (midiFileData) {
+                    kanakku.midiFileData = midiFileData;  // Base64 encoded binary
+                }
             }
             
             try {
@@ -1649,7 +1669,10 @@
                                         <div class="kanakku-item-title">${k.name}</div>
                                         <div class="kanakku-item-info">${k.beats}B ${k.nadai}N</div>
                                     </div>
-                                    <button class="kanakku-delete-btn" data-id="${k.id}" title="Delete">✕</button>
+                                    <div style="display: flex; gap: 4px;">
+                                        ${k.midiFilePath ? `<button class="kanakku-midi-btn" data-id="${k.id}" title="Open in MuseScore">♫</button>` : ''}
+                                        <button class="kanakku-delete-btn" data-id="${k.id}" title="Delete">✕</button>
+                                    </div>
                                 </div>
                             `;
                             div.addEventListener('click', (e) => {
@@ -1706,6 +1729,31 @@
                                 } catch (err) {
                                     console.error('Delete error:', err);
                                     alert('Error deleting kanakku');
+                                }
+                            }
+                        });
+                    });
+
+                    // Add MIDI (open in MuseScore) listeners
+                    kanakkuList.querySelectorAll('.kanakku-midi-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            const kanakkuId = btn.dataset.id;
+                            const kanakku = savedKanakkus.find(k => k.id === kanakkuId);
+                            if (kanakku && kanakku.midiFilePath) {
+                                try {
+                                    // Request backend to open file with MuseScore
+                                    const response = await fetch('/api/open-midi', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ filePath: kanakku.midiFilePath })
+                                    });
+                                    if (!response.ok) {
+                                        alert('Could not open file in MuseScore. Make sure MuseScore is installed.');
+                                    }
+                                } catch (err) {
+                                    console.error('Error opening MIDI:', err);
+                                    alert('Error opening MIDI file');
                                 }
                             }
                         });
@@ -2099,6 +2147,106 @@
             
             bytes.push(v & 0xFF);
             return bytes;
+        }
+
+        // Generate MIDI file data and return as base64 string
+        function getMidiFileData(midiData) {
+            if (!midiData || !midiData.notes || midiData.notes.length === 0) {
+                return null;
+            }
+
+            // MIDI file header
+            const header = [0x4D, 0x54, 0x68, 0x64]; // "MThd"
+            const headerLength = [0x00, 0x00, 0x00, 0x06]; // Header length = 6
+            const format = [0x00, 0x00]; // Format 0 (single track)
+            const tracks = [0x00, 0x01]; // 1 track
+            
+            // Ticks per quarter note (standard: 480)
+            const ticksPerQuarter = 480;
+            const ticksPerByte = [
+                (ticksPerQuarter >> 8) & 0xFF,
+                ticksPerQuarter & 0xFF
+            ];
+
+            // Build header
+            let midiFile = [...header, ...headerLength, ...format, ...tracks, ...ticksPerByte];
+
+            // Build track data
+            let trackData = [];
+
+            // Set tempo (microseconds per quarter note)
+            const tempo = Math.round(60000000 / midiData.bpm);
+            const tempoBytes = [
+                (tempo >> 16) & 0xFF,
+                (tempo >> 8) & 0xFF,
+                tempo & 0xFF
+            ];
+            
+            // Meta event: Set Tempo (FF 51 03) with delta time 0
+            trackData.push(0x00);
+            trackData.push(0xFF, 0x51, 0x03, ...tempoBytes);
+
+            // Set time signature (4/4) - meta event FF 58 04
+            trackData.push(0x00);
+            trackData.push(0xFF, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08);
+
+            // Convert notes to MIDI events
+            let currentTick = 0;
+            
+            midiData.notes.forEach((note, index) => {
+                const noteTick = Math.round(note.startTime * (midiData.bpm / 60) * ticksPerQuarter);
+                const noteDurationTick = Math.round(note.duration * (midiData.bpm / 60) * ticksPerQuarter);
+                
+                // Delta time
+                const deltaTime = noteTick - currentTick;
+                const deltaBytes = encodeVariableLength(deltaTime);
+                
+                // Handle rest entries
+                if (note.type === 'rest') {
+                    trackData.push(...deltaBytes, 0x90, 60, 0x00);
+                    currentTick = noteTick;
+                    
+                    const offDeltaTime = noteDurationTick;
+                    const offDeltaBytes = encodeVariableLength(offDeltaTime);
+                    trackData.push(...offDeltaBytes, 0x80, 60, 0x40);
+                    currentTick = noteTick + noteDurationTick;
+                    return;
+                }
+                
+                // Regular note entry
+                trackData.push(...deltaBytes, 0x90, note.note, note.velocity || 100);
+                currentTick = noteTick;
+                
+                const offDeltaTime = noteDurationTick;
+                const offDeltaBytes = encodeVariableLength(offDeltaTime);
+                
+                trackData.push(...offDeltaBytes, 0x80, note.note, 0x40);
+                currentTick = noteTick + noteDurationTick;
+            });
+
+            // End of track meta event
+            trackData.push(0x00);
+            trackData.push(0xFF, 0x2F, 0x00);
+
+            // Track header
+            const trackHeader = [0x4D, 0x54, 0x72, 0x6B]; // "MTrk"
+            const trackLength = [
+                (trackData.length >> 24) & 0xFF,
+                (trackData.length >> 16) & 0xFF,
+                (trackData.length >> 8) & 0xFF,
+                trackData.length & 0xFF
+            ];
+
+            // Combine all
+            midiFile.push(...trackHeader, ...trackLength, ...trackData);
+
+            // Convert to base64
+            const uint8Array = new Uint8Array(midiFile);
+            let binary = '';
+            for (let i = 0; i < uint8Array.byteLength; i++) {
+                binary += String.fromCharCode(uint8Array[i]);
+            }
+            return btoa(binary);
         }
 
         // Render MIDI button handler

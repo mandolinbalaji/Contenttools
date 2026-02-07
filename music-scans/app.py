@@ -2,6 +2,8 @@ import json
 import os
 import uuid
 import mimetypes
+import subprocess
+import base64
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, send_from_directory, request, jsonify, Response
@@ -15,6 +17,7 @@ print(f"[STARTUP] Script location: {Path(__file__).absolute()}")
 DATA_PATH = BASE_DIR / "songs.json"
 MEDIA_ROOT = BASE_DIR / "media"
 BACKUP_DIR = BASE_DIR / "backups"
+MIDI_DIR = BASE_DIR / "midi_files"
 
 app = Flask(__name__, static_folder=None)
 _write_lock = False  # single process guard
@@ -264,6 +267,45 @@ def _save_kanakkus(kanakkus):
     with open(KANAKKU_FILE, 'w', encoding='utf-8') as f:
         json.dump(kanakkus, f, indent=2, ensure_ascii=False)
 
+def _save_midi_file(kanakku_name, midi_file_data_b64):
+    """
+    Save MIDI file from base64 data.
+    
+    Args:
+        kanakku_name: Name of the kanakku (used in filename)
+        midi_file_data_b64: Base64-encoded binary MIDI data
+    
+    Returns:
+        Relative path to saved file, e.g., "midi_files/name-1234567890.mid"
+    """
+    # Ensure midi_files directory exists
+    MIDI_DIR.mkdir(parents=True, exist_ok=True)
+    
+    # Decode base64 to binary
+    try:
+        midi_binary = base64.b64decode(midi_file_data_b64)
+    except Exception as e:
+        print(f"[ERROR] Failed to decode MIDI base64: {e}")
+        return None
+    
+    # Create filename with timestamp
+    timestamp = int(datetime.now().timestamp() * 1000)  # milliseconds
+    sanitized_name = ''.join(c if c.isalnum() or c in ' -_' else '' for c in kanakku_name)[:50]
+    sanitized_name = sanitized_name.replace(' ', '-')
+    filename = f"{sanitized_name}-{timestamp}.mid"
+    filepath = MIDI_DIR / filename
+    
+    # Save to file
+    try:
+        with open(filepath, 'wb') as f:
+            f.write(midi_binary)
+        print(f"[INFO] Saved MIDI file: {filepath}")
+        return f"midi_files/{filename}"
+    except Exception as e:
+        print(f"[ERROR] Failed to save MIDI file: {e}")
+        return None
+
+
 @app.route('/api/kanakkus', methods=['GET'])
 def get_kanakkus():
     """Get all saved kanakkus"""
@@ -279,6 +321,14 @@ def save_kanakku():
     
     # Generate unique ID
     data['id'] = str(uuid.uuid4())
+    
+    # Save MIDI file if provided
+    if data.get('midiFileData'):
+        midi_file_path = _save_midi_file(data.get('name', 'kanakku'), data['midiFileData'])
+        if midi_file_path:
+            data['midiFilePath'] = midi_file_path
+        # Remove the binary data from JSON (keep only the path)
+        del data['midiFileData']
     
     kanakkus = _load_kanakkus()
     kanakkus.insert(0, data)  # Add to front of list
@@ -297,6 +347,15 @@ def update_kanakku(kanakku_id):
     for i, kanakku in enumerate(kanakkus):
         if kanakku.get('id') == kanakku_id:
             data['id'] = kanakku_id  # Preserve ID
+            
+            # Save MIDI file if provided
+            if data.get('midiFileData'):
+                midi_file_path = _save_midi_file(data.get('name', 'kanakku'), data['midiFileData'])
+                if midi_file_path:
+                    data['midiFilePath'] = midi_file_path
+                # Remove the binary data from JSON (keep only the path)
+                del data['midiFileData']
+            
             kanakkus[i] = data
             _save_kanakkus(kanakkus)
             return jsonify(data)
@@ -311,6 +370,46 @@ def delete_kanakku(kanakku_id):
     _save_kanakkus(kanakkus)
     return jsonify({"success": True})
 
+@app.route('/api/open-midi', methods=['POST'])
+def open_midi():
+    """Open a MIDI file in MuseScore"""
+    data = request.get_json()
+    if not data or not data.get('filePath'):
+        return jsonify({"error": "No filePath provided"}), 400
+    
+    # Construct full path
+    midi_path = BASE_DIR / data['filePath']
+    
+    # Check if file exists
+    if not midi_path.exists():
+        return jsonify({"error": "MIDI file not found"}), 404
+    
+    # Try to open with MuseScore
+    try:
+        # On Windows, try common MuseScore installation paths
+        musescore_paths = [
+            "C:\\Program Files\\MuseScore 3\\bin\\MuseScore3.exe",
+            "C:\\Program Files\\MuseScore 4\\bin\\MuseScore4.exe",
+            "C:\\Program Files (x86)\\MuseScore\\bin\\MuseScore.exe",
+            "C:\\Program Files\\MuseScore\\bin\\MuseScore.exe",
+        ]
+        
+        opened = False
+        for musescore_exe in musescore_paths:
+            if os.path.exists(musescore_exe):
+                subprocess.Popen([musescore_exe, str(midi_path)])
+                opened = True
+                break
+        
+        if not opened:
+            # Try using 'start' command on Windows
+            os.startfile(str(midi_path))
+        
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"[ERROR] Failed to open MIDI file in MuseScore: {e}")
+        return jsonify({"error": f"Failed to open file: {str(e)}"}), 500
+
 
 if __name__ == "__main__":
     print("\n" + "="*70)
@@ -320,5 +419,6 @@ if __name__ == "__main__":
     print("="*70 + "\n")
     print("Starting server at http://127.0.0.1:5000")
     BASE_DIR.mkdir(parents=True, exist_ok=True)
+    MIDI_DIR.mkdir(parents=True, exist_ok=True)
     _ensure_json_file()
     app.run(host="127.0.0.1", port=5000, debug=False)
