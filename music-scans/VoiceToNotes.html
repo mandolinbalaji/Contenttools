@@ -293,739 +293,200 @@
     </div>
 
     <script>
-        // Initialize
-        const listenBtn = document.getElementById('listenBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const resultSwaras = document.getElementById('resultSwaras');
-        const commentSection = document.getElementById('commentSection');
-        const status = document.getElementById('status');
-        const meterFill = document.getElementById('meterFill');
+        (function() {
+            const listenBtn = document.getElementById('listenBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const resultSwaras = document.getElementById('resultSwaras');
+            const commentSection = document.getElementById('commentSection');
+            const status = document.getElementById('status');
 
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let isRecording = false;
-        let fullInputText = '';
-        let audioStream = null;
-        
-        const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n']);
+            let mediaRecorder = null;
+            let audioChunks = [];
+            let isRecording = false;
+            let fullInputText = '';
+            let audioStream = null;
+            
+            const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n']);
 
-        function extractSwaras(text) {
-            const cleaned = text.toLowerCase().replace(/\s+/g, '');
-            let extracted = '';
-            let ignored = '';
+            function extractSwaras(text) {
+                const cleaned = text.toLowerCase().replace(/\s+/g, '');
+                let extracted = '';
+                let ignored = '';
 
-            for (let char of cleaned) {
-                if (validSwaras.has(char)) {
-                    extracted += char;
-                } else if (char !== '') {
-                    ignored += char;
-                }
-            }
-
-            return { extracted, ignored, cleaned };
-        }
-
-        function updateDisplay() {
-            const { extracted, ignored, cleaned } = extractSwaras(fullInputText);
-
-            // Update result
-            resultSwaras.textContent = extracted || '—';
-
-            // Generate comments
-            let commentsHTML = '';
-
-            if (fullInputText) {
-                // Comment 1: What was said
-                commentsHTML += `
-                    <div class="comment-item">
-                        <div class="comment-label">💬 What You Said</div>
-                        <div class="comment-text">
-                            <span class="recognized-text">"${fullInputText}"</span>
-                        </div>
-                    </div>
-                `;
-
-                // Comment 2: Cleaned
-                commentsHTML += `
-                    <div class="comment-item">
-                        <div class="comment-label">🔤 Cleaned (lowercase, no spaces)</div>
-                        <div class="comment-text">
-                            <span class="recognized-text">"${cleaned}"</span>
-                        </div>
-                    </div>
-                `;
-
-                // Comment 3: Extracted swaras
-                if (extracted) {
-                    commentsHTML += `
-                        <div class="comment-item">
-                            <div class="comment-label">✅ Valid Swaras Found</div>
-                            <div class="comment-text">
-                                <span class="extracted-swaras">${extracted}</span>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    commentsHTML += `
-                        <div class="comment-item">
-                            <div class="comment-label">❌ No Valid Swaras Found</div>
-                            <div class="comment-text">
-                                Could not identify any swaras (s, r, g, m, p, d, n) in the input.
-                            </div>
-                        </div>
-                    `;
+                for (let char of cleaned) {
+                    if (validSwaras.has(char)) {
+                        extracted += char;
+                    } else if (char !== '') {
+                        ignored += char;
+                    }
                 }
 
-                // Comment 4: Ignored characters
-                if (ignored) {
-                    commentsHTML += `
-                        <div class="comment-item">
-                            <div class="comment-label">🚫 Characters Ignored</div>
-                            <div class="comment-text">
-                                <span class="ignored-text">${ignored}</span>
-                                <div style="margin-top: 6px; font-size: 12px; color: #999;">These weren't valid swaras, so they were excluded.</div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Comment 5: Summary
-                const totalChars = cleaned.length;
-                const validCount = extracted.length;
-                const ignoredCount = ignored.length;
-                commentsHTML += `
-                    <div class="comment-item">
-                        <div class="comment-label">📊 Summary</div>
-                        <div class="comment-text">
-                            Total characters: <strong>${totalChars}</strong><br>
-                            Valid swaras: <strong>${validCount}</strong><br>
-                            Ignored: <strong>${ignoredCount}</strong>
-                        </div>
-                    </div>
-                `;
+                return { extracted, ignored, cleaned };
             }
 
-            commentSection.innerHTML = commentsHTML;
-        }
+            function updateDisplay() {
+                const { extracted, ignored, cleaned } = extractSwaras(fullInputText);
 
-        // Check browser support
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            status.textContent = '⚠️ Your browser does not support audio recording. Please use Chrome, Edge, or Firefox.';
-            status.classList.add('error');
-            listenBtn.disabled = true;
-            return;
-        }
+                // Update result
+                resultSwaras.textContent = extracted || '—';
 
-        // Listen button
-        listenBtn.addEventListener('click', async () => {
-            if (!isRecording) {
-                // Start recording
-                try {
-                    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(audioStream);
-                    audioChunks = [];
-
-                    mediaRecorder.ondataavailable = (event) => {
-                        audioChunks.push(event.data);
-                    };
-
-                    mediaRecorder.onstop = async () => {
-                        // Send to server
-                        const blob = new Blob(audioChunks, { type: 'audio/wav' });
-                        status.textContent = '📤 Sending to server...';
-                        status.classList.remove('recording');
-
-                        try {
-                            const arrayBuffer = await blob.arrayBuffer();
-                            const response = await fetch('/api/transcribe', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/octet-stream',
-                                },
-                                body: arrayBuffer
-                            });
-
-                            const result = await response.json();
-
-                            if (result.success && result.text) {
-                                fullInputText = result.text;
-                                status.textContent = '✅ Transcription complete!';
-                                status.classList.add('success');
-                            } else {
-                                status.textContent = '❌ ' + (result.error || 'Could not transcribe');
-                                status.classList.add('error');
-                                fullInputText = '';
-                            }
-                        } catch (error) {
-                            console.error('Transcription error:', error);
-                            status.textContent = '❌ Network error. Check server connection.';
-                            status.classList.add('error');
-                            fullInputText = '';
-                        }
-
-                        updateDisplay();
-                        meterFill.style.width = '0%';
-
-                        // Stop all tracks
-                        if (audioStream) {
-                            audioStream.getTracks().forEach(track => track.stop());
-                        }
-                    };
-
-                    mediaRecorder.start();
-                    isRecording = true;
-                    listenBtn.classList.add('listening');
-                    listenBtn.textContent = '🎤 Listening...';
-                    status.textContent = '🔴 Recording... (say your swaras)';
-                    status.classList.add('recording');
-                    meterFill.style.width = '50%';
-                } catch (error) {
-                    console.error('Microphone error:', error);
-                    status.textContent = '⚠️ Microphone access denied. Please allow microphone access.';
-                    status.classList.add('error');
-                }
-            } else {
-                // Stop recording
-                isRecording = false;
-                listenBtn.classList.remove('listening');
-                listenBtn.textContent = '🎤 Listen';
-                if (mediaRecorder) {
-                    mediaRecorder.stop();
-                }
-                status.textContent = '⏳ Processing...';
-            }
-        });
-
-        // Clear button
-        clearBtn.addEventListener('click', () => {
-            fullInputText = '';
-            audioChunks = [];
-            isRecording = false;
-            listenBtn.classList.remove('listening');
-            listenBtn.textContent = '🎤 Listen';
-            status.textContent = '';
-            status.classList.remove('recording', 'success', 'error');
-            meterFill.style.width = '0%';
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-            if (audioStream) {
-                audioStream.getTracks().forEach(track => track.stop());
-            }
-            updateDisplay();
-        });
-
-        // Initial display
-        updateDisplay();
-    </script>
-</body>
-</html>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            max-width: 800px;
-            width: 100%;
-            padding: 40px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2em;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 0.95em;
-        }
-
-        .instructions {
-            background: #f0f4ff;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 30px;
-            border-radius: 5px;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        .instructions strong {
-            color: #667eea;
-        }
-
-        .control-section {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            justify-content: center;
-        }
-
-        button {
-            padding: 12px 30px;
-            font-size: 1em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .listen-btn {
-            background: #667eea;
-            color: white;
-        }
-
-        .listen-btn:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .listen-btn:active {
-            transform: translateY(0);
-        }
-
-        .listen-btn.listening {
-            background: #e74c3c;
-            animation: pulse 1s infinite;
-        }
-
-        .clear-btn {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .clear-btn:hover {
-            background: #7f8c8d;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
-            }
-        }
-
-        .result-section {
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .result-box {
-            background: #f9f9f9;
-            border: 2px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 8px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-        }
-
-        .result-swaras {
-            font-size: 1.8em;
-            font-family: 'Courier New', monospace;
-            color: #667eea;
-            font-weight: bold;
-            word-break: break-all;
-            line-height: 1.4;
-        }
-
-        .empty-text {
-            color: #999;
-            font-style: italic;
-        }
-
-        .comments-section {
-            background: #fffbf0;
-            border: 2px solid #f0e0c0;
-            border-radius: 8px;
-            padding: 15px;
-        }
-
-        .comment-item {
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #e8d7c3;
-        }
-
-        .comment-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .comment-label {
-            font-weight: 600;
-            color: #d97706;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .comment-text {
-            color: #333;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-
-        .recognized-text {
-            color: #666;
-            background: #fff9e6;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .extracted-swaras {
-            color: #667eea;
-            background: #f0f4ff;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-        }
-
-        .ignored-chars {
-            color: #e74c3c;
-            background: #ffe8e8;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .empty-message {
-            color: #999;
-            font-style: italic;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .status {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .status.recording {
-            color: #e74c3c;
-            font-weight: 600;
-        }
-
-        .no-support {
-            background: #ffe8e8;
-            border: 2px solid #e74c3c;
-            color: #c0392b;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🎤 Voice to Notes</h1>
-        <p class="subtitle">Speak Carnatic music swaras (srgmpdn)</p>
-
-        <div class="instructions">
-            <strong>Instructions:</strong><br>
-            Click the "Listen" button and speak the swaras you want to transcribe. Use lowercase format: <strong>s, r, g, m, p, d, n</strong><br>
-            Spaces and other characters will be ignored automatically.
-        </div>
-
-        <div class="control-section">
-            <button class="listen-btn" id="listenBtn">🎤 Listen</button>
-            <button class="clear-btn" id="clearBtn">Clear</button>
-        </div>
-
-        <div class="status" id="status"></div>
-
-        <div class="result-section">
-            <div class="section-title">Extracted Swaras</div>
-            <div class="result-box">
-                <div class="result-swaras" id="resultSwaras">
-                    <span class="empty-text">[No input yet]</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="result-section">
-            <div class="section-title">Recognition Comments</div>
-            <div class="comments-section" id="commentSection">
-                <div class="empty-message">No input recorded yet. Click "Listen" to start!</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Check browser support
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        
-        if (!SpeechRecognition) {
-            document.body.innerHTML += `
-                <div style="position: fixed; bottom: 20px; right: 20px; max-width: 300px;">
-                    <div class="no-support">
-                        <strong>Not Supported</strong><br>
-                        Web Speech API is not supported in your browser.<br>
-                        Please use Chrome, Edge, or Safari.
-                    </div>
-                </div>
-            `;
-        }
-
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.language = 'en-US';
-
-        const listenBtn = document.getElementById('listenBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const resultSwaras = document.getElementById('resultSwaras');
-        const commentSection = document.getElementById('commentSection');
-        const status = document.getElementById('status');
-
-        let fullInputText = '';
-        let isListening = false;
-
-        // Valid swaras
-        const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n']);
-
-        function extractSwaras(text) {
-            const cleaned = text.toLowerCase().replace(/\s+/g, '');
-            let extracted = '';
-            let ignored = '';
-
-            for (let char of cleaned) {
-                if (validSwaras.has(char)) {
-                    extracted += char;
-                } else if (char !== '' && char !== ' ') {
-                    ignored += char;
-                }
-            }
-
-            return { extracted, ignored, cleaned };
-        }
-
-        function updateDisplay() {
-            const { extracted, ignored, cleaned } = extractSwaras(fullInputText);
-
-            // Update result swaras
-            if (extracted) {
-                resultSwaras.innerHTML = `<span class="result-swaras">${extracted}</span>`;
-            } else {
-                resultSwaras.innerHTML = `<span class="empty-text">[No valid swaras]</span>`;
-            }
-
-            // Update comments
-            if (fullInputText.trim() === '') {
-                commentSection.innerHTML = `<div class="empty-message">No input recorded yet. Click "Listen" to start!</div>`;
-            } else {
+                // Generate comments
                 let commentsHTML = '';
 
-                // Comment 1: What you said
-                commentsHTML += `
-                    <div class="comment-item">
-                        <div class="comment-label">💬 What You Said</div>
-                        <div class="comment-text">
-                            <span class="recognized-text">"${fullInputText}"</span>
-                        </div>
-                    </div>
-                `;
-
-                // Comment 2: Cleaned (lowercase, no spaces)
-                commentsHTML += `
-                    <div class="comment-item">
-                        <div class="comment-label">🔤 Cleaned (lowercase, spaces removed)</div>
-                        <div class="comment-text">
-                            <span class="recognized-text">"${cleaned}"</span>
-                        </div>
-                    </div>
-                `;
-
-                // Comment 3: Extracted swaras
-                if (extracted) {
+                if (fullInputText) {
                     commentsHTML += `
                         <div class="comment-item">
-                            <div class="comment-label">✅ Valid Swaras Found</div>
+                            <div class="comment-label">💬 What You Said</div>
                             <div class="comment-text">
-                                <span class="extracted-swaras">${extracted}</span>
+                                <span class="recognized-text">"${fullInputText}"</span>
                             </div>
                         </div>
                     `;
-                } else {
+
                     commentsHTML += `
                         <div class="comment-item">
-                            <div class="comment-label">❌ No Valid Swaras Found</div>
+                            <div class="comment-label">🔤 Cleaned (lowercase, no spaces)</div>
                             <div class="comment-text">
-                                Could not identify any swaras (s, r, g, m, p, d, n) in the input.
+                                <span class="recognized-text">"${cleaned}"</span>
+                            </div>
+                        </div>
+                    `;
+
+                    if (extracted) {
+                        commentsHTML += `
+                            <div class="comment-item">
+                                <div class="comment-label">✅ Valid Swaras Found</div>
+                                <div class="comment-text">
+                                    <span class="extracted-swaras">${extracted}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        commentsHTML += `
+                            <div class="comment-item">
+                                <div class="comment-label">❌ No Valid Swaras Found</div>
+                                <div class="comment-text">
+                                    Could not identify any swaras (s, r, g, m, p, d, n) in the input.
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    if (ignored) {
+                        commentsHTML += `
+                            <div class="comment-item">
+                                <div class="comment-label">🚫 Characters Ignored</div>
+                                <div class="comment-text">
+                                    <span class="ignored-text">${ignored}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    commentsHTML += `
+                        <div class="comment-item">
+                            <div class="comment-label">📊 Summary</div>
+                            <div class="comment-text">
+                                Total: <strong>${cleaned.length}</strong> | Valid: <strong>${extracted.length}</strong> | Ignored: <strong>${ignored.length}</strong>
                             </div>
                         </div>
                     `;
                 }
-
-                // Comment 4: Ignored characters
-                if (ignored) {
-                    commentsHTML += `
-                        <div class="comment-item">
-                            <div class="comment-label">⏭️ Ignored Characters (not srgmpdn)</div>
-                            <div class="comment-text">
-                                <span class="ignored-chars">"${ignored}"</span>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                commentsHTML += `
-                    <div class="comment-item">
-                        <div class="comment-label">📊 Summary</div>
-                        <div class="comment-text">
-                            Total chars heard: <strong>${cleaned.length}</strong> | 
-                            Valid swaras: <strong>${extracted.length}</strong> | 
-                            Ignored: <strong>${ignored.length}</strong>
-                        </div>
-                    </div>
-                `;
 
                 commentSection.innerHTML = commentsHTML;
             }
-        }
 
-        listenBtn.addEventListener('click', () => {
-            if (!isListening) {
-                // Start listening
-                isListening = true;
+            // Check browser support
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                status.textContent = '⚠️ Browser does not support audio recording.';
+                status.classList.add('error');
+                listenBtn.disabled = true;
+                return;
+            }
+
+            // Listen button
+            listenBtn.addEventListener('click', async () => {
+                if (!isRecording) {
+                    try {
+                        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorder = new MediaRecorder(audioStream);
+                        audioChunks = [];
+
+                        mediaRecorder.ondataavailable = (event) => {
+                            audioChunks.push(event.data);
+                        };
+
+                        mediaRecorder.onstop = async () => {
+                            const blob = new Blob(audioChunks, { type: 'audio/wav' });
+                            status.textContent = '📤 Sending to server...';
+                            status.classList.remove('recording');
+
+                            try {
+                                const arrayBuffer = await blob.arrayBuffer();
+                                const response = await fetch('/api/transcribe', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/octet-stream' },
+                                    body: arrayBuffer
+                                });
+
+                                const result = await response.json();
+
+                                if (result.success && result.text) {
+                                    fullInputText = result.text;
+                                    status.textContent = '✅ Done!';
+                                    status.classList.add('success');
+                                } else {
+                                    status.textContent = '❌ ' + (result.error || 'Error');
+                                    status.classList.add('error');
+                                    fullInputText = '';
+                                }
+                            } catch (error) {
+                                console.error(error);
+                                status.textContent = '❌ Network error';
+                                status.classList.add('error');
+                                fullInputText = '';
+                            }
+
+                            updateDisplay();
+                            if (audioStream) audioStream.getTracks().forEach(t => t.stop());
+                        };
+
+                        mediaRecorder.start();
+                        isRecording = true;
+                        listenBtn.classList.add('listening');
+                        listenBtn.textContent = '🎤 Listening...';
+                        status.textContent = '🔴 Recording...';
+                        status.classList.add('recording');
+                    } catch (error) {
+                        status.textContent = '⚠️ Microphone access denied';
+                        status.classList.add('error');
+                    }
+                } else {
+                    isRecording = false;
+                    listenBtn.classList.remove('listening');
+                    listenBtn.textContent = '🎤 Listen';
+                    mediaRecorder.stop();
+                    status.textContent = '⏳ Processing...';
+                }
+            });
+
+            // Clear button
+            clearBtn.addEventListener('click', () => {
                 fullInputText = '';
-                listenBtn.classList.add('listening');
-                listenBtn.textContent = '🎤 Listening...';
-                status.textContent = '🔴 Recording...';
-                status.classList.add('recording');
-                recognition.start();
-                updateDisplay();
-            } else {
-                // Stop listening
-                isListening = false;
+                audioChunks = [];
+                isRecording = false;
                 listenBtn.classList.remove('listening');
                 listenBtn.textContent = '🎤 Listen';
                 status.textContent = '';
-                status.classList.remove('recording');
-                recognition.stop();
-            }
-        });
-
-        clearBtn.addEventListener('click', () => {
-            fullInputText = '';
-            isListening = false;
-            listenBtn.classList.remove('listening');
-            listenBtn.textContent = '🎤 Listen';
-            status.textContent = '';
-            status.classList.remove('recording');
-            recognition.stop();
-            updateDisplay();
-        });
-
-        recognition.addEventListener('result', (event) => {
-            let interimTranscript = '';
-            
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const transcript = event.results[i][0].transcript;
-                
-                if (event.results[i].isFinal) {
-                    fullInputText += transcript + ' ';
-                } else {
-                    interimTranscript += transcript;
-                }
-            }
-
-            // Show real-time feedback
-            status.textContent = interimTranscript ? `🔴 Recording: "${interimTranscript}"` : '🔴 Recording...';
+                status.classList.remove('recording', 'success', 'error');
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+                if (audioStream) audioStream.getTracks().forEach(t => t.stop());
+                updateDisplay();
+            });
 
             updateDisplay();
-        });
-
-        let retryTimeout = null;
-        let isRetrying = false;
-
-        recognition.addEventListener('end', () => {
-            clearTimeout(retryTimeout);
-            
-            if (isListening && !isRetrying) {
-                // Auto-restart if still marked as listening (and not already retrying)
-                setTimeout(() => {
-                    if (isListening && !isRetrying) {
-                        try {
-                            recognition.start();
-                        } catch (e) {
-                            console.log('Could not restart recognition:', e);
-                            status.textContent = '⚠️ Unable to connect. Check internet and microphone.';
-                        }
-                    }
-                }, 100);
-            } else if (!isListening) {
-                status.textContent = '';
-                status.classList.remove('recording');
-            }
-        });
-
-        recognition.addEventListener('error', (event) => {
-            console.error('Speech recognition error:', event.error);
-            
-            // Ignore aborted errors (self-triggered by abort())
-            if (event.error === 'aborted') {
-                return;
-            }
-            
-            status.textContent = `⚠️ Error: ${event.error}`;
-            
-            // Only retry on network errors if still listening
-            if (isListening && event.error === 'network' && !isRetrying) {
-                isRetrying = true;
-                status.textContent = '🔴 Recording... (retrying)';
-                retryTimeout = setTimeout(() => {
-                    if (isListening) {
-                        try {
-                            recognition.start();
-                        } catch (e) {
-                            console.log('Retry failed:', e);
-                            status.textContent = '⚠️ Connection failed. Click Listen to try again.';
-                        }
-                    }
-                    isRetrying = false;
-                }, 1500);
-            }
-        });
-
-        // Initial display
-        updateDisplay();
+        })();
     </script>
 </body>
 </html>
+
