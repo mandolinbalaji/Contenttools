@@ -299,6 +299,50 @@
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
+        .audio-monitor {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .audio-monitor.active {
+            display: block;
+        }
+
+        .monitor-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .level-bars {
+            display: flex;
+            gap: 4px;
+            height: 40px;
+            align-items: flex-end;
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .level-bar {
+            flex: 1;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 2px;
+            min-height: 2px;
+            transition: height 0.05s ease-out;
+        }
+
+        .volume-text {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
     </style>
 </head>
 <body>
@@ -323,6 +367,13 @@
         </div>
 
         <div id="status"></div>
+
+        <div class="audio-monitor" id="audioMonitor">
+            <div class="monitor-label">📊 Input Level</div>
+            <div class="level-bars" id="levelBars"></div>
+            <div class="volume-text"><span id="volumeValue">0</span>%</div>
+        </div>
+
         <div class="meter">
             <div class="meter-fill" id="meterFill"></div>
         </div>
@@ -350,6 +401,12 @@
             let fullInputText = '';
             let audioStream = null;
             let selectedDeviceId = null;
+            
+            // Audio monitoring
+            let audioContext = null;
+            let analyser = null;
+            let dataArray = null;
+            let animationId = null;
             
             const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n']);
 
@@ -388,6 +445,88 @@
             deviceSelect.addEventListener('change', () => {
                 selectedDeviceId = deviceSelect.value;
             });
+
+            // Setup audio monitoring
+            function setupAudioMonitor(stream) {
+                try {
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+
+                    const source = audioContext.createMediaStreamSource(stream);
+                    if (!analyser) {
+                        analyser = audioContext.createAnalyser();
+                        analyser.fftSize = 256;
+                    }
+
+                    source.connect(analyser);
+                    
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+
+                    // Create level bars
+                    const levelBars = document.getElementById('levelBars');
+                    levelBars.innerHTML = '';
+                    const barCount = 12;
+                    for (let i = 0; i < barCount; i++) {
+                        const bar = document.createElement('div');
+                        bar.className = 'level-bar';
+                        levelBars.appendChild(bar);
+                    }
+
+                    // Start monitoring
+                    startMonitoring();
+                } catch (error) {
+                    console.error('Audio monitor setup error:', error);
+                }
+            }
+
+            // Animate the level bars
+            function startMonitoring() {
+                const levelBars = document.querySelectorAll('.level-bar');
+                const volumeValue = document.getElementById('volumeValue');
+
+                function updateBars() {
+                    analyser.getByteFrequencyData(dataArray);
+
+                    let sum = 0;
+                    const barCount = levelBars.length;
+                    const samplesPerBar = Math.floor(dataArray.length / barCount);
+
+                    levelBars.forEach((bar, index) => {
+                        let average = 0;
+                        for (let i = 0; i < samplesPerBar; i++) {
+                            average += dataArray[index * samplesPerBar + i];
+                        }
+                        average /= samplesPerBar;
+                        sum += average;
+
+                        const height = (average / 255) * 100;
+                        bar.style.height = height + '%';
+                    });
+
+                    // Calculate overall volume
+                    const volume = Math.round((sum / (barCount * 255)) * 100);
+                    volumeValue.textContent = volume;
+
+                    if (isRecording) {
+                        animationId = requestAnimationFrame(updateBars);
+                    }
+                }
+
+                updateBars();
+            }
+
+            // Stop monitoring
+            function stopMonitoring() {
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                const levelBars = document.querySelectorAll('.level-bar');
+                levelBars.forEach(bar => bar.style.height = '0%');
+                document.getElementById('volumeValue').textContent = '0';
+            }
 
             function extractSwaras(text) {
                 const cleaned = text.toLowerCase().replace(/\s+/g, '');
@@ -538,6 +677,8 @@
 
                         mediaRecorder.start();
                         isRecording = true;
+                        setupAudioMonitor(audioStream);
+                        document.getElementById('audioMonitor').classList.add('active');
                         listenBtn.classList.add('listening');
                         listenBtn.textContent = '🎤 Listening...';
                         status.textContent = '🔴 Recording...';
@@ -548,6 +689,8 @@
                     }
                 } else {
                     isRecording = false;
+                    stopMonitoring();
+                    document.getElementById('audioMonitor').classList.remove('active');
                     listenBtn.classList.remove('listening');
                     listenBtn.textContent = '🎤 Listen';
                     mediaRecorder.stop();
@@ -560,6 +703,8 @@
                 fullInputText = '';
                 audioChunks = [];
                 isRecording = false;
+                stopMonitoring();
+                document.getElementById('audioMonitor').classList.remove('active');
                 listenBtn.classList.remove('listening');
                 listenBtn.textContent = '🎤 Listen';
                 status.textContent = '';
