@@ -456,13 +456,17 @@
             updateDisplay();
         });
 
+        let retryTimeout = null;
+        let isRetrying = false;
+
         recognition.addEventListener('end', () => {
-            if (isListening) {
-                // Auto-restart if still marked as listening (with a small delay to avoid rapid restarts)
+            clearTimeout(retryTimeout);
+            
+            if (isListening && !isRetrying) {
+                // Auto-restart if still marked as listening (and not already retrying)
                 setTimeout(() => {
-                    if (isListening) {
+                    if (isListening && !isRetrying) {
                         try {
-                            recognition.abort();  // Clear any previous state
                             recognition.start();
                         } catch (e) {
                             console.log('Could not restart recognition:', e);
@@ -470,7 +474,7 @@
                         }
                     }
                 }, 100);
-            } else {
+            } else if (!isListening) {
                 status.textContent = '';
                 status.classList.remove('recording');
             }
@@ -478,24 +482,29 @@
 
         recognition.addEventListener('error', (event) => {
             console.error('Speech recognition error:', event.error);
+            
+            // Ignore aborted errors (self-triggered by abort())
+            if (event.error === 'aborted') {
+                return;
+            }
+            
             status.textContent = `⚠️ Error: ${event.error}`;
             
-            // Instead of stopping, retry if still listening
-            if (isListening) {
-                setTimeout(() => {
+            // Only retry on network errors if still listening
+            if (isListening && event.error === 'network' && !isRetrying) {
+                isRetrying = true;
+                status.textContent = '🔴 Recording... (retrying)';
+                retryTimeout = setTimeout(() => {
                     if (isListening) {
                         try {
-                            status.textContent = '🔴 Recording... (retrying)';
-                            recognition.abort();  // Clear state before restarting
                             recognition.start();
                         } catch (e) {
                             console.log('Retry failed:', e);
+                            status.textContent = '⚠️ Connection failed. Click Listen to try again.';
                         }
                     }
+                    isRetrying = false;
                 }, 1500);
-            } else {
-                listenBtn.classList.remove('listening');
-                listenBtn.textContent = '🎤 Listen';
             }
         });
 
