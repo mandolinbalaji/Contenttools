@@ -288,6 +288,24 @@ def _save_midi_file(kanakku_name, midi_file_data_b64):
         print(f"[ERROR] Failed to decode MIDI base64: {e}")
         return None
     
+    # Validate MIDI file structure
+    if len(midi_binary) < 14:
+        print(f"[ERROR] MIDI file too small ({len(midi_binary)} bytes). Expected at least 14 bytes.")
+        return None
+    
+    # Check for MThd header
+    if midi_binary[:4] != b'MThd':
+        print(f"[ERROR] Invalid MIDI header. Expected 'MThd', got: {midi_binary[:4]}")
+        return None
+    
+    # Check for MTrk header (should be at position 14 minimum for basic MIDI)
+    if b'MTrk' not in midi_binary:
+        print(f"[ERROR] No MTrk (track) header found in MIDI data. File is incomplete or invalid.")
+        print(f"[DEBUG] File hex (first 60 bytes): {midi_binary[:60].hex()}")
+        return None
+    
+    print(f"[INFO] MIDI validation passed: {len(midi_binary)} bytes, contains MThd and MTrk")
+    
     # Create filename with timestamp
     timestamp = int(datetime.now().timestamp() * 1000)  # milliseconds
     sanitized_name = ''.join(c if c.isalnum() or c in ' -_' else '' for c in kanakku_name)[:50]

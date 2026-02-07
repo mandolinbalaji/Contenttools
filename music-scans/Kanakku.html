@@ -1420,7 +1420,12 @@
                 const midiFileData = getMidiFileData(currentMidiData);
                 if (midiFileData) {
                     kanakku.midiFileData = midiFileData;  // Base64 encoded binary
+                    console.log(`[Save] Generated MIDI base64 data (${midiFileData.length} chars) for "${name}"`);
+                } else {
+                    console.warn('[Save] getMidiFileData returned null');
                 }
+            } else {
+                console.log('[Save] No currentMidiData - MIDI not saved. Click "Render" button first to generate MIDI.');
             }
             
             try {
@@ -1443,16 +1448,19 @@
 
                 if (response.ok) {
                     const saved = await response.json();
+                    console.log('[Save] Success:', saved);
                     currentKanakkuId = saved.id;
                     kanakkuNameInput.value = name;
                     await loadSavedKanakkus();
                     alert('Saved: ' + name);
                 } else {
-                    alert('Error saving kanakku');
+                    const error = await response.text();
+                    console.error('[Save] Server error:', error);
+                    alert('Error saving kanakku: ' + error);
                 }
             } catch (err) {
                 console.error('Save error:', err);
-                alert('Error saving kanakku');
+                alert('Error saving kanakku: ' + err.message);
             }
         });
 
@@ -2242,10 +2250,10 @@
 
             // Convert to base64
             const uint8Array = new Uint8Array(midiFile);
-            let binary = '';
-            for (let i = 0; i < uint8Array.byteLength; i++) {
-                binary += String.fromCharCode(uint8Array[i]);
-            }
+            // Use reduce to convert bytes to binary string (avoids call stack issues)
+            const binary = Array.from(uint8Array).reduce((str, byte) => {
+                return str + String.fromCharCode(byte);
+            }, '');
             return btoa(binary);
         }
 
