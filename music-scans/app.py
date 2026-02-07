@@ -440,43 +440,74 @@ def open_midi():
 def transcribe_audio():
     """Transcribe audio data to text using speech recognition"""
     if not SPEECH_RECOGNITION_AVAILABLE:
-        return jsonify({"error": "Speech recognition not available. Install: pip install SpeechRecognition"}), 500
+        return jsonify({"error": "Speech recognition not available"}), 500
     
     try:
         # Get audio data from request
         audio_data = request.get_data()
         
-        if not audio_data:
-            return jsonify({"error": "No audio data provided"}), 400
+        if not audio_data or len(audio_data) < 100:
+            return jsonify({"error": "No audio data provided", "success": False}), 200
         
         # Create recognizer
         recognizer = sr.Recognizer()
         
-        # Convert bytes to AudioData
+        # Try to process the audio
         try:
-            # Assume audio is 16-bit PCM wav data (44.1kHz)
-            audio = sr.AudioData(audio_data, 44100, 2)
-        except Exception as e:
-            print(f"[ERROR] Failed to parse audio data: {e}")
-            return jsonify({"error": "Invalid audio format"}), 400
+            # Try to load audio with pydub first (handles multiple formats)
+            from pydub import AudioSegment
+            
+            # Try to detect format and convert to WAV
+            try:
+                audio = AudioSegment.from_file(io.BytesIO(audio_data))
+            except Exception as e:
+                print(f"[DEBUG] Pydub failed to auto-detect format: {e}, trying WAV...")
+                # If auto-detect fails, try WAV specifically
+                audio = AudioSegment.from_wav(io.BytesIO(audio_data))
+            
+            # Convert to mono, 16-bit, 16kHz for better recognition
+            audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+            
+            # Export to WAV bytes
+            wav_bytes = io.BytesIO()
+            audio.export(wav_bytes, format="wav")
+            wav_bytes.seek(0)
+            
+            # Load with speech_recognition
+            try:
+                audio_sr = recognizer.record(wav_bytes)
+            except Exception as e:
+                print(f"[DEBUG] Failed to load with speech_recognition: {e}")
+                return jsonify({"error": f"Could not process audio: {str(e)}", "success": False}), 200
+            
+        except ImportError:
+            # Fallback if pydub not available - try raw bytes
+            print("[DEBUG] Pydub not available, trying raw audio data...")
+            try:
+                audio_sr = sr.AudioData(audio_data, 16000, 2)
+            except Exception as e:
+                print(f"[ERROR] Failed to create AudioData: {e}")
+                return jsonify({"error": "Could not process audio format", "success": False}), 200
         
-        # Try Google Web Speech API first (requires internet)
+        # Try Google Web Speech API
         try:
-            text = recognizer.recognize_google(audio, language='en-US')
+            print(f"[DEBUG] Attempting transcription, audio length: {len(audio_data)} bytes")
+            text = recognizer.recognize_google(audio_sr, language='en-US')
+            print(f"[DEBUG] Transcription success: {text}")
             return jsonify({"text": text, "success": True})
         except sr.UnknownValueError:
-            return jsonify({"error": "Could not understand audio", "success": False}), 200
+            print(f"[DEBUG] Could not understand audio")
+            return jsonify({"error": "Could not understand audio - try speaking clearer or check microphone", "success": False}), 200
         except sr.RequestError as e:
-            # Fallback: return error but don't crash
             print(f"[WARNING] Google Speech API error: {e}")
-            return jsonify({"error": f"Speech service error: {str(e)}", "success": False}), 200
+            return jsonify({"error": f"Speech service unavailable: check internet connection", "success": False}), 200
         except Exception as e:
-            print(f"[ERROR] Transcription error: {e}")
+            print(f"[ERROR] Unexpected transcription error: {e}")
             return jsonify({"error": f"Transcription error: {str(e)}", "success": False}), 200
             
     except Exception as e:
         print(f"[ERROR] Transcribe endpoint error: {e}")
-        return jsonify({"error": f"Server error: {str(e)}"}), 500
+        return jsonify({"error": f"Server error: {str(e)}", "success": False}), 500
 
 
 @app.route('/<path:filename>')

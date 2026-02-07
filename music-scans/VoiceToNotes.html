@@ -633,7 +633,20 @@
                             : { audio: true };
                         
                         audioStream = await navigator.mediaDevices.getUserMedia(audioConstraints);
-                        mediaRecorder = new MediaRecorder(audioStream);
+                        
+                        // Try to use a supported audio format (WAV preferred, fallback to WebM)
+                        let mimeType = 'audio/wav';
+                        const supportedMimes = ['audio/wav', 'audio/webm', 'audio/mp4', 'audio/ogg'];
+                        
+                        for (const mime of supportedMimes) {
+                            if (MediaRecorder.isTypeSupported(mime)) {
+                                mimeType = mime;
+                                break;
+                            }
+                        }
+                        
+                        console.log(`Using audio format: ${mimeType}`);
+                        mediaRecorder = new MediaRecorder(audioStream, { mimeType: mimeType });
                         audioChunks = [];
 
                         mediaRecorder.ondataavailable = (event) => {
@@ -641,7 +654,7 @@
                         };
 
                         mediaRecorder.onstop = async () => {
-                            const blob = new Blob(audioChunks, { type: 'audio/wav' });
+                            const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/wav' });
                             status.textContent = '📤 Sending to server...';
                             status.classList.remove('recording');
 
