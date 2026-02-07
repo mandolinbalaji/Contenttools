@@ -462,6 +462,189 @@ def test_audio():
         return jsonify({"error": str(e)}), 500
 
 
+def extract_swaras_from_text(text, recognized_text=""):
+    """
+    Extract swaras from recognized text using multiple strategies.
+    
+    Strategy 1: Direct character matching (s, r, g, m, p, d, n)
+    Strategy 2: Phonetic matching with syllable breaking
+    Strategy 3: Learn from common misidentifications (ni->n, pa->p, ma->m, etc)
+    """
+    valid_swaras = set(['s', 'r', 'g', 'm', 'p', 'd', 'n'])
+    
+    # Strategy 1: Direct extraction
+    text_lower = text.lower()
+    cleaned = text_lower.replace(' ', '')
+    
+    direct_swaras = ''
+    direct_ignored = ''
+    for char in cleaned:
+        if char in valid_swaras:
+            direct_swaras += char
+        elif char != '':
+            direct_ignored += char
+    
+    # Strategy 2: Phonetic extraction - break words into syllables
+    # First, apply common patterns
+    phonetic_corrections = {
+        # Double/triple patterns
+        'nini': 'nn',      # "nini" -> n-n
+        'ninini': 'nnn',   # triple n  
+        'panini': 'pnn',   # "pa-ni-ni" -> p-n-n
+        'panp': 'pnp',     # if followed by p
+        'panpan': 'pnpn',
+        'pani': 'pn',      # pa-ni -> p-n
+        'mana': 'mn',
+        'mani': 'mn',
+        'papa': 'pp',
+        'mama': 'mm',
+        'riri': 'rr',
+        'gaga': 'gg',
+        'dada': 'dd',
+        'sasa': 'ss',
+        # Common syllable patterns
+        'nip': 'np',
+        'nap': 'np',
+        'nis': 'ns',
+        'nas': 'ns',
+        'nit': 'n',        # nis/nit often just means n
+        'pit': 'p',
+        'pan': 'pn',
+        'pans': 'pn',      # plural doesn't add swara
+        'man': 'mn',
+        'mans': 'mn',
+        'ran': 'rn',
+        'dans': 'dn',
+        'dans': 'dn',
+        'dan': 'dn',
+        'dun': 'dn',
+        'gan': 'gn',
+        'gans': 'gn',
+        'san': 'sn',
+        'sap': 'sp',
+        'map': 'mp',
+        'gap': 'gp',
+        'rap': 'rp',
+        'dap': 'dp',
+        'ponies': 'pn',    # "ponies" -> p-n (common misheard)
+        'pie': 'p',        # "pie" -> p (common ending)
+        'pagal': 'pg',     # "pagal" -> p-g
+        'pagan': 'pgn',
+        'magan': 'mgn',
+    }
+    
+    phonetic_swaras = text_lower
+    # Apply corrections in order of longest first (to avoid partial replacements)
+    for word_pattern in sorted(phonetic_corrections.keys(), key=len, reverse=True):
+        swara_pattern = phonetic_corrections[word_pattern]
+        phonetic_swaras = phonetic_swaras.replace(word_pattern, swara_pattern)
+    
+    # Extract swaras from phonetically corrected text
+    phonetic_cleaned = phonetic_swaras.replace(' ', '')
+    phonetic_extracted = ''
+    phonetic_ignored = ''
+    for char in phonetic_cleaned:
+        if char in valid_swaras:
+            phonetic_extracted += char
+        elif char != '':
+            phonetic_ignored += char
+    
+    return {
+        'direct': direct_swaras,
+        'direct_ignored': direct_ignored,
+        'phonetic': phonetic_extracted,
+        'phonetic_ignored': phonetic_ignored,
+        'raw_text': text
+    }
+
+
+@app.route('/api/transcribe-with-corrections/<filename>', methods=['GET'])
+def transcribe_with_corrections(filename):
+    """Test endpoint that shows both raw and corrected transcription"""
+    try:
+        file_path = MEDIA_ROOT / filename
+        if not file_path.exists():
+            return jsonify({"error": f"File not found: {filename}"}), 404
+        
+        print(f"\n{'='*70}")
+        print(f"[COMPARE] Testing: {filename}")
+        print(f"{'='*70}")
+        
+        audio_data = file_path.read_bytes()
+        recognizer = sr.Recognizer()
+        audio_sr = None
+        
+        # Parse and convert audio
+        is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
+        is_webm = len(audio_data) > 4 and audio_data[0] == 0x1a and audio_data[1] == 0x45 and audio_data[2] == 0xdf and audio_data[3] == 0xa3
+        
+        if is_wav or is_webm:
+            try:
+                if is_webm:
+                    from pydub import AudioSegment
+                    audio = AudioSegment.from_file(io.BytesIO(audio_data), format="webm")
+                else:
+                    wav_stream = io.BytesIO(audio_data)
+                    with wave.open(wav_stream, 'rb') as wav:
+                        frames = wav.readframes(wav.getnframes())
+                        sample_rate = wav.getframerate()
+                        channels = wav.getnchannels()
+                        sample_width = wav.getsampwidth()
+                        
+                        if sample_rate != 16000 or channels != 1 or sample_width != 2:
+                            from pydub import AudioSegment
+                            audio = AudioSegment(
+                                data=frames,
+                                sample_width=sample_width,
+                                frame_rate=sample_rate,
+                                channels=channels
+                            )
+                        else:
+                            audio_sr = sr.AudioData(frames, 16000, 2)
+                
+                if not audio_sr and 'audio' in locals():
+                    audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                    audio_sr = sr.AudioData(audio.raw_data, 16000, 2)
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+        
+        if not audio_sr:
+            return jsonify({"error": "Failed to load audio"}), 500
+        
+        # Get Google transcription
+        try:
+            raw_text = recognizer.recognize_google(audio_sr, language='en-US')
+            print(f"[COMPARE] Google transcription: '{raw_text}'")
+        except sr.UnknownValueError:
+            return jsonify({"error": "Could not understand audio", "success": False}), 200
+        except sr.RequestError as e:
+            return jsonify({"error": f"API error: {str(e)[:100]}"}), 200
+        
+        # Extract swaras with different strategies
+        result = extract_swaras_from_text(raw_text)
+        
+        print(f"[COMPARE] Direct extraction: '{result['direct']}'")
+        print(f"[COMPARE] Phonetic extraction: '{result['phonetic']}'")
+        print(f"{'='*70}\n")
+        
+        return jsonify({
+            "success": True,
+            "file": filename,
+            "raw_text": raw_text,
+            "swaras": {
+                "direct": result['direct'],
+                "phonetic": result['phonetic']  # Better for swaras
+            },
+            "debug": {
+                "direct_ignored": result['direct_ignored'],
+                "phonetic_ignored": result['phonetic_ignored']
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/test-transcribe/<filename>', methods=['GET'])
 def test_transcribe_file(filename):
     """Test transcription with a file from media folder"""
