@@ -491,7 +491,7 @@ def test_transcribe_file(filename):
         
         # Check if WAV
         is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
-        is_webm = audio_data[:4] == b'\x1aEDF\xa3'  # EBML/WebM signature
+        is_webm = len(audio_data) > 4 and audio_data[0] == 0x1a and audio_data[1] == 0x45 and audio_data[2] == 0xdf and audio_data[3] == 0xa3
         print(f"[TEST] Format check: WAV={is_wav}, WebM={is_webm}")
         
         if is_wav or is_webm:
@@ -599,7 +599,7 @@ def transcribe_audio():
         
         # Check if this is a WAV file (check RIFF header)
         is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
-        is_webm = audio_data[:4] == b'\x1aEDF\xa3'  # EBML/WebM signature
+        is_webm = len(audio_data) > 4 and audio_data[0] == 0x1a and audio_data[1] == 0x45 and audio_data[2] == 0xdf and audio_data[3] == 0xa3
         print(f"[DEBUG] Audio format detection: WAV={is_wav}, WebM={is_webm}")
         
         if is_wav or is_webm:
