@@ -710,9 +710,9 @@
                         <button class="toolbar-btn" id="numberingToggleBtn" title="Toggle numbering direction (Reverse/Forward)">Rev</button>
                         <button class="toolbar-btn" id="exportBtn" title="Export as Text">Export</button>
                     </div>
-                    <input type="text" class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" style="flex: 1;">
+                    <textarea class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" style="flex: 1; min-height: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-family: monospace; font-size: 0.9em; resize: vertical; word-wrap: break-word; white-space: pre-wrap;" wrap="soft"></textarea>
                     <div style="display: flex; gap: 6px;">
-                        <input type="text" id="patternInput" placeholder="e.g., 52525" style="padding: 4px 6px; border: 2px solid #ddd; border-radius: 3px; font-size: 0.75em; width: 70px;">
+                        <input type="text" id="patternInput" placeholder="e.g., 52525" style="padding: 4px 6px; border: 2px solid #ddd; border-radius: 3px; font-size: 0.75em; width: 200px;">
                         <button class="toolbar-btn" id="checkCalcBtn" title="Check Calculation" style="padding: 4px 8px; font-size: 0.7em;">Check Calc</button>
                     </div>
                     <div class="phrase-info">
@@ -994,7 +994,8 @@
                 '\u0323']);  // combining dot below (for g\u0323, p\u0323)
             let count = 0;
             for (let char of phrase) {
-                if (validSwaras.has(char)) {
+                // Count swaras, commas, and numeric characters (1-9)
+                if (validSwaras.has(char) || /[1-9]/.test(char)) {
                     count++;
                 }
             }
@@ -1313,14 +1314,14 @@
                 return;
             }
 
-            // Split each digit and create sequence for each using swaras
-            const sequence = 'srgmpdnS';  // Use swaras instead of numbers
+            // Split each digit and create sequence for each using numbers
+            const sequence = '123456789';  // Use numbers instead of swaras
             let filledPhrase = '';
             
             for (let char of pattern) {
                 if (!isNaN(char)) {
                     const count = parseInt(char);
-                    // Take first 'count' characters from swara sequence
+                    // Take first 'count' characters from numeric sequence
                     filledPhrase += sequence.substring(0, count);
                 }
             }
@@ -1748,15 +1749,15 @@
                             }
                         }
 
-                        // Find the note at this position, skipping numbers in the phrase
-                        let noteCount = 0;  // Count only valid notes (swaras and commas), not numbers
+                        // Find the note at this position
+                        let noteCount = 0;  // Count valid notes (swaras, commas, and numbers)
                         let phraseCharacter = null;
                         
                         for (let i = 0; i < phrase.length; i++) {
                             const char = phrase[i];
-                            // Only count swaras (including dotted variants) and commas, skip numbers
-                            // Valid: s,r,g,m,p,d,n (base) + ṡ,ṙ,ġ,ṁ,ṗ,ḋ,ṅ (dots above) + ṣ,ṛ,ṃ,ḍ,ṇ (dots below) + combining mark \u0323 + comma
-                            if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u0323]/.test(char)) {
+                            // Count swaras (including dotted variants), commas, and numeric characters
+                            // Valid: s,r,g,m,p,d,n (base) + ṡ,ṙ,ġ,ṁ,ṗ,ḋ,ṅ (dots above) + ṣ,ṛ,ṃ,ḍ,ṇ (dots below) + combining mark \u0323 + comma + numbers 1-9
+                            if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u03231-9]/.test(char)) {
                                 noteCount++;
                                 if (noteCount === globalPos - startingPos + 1) {
                                     phraseCharacter = char;
