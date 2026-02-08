@@ -710,7 +710,13 @@
                         <button class="toolbar-btn" id="numberingToggleBtn" title="Toggle numbering direction (Reverse/Forward)">Rev</button>
                         <button class="toolbar-btn" id="exportBtn" title="Export as Text">Export</button>
                     </div>
-                    <textarea class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" style="flex: 1; min-height: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-family: monospace; font-size: 0.9em; resize: vertical; word-wrap: break-word; white-space: pre-wrap;" wrap="soft"></textarea>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <textarea class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" style="width: 50%; min-height: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-family: monospace; font-size: 0.9em; resize: vertical; word-wrap: break-word; white-space: pre-wrap;" wrap="soft"></textarea>
+                        <textarea id="commentInput" placeholder="Comments (optional)" autocomplete="off" style="width: 50%; min-height: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-family: monospace; font-size: 0.9em; resize: vertical; word-wrap: break-word; white-space: pre-wrap;" wrap="soft"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <input type="text" id="groupingInput" placeholder="Grouping (optional)" style="flex: 1; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.9em;">
+                    </div>
                     <div style="display: flex; gap: 6px;">
                         <input type="text" id="patternInput" placeholder="e.g., 52525" style="padding: 4px 6px; border: 2px solid #ddd; border-radius: 3px; font-size: 0.75em; width: 200px;">
                         <button class="toolbar-btn" id="checkCalcBtn" title="Check Calculation" style="padding: 4px 8px; font-size: 0.7em;">Check Calc</button>
@@ -810,6 +816,8 @@
         const exportBtn = document.getElementById('exportBtn');
         const checkCalcBtn = document.getElementById('checkCalcBtn');
         const patternInput = document.getElementById('patternInput');
+        const commentInput = document.getElementById('commentInput');
+        const groupingInput = document.getElementById('groupingInput');
         const saveBtn = document.getElementById('saveBtn');
 
         // State
@@ -1177,6 +1185,8 @@
             phraseInput.value = '';
             kanakkuNameInput.value = '';
             kanakkuTagsInput.value = '';
+            commentInput.value = '';
+            groupingInput.value = '';
             beatsInput.value = '8';
             nadaiInput.value = '4';
             eduppuInput.value = '1';
@@ -1582,8 +1592,10 @@
             const sruthi = sruthiSelect.value;
             const ragaNotes = ragaNotesInput.value;  // Get raga notes
             const tags = kanakkuTagsInput.value.split(',').map(t => t.trim()).filter(t => t);  // Parse tags
+            const comment = commentInput.value;  // Get comment
+            const grouping = groupingInput.value;  // Get grouping
 
-            const kanakku = { name, phrase, beats, nadai, eduppu, sruthi, ragaNotes, tags };
+            const kanakku = { name, phrase, beats, nadai, eduppu, sruthi, ragaNotes, tags, comment, grouping };
             
             // Include MIDI file data if it exists
             if (currentMidiData) {
@@ -1859,6 +1871,8 @@
                                 sruthiSelect.value = k.sruthi || 'C#';
                                 kanakkuTagsInput.value = (k.tags || []).join(', ');  // Load tags
                                 ragaNotesInput.value = k.ragaNotes || '';  // Load raga notes
+                                commentInput.value = k.comment || '';  // Load comment
+                                groupingInput.value = k.grouping || '';  // Load grouping
                                 ragaNotesMap = parseRagaNotes(k.ragaNotes || '');  // Parse raga notes
                                 currentKanakkuId = k.id;
                                 currentEditingKanakkuId = k.id;
