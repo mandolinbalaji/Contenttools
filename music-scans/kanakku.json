@@ -1,5 +1,21 @@
 [
   {
+    "name": "Begada-Phrase-01",
+    "phrase": "gm,,pdp,,,p,pp,pp,pdmm gmpdpdm,m,gmpdn,dp pdmm rsndp,p gmdp,p",
+    "beats": 8,
+    "nadai": 4,
+    "eduppu": 1,
+    "sruthi": "C#",
+    "ragaNotes": "r2g3m1d2n2",
+    "tags": [
+      "Phrase",
+      "Begada"
+    ],
+    "comment": "https://www.youtube.com/watch?v=T8x8D87xouo&list=RDT8x8D87xouo&start_radio=1",
+    "grouping": "",
+    "id": "0f9e401b-baeb-4e54-acbb-80417539de1f"
+  },
+  {
     "name": "Korvai-64-Adhi-1",
     "phrase": "1234123412341231234123412341231234123412341231234512123451212345s,r,g,m,p,d,n,,s,r,g,m,p,d,n,,s,r,g,m,p,d,n,,ġṙṡndṡ,ṙṡndpd,ṡndpm",
     "beats": 8,
@@ -12,8 +28,9 @@
       "adhi",
       "64"
     ],
-    "id": "48a3ab7b-5a5b-4ef8-b435-84b777df85d1",
-    "midiFilePath": "midi_files/Korvai-64-Adhi-1.mid"
+    "comment": "ThaDhiThaDhiThaDhiThaKiTa\nThaDhiThaDhiThaDhiThaKiTa\nThaDhiThaDhiThaDhiThaKiTa\nThaDhiGiNaThomThamThaDhiGiNaThomThamThaDhiGiNaThom",
+    "grouping": "44434443444352525",
+    "id": "48a3ab7b-5a5b-4ef8-b435-84b777df85d1"
   },
   {
     "name": "Dhanasri-Thillana",
