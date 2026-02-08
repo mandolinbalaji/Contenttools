@@ -1150,8 +1150,15 @@
         });
 
         formatBtn.addEventListener('click', () => {
-            // Format: keep swaras (including dotted variants), numbers, and commas; remove everything else
+            // Format: 
+            // - Replace ; (semicolon) with ,, (two commas, treating commas as notes not delimiters)
+            // - Remove | (pipes) and spaces
+            // - Keep swaras (including dotted variants), numbers, and commas
             let text = phraseInput.value;
+            
+            // Replace semicolons with two commas
+            text = text.replace(/;/g, ',,');
+            
             // Valid swaras include base (s,r,g,m,p,d,n), dotted variants (precomposed), combining marks, and numbers/commas
             const validChars = new Set([
                 // Base swaras
