@@ -1602,12 +1602,9 @@
                 const midiFileData = getMidiFileData(currentMidiData);
                 if (midiFileData) {
                     kanakku.midiFileData = midiFileData;  // Base64 encoded binary
-                    console.log(`[Save] Generated MIDI base64 data (${midiFileData.length} chars) for "${name}"`);
                 } else {
-                    console.warn('[Save] getMidiFileData returned null');
+                    // MIDI file data generation failed
                 }
-            } else {
-                console.log('[Save] No currentMidiData - MIDI not saved. Click "Render" button first to generate MIDI.');
             }
             
             try {
@@ -1630,7 +1627,6 @@
 
                 if (response.ok) {
                     const saved = await response.json();
-                    console.log('[Save] Success:', saved);
                     currentKanakkuId = saved.id;
                     kanakkuNameInput.value = name;
                     await loadSavedKanakkus();
@@ -1817,7 +1813,6 @@
                     return res.json();
                 })
                 .then(data => {
-                    console.log('Loaded kanakkus:', data);
                     savedKanakkus = data;
                     
                     kanakkuList.innerHTML = '';
@@ -2474,7 +2469,6 @@
                 // Also save to current kanakku if editing
                 if (currentEditingKanakkuId) {
                     // Will be saved when user clicks Save button
-                    console.log('MIDI generated and ready to save');
                 } else {
                     // Create a temporary kanakku entry
                     currentEditingKanakkuId = Date.now().toString();
@@ -2485,7 +2479,6 @@
 
         // Open MIDI button handler (display existing MIDI from saved kanakku)
         openMidiBtn.addEventListener('click', () => {
-            console.log('Open MIDI clicked. currentMidiData:', currentMidiData);
             if (currentMidiData) {
                 displayMidiStaff(currentMidiData, true);  // Pass true to scroll into view
             } else {
