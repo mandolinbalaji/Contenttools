@@ -43,15 +43,25 @@ The Kanakku phrase timing calculator now includes MIDI rendering and visualizati
 
 ### Swara to MIDI Offset
 Each swara is mapped to a semitone offset from the base sruthi:
-- **S (Sa)**: +0 semitones
-- **R (Ri)**: +2 semitones
-- **G (Ga)**: +4 semitones
-- **M (Ma)**: +5 semitones
-- **P (Pa)**: +7 semitones
-- **D (Dha)**: +9 semitones
-- **N (Ni)**: +11 semitones
+- **S (Sa)**: +0 semitones (fixed, no variants)
+- **R (Ri)**: +2 semitones (base); variants: r1=-1, r2=0, r3=+1
+- **G (Ga)**: +4 semitones (base); variants: g1=-2, g2=-1, g3=0
+- **M (Ma)**: +5 semitones (base); variants: m1=0, m2=+1
+- **P (Pa)**: +7 semitones (fixed, no variants)
+- **D (Dha)**: +9 semitones (base); variants: d1=-1, d2=0, d3=+1
+- **N (Ni)**: +11 semitones (base); variants: n1=-2, n2=-1, n3=0
+
+For example, in C sruthi: r1=C#, r2=D, r3=D# (playing the actual variant pitch, not base r notation).
 
 This creates the characteristic Indian raga intervals while using standard MIDI format.
+
+### Octave Modifiers (Dot Modifiers)
+- **Dot Above (˙)**: Raises note by **one octave (+12 semitones)**
+- **Dot Below (̇)**: Lowers note by **one octave (-12 semitones)**
+- Applied AFTER variant selection
+- Support for both precomposed Unicode forms (ṡ, ṙ) and combining marks (U+0323)
+
+For example: g3 = E4, but ġ3 (g with dot below) = E3 (one octave lower)
 
 ### Note Duration Calculation
 ```

@@ -14,11 +14,13 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
   - Dot Above (˙): Raises note by one octave (+12 semitones)
   - Dot Below (̇): Lowers note by one octave (-12 semitones)
   - Support for both precomposed Unicode forms (ṡ, ṙ, etc.) and combining marks
-- **Raga Notes System**:
-  - Assign chromatic variants to each swara (variants 1, 2, 3)
-  - Numbers 1/2/3 select different pitches within each swara
+- **Raga Notes System** (Chromatic Variants):
+  - Only **Ri (r), Ga (g), Dha (d), Ni (n)** have chromatic variants (1, 2, 3)
+  - **Sa (s) and Pa (p)** are fixed pitches with no variants
+  - Numbers 1/2/3 select different chromatic pitches (e.g., r1=C#, r2=D, r3=D# in C sruthi)
+  - MIDI playback uses the variant pitch (not base note)
   - Independent from dot modifiers
-  - Proper semitone offset mapping per swara
+  - Proper semitone offset mapping per swara and variant
 
 ### 2. Timing Calculations
 - **Beats**: Set cycle length (3-16 beats supported)
