@@ -1741,11 +1741,50 @@
             const beatNum = Math.ceil(eduppu / nadai);
             landingBeatSpan.textContent = eduppu;
 
-            displayStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu);
+            displayStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu, groupingInput.value);
         }
 
-        function displayStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu) {
+        // Helper function to parse grouping digits and create color map
+        function parseGroupingColors(groupingStr) {
+            if (!groupingStr || groupingStr.trim() === '') return null;
+            
+            // Extract all digits from grouping string
+            const digits = groupingStr.match(/\d+/g);
+            if (!digits) return null;
+            
+            // Color palette for different groups (pastel colors)
+            const colors = [
+                '#FFE5E5',  // Light red
+                '#E5F0FF',  // Light blue
+                '#E5FFE5',  // Light green
+                '#FFF5E5',  // Light orange
+                '#F5E5FF',  // Light purple
+                '#FFE5F5',  // Light pink
+                '#E5FFFF',  // Light cyan
+                '#FFFFE5'   // Light yellow
+            ];
+            
+            // Create mapping: note position -> color
+            const groupMap = {};
+            let notePos = 1;
+            
+            digits.forEach((digit, index) => {
+                const count = parseInt(digit);
+                const color = colors[index % colors.length];
+                for (let i = 0; i < count; i++) {
+                    groupMap[notePos] = color;
+                    notePos++;
+                }
+            });
+            
+            return groupMap;
+        }
+
+        function displayStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu, grouping) {
             let html = '';
+            
+            // Parse grouping colors (special effect layer)
+            const groupColorMap = parseGroupingColors(grouping);
 
             const totalNotes = startingPos - 1 + phrase.length;
             const totalCycles = Math.ceil(totalNotes / cycleLengthVal);
@@ -1820,6 +1859,11 @@
                                 bgColor = '#ffebee';
                             } else if (character !== ',') {
                                 bgColor = '#f5f5f5';
+                            }
+                            
+                            // Apply grouping color as a special effect (overlays existing colors)
+                            if (groupColorMap && groupColorMap[phraseNoteIndex + 1]) {
+                                bgColor = groupColorMap[phraseNoteIndex + 1];
                             }
                         }
 
