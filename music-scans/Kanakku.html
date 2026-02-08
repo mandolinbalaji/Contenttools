@@ -1748,9 +1748,9 @@
         function parseGroupingColors(groupingStr) {
             if (!groupingStr || groupingStr.trim() === '') return null;
             
-            // Extract all digits from grouping string
-            const digits = groupingStr.match(/\d+/g);
-            if (!digits) return null;
+            // Extract individual digits from grouping string (not multi-digit numbers)
+            const digits = groupingStr.match(/\d/g);  // Match individual digits only
+            if (!digits || digits.length === 0) return null;
             
             // Color palette for different groups (pastel colors)
             const colors = [
@@ -1770,10 +1770,12 @@
             
             digits.forEach((digit, index) => {
                 const count = parseInt(digit);
-                const color = colors[index % colors.length];
-                for (let i = 0; i < count; i++) {
-                    groupMap[notePos] = color;
-                    notePos++;
+                if (count > 0) {  // Skip zero digits
+                    const color = colors[index % colors.length];
+                    for (let i = 0; i < count; i++) {
+                        groupMap[notePos] = color;
+                        notePos++;
+                    }
                 }
             });
             
