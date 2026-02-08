@@ -995,15 +995,15 @@
         // Helper function to count only valid swara characters (including precomposed dotted versions)
         // Counts: s, r, g, m, p, d, n, commas, and their dotted variants (ṡ, ṙ, ġ, ṁ, ṗ, ḋ, ṅ, etc)
         function countSwaras(phrase) {
-            const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n', ',',
+            const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n', 'S', 'R', 'G', 'M', 'P', 'D', 'N', ',',
                 // Precomposed dotted variants
                 'ṡ', 'ṙ', 'ġ', 'ṁ', 'ṗ', 'ḋ', 'ṅ',  // dots above
                 'ṣ', 'ṛ', 'ṃ', 'ḍ', 'ṇ',  // dots below (precomposed)
                 '\u0323']);  // combining dot below (for g\u0323, p\u0323)
             let count = 0;
             for (let char of phrase) {
-                // Count swaras, commas, and numeric characters (1-9)
-                if (validSwaras.has(char) || /[1-9]/.test(char)) {
+                // Count swaras (including uppercase) and commas only (ignore numeric MIDI references)
+                if (validSwaras.has(char)) {
                     count++;
                 }
             }
@@ -1151,17 +1151,28 @@
 
         formatBtn.addEventListener('click', () => {
             // Format: 
-            // - Replace ; (semicolon) with ,, (two commas, treating commas as notes not delimiters)
-            // - Remove | (pipes) and spaces
-            // - Keep swaras (including dotted variants), numbers, and commas
+            // - Convert uppercase swaras to lowercase + comma (S→s,, R→r,, etc)
+            // - Replace ; (semicolon) with ,, (two commas)
+            // - Remove | (pipes) and spaces (noise)
+            // - Keep lowercase swaras, commas, dotted variants, and MIDI chromatic variant numbers
             let text = phraseInput.value;
             
-            // Replace semicolons with two commas
+            // Step 1: Convert uppercase to lowercase + comma
+            // S→s,, R→r,, G→g,, M→m,, P→p,, D→d,, N→n,
+            text = text.replace(/S/g, 's,');
+            text = text.replace(/R/g, 'r,');
+            text = text.replace(/G/g, 'g,');
+            text = text.replace(/M/g, 'm,');
+            text = text.replace(/P/g, 'p,');
+            text = text.replace(/D/g, 'd,');
+            text = text.replace(/N/g, 'n,');
+            
+            // Step 2: Replace semicolons with two commas
             text = text.replace(/;/g, ',,');
             
-            // Valid swaras include base (s,r,g,m,p,d,n), dotted variants (precomposed), combining marks, and numbers/commas
+            // Step 3: Filter through valid characters (lowercase only now)
             const validChars = new Set([
-                // Base swaras
+                // Base swaras (lowercase only after uppercase conversion)
                 's','r','g','m','p','d','n',',',
                 // Precomposed dots above
                 'ṡ','ṙ','ġ','ṁ','ṗ','ḋ','ṅ',
@@ -1169,7 +1180,7 @@
                 'ṣ','ṛ','ṃ','ḍ','ṇ',
                 // Combining mark: dot below (U+0323) - used for g\u0323, p\u0323
                 '\u0323',
-                // Numbers
+                // Numbers (chromatic variant selectors)
                 '0','1','2','3','4','5','6','7','8','9'
             ]);
             let formatted = '';
@@ -1181,6 +1192,7 @@
             text = formatted.toLowerCase();
             
             phraseInput.value = text;
+            notesEnteredSpan.textContent = countSwaras(text);  // Update note count display
             history.push(text);
             historyIndex = history.length - 1;
             updateUndoRedo();
@@ -1765,24 +1777,39 @@
                         }
 
                         // Find the note at this position
-                        let noteCount = 0;  // Count valid notes (swaras, commas, and numbers)
+                        let noteCount = 0;  // Count only swaras and commas (numbers are MIDI metadata only)
                         let phraseCharacter = null;
+                        let phraseIndex = -1;  // Track the index of the found character
                         
                         for (let i = 0; i < phrase.length; i++) {
                             const char = phrase[i];
-                            // Count swaras (including dotted variants), commas, and numeric characters
-                            // Valid: s,r,g,m,p,d,n (base) + ṡ,ṙ,ġ,ṁ,ṗ,ḋ,ṅ (dots above) + ṣ,ṛ,ṃ,ḍ,ṇ (dots below) + combining mark \u0323 + comma + numbers 1-9
-                            if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u03231-9]/.test(char)) {
+                            // Count swaras (including dotted variants) and commas only
+                            // IGNORE numeric characters - they are MIDI data and don't occupy positions
+                            // Valid: s,r,g,m,p,d,n (base) + ṡ,ṙ,ġ,ṁ,ṗ,ḋ,ṅ (dots above) + ṣ,ṛ,ṃ,ḍ,ṇ (dots below) + combining mark \u0323 + comma
+                            if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u0323]/.test(char)) {
                                 noteCount++;
                                 if (noteCount === globalPos - startingPos + 1) {
                                     phraseCharacter = char;
+                                    phraseIndex = i;
                                     break;
                                 }
                             }
                         }
 
                         if (phraseCharacter !== null) {
-                            character = phraseCharacter;
+                            // Capture any following numeric MIDI data
+                            let fullToken = phraseCharacter;
+                            if (phraseIndex >= 0) {
+                                for (let i = phraseIndex + 1; i < phrase.length; i++) {
+                                    const char = phrase[i];
+                                    if (/[1-9]/.test(char)) {
+                                        fullToken += char;
+                                    } else {
+                                        break;  // Stop at first non-numeric
+                                    }
+                                }
+                            }
+                            character = fullToken;
                             const phraseNoteIndex = globalPos - startingPos;
                             
                             if (phraseNoteIndex === 0) {
