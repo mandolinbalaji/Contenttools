@@ -1,58 +1,19 @@
 [
   {
-    "name": "Test Kanakku",
-    "phrase": "srgm",
+    "name": "Korvai-64-Adhi-1",
+    "phrase": "1234123412341231234123412341231234123412341231234512123451212345s,r,g,m,p,d,n,,s,r,g,m,p,d,n,,s,r,g,m,p,d,n,,ġṙṡndṡ,ṙṡndpd,ṡndpm",
     "beats": 8,
-    "nadai": 4,
-    "eduppu": 0,
-    "sruthi": "C#",
-    "ragaNotes": "C# D# F# G# A#",
-    "id": "8cd17edc-bfac-4002-a326-e16b4c492406",
-    "midiFilePath": "midi_files/Test-Kanakku-1770473007089.mid"
-  },
-  {
-    "name": "srgm",
-    "phrase": ",,,,,",
-    "beats": 4,
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
     "ragaNotes": "",
-    "midiData": {
-      "notes": [
-        {
-          "type": "rest",
-          "startTime": 0,
-          "duration": 0.1875
-        },
-        {
-          "type": "rest",
-          "startTime": 0.1875,
-          "duration": 0.1875
-        },
-        {
-          "type": "rest",
-          "startTime": 0.375,
-          "duration": 0.1875
-        },
-        {
-          "type": "rest",
-          "startTime": 0.5625,
-          "duration": 0.1875
-        },
-        {
-          "type": "rest",
-          "startTime": 0.75,
-          "duration": 0.1875
-        }
-      ],
-      "bpm": 80,
-      "sruthi": "C#",
-      "phrase": ",,,,,",
-      "beats": 4,
-      "nadai": 4
-    },
-    "id": "25621710-0b02-4343-aa4f-873054f55f59"
+    "tags": [
+      "korvai",
+      "adhi",
+      "64"
+    ],
+    "id": "48a3ab7b-5a5b-4ef8-b435-84b777df85d1",
+    "midiFilePath": "midi_files/Korvai-64-Adhi-1.mid"
   },
   {
     "name": "Dhanasri-Thillana",
@@ -244,9 +205,10 @@
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
-    "ragaNotes": "",
+    "ragaNotes": "g3r2d2",
+    "tags": [],
     "id": "b1c3fd23-c000-43a5-a870-c15bb964aca3",
-    "midiFilePath": "midi_files/Mohana-Varnam-1770473216445.mid"
+    "midiFilePath": "midi_files/Mohana-Varnam.mid"
   },
   {
     "name": "Kanakku-15",
