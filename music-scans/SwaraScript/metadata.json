@@ -1,0 +1,7 @@
+{
+  "name": "SwaraScript: Carnatic Voice to Notation",
+  "description": "A specialized tool for Carnatic musicians that listens to vocals and transcribes swaras (S, R, G, M, P, D, N) into text notation in real-time.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

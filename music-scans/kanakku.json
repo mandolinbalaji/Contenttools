@@ -15,8 +15,8 @@
   },
   {
     "name": "Begada-Phrase-01",
-    "phrase": "gm,,pdp,,,p,pp,pp,pdmmgmpdpdm,m,gmpdn,dp,,pdm,m,,rsndp,pgmdp,p",
-    "beats": 8,
+    "phrase": "mpdpmdpmgmdp,pmdppmgmr",
+    "beats": 6,
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
@@ -25,10 +25,9 @@
       "Phrase",
       "Begada"
     ],
-    "comment": "https://www.youtube.com/watch?v=T8x8D87xouo&list=RDT8x8D87xouo&start_radio=1",
+    "comment": "https://www.youtube.com/watch?v=T8x8D87xouo&list=RDT8x8D87xouo&start_radio=1\nRavikiran - https://www.youtube.com/watch?v=mDFMTyc6V8c\n\nMelakartha 28 HariKamboji\n\nMore prominent Kaishiki\nFast phrases higher n3 Kakali Slow phrases Kaishiki (n2)\n\ngm,,pdp,,,p,pp,pp,pdmmgmpdpdm,m,gmpdn,dp,,pdm,m,,rsndp,pgmdp,p\n\nsgrg mpdp sndp s sn,,,,dp n,,,dp m,grs sṇḍp̣ s,,,,\n\ngmpdpdn,,,dp mn,,,dp mdpd mdp pmgmrgm,,,dm,,grs\n\ngm,,,grṣṇḍp̣s",
     "grouping": "",
-    "id": "0f9e401b-baeb-4e54-acbb-80417539de1f",
-    "midiFilePath": "midi_files/Begada-Phrase-01.mid"
+    "id": "0f9e401b-baeb-4e54-acbb-80417539de1f"
   },
   {
     "name": "Korvai-64-Adhi-1",
@@ -255,8 +254,7 @@
       "15"
     ],
     "comment": "",
-    "grouping": "",
-    "id": "f166ba12-8035-47de-8b80-8facc5c9438f",
-    "midiFilePath": "midi_files/Kanakku-15.mid"
+    "grouping": "555",
+    "id": "f166ba12-8035-47de-8b80-8facc5c9438f"
   }
 ]

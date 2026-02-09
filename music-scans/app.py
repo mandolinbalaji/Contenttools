@@ -7,6 +7,8 @@ import base64
 import io
 import wave
 import logging
+import tempfile
+import numpy as np
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, send_from_directory, request, jsonify, Response
@@ -16,6 +18,18 @@ try:
     SPEECH_RECOGNITION_AVAILABLE = True
 except ImportError:
     SPEECH_RECOGNITION_AVAILABLE = False
+
+try:
+    import librosa
+    LIBROSA_AVAILABLE = True
+except ImportError:
+    LIBROSA_AVAILABLE = False
+
+try:
+    import soundfile as sf
+    SOUNDFILE_AVAILABLE = True
+except ImportError:
+    SOUNDFILE_AVAILABLE = False
 
 # Everything lives here - use the directory where this script is located
 # This ensures it works regardless of where the batch file is run from
@@ -32,6 +46,57 @@ _write_lock = False  # single process guard
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Set temp directory for FFmpeg to avoid permission issues
+# This must be done before any audio processing
+_temp_dir = tempfile.gettempdir()
+os.environ['TMPDIR'] = _temp_dir
+os.environ['TEMPDIR'] = _temp_dir
+os.environ['TMP'] = _temp_dir
+logger.info(f"FFmpeg temp directory set to: {_temp_dir}")
+
+# Check if FFmpeg is available for MP4 decoding
+def _has_ffmpeg():
+    try:
+        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, timeout=5)
+        return result.returncode == 0
+    except:
+        return False
+
+FFMPEG_AVAILABLE = _has_ffmpeg()
+logger.info(f"FFmpeg available: {FFMPEG_AVAILABLE}")
+
+# ============================================================================
+# CARNATIC SWARA RECOGNITION - Constants and CORS Headers
+# ============================================================================
+
+# Carnatic Music Swaras (7 notes)
+SWARAS = ['s', 'r', 'g', 'm', 'p', 'd', 'n']
+SWARA_NAMES = {
+    's': 'Sa', 'r': 'Ri', 'g': 'Ga', 'm': 'Ma',
+    'p': 'Pa', 'd': 'Dha', 'n': 'Ni'
+}
+
+# CORS Headers for Carnatic API
+@app.before_request
+def cors_before_request():
+    """Handle CORS preflight requests for Carnatic API"""
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response
+
+@app.after_request
+def cors_after_request(response):
+    """Add CORS headers to all responses"""
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
+
+# ============================================================================
 
 
 def _ensure_json_file():
@@ -118,6 +183,53 @@ def _load_songs():
     return data
 
 
+def _convert_mp4_to_wav_raw(audio_data):
+    """Convert MP4/M4A audio to PCM using FFmpeg via pipe"""
+    if not FFMPEG_AVAILABLE:
+        return None
+    
+    try:
+        logger.debug(f"Attempting FFmpeg MP4 conversion via pipe ({len(audio_data)} bytes)")
+        
+        # Use FFmpeg with pipe input/output (more reliable than file-based)
+        cmd = [
+            'ffmpeg',
+            '-i', 'pipe:0',           # Read from stdin
+            '-f', 'wav',              # Output format
+            '-acodec', 'pcm_s16le',   # Audio codec
+            '-ar', '16000',           # Sample rate
+            '-ac', '1',               # Mono
+            '-y',                     # Overwrite output
+            '-loglevel', 'error',     # Minimal logging
+            'pipe:1'                  # Write to stdout
+        ]
+        
+        try:
+            result = subprocess.run(
+                cmd,
+                input=audio_data,
+                capture_output=True,
+                timeout=30
+            )
+            
+            if result.returncode == 0 and result.stdout:
+                wav_data = result.stdout
+                logger.info(f"✅ MP4→WAV via FFmpeg pipe: {len(audio_data)} → {len(wav_data)} bytes")
+                return wav_data
+            else:
+                stderr = result.stderr.decode('utf-8', errors='ignore') if result.stderr else 'No error output'
+                logger.error(f"FFmpeg conversion failed (code {result.returncode}): {stderr[:100]}")
+                return None
+                
+        except subprocess.TimeoutExpired:
+            logger.error("FFmpeg conversion timeout (30s)")
+            return None
+            
+    except Exception as e:
+        logger.error(f"FFmpeg pipe conversion error: {e}")
+        return None
+
+
 def _save_songs(songs, make_backup=True):
     global _write_lock
     if _write_lock:
@@ -136,6 +248,219 @@ def _save_songs(songs, make_backup=True):
         os.replace(tmp_path, DATA_PATH)
     finally:
         _write_lock = False
+
+# ============================================================================
+# CARNATIC SWARA RECOGNITION - Core Functions
+# ============================================================================
+
+def transcribe_audio_chunk(audio_chunk, sr_rate=16000):
+    """Transcribe a single audio chunk to get one swara"""
+    if not SPEECH_RECOGNITION_AVAILABLE:
+        return None
+    
+    try:
+        recognizer = sr.Recognizer()
+        # Create AudioData from numpy array
+        audio_bytes = (audio_chunk * 32767).astype(np.int16).tobytes()
+        audio_data = sr.AudioData(audio_bytes, sr_rate, 2)
+        
+        # Transcribe
+        text = recognizer.recognize_google(audio_data, language='en-US')
+        logger.info(f"[Swara] Transcribed chunk: {text}")
+        
+        # Extract single swara
+        swara_result = extract_swaras_from_text(text)
+        swara_str = swara_result['swaras'] if isinstance(swara_result, dict) else swara_result
+        if swara_str:
+            return swara_str[0]  # First swara found
+        return None
+    except sr.UnknownValueError:
+        logger.debug("[Swara] Could not understand audio chunk")
+        return None
+    except Exception as e:
+        logger.debug(f"[Swara] Transcription error: {e}")
+        return None
+
+
+def process_audio_with_chunks(audio_data, sr_rate=16000, chunk_duration=1.0):
+    """Process audio in small chunks for swara recognition
+    Ideal for individual note recognition in Carnatic music
+    """
+    if not LIBROSA_AVAILABLE:
+        return None, "librosa not available"
+    
+    try:
+        # Settings for chunk processing
+        chunk_samples = int(sr_rate * chunk_duration)
+        swaras = []
+        chunk_info = []
+        
+        logger.info(f"[Swara] Processing audio: {len(audio_data)} samples at {sr_rate}Hz")
+        logger.info(f"[Swara] Chunk size: {chunk_samples} samples ({chunk_duration}s)")
+        
+        # Process each chunk
+        num_chunks = (len(audio_data) + chunk_samples - 1) // chunk_samples
+        logger.info(f"[Swara] Total chunks: {num_chunks}")
+        
+        for i in range(num_chunks):
+            start = i * chunk_samples
+            end = min(start + chunk_samples, len(audio_data))
+            chunk = audio_data[start:end]
+            
+            # Normalize chunk
+            chunk_max = np.max(np.abs(chunk))
+            if chunk_max > 0:
+                chunk = chunk / chunk_max
+            
+            # Check if chunk has meaningful energy (not silence)
+            energy = np.sum(chunk ** 2) / len(chunk)
+            logger.debug(f"[Swara] Chunk {i}: energy={energy:.6f}")
+            
+            if energy > 0.001:  # Threshold for meaningful audio
+                # Transcribe this chunk
+                swara = transcribe_audio_chunk(chunk, sr_rate)
+                if swara:
+                    swaras.append(swara)
+                    chunk_info.append({
+                        'chunk': i,
+                        'time': f"{start/sr_rate:.2f}s-{end/sr_rate:.2f}s",
+                        'swara': swara,
+                        'energy': float(energy)
+                    })
+                    logger.info(f"[Swara] Chunk {i}: {swara}")
+        
+        return ''.join(swaras), chunk_info
+        
+    except Exception as e:
+        logger.error(f"[Swara] Chunk processing error: {e}")
+        return None, str(e)
+
+
+def process_audio_with_progress(audio_data, sr_rate=16000, chunk_duration=1.0):
+    """Process audio in chunks with real-time progress updates
+    
+    Yields progress dictionaries for each chunk processed.
+    Each progress dict contains: chunk_num, total_chunks, percentage, swara, transcribed_text, time
+    """
+    if not LIBROSA_AVAILABLE:
+        yield {"error": "librosa not available", "percentage": 0}
+        return
+    
+    try:
+        # Settings for chunk processing
+        chunk_samples = int(sr_rate * chunk_duration)
+        swaras = []
+        num_chunks = (len(audio_data) + chunk_samples - 1) // chunk_samples
+        
+        logger.info(f"[Swara/Stream] Starting: {num_chunks} chunks of {chunk_duration}s")
+        
+        # Yield initial status
+        yield {
+            "status": "starting",
+            "total_chunks": num_chunks,
+            "percentage": 0,
+            "message": f"Processing audio: {len(audio_data)} samples at {sr_rate}Hz"
+        }
+        
+        processed_chunks = 0
+        
+        # Process each chunk
+        energy_threshold = 0.00001  # Very low threshold to catch all speech
+        
+        for i in range(num_chunks):
+            start = i * chunk_samples
+            end = min(start + chunk_samples, len(audio_data))
+            chunk = audio_data[start:end]
+            time_range = f"{start/sr_rate:.2f}s-{end/sr_rate:.2f}s"
+            
+            # Normalize chunk
+            chunk_max = np.max(np.abs(chunk))
+            if chunk_max > 0:
+                chunk = chunk / chunk_max
+            
+            # Check if chunk has meaningful energy
+            energy = np.sum(chunk ** 2) / len(chunk)
+            logger.info(f"[Swara/Stream] Chunk {i}: energy={energy:.8f} (threshold={energy_threshold:.8f})")
+            
+            # Always try to transcribe all chunks (even low-energy ones)
+            if True:  # Always process
+                # Transcribe this chunk
+                recognizer = sr.Recognizer()
+                audio_bytes = (chunk * 32767).astype(np.int16).tobytes()
+                audio_data_sr = sr.AudioData(audio_bytes, sr_rate, 2)
+                
+                transcribed_text = None
+                swara = None
+                
+                try:
+                    logger.info(f"[Swara/Stream] Chunk {i}: Attempting transcription...")
+                    transcribed_text = recognizer.recognize_google(audio_data_sr, language='en-US')
+                    logger.info(f"[Swara/Stream] Chunk {i}: 🎤 Heard: '{transcribed_text}'")
+                    
+                    swara_result = extract_swaras_from_text(transcribed_text)
+                    swara_str = swara_result['swaras'] if isinstance(swara_result, dict) else swara_result
+                    logger.info(f"[Swara/Stream] Chunk {i}: Extracted swaras: '{swara_str}' (method: {swara_result.get('method', 'unknown') if isinstance(swara_result, dict) else 'simple'})")
+                    
+                    if swara_str:
+                        first_swara = swara_str[0]
+                        swaras.append(first_swara)
+                        logger.info(f"[Swara/Stream] Chunk {i}: ✅ RECOGNIZED: '{first_swara}' from '{transcribed_text}'")
+                    
+                    # Yield progress with transcribed text
+                    swara_display = swara_str[0] if swara_str else "—"
+                    yield {
+                        "status": "processing",
+                        "chunk_num": i,
+                        "total_chunks": num_chunks,
+                        "percentage": int((i + 1) / num_chunks * 100),
+                        "transcribed_text": transcribed_text,
+                        "swara": swara_display,
+                        "time": time_range,
+                        "energy": float(energy)
+                    }
+                    
+                except sr.UnknownValueError:
+                    logger.warning(f"[Swara/Stream] Chunk {i}: ⚠️  Could not understand audio (no speech detected)")
+                    yield {
+                        "status": "processing",
+                        "chunk_num": i,
+                        "total_chunks": num_chunks,
+                        "percentage": int((i + 1) / num_chunks * 100),
+                        "transcribed_text": "—",
+                        "swara": "—",
+                        "time": time_range,
+                        "energy": float(energy),
+                        "skip_reason": "not_recognized"
+                    }
+                except Exception as e:
+                    logger.warning(f"[Swara/Stream] Chunk {i}: ❌ Error: {e}")
+                    yield {
+                        "status": "processing",
+                        "chunk_num": i,
+                        "total_chunks": num_chunks,
+                        "percentage": int((i + 1) / num_chunks * 100),
+                        "transcribed_text": "—",
+                        "swara": "—",
+                        "time": time_range,
+                        "error": str(e)
+                    }
+            
+            # No longer skip chunks by energy - process all
+        
+        # Final result
+        yield {
+            "status": "complete",
+            "percentage": 100,
+            "swaras": ''.join(swaras),
+            "total_swaras": len(swaras),
+            "message": f"✨ Complete! Recognized {len(swaras)} swaras"
+        }
+        
+    except Exception as e:
+        logger.error(f"[Swara/Stream] Error: {e}")
+        yield {"status": "error", "error": str(e), "percentage": 0}
+
+# ============================================================================
 
 
 @app.get("/")
@@ -415,11 +740,12 @@ def open_midi():
 
 def extract_swaras_from_text(text, recognized_text=""):
     """
-    Extract swaras from recognized text using multiple strategies.
+    Extract swaras (S, R, G, M, P, D, N) from recognized text.
+    Designed for Carnatic music notation - focuses on the 7 basic notes.
     
     Strategy 1: Direct character matching (s, r, g, m, p, d, n)
-    Strategy 2: Phonetic matching with syllable breaking
-    Strategy 3: Learn from common misidentifications (ni->n, pa->p, ma->m, etc)
+    Strategy 2: Phonetic matching - handle how amateurs pronounce notes
+    Strategy 3: Common misrecognitions from speech API
     """
     valid_swaras = set(['s', 'r', 'g', 'm', 'p', 'd', 'n'])
     
@@ -435,60 +761,64 @@ def extract_swaras_from_text(text, recognized_text=""):
         elif char != '':
             direct_ignored += char
     
-    # Strategy 2: Phonetic extraction - break words into syllables
-    # First, apply common patterns
+    # Strategy 2 & 3: Phonetic extraction for amateur Carnatic singers
+    # These patterns handle:
+    # - Different pronunciation variations (sa/sah, pa/pah, etc)
+    # - Elongated vowels (saaaa = s)
+    # - Common speech recognition errors
+    # - Note sequences that sound similar
+    
     phonetic_corrections = {
-        # Named swaras (Indian classical music notation)
-        'sa re ga': 'srg',        # first three swaras as a phrase
-        'dhani': 'dn',             # "dha-ni" -> d-n
-        'dhana': 'dn',
-        'duni': 'dn',
-        'song': '',                # endings like "song" that aren't swaras
-        'ponies': 'pn',           # "ponies" -> p-n (common misheard)
-        'pie': 'p',               # "pie" -> p (common ending)
-        'pagal': 'pg',            # "pagal" -> p-g
-        'pagan': 'pgn',
-        'magan': 'mgn',
+        # Elongated notes (common in singing)
+        'saaaa': 's', 'saaa': 's', 'saa': 's',
+        'raaaa': 'r', 'raaa': 'r', 'raa': 'r',
+        'gaaaa': 'g', 'gaaa': 'g', 'gaa': 'g',
+        'maaaa': 'm', 'maaa': 'm', 'maa': 'm',
+        'paaaa': 'p', 'paaa': 'p', 'paa': 'p',
+        'daaaa': 'd', 'daaa': 'd', 'daa': 'd',
+        'naaaa': 'n', 'naaa': 'n', 'naa': 'n',
         
-        # Double/triple patterns
-        'nini': 'nn',             # "nini" -> n-n
-        'ninini': 'nnn',          # triple n  
-        'panini': 'pnn',          # "pa-ni-ni" -> p-n-n
-        'panp': 'pnp',
-        'panpan': 'pnpn',
-        'pani': 'pn',             # pa-ni -> p-n
-        'mani': 'mn',
-        'mana': 'mn',
-        'papa': 'pp',
-        'mama': 'mm',
-        'riri': 'rr',
-        'gaga': 'gg',
-        'dada': 'dd',
-        'sasa': 'ss',
+        # With consonant endings (how people naturally sing)
+        'sah': 's', 'rah': 'r', 'gah': 'g', 'mah': 'm', 'pah': 'p', 'dah': 'd', 'nah': 'n',
+        'shas': 'ss', 'rahs': 'rr', 'gahs': 'gg', 'mahs': 'mm', 'pahs': 'pp', 'dahs': 'dd', 'nahs': 'nn',
         
-        # Syllable patterns with endings
-        'nip': 'np',
-        'nap': 'np',
-        'nis': 'ns',
-        'nas': 'ns',
-        'nit': 'n',
-        'pit': 'p',
-        'pan': 'pn',
-        'pans': 'pn',
-        'man': 'mn',
-        'mans': 'mn',
-        'ran': 'rn',
-        'dans': 'dn',
-        'dan': 'dn',
-        'dun': 'dn',
-        'gan': 'gn',
-        'gans': 'gn',
-        'san': 'sn',
-        'sap': 'sp',
-        'map': 'mp',
-        'gap': 'gp',
-        'rap': 'rp',
-        'dap': 'dp',
+        # Long vowel variations
+        'saw': 's', 'raw': 'r', 'gaw': 'g', 'maw': 'm', 'paw': 'p', 'daw': 'd', 'naw': 'n',
+        
+        # Common note name pronunciations (full swaras)
+        'sha': 's', 're': 'r', 'ri': 'r', 'ga': 'g', 'ma': 'm', 'pa': 'p', 'dha': 'd', 'ni': 'n',
+        'resh': 'r', 'gam': 'g', 'mam': 'm', 'pam': 'p', 'dam': 'd', 'nam': 'n',
+        
+        # Common sequences (adjacent notes)
+        'sa re': 'sr', 'sa ri': 'sr', 're ga': 'rg', 'ga ma': 'gm', 'ma pa': 'mp', 'pa dha': 'pd', 'dha ni': 'dn',
+        'saraga': 'srg', 'resaga': 'rsga', 'gama': 'gm', 'madha': 'md', 'pani': 'pn',
+        
+        # Very common amateur patterns
+        'shag': 'sg', 'shap': 'sp', 'shard': 'srd', 'sharp': 'srp',
+        'rya': 'r', 'ria': 'r', 'ryga': 'rg',
+        'pee': 'p', 'pi': 'p', 'pine': 'p',
+        'nee': 'n', 'knee': 'n', 'nigh': 'n',
+        
+        # Repetitions in singing
+        'ssss': 'ssss', 'rrrr': 'rrrr', 'gggg': 'gggg', 'mmmm': 'mmmm', 'pppp': 'pppp', 'dddd': 'dddd', 'nnnn': 'nnnn',
+        'nini': 'nn', 'ninini': 'nnn', 'papa': 'pp', 'papapa': 'ppp', 'mama': 'mm', 'mamama': 'mmm',
+        'didi': 'dd', 'dididi': 'ddd', 'gigi': 'gg', 'gigigi': 'ggg', 'riri': 'rr', 'rarara': 'rr',
+        
+        # Speech API common misrecognitions
+        'sea': 's', 'see': 's', 'rea': 'r', 'gee': 'g', 'may': 'm', 'pay': 'p', 'dee': 'd', 'pea': 'p',
+        'song': '', 'say': 's', 'okay': '', 'thank': '',  # Filter out non-notes
+        
+        # Syllable patterns with musical endings
+        'sap': 's', 'sam': 's', 'san': 's', 'sap': 's',
+        'rap': 'r', 'ram': 'r', 'ran': 'r', 'ramp': 'r',
+        'gap': 'g', 'gam': 'g', 'gan': 'g', 'gams': 'g',
+        'mam': 'm', 'man': 'm', 'map': 'm', 'mamp': 'm',
+        'pam': 'p', 'pan': 'p', 'map': 'p', 'pans': 'p',
+        'dam': 'd', 'dan': 'd', 'damp': 'd', 'dans': 'd', 'dun': 'd',
+        'nam': 'n', 'nan': 'n', 'nap': 'n', 'nans': 'n',
+        
+        # Alternating patterns (like scalar runs)
+        'shrig': 'srg', 'rigma': 'rgm', 'gampa': 'gmp', 'mapda': 'mpd', 'padni': 'pdn',
     }
     
     phonetic_swaras = text_lower
@@ -507,12 +837,17 @@ def extract_swaras_from_text(text, recognized_text=""):
         elif char != '':
             phonetic_ignored += char
     
+    # Return best interpretation (prefer phonetic if it finds notes, else direct)
+    best_swaras = phonetic_extracted if phonetic_extracted else direct_swaras
+    
     return {
-        'direct': direct_swaras,
+        'swaras': best_swaras,           # The extracted notes (S R G M P D N)
+        'method': 'phonetic' if phonetic_extracted else 'direct',
+        'direct': direct_swaras,         # Raw character extraction
         'direct_ignored': direct_ignored,
-        'phonetic': phonetic_extracted,
+        'phonetic': phonetic_extracted,  # Phonetic-based extraction
         'phonetic_ignored': phonetic_ignored,
-        'raw_text': text
+        'raw_text': text                 # Original recognized text
     }
 
 
@@ -536,6 +871,10 @@ def transcribe_audio():
         if not audio_data or audio_size < 100:
             return jsonify({"error": f"Audio too small ({audio_size} bytes) - needs at least 100 bytes", "success": False}), 200
         
+        # Log audio signature for debugging
+        hex_sig = audio_data[:16].hex() if audio_size >= 16 else audio_data.hex()
+        logger.info(f"Received audio: {audio_size} bytes, signature: {hex_sig}")
+        
         # Create recognizer
         recognizer = sr.Recognizer()
         audio_sr = None
@@ -543,6 +882,15 @@ def transcribe_audio():
         # Check if this is a WAV file (check RIFF header)
         is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
         is_webm = len(audio_data) > 4 and audio_data[0] == 0x1a and audio_data[1] == 0x45 and audio_data[2] == 0xdf and audio_data[3] == 0xa3
+        # Check for MP4/M4A file - multiple signatures for different MP4 variants
+        is_mp4 = (b'ftyp' in audio_data[:32] or                    # Standard MP4 ftyp box
+                  (len(audio_data) > 4 and audio_data[4:8] == b'ftyp') or  # ftyp at offset 4
+                  b'mdat' in audio_data[:16] or                    # Media data box
+                  b'moov' in audio_data[:200] or                   # Movie box
+                  (len(audio_data) > 10 and audio_data[4:8] == b'\x00\x00\x00\x00') or  # Extended size
+                  (len(audio_data) > 4 and audio_data[0:3] == b'\x00\x00\x20'))  # M4A signature
+        
+        logger.info(f"Audio detection summary: WAV={is_wav}, WebM={is_webm}, MP4={is_mp4}, size={audio_size}, sig={audio_data[:16].hex()}")
         
         if is_wav:
             # Parse WAV directly to check specs
@@ -589,42 +937,121 @@ def transcribe_audio():
             # WebM file - use pydub conversion  
             try:
                 from pydub import AudioSegment
+                logger.info(f"Processing WebM audio ({audio_size} bytes)")
                 audio = AudioSegment.from_file(io.BytesIO(audio_data), format="webm")
                 
                 # Convert to 16kHz mono 16-bit
                 audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
                 converted_frames = audio.raw_data
                 audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                logger.info(f"WebM converted successfully ({len(converted_frames)} bytes)")
             except Exception as e:
                 logger.error(f"WebM processing error: {e}")
-                return jsonify({"error": f"WebM error: {str(e)}", "success": False, "stage": "webm_parse"}), 200
+                return jsonify({"error": f"WebM error: Decoding failed - {str(e)[:80]}", "success": False, "stage": "webm_parse"}), 200
         
-        else:
+        elif is_mp4:
+            # MP4/M4A file - use FFmpeg or pydub
             try:
                 from pydub import AudioSegment
-                # Try to auto-detect
-                try:
-                    audio = AudioSegment.from_file(io.BytesIO(audio_data))
-                except Exception as e:
-                    audio = None
-                    for fmt in ['mp3', 'ogg', 'webm', 'm4a']:
-                        try:
-                            audio = AudioSegment.from_file(io.BytesIO(audio_data), format=fmt)
-                            break
-                        except:
-                            continue
-                    
-                    if not audio:
-                        raise ValueError("Could not detect audio format")
+                logger.info(f"Processing MP4 audio ({audio_size} bytes)")
                 
-                # Convert to mono, 16-bit, 16kHz
+                # First try pydub
+                audio = None
+                for fmt in ['m4a', 'mp4', 'aac']:
+                    try:
+                        logger.debug(f"Trying pydub MP4 format: {fmt}")
+                        audio = AudioSegment.from_file(io.BytesIO(audio_data), format=fmt)
+                        logger.info(f"✅ Pydub loaded MP4 as {fmt}")
+                        break
+                    except Exception as e:
+                        logger.debug(f"Pydub {fmt} failed: {str(e)[:50]}")
+                
+                # If pydub failed, try FFmpeg conversion
+                if not audio and FFMPEG_AVAILABLE:
+                    logger.info("Pydub failed, trying FFmpeg conversion for MP4...")
+                    wav_data = _convert_mp4_to_wav_raw(audio_data)
+                    if wav_data:
+                        try:
+                            audio = AudioSegment.from_file(io.BytesIO(wav_data), format="wav")
+                            logger.info("✅ FFmpeg successfully converted MP4 to WAV")
+                        except Exception as e:
+                            logger.error(f"Failed to load FFmpeg-converted WAV: {e}")
+                            audio = None
+                
+                if not audio:
+                    raise ValueError("MP4 decoding failed - pydub and FFmpeg both failed")
+                
+                # Convert to 16kHz mono 16-bit (in case it's not already)
                 audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
                 converted_frames = audio.raw_data
                 audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                logger.info(f"✅ MP4 processed successfully ({len(converted_frames)} bytes)")
+                
+            except Exception as e:
+                logger.error(f"MP4 processing error: {e}")
+                return jsonify({"error": f"MP4 error: {str(e)[:80]}", "success": False, "stage": "mp4_parse"}), 200
+        
+        else:
+            # Unknown format - try to detect and convert
+            try:
+                from pydub import AudioSegment
+                logger.info(f"Auto-detecting audio format ({audio_size} bytes)")
+                
+                # Try to auto-detect
+                audio = None
+                
+                # First, try without specifying format (let pydub detect)
+                try:
+                    audio = AudioSegment.from_file(io.BytesIO(audio_data))
+                    logger.info("Format auto-detected successfully by pydub")
+                except Exception as e:
+                    logger.debug(f"Pydub auto-detection failed: {e}")
+                    audio = None
+                
+                # If that didn't work, try specific formats in priority order
+                if not audio:
+                    # MP4/M4A must be tried first since browser often sends audio/mp4
+                    format_list = ['m4a', 'mp4', 'aac', 'mp3', 'ogg', 'flac', 'wav', 'webm']
+                    for fmt in format_list:
+                        try:
+                            logger.debug(f"Trying pydub format: {fmt}")
+                            audio = AudioSegment.from_file(io.BytesIO(audio_data), format=fmt)
+                            logger.info(f"✅ Successfully loaded audio as {fmt} format")
+                            break
+                        except Exception as e:
+                            logger.debug(f"Failed to load as {fmt}: {str(e)[:50]}")
+                            continue
+                
+                # If pydub still failed and we have FFmpeg, try MP4 conversion via FFmpeg
+                if not audio and FFMPEG_AVAILABLE:
+                    logger.info("Trying MP4 conversion via FFmpeg...")
+                    wav_data = _convert_mp4_to_wav_raw(audio_data)
+                    if wav_data:
+                        try:
+                            # Load the converted WAV
+                            audio = AudioSegment.from_file(io.BytesIO(wav_data), format="wav")
+                            logger.info("✅ Successfully converted audio via FFmpeg")
+                        except Exception as e:
+                            logger.error(f"Failed to load FFmpeg-converted WAV: {e}")
+                            audio = None
+                
+                if not audio:
+                    error_msg = (f"Could not decode audio format with pydub "
+                                f"(tried: m4a, mp4, aac, mp3, ogg, flac, wav, webm). "
+                                f"FFmpeg available: {FFMPEG_AVAILABLE}")
+                    logger.error(f"Format detection failed: {error_msg}")
+                    raise ValueError(error_msg)
+                
+                # Convert to mono, 16-bit, 16kHz
+                logger.info(f"Converting from {audio.frame_rate}Hz {audio.channels}ch to 16kHz mono")
+                audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                converted_frames = audio.raw_data
+                audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                logger.info(f"✅ Audio converted successfully ({len(converted_frames)} bytes)")
                 
             except Exception as e:
                 logger.error(f"Format conversion failed: {e}")
-                return jsonify({"error": f"Unsupported audio format: {str(e)}", "success": False, "stage": "format"}), 200
+                return jsonify({"error": f"Unsupported audio format: {str(e)[:100]}", "success": False, "stage": "format"}), 200
         
         if not audio_sr:
             return jsonify({"error": "Failed to process audio", "success": False, "stage": "audio_load"}), 200
@@ -632,7 +1059,22 @@ def transcribe_audio():
         # Try Google Web Speech API
         try:
             text = recognizer.recognize_google(audio_sr, language='en-US')
-            return jsonify({"text": text, "success": True})
+            logger.info(f"Transcribed text: {text}")
+            
+            # Extract swaras from the recognized text
+            swara_result = extract_swaras_from_text(text)
+            
+            return jsonify({
+                "text": text,
+                "swaras": swara_result['swaras'],
+                "method": swara_result['method'],
+                "success": True,
+                "debug": {
+                    "raw_text": text,
+                    "direct_match": swara_result['direct'],
+                    "phonetic_match": swara_result['phonetic']
+                }
+            })
         except sr.UnknownValueError as e:
             return jsonify({
                 "error": "Google could not understand your speech - try speaking clearer, slower, or check microphone quality",
@@ -652,6 +1094,443 @@ def transcribe_audio():
         logger.error(f"Transcribe endpoint error: {e}")
         return jsonify({"error": f"Server error: {str(e)[:100]}", "success": False, "stage": "server"}), 500
 
+
+@app.route('/api/test-swara/<filename>', methods=['GET'])
+def test_swara_recognition(filename):
+    """Test swara recognition with WAV files from media folder"""
+    try:
+        # Safely construct the file path
+        file_path = MEDIA_ROOT / filename
+        file_path = file_path.resolve()
+        
+        # Security check - ensure file is in media folder
+        if not str(file_path).startswith(str(MEDIA_ROOT.resolve())):
+            return jsonify({"error": "Access denied", "success": False}), 403
+        
+        # Check file exists
+        if not file_path.exists() or not file_path.is_file():
+            return jsonify({"error": f"File not found: {filename}", "success": False}), 404
+        
+        # Read the audio file
+        audio_data = file_path.read_bytes()
+        logger.info(f"Testing swara recognition with file: {filename} ({len(audio_data)} bytes)")
+        
+        # Create recognizer
+        recognizer = sr.Recognizer()
+        audio_sr = None
+        
+        # Check if it's a WAV file
+        is_wav = audio_data[:4] == b'RIFF' and audio_data[8:12] == b'WAVE'
+        
+        if is_wav:
+            try:
+                wav_stream = io.BytesIO(audio_data)
+                with wave.open(wav_stream, 'rb') as wav:
+                    frames = wav.readframes(wav.getnframes())
+                    sample_rate = wav.getframerate()
+                    channels = wav.getnchannels()
+                    sample_width = wav.getsampwidth()
+                
+                logger.info(f"WAV file: {sample_rate}Hz, {channels}ch, {sample_width} bytes per sample")
+                
+                # If it's already 16kHz mono 16-bit, use it directly
+                if sample_rate == 16000 and channels == 1 and sample_width == 2:
+                    audio_sr = sr.AudioData(frames, 16000, 2)
+                else:
+                    # Convert using pydub
+                    try:
+                        from pydub import AudioSegment
+                        audio = AudioSegment(
+                            data=frames,
+                            sample_width=sample_width,
+                            frame_rate=sample_rate,
+                            channels=channels
+                        )
+                        audio = audio.set_channels(1).set_sample_width(2).set_frame_rate(16000)
+                        converted_frames = audio.raw_data
+                        audio_sr = sr.AudioData(converted_frames, 16000, 2)
+                        logger.info(f"WAV converted to 16kHz mono")
+                    except Exception as e:
+                        # Fallback: try to use as-is
+                        audio_sr = sr.AudioData(frames, sample_rate, sample_width)
+                        logger.warning(f"WAV used as-is: {e}")
+            
+            except Exception as e:
+                logger.error(f"WAV parsing failed: {e}")
+                return jsonify({"error": f"WAV parsing error: {str(e)}", "success": False}), 400
+        else:
+            return jsonify({"error": "File must be WAV format", "success": False}), 400
+        
+        if not audio_sr:
+            return jsonify({"error": "Failed to load audio", "success": False}), 400
+        
+        # Transcribe using Google Speech API
+        try:
+            text = recognizer.recognize_google(audio_sr, language='en-US')
+            logger.info(f"Transcribed: {text}")
+            
+            # Extract swaras
+            swara_result = extract_swaras_from_text(text)
+            
+            return jsonify({
+                "filename": filename,
+                "text": text,
+                "swaras": swara_result['swaras'],
+                "method": swara_result['method'],
+                "success": True,
+                "debug": {
+                    "raw_text": text,
+                    "direct_match": swara_result['direct'],
+                    "phonetic_match": swara_result['phonetic'],
+                    "audio_info": f"{len(audio_data)} bytes, format: WAV"
+                }
+            })
+        except sr.UnknownValueError:
+            return jsonify({
+                "filename": filename,
+                "error": "Could not understand audio - try a clearer recording",
+                "success": False
+            }), 200
+        except sr.RequestError as e:
+            return jsonify({
+                "filename": filename,
+                "error": f"Speech service error: {str(e)[:80]}",
+                "success": False
+            }), 200
+            
+    except Exception as e:
+        logger.error(f"Test swara endpoint error: {e}")
+        return jsonify({"error": f"Server error: {str(e)[:100]}", "success": False}), 500
+
+
+def _convert_webm_to_wav_bytes(audio_bytes):
+    """Convert WebM/MP4 audio bytes to WAV using FFmpeg pipe
+    
+    Args:
+        audio_bytes: Raw audio data (WebM, MP4, etc)
+    
+    Returns:
+        WAV bytes if successful, None if conversion fails
+    """
+    if not FFMPEG_AVAILABLE:
+        logger.warning("[Swara] FFmpeg not available for WebM conversion")
+        return None
+    
+    try:
+        logger.info(f"[Swara] Converting WebM to WAV via FFmpeg ({len(audio_bytes)} bytes)")
+        
+        # Use FFmpeg with pipe input/output for WebM/MP4 conversion
+        cmd = [
+            'ffmpeg',
+            '-i', 'pipe:0',           # Read from stdin
+            '-f', 'wav',              # Output WAV format
+            '-acodec', 'pcm_s16le',   # PCM 16-bit little-endian
+            '-ar', '16000',           # Sample rate
+            '-ac', '1',               # Mono
+            '-y',                     # Overwrite output
+            '-loglevel', 'error',     # Minimal logging
+            'pipe:1'                  # Write to stdout
+        ]
+        
+        result = subprocess.run(
+            cmd,
+            input=audio_bytes,
+            capture_output=True,
+            timeout=30
+        )
+        
+        if result.returncode == 0 and result.stdout:
+            wav_data = result.stdout
+            logger.info(f"[Swara] ✅ WebM→WAV conversion: {len(audio_bytes)} → {len(wav_data)} bytes")
+            return wav_data
+        else:
+            stderr = result.stderr.decode('utf-8', errors='ignore') if result.stderr else 'No error output'
+            logger.error(f"[Swara] FFmpeg conversion failed (code {result.returncode}): {stderr[:100]}")
+            return None
+            
+    except subprocess.TimeoutExpired:
+        logger.error("[Swara] FFmpeg conversion timeout (30s)")
+        return None
+    except Exception as e:
+        logger.error(f"[Swara] FFmpeg conversion error: {e}")
+        return None
+
+
+# ============================================================================
+
+@app.route('/api/upload', methods=['POST', 'OPTIONS'])
+def upload_and_recognize():
+    """Upload audio file and recognize swaras using chunk-based processing
+    
+    Supports: WAV, MP3, OGG, FLAC, WebM, MP4 (WebM/MP4 converted via FFmpeg)
+    Returns: Recognized swaras + chunk analysis info
+    """
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        if 'audio' not in request.files:
+            return jsonify({"error": "No audio file provided", "success": False}), 400
+        
+        file = request.files['audio']
+        if file.filename == '':
+            return jsonify({"error": "No file selected", "success": False}), 400
+        
+        logger.info(f"[API/upload] Received file: {file.filename} (type: {file.content_type})")
+        
+        # Read audio bytes from FileStorage
+        audio_bytes = file.read()
+        logger.info(f"[API/upload] File size: {len(audio_bytes)} bytes")
+        
+        # Try to load with librosa directly first
+        audio_data = None
+        sr_rate = None
+        
+        try:
+            # Try loading directly (works for WAV, MP3, OGG, etc)
+            import io
+            audio_data, sr_rate = librosa.load(io.BytesIO(audio_bytes), sr=16000, mono=True)
+            logger.info(f"[API/upload] ✅ Loaded audio directly: {len(audio_data)} samples at {sr_rate}Hz")
+        except Exception as e:
+            logger.warning(f"[API/upload] Direct load failed: {e}")
+            
+            # Check if it's WebM or MP4 format
+            if file.content_type in ['audio/webm', 'audio/mp4', 'video/mp4'] or \
+               file.filename.lower().endswith(('.webm', '.mp4', '.m4a')):
+                
+                logger.info("[API/upload] Attempting FFmpeg conversion for WebM/MP4...")
+                
+                # Convert using FFmpeg
+                wav_bytes = _convert_webm_to_wav_bytes(audio_bytes)
+                
+                if wav_bytes:
+                    try:
+                        # Try loading the converted WAV
+                        audio_data, sr_rate = librosa.load(io.BytesIO(wav_bytes), sr=16000, mono=True)
+                        logger.info(f"[API/upload] ✅ Loaded converted audio: {len(audio_data)} samples at {sr_rate}Hz")
+                    except Exception as e2:
+                        logger.error(f"[API/upload] Failed to load converted audio: {e2}")
+                        return jsonify({"error": f"Could not load converted audio: {str(e2)}", "success": False}), 400
+                else:
+                    return jsonify({"error": "WebM/MP4 format requires FFmpeg. Format conversion failed.", "success": False}), 400
+            else:
+                return jsonify({"error": f"Could not load audio format. Error: {str(e)}", "success": False}), 400
+        
+        # Ensure we have audio data
+        if audio_data is None or sr_rate is None:
+            return jsonify({"error": "Failed to load audio data", "success": False}), 400
+        
+        # Process in chunks
+        swaras, chunk_info = process_audio_with_chunks(audio_data, sr_rate, chunk_duration=0.5)
+        
+        if swaras is None:
+            return jsonify({"error": chunk_info, "success": False}), 400
+        
+        logger.info(f"[API/upload] Final result: {swaras}")
+        
+        return jsonify({
+            "swaras": swaras,
+            "chunks": chunk_info,
+            "success": True,
+            "info": f"Recognized {len(swaras)} swaras in {len(chunk_info)} chunks"
+        })
+        
+    except Exception as e:
+        logger.error(f"[API/upload] Error: {e}")
+        return jsonify({"error": str(e), "success": False}), 500
+
+
+@app.route('/api/upload-stream', methods=['POST', 'OPTIONS'])
+def upload_with_stream():
+    """Upload audio file and stream progress updates (Server-Sent Events)
+    
+    Returns real-time progress as JSON events showing each chunk's transcription
+    """
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    # Extract file from request BEFORE creating generator (must be in request context)
+    if 'audio' not in request.files:
+        return Response(
+            f"data: {json.dumps({'error': 'No audio file provided'})}\n\n",
+            mimetype='text/event-stream'
+        )
+    
+    file = request.files['audio']
+    if file.filename == '':
+        return Response(
+            f"data: {json.dumps({'error': 'No file selected'})}\n\n",
+            mimetype='text/event-stream'
+        )
+    
+    # Read audio bytes while we're still in request context
+    audio_bytes = file.read()
+    file_content_type = file.content_type
+    file_filename = file.filename
+    
+    logger.info(f"[API/upload-stream] Received file: {file_filename} (type: {file_content_type})")
+    logger.info(f"[API/upload-stream] File size: {len(audio_bytes)} bytes")
+    
+    # Now create generator that only uses the extracted data, not request object
+    def stream_progress():
+        try:
+            import io
+            
+            # Try to load with librosa directly first
+            audio_data = None
+            sr_rate = None
+            
+            try:
+                # Try loading directly (works for WAV, MP3, OGG, etc)
+                audio_data, sr_rate = librosa.load(io.BytesIO(audio_bytes), sr=16000, mono=True)
+                logger.info(f"[API/upload-stream] ✅ Loaded audio directly: {len(audio_data)} samples at {sr_rate}Hz")
+            except Exception as e:
+                logger.warning(f"[API/upload-stream] Direct load failed: {e}")
+                
+                # Check if it's WebM or MP4 format
+                if file_content_type in ['audio/webm', 'audio/mp4', 'video/mp4'] or \
+                   file_filename.lower().endswith(('.webm', '.mp4', '.m4a')):
+                    
+                    logger.info("[API/upload-stream] Attempting FFmpeg conversion for WebM/MP4...")
+                    yield f"data: {json.dumps({'status': 'converting', 'message': 'Converting WebM/MP4 to WAV...'})}\n\n"
+                    
+                    # Convert using FFmpeg
+                    wav_bytes = _convert_webm_to_wav_bytes(audio_bytes)
+                    
+                    if wav_bytes:
+                        try:
+                            # Try loading the converted WAV
+                            audio_data, sr_rate = librosa.load(io.BytesIO(wav_bytes), sr=16000, mono=True)
+                            logger.info(f"[API/upload-stream] ✅ Loaded converted audio: {len(audio_data)} samples at {sr_rate}Hz")
+                        except Exception as e2:
+                            logger.error(f"[API/upload-stream] Failed to load converted audio: {e2}")
+                            yield f"data: {json.dumps({'error': f'Could not load converted audio: {str(e2)}'})}\n\n"
+                            return
+                    else:
+                        yield f"data: {json.dumps({'error': 'WebM/MP4 conversion failed. FFmpeg may not be available.'})}\n\n"
+                        return
+                else:
+                    yield f"data: {json.dumps({'error': f'Could not load audio format: {str(e)}'})}\n\n"
+                    return
+            
+            # Ensure we have audio data
+            if audio_data is None or sr_rate is None:
+                yield f"data: {json.dumps({'error': 'Failed to load audio data'})}\n\n"
+                return
+            
+            # Process in chunks with progress streaming
+            for progress in process_audio_with_progress(audio_data, sr_rate, chunk_duration=1.0):
+                yield f"data: {json.dumps(progress)}\n\n"
+                
+        except Exception as e:
+            logger.error(f"[API/upload-stream] Error: {e}")
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+    
+    return Response(
+        stream_progress(),
+        mimetype='text/event-stream',
+        headers={
+            'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no',
+            'Content-Type': 'text/event-stream'
+        }
+    )
+
+
+def test_file_recognition(filename):
+    """Test swara recognition with pre-recorded file from media folder
+    
+    Example files: A-audio.wav, srgmpdns.wav
+    """
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        # Safety check
+        file_path = MEDIA_ROOT / filename
+        if not file_path.exists():
+            return jsonify({"error": f"File not found: {filename}", "success": False}), 404
+        
+        logger.info(f"[API/test-file] Testing with file: {filename}")
+        
+        # Load audio using librosa
+        try:
+            audio_data, sr_rate = librosa.load(str(file_path), sr=16000, mono=True)
+            logger.info(f"[API/test-file] Loaded {filename}: {len(audio_data)} samples at {sr_rate}Hz")
+        except Exception as e:
+            logger.error(f"[API/test-file] Failed to load {filename}: {e}")
+            return jsonify({"error": f"Could not load audio: {str(e)}", "success": False}), 400
+        
+        # Process in chunks
+        swaras, chunk_info = process_audio_with_chunks(audio_data, sr_rate, chunk_duration=0.5)
+        
+        if swaras is None:
+            return jsonify({"error": chunk_info, "success": False}), 400
+        
+        logger.info(f"[API/test-file] Result for {filename}: {swaras}")
+        
+        return jsonify({
+            "filename": filename,
+            "swaras": swaras,
+            "chunks": chunk_info,
+            "success": True,
+            "info": f"Recognized {len(swaras)} swaras in {len(chunk_info)} chunks"
+        })
+        
+    except Exception as e:
+        logger.error(f"[API/test-file] Error: {e}")
+        return jsonify({"error": str(e), "success": False}), 500
+
+# ============================================================================
+# SwaraScript App Server
+# ============================================================================
+
+@app.route('/SwaraScript/<path:filepath>')
+def serve_swarascript(filepath):
+    """Serve SwaraScript app files with proper MIME types"""
+    swarascript_dir = BASE_DIR / 'SwaraScript'
+    file_path = swarascript_dir / filepath
+    
+    # Security check: prevent directory traversal
+    try:
+        file_path = file_path.resolve()
+        if not str(file_path).startswith(str(swarascript_dir.resolve())):
+            return jsonify({"error": "Access denied"}), 403
+    except:
+        return jsonify({"error": "Invalid path"}), 400
+    
+    # Check if file exists
+    if not file_path.exists() or not file_path.is_file():
+        return jsonify({"error": "File not found"}), 404
+    
+    # Set proper MIME types
+    mime_type = 'application/octet-stream'
+    if filepath.endswith('.tsx'):
+        mime_type = 'application/typescript'
+    elif filepath.endswith('.ts'):
+        mime_type = 'application/typescript'
+    elif filepath.endswith('.jsx'):
+        mime_type = 'text/jsx'
+    elif filepath.endswith('.js'):
+        mime_type = 'application/javascript'
+    elif filepath.endswith('.css'):
+        mime_type = 'text/css'
+    elif filepath.endswith('.json'):
+        mime_type = 'application/json'
+    elif filepath.endswith('.html'):
+        mime_type = 'text/html'
+    elif filepath.endswith('.svg'):
+        mime_type = 'image/svg+xml'
+    elif filepath.endswith(('.png', '.jpg', '.jpeg')):
+        mime_type = 'image/' + filepath.split('.')[-1].replace('jpg', 'jpeg')
+    
+    response = send_from_directory(swarascript_dir, filepath)
+    response.headers['Content-Type'] = mime_type
+    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+    return response
+
+# ============================================================================
 
 @app.route('/<path:filename>')
 def serve_static(filename):
@@ -675,9 +1554,31 @@ def serve_static(filename):
 
 if __name__ == "__main__":
     print("\n" + "="*70)
-    print("FLASK APP INITIALIZATION")
+    print("🎵 FLASK MUSIC TOOLS - COMBINED SERVER")
     print("="*70)
     print(f"BASE_DIR: {BASE_DIR}")
+    print(f"MEDIA_ROOT: {MEDIA_ROOT}")
+    print("-"*70)
+    print("📊 LIBRARY STATUS:")
+    print(f"  FFmpeg: {FFMPEG_AVAILABLE}")
+    print(f"  librosa (Carnatic): {LIBROSA_AVAILABLE}")
+    print(f"  soundfile: {SOUNDFILE_AVAILABLE}")
+    print(f"  speech_recognition: {SPEECH_RECOGNITION_AVAILABLE}")
+    print("-"*70)
+    print("🎯 AVAILABLE ENDPOINTS:")
+    print("  Original:")
+    print("    GET  /Kanakku.html")
+    print("    GET  /api/songs")
+    print("    POST /api/songs")
+    print("    PUT  /api/songs/<id>")
+    print("    GET  /api/test-swara/<filename>")
+    print()
+    print("  Carnatic Swara Recognition (NEW):")
+    print("    POST /api/upload (audio file)")
+    print("    GET  /api/test-file/<filename>")
+    print()
+    print("  File Serving:")
+    print("    GET  /<filename>")
     print("="*70 + "\n")
     print("Starting server at http://127.0.0.1:5000")
     BASE_DIR.mkdir(parents=True, exist_ok=True)
