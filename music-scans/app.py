@@ -1526,8 +1526,6 @@ def serve_swarascript(filepath):
     
     response = send_from_directory(swarascript_dir, filepath)
     response.headers['Content-Type'] = mime_type
-    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
-    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
     return response
 
 # ============================================================================
