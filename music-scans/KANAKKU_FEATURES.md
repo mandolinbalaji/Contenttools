@@ -22,7 +22,32 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
   - Independent from dot modifiers
   - Proper semitone offset mapping per swara and variant
 
-### 2. Timing Calculations
+### 2. Pattern Generator
+- **Quick Pattern Input**:
+  - Enter digit pattern in "Pattern Input" field (e.g., "51515")
+  - Each digit represents a group size that generates a numeric sequence
+  - Auto-generates phrase using numbers 1-9 as placeholder content
+- **How It Works**:
+  - Pattern "51515" generates phrase "12345112345112345"
+  - Pattern "535" generates phrase "12345123545"
+  - Each digit cycles through 1-9 sequence, repeating as needed
+  - Numbers in the phrase represent musical content positions
+- **Numbers as Phrase Content**:
+  - When generated from pattern input, numbers (0-9) are treated as valid phrase content
+  - Display in staff cells just like swara characters
+  - Can be combined with grouping colors for visual organization
+  - Useful for timing and phrase analysis without specific swara assignments
+- **Integration with Grouping**:
+  - Pattern-generated numeric phrases work seamlessly with grouping colors
+  - Example: Pattern "51515" with Grouping "51515" creates matching color groups
+  - Each group gets a unique pastel color for visual distinction
+- **Check Pattern Button**:
+  - Validates the pattern input format
+  - Auto-fills the phrase field with generated numeric sequence
+  - Updates note count and all timing calculations
+  - Triggers staff recalculation
+
+### 3. Timing Calculations
 - **Beats**: Set cycle length (3-16 beats supported)
 - **Nadai**: Set divisions per beat (3, 4, 5, 7, 9 supported)
 - **Eduppu (Starting Position)**: Set where phrase begins in cycle
@@ -33,7 +58,7 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
   - Landing beat position
   - Starting position in cycle
 
-### 3. User Interface Elements
+### 4. User Interface Elements
 - **Visual Feedback**:
   - Real-time updates as you type
   - Note count display
@@ -51,7 +76,7 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
 
 ## Audio Features
 
-### 4. Audio Playback
+### 5. Audio Playback
 - **Web Audio API Integration**:
   - Real-time sine wave synthesis
   - Proper frequency calculation based on MIDI note values
@@ -69,7 +94,7 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
 
 ## MIDI Export Features
 
-### 5. MIDI File Generation
+### 6. MIDI File Generation
 - **MIDI Creation**:
   - Custom MIDI binary generation (no external libraries)
   - Proper MIDI header (MThd) and track (MTrk) chunks
@@ -86,20 +111,20 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
   - Persistent through kanakku save/load
   - Base64 encoding for data storage
 
-### 6. MIDI Visualization
+### 7. MIDI Visualization
 - **Staff Display**:
   - SVG-based treble clef staff (5 lines)
   - Visual note representation with stems
   - Beat/nadai grouping indicators
   - Metadata display (Sruthi, BPM, Beats, Nadai)
 
-### 7. MuseScore Integration
+### 8. MuseScore Integration
 - **Open in MuseScore Button**:
   - Directly open MIDI files in MuseScore desktop application
   - Server-side file path handling
   - Cross-platform support (Windows, Mac, Linux)
 
-### 8. Text Export
+### 9. Text Export
 - **Export Format**:
   - Cycle-based layout with separators
   - Beat markers (single |) between nadai groups
@@ -112,7 +137,7 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
 
 ## Data Management
 
-### 9. Save & Load System
+### 10. Save & Load System
 - **Persistent Storage**:
   - JSON-based `kanakku.json` file
   - Server-side persistence via Flask
@@ -128,7 +153,7 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
   - Restore audio and MIDI configurations
   - MIDI staff auto-displays for saved kanakkus
 
-### 10. Filtering & Search
+### 11. Filtering & Search
 - **Tag System**:
   - Add tags when saving kanakkus (e.g., "varnam, palavi, short")
   - Search/filter by tags
@@ -144,7 +169,7 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
   - Combine multiple filters for precise results
   - Maintains full list visibility
 
-### 11. Sidebar Navigation
+### 12. Sidebar Navigation
 - **Alphabetical Grouping**: Kanakkus grouped by first letter
 - **Quick Index**: Click letters to jump to groups
 - **Organized Display**: Beats and nadai info shown inline
@@ -154,7 +179,7 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
 
 ## Raga System
 
-### 12. Chromatic Variant System
+### 13. Chromatic Variant System
 - **Raga Notes Input**:
   - Format: swara+number (e.g., r1, r2, r3, g2, m1)
   - Separated by commas and spaces
@@ -172,23 +197,85 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
 
 ---
 
+## Rules & Conventions
+
+### Pattern Generator Rules
+1. **Valid Pattern Input**:
+   - Only digits 0-9 are accepted in pattern field
+   - Non-digit characters are ignored
+   - Empty or invalid patterns trigger an alert
+   - Each digit must be 0-9 (no multi-digit numbers)
+
+2. **Phrase Generation Rules**:
+   - Digit value determines group size
+   - Example: "5" creates group of 5: "12345"
+   - Zero ("0") is used as valid digit, creates no output for that group
+   - Pattern is processed sequentially left to right
+   - Numeric sequence cycles through 1-9 and restarts
+
+3. **Generated Phrase Format**:
+   - Output consists only of numeric characters (1-9)
+   - Numbers represent timing positions
+   - No swaras, dots, or special characters in output
+   - Result is stored in the main Phrase field
+   - Example pattern "51515" → phrase "12345112345112345"
+
+4. **Integration with Grouping**:
+   - Grouping field accepts same digit patterns as pattern input
+   - Grouping "51515" creates 5 color groups of sizes: 5, 1, 5, 1, 5
+   - Each group receives a unique pastel color
+   - Colors overlay/replace default background colors
+   - Color array: Red, Blue, Green, Orange, Purple, Pink, Cyan, Yellow (repeats if needed)
+
+5. **Number Handling in Phrases**:
+   - **When from pattern**: Numbers are the phrase content itself
+   - **When manual entry**: Numbers (1-3) after swaras are MIDI octave variants
+   - System distinguishes between the two contexts automatically
+   - MIDI variant numbers only append to swara characters, not standalone numerics
+
+6. **Display Rules**:
+   - All valid phrase content displays in staff cells
+   - Numbers from pattern display in subdivision-char div
+   - Staff background colors:
+     - Green (#e8f5e9) = first note position
+     - Red (#ffebee) = landing/eduppu position
+     - Light gray (#f5f5f5) = intermediate notes
+     - Custom pastel colors = grouping overlay
+   - Numbers are centered and monospace-styled
+
+7. **Calculation Impact**:
+   - Pattern-generated phrases trigger full recalculation
+   - Phrase length (note count) updates automatically
+   - Starting position and landing beat computed normally
+   - Timing calculations same as manually-entered phrases
+   - MIDI export treats numeric content as regular notes
+
+### General Phrase Rules
+- **Valid Characters**: s, r, g, m, p, d, n, (uppercase variants), commas (rests), dots above/below, numbers (0-9)
+- **Swara Character Requirements**: Uppercase variants (S, R, G, M, P, D, N) work identically to lowercase
+- **Dot Modifiers**: Can combine with any swara; independent from numeric variants
+- **Rest Representation**: Single comma (,) represents one rest position
+- **Character Order**: Swaras first, then optional numeric variant (1-3), then optional dots
+
+---
+
 ## Advanced Features
 
-### 13. Undo/Redo System
+### 14. Undo/Redo System
 - **Full History Tracking**:
   - Every phrase modification tracked
   - Navigate history with Undo/Redo buttons
   - Keyboard shortcuts (Ctrl+Z, Ctrl+Y)
   - Visual button enable/disable states
 
-### 14. Pattern Validation
+### 15. Pattern Validation
 - **Check Pattern Feature**:
   - Analyze phrase patterns
   - Identify repeating sequences
   - Count pattern occurrences
   - Display summary statistics
 
-### 15. Responsive Design
+### 16. Responsive Design
 - **Flexible Layout**:
   - Resizable sidebar (drag splitter)
   - Mobile-friendly interface

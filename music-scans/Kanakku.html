@@ -999,10 +999,11 @@
                 // Precomposed dotted variants
                 'ṡ', 'ṙ', 'ġ', 'ṁ', 'ṗ', 'ḋ', 'ṅ',  // dots above
                 'ṣ', 'ṛ', 'ṃ', 'ḍ', 'ṇ',  // dots below (precomposed)
-                '\u0323']);  // combining dot below (for g\u0323, p\u0323)
+                '\u0323',  // combining dot below (for g\u0323, p\u0323)
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);  // numeric content from pattern
             let count = 0;
             for (let char of phrase) {
-                // Count swaras (including uppercase) and commas only (ignore numeric MIDI references)
+                // Count swaras (including uppercase), commas, and numeric characters
                 if (validSwaras.has(char)) {
                     count++;
                 }
@@ -1820,16 +1821,15 @@
                         }
 
                         // Find the note at this position
-                        let noteCount = 0;  // Count only swaras and commas (numbers are MIDI metadata only)
+                        let noteCount = 0;  // Count swaras, commas, and numeric characters
                         let phraseCharacter = null;
                         let phraseIndex = -1;  // Track the index of the found character
                         
                         for (let i = 0; i < phrase.length; i++) {
                             const char = phrase[i];
-                            // Count swaras (including dotted variants) and commas only
-                            // IGNORE numeric characters - they are MIDI data and don't occupy positions
-                            // Valid: s,r,g,m,p,d,n (base) + ṡ,ṙ,ġ,ṁ,ṗ,ḋ,ṅ (dots above) + ṣ,ṛ,ṃ,ḍ,ṇ (dots below) + combining mark \u0323 + comma
-                            if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u0323]/.test(char)) {
+                            // Count swaras (including dotted variants), commas, and numeric characters
+                            // Numeric characters are valid content when generated from pattern
+                            if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u0323\d]/.test(char)) {
                                 noteCount++;
                                 if (noteCount === globalPos - startingPos + 1) {
                                     phraseCharacter = char;
@@ -1839,10 +1839,14 @@
                             }
                         }
 
+                        const phraseNoteIndex = globalPos - startingPos;
+                        
                         if (phraseCharacter !== null) {
                             // Capture any following numeric MIDI data
                             let fullToken = phraseCharacter;
-                            if (phraseIndex >= 0) {
+                            // Only capture following numeric MIDI data if this character is a swara
+                            // If it's already a numeric character (from pattern), don't append more numbers
+                            if (phraseIndex >= 0 && /[srgmpdnSRGMPDN]/.test(phraseCharacter)) {
                                 for (let i = phraseIndex + 1; i < phrase.length; i++) {
                                     const char = phrase[i];
                                     if (/[1-9]/.test(char)) {
@@ -1853,7 +1857,6 @@
                                 }
                             }
                             character = fullToken;
-                            const phraseNoteIndex = globalPos - startingPos;
                             
                             if (phraseNoteIndex === 0) {
                                 bgColor = '#e8f5e9';
@@ -1862,11 +1865,12 @@
                             } else if (character !== ',') {
                                 bgColor = '#f5f5f5';
                             }
-                            
-                            // Apply grouping color as a special effect (overlays existing colors)
-                            if (groupColorMap && groupColorMap[phraseNoteIndex + 1]) {
-                                bgColor = groupColorMap[phraseNoteIndex + 1];
-                            }
+                        }
+                        
+                        // Apply grouping color as a special effect (overlays existing colors)
+                        // This applies regardless of whether phraseCharacter exists
+                        if (groupColorMap && groupColorMap[phraseNoteIndex + 1]) {
+                            bgColor = groupColorMap[phraseNoteIndex + 1];
                         }
 
                         let cellClass = 'subdivision';
