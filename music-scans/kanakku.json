@@ -24,8 +24,7 @@
     "tags": [],
     "comment": "",
     "grouping": "",
-    "id": "611cf132-b193-4b1b-a956-64300ada668d",
-    "midiFilePath": "midi_files/Makelara_Ravichandrika.mid"
+    "id": "611cf132-b193-4b1b-a956-64300ada668d"
   },
   {
     "name": "Begada-Phrase-01",
@@ -62,15 +61,16 @@
   },
   {
     "name": "Dhanasri-Thillana",
-    "phrase": "ṇs,gs,gmp,ṇsgmpnpmgmnp,ṡn,ġṙṡ,,,p,n,ṡ,nṡġṙṡṙnṡ,ndpg,mp,,ggmgrsṇsmg,g,ggmnp,npnṡnṡn,ṡnṡġṡġṡġ,,,ġṡnṙṡnpnpn,,pṡnṡpnpmgmgm,psnspnmnp",
+    "phrase": "ṇs,gs,gmp,ṇsgmpnpmgmnp,ṡn,ġṙṡ,,,\np,n,ṡ,nṡġṙṡṙnṡ,ndpg,mp,,ggmgrsṇs\nmg,g,ggmnp,npnṡnṡn,ṡnṡġṡġṡġ,,,ġṡ\nnṙṡnpnpn,,pṡnṡpnpmgmgm,psnspnmnp",
     "beats": 8,
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
     "ragaNotes": "g2m1n2d2",
     "tags": [],
-    "id": "fb2261ab-d33a-433c-bffc-9eb3337557cc",
-    "midiFilePath": "midi_files/Dhanasri-Thillana.mid"
+    "comment": "",
+    "grouping": "",
+    "id": "fb2261ab-d33a-433c-bffc-9eb3337557cc"
   },
   {
     "name": "Octaves",
@@ -236,11 +236,15 @@
   },
   {
     "name": "Alakalalla-Madhyamavathi",
-    "phrase": "p,m,r,rrsṇp,ṇsr,r,r,rsr,p,m,r,pmrsṇpṇsr,r,r,rsr,",
+    "phrase": "p,m,r,rrsṇp,ṇsr,r,r,rsr,\np,m,r,pmrsṇpṇsr,r,r,rsr,",
     "beats": 6,
     "nadai": 4,
     "eduppu": 1,
     "sruthi": "C#",
+    "ragaNotes": "",
+    "tags": [],
+    "comment": "",
+    "grouping": "",
     "id": "07a7f021-66cd-494c-b215-61f34567ada8"
   },
   {
