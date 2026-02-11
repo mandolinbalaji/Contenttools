@@ -3090,64 +3090,45 @@
                 return;
             }
 
-            // Build multiple tracks: one for main phrase, one for each Kalpana
-            const tracks = [];
+            // Build separate MIDI files: one for main phrase, one for each Kalpana
+            const midiFiles = [];
             
-            // Track 1: Main phrase
-            tracks.push(createMidiTrack(midiData.notes, midiData.bpm, 'Main'));
+            // File 1: Main phrase
+            const mainTrack = createMidiTrack(midiData.notes, midiData.bpm, 'Main');
+            midiFiles.push({
+                name: 'Main',
+                data: createSingleTrackMidiFile(mainTrack, midiData.bpm)
+            });
             
-            // Additional tracks for Kalpana variations
+            // Additional files for Kalpana variations
             if (midiData.kalpanas && midiData.kalpanas.length > 0) {
                 midiData.kalpanas.forEach((kalpana, index) => {
-                    tracks.push(createMidiTrack(kalpana.notes, midiData.bpm, kalpana.label));
+                    const kalpanaTrack = createMidiTrack(kalpana.notes, midiData.bpm, kalpana.label);
+                    midiFiles.push({
+                        name: kalpana.label.replace(' ', ''),
+                        data: createSingleTrackMidiFile(kalpanaTrack, midiData.bpm)
+                    });
                 });
             }
             
-            // MIDI file header
-            const header = [0x4D, 0x54, 0x68, 0x64]; // "MThd"
-            const headerLength = [0x00, 0x00, 0x00, 0x06]; // Header length = 6
-            const format = [0x00, 0x01]; // Format 1 (multiple tracks)
-            const numTracks = [
-                (tracks.length >> 8) & 0xFF,
-                tracks.length & 0xFF
-            ];
-            
-            // Ticks per quarter note (standard: 480)
-            const ticksPerQuarter = 480;
-            const ticksPerByte = [
-                (ticksPerQuarter >> 8) & 0xFF,
-                ticksPerQuarter & 0xFF
-            ];
-
-            // Build header
-            let midiFile = [...header, ...headerLength, ...format, ...numTracks, ...ticksPerByte];
-            
-            // Add all tracks
-            tracks.forEach(trackData => {
-                const trackHeader = [0x4D, 0x54, 0x72, 0x6B]; // "MTrk"
-                const trackLength = [
-                    (trackData.length >> 24) & 0xFF,
-                    (trackData.length >> 16) & 0xFF,
-                    (trackData.length >> 8) & 0xFF,
-                    trackData.length & 0xFF
-                ];
-                midiFile.push(...trackHeader, ...trackLength, ...trackData);
-            });
-
-            // Convert to binary and create blob
-            const uint8Array = new Uint8Array(midiFile);
-            const blob = new Blob([uint8Array], { type: 'audio/midi' });
-
-            // Create download link
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
+            // Download all files
             const kanakkuName = kanakkuNameInput.value || 'Kanakku';
-            link.download = `${kanakkuName}.mid`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            midiFiles.forEach((file, index) => {
+                const blob = new Blob([file.data], { type: 'audio/midi' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${kanakkuName}_${file.name}.mid`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                // Small delay between downloads to avoid browser blocking
+                if (index < midiFiles.length - 1) {
+                    setTimeout(() => {}, 500);
+                }
+            });
         }
         
         // Helper function to create a MIDI track from notes array
@@ -3225,6 +3206,37 @@
             trackData.push(0xFF, 0x2F, 0x00);
             
             return trackData;
+        }
+
+        // Helper function to create a single-track MIDI file (Format 0)
+        function createSingleTrackMidiFile(trackData, bpm) {
+            // MIDI file header
+            const header = [0x4D, 0x54, 0x68, 0x64]; // "MThd"
+            const headerLength = [0x00, 0x00, 0x00, 0x06]; // Header length = 6
+            const format = [0x00, 0x00]; // Format 0 (single track)
+            const numTracks = [0x00, 0x01]; // 1 track
+            
+            // Ticks per quarter note (standard: 480)
+            const ticksPerQuarter = 480;
+            const ticksPerByte = [
+                (ticksPerQuarter >> 8) & 0xFF,
+                ticksPerQuarter & 0xFF
+            ];
+
+            // Build header
+            let midiFile = [...header, ...headerLength, ...format, ...numTracks, ...ticksPerByte];
+            
+            // Add the track
+            const trackHeader = [0x4D, 0x54, 0x72, 0x6B]; // "MTrk"
+            const trackLength = [
+                (trackData.length >> 24) & 0xFF,
+                (trackData.length >> 16) & 0xFF,
+                (trackData.length >> 8) & 0xFF,
+                trackData.length & 0xFF
+            ];
+            midiFile.push(...trackHeader, ...trackLength, ...trackData);
+            
+            return new Uint8Array(midiFile);
         }
 
 
