@@ -47,6 +47,40 @@ A comprehensive web-based Carnatic music phrase timing calculator with MIDI expo
   - Updates note count and all timing calculations
   - Triggers staff recalculation
 
+### 2B. Kalpana Swara (Multiple Variations)
+**Purpose**: Create different melodic variations of a phrase that all land at the same eduppu position (landing beat) within a cycle.
+
+- **Multiple Variation Support**:
+  - Add multiple Kalpana lines using "+ Add Line" button
+  - Each variation is labeled (Kalpana 1, Kalpana 2, Kalpana 3, etc.)
+  - Each variation independently lands at the eduppu position
+  - Display as separate labeled staff sections below main phrase (compact layout)
+
+- **Landing Position Calculation**:
+  - **Target**: All Kalpana lines must land at position = Eduppu - 1
+  - **Formula**: `leading_commas = (eduppu - 1 - note_count) mod cycle_length`
+  - Example (Beats=7, Nadai=4, Cycle=28, Eduppu=4):
+    - Target landing = position 3 (4-1)
+    - 12-note phrase → add 19 commas to land at position 3 → (3-12) mod 28 = 19
+    - 24-note phrase → add 8 commas to land at position 3 → (3-24) mod 28 = 8
+  - Leading commas automatically calculated and prepended when user enters phrase
+
+- **Staff Display**:
+  - Main phrase in primary section
+  - Each Kalpana variation in separate mini staff section with label
+  - Compact layout: no wasted space
+  - Star marker (*) shows eduppu position for each line
+  - All variations share same beat/nadai/cycle structure
+
+- **Data Persistence**:
+  - Multiple Kalpana variations stored in kanakku.json
+  - Structure: `kalpanas: [{ label: "Kalpana 1", phrase: "...", eduppu: 4 }, ...]`
+
+- **Export & MIDI**:
+  - Text export includes all variations labeled with their line numbers
+  - MIDI file includes all variations as separate tracks or sequential notation
+  - Each variation respects its own calculated landing position
+
 ### 3. Timing Calculations
 - **Beats**: Set cycle length (3-16 beats supported)
 - **Nadai**: Set divisions per beat (3, 4, 5, 7, 9 supported)

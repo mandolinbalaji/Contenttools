@@ -449,6 +449,78 @@
             color: #667eea;
         }
 
+        /* KALPANA SWARA STYLES */
+        .kalpana-line {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            padding: 8px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        .kalpana-line-label {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.75em;
+            white-space: nowrap;
+            padding-top: 4px;
+        }
+
+        .kalpana-line-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .kalpana-line-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .kalpana-line-controls {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .kalpana-eduppu-input {
+            width: 60px;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 0.75em;
+        }
+
+        .kalpana-remove-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.2s;
+            line-height: 1;
+        }
+
+        .kalpana-remove-btn:hover {
+            color: #c33;
+            transform: scale(1.2);
+        }
+
+        .kalpana-info {
+            font-size: 0.7em;
+            color: #666;
+            padding: 2px 0;
+        }
+
         /* STAFF NOTATION */
         .staff-section {
             flex: 1;
@@ -767,6 +839,18 @@
                     <div id="errorMessage"></div>
                 </div>
 
+                <!-- KALPANA SWARA (MULTIPLE VARIATIONS) SECTION -->
+                <div style="padding: 12px 20px; border-top: 2px solid #e9ecef; background: #fafafa;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                        <span style="font-weight: 600; color: #667eea; font-size: 0.9em;">Kalpana Swaras</span>
+                        <button id="addKalpanaBtn" class="toolbar-btn" title="Add new Kalpana variation" style="padding: 4px 8px; font-size: 0.8em;">+ Add Line</button>
+                    </div>
+                    <div id="kalpanaContainer" style="display: none; max-height: 300px; overflow-y: auto;">
+                        <!-- Kalpana lines will be dynamically inserted here -->
+                    </div>
+                    <div id="kalpanaEmpty" style="font-size: 0.8em; color: #999; font-style: italic;">No Kalpana variations added yet</div>
+                </div>
+
                 <!-- STAFF NOTATION -->
                 <div class="staff-section">
                     <div id="staffContainer">
@@ -837,6 +921,11 @@
         const groupingInput = document.getElementById('groupingInput');
         const saveBtn = document.getElementById('saveBtn');
 
+        // KALPANA UI DOM ELEMENTS
+        const addKalpanaBtn = document.getElementById('addKalpanaBtn');
+        const kalpanaContainer = document.getElementById('kalpanaContainer');
+        const kalpanaEmpty = document.getElementById('kalpanaEmpty');
+
         // State
         let dotMode = null;
         let history = [''];
@@ -850,6 +939,15 @@
         let isPlaying = false;  // Track if audio is currently playing
         let currentAudioContext = null;  // Store reference to current audio context
         let currentOscillators = [];  // Store oscillators to stop them
+
+        // ============================================================================
+        // KALPANA SWARA (MULTIPLE VARIATIONS) STATE
+        // ============================================================================
+        // Data structure to hold multiple Kalpana variations
+        // Each Kalpana line can start at a different eduppu and will be displayed
+        // as a separate staff section with its own landing position calculation
+        let kalpanaLines = [];  // Array of {id, label, phrase, eduppu, leadingCommas}
+        let nextKalpanaId = 1;  // Auto-increment ID for Kalpana lines
 
         const dotsAbove = {
             's': 'ṡ', 'S': 'Ṡ', 'r': 'ṙ', 'R': 'Ṙ', 'g': 'ġ', 'G': 'Ġ', 
@@ -919,6 +1017,293 @@
             return result;
         }
 
+        // ============================================================================
+        // MODULE 1: KALPANA DATA STRUCTURE & CALCULATION FUNCTIONS
+        // ============================================================================
+        // These functions handle the core calculation and logic for Kalpana swaras
+        // (multiple melodic variations that land at the same eduppu position)
+
+        /**
+         * CALCULATE LEADING COMMAS FOR KALPANA LANDING POSITION
+         * 
+         * Purpose: Determines how many rest characters (commas) to prepend to a 
+         *          Kalpana phrase so it lands exactly at the target position.
+         *
+         * Target Position: eduppu - 1 (e.g., for eduppu=4, target=3)
+         * 
+         * Formula: leading_commas = (target_position - note_count) mod cycle_length
+         *
+         * Example (Beats=7, Nadai=4, Cycle=28, Eduppu=4):
+         *   - Target landing = 3 (eduppu - 1)
+         *   - 12-note phrase: (3 - 12) mod 28 = 19 commas
+         *   - 24-note phrase: (3 - 24) mod 28 = 8 commas
+         *
+         * @param {number} noteCount - Number of swara notes in phrase
+         * @param {number} cycleLengthVal - Total notes per cycle (beats × nadai)
+         * @param {number} eduppu - Starting position (1..cycleLengthVal)
+         * @returns {number} Number of leading commas to prepend
+         */
+        function calculateLeadingCommas(noteCount, cycleLengthVal, eduppu) {
+            const targetPos = eduppu - 1;  // Landing position (0-indexed becomes target position)
+            let leadingCommas = targetPos - noteCount;
+            
+            // Ensure positive result using modulo
+            while (leadingCommas <= 0) {
+                leadingCommas += cycleLengthVal;
+            }
+            
+            return leadingCommas;
+        }
+
+        /**
+         * ADD LEADING COMMAS TO PHRASE
+         * 
+         * Purpose: Prepends calculated number of comma characters to a phrase
+         *
+         * @param {string} phrase - The swara phrase
+         * @param {number} leadingCommas - Number of commas to add
+         * @returns {string} Phrase with leading commas prepended
+         */
+        function addLeadingCommas(phrase, leadingCommas) {
+            return ','.repeat(leadingCommas) + phrase;
+        }
+
+        /**
+         * COUNT SWARAS IN PHRASE (REUSABLE)
+         * 
+         * Purpose: Counts only valid swara notes, commas, and numbers (ignores newlines)
+         *          Used by Kalpana to determine actual note count
+         *
+         * @param {string} phrase - The phrase to count
+         * @returns {number} Count of valid note characters
+         */
+        function countNotesInPhrase(phrase) {
+            const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n', 'S', 'R', 'G', 'M', 'P', 'D', 'N', ',',
+                'ṡ', 'ṙ', 'ġ', 'ṁ', 'ṗ', 'ḋ', 'ṅ', 'ṣ', 'ṛ', 'ṃ', 'ḍ', 'ṇ', '\u0323',
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+            let count = 0;
+            for (let char of phrase) {
+                if (validSwaras.has(char)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        /**
+         * VALIDATE KALPANA LANDING POSITION
+         * 
+         * Purpose: Verifies that a Kalpana phrase with leading commas will land at
+         *          the correct eduppu position
+         *
+         * @param {string} phrase - Phrase with leading commas already applied
+         * @param {number} cycleLengthVal - Total notes per cycle
+         * @param {number} eduppu - Target eduppu (should land at eduppu-1)
+         * @returns {object} {valid: boolean, landingPos: number, message: string}
+         */
+        function validateKalpanaLanding(phrase, cycleLengthVal, eduppu) {
+            const noteCount = countNotesInPhrase(phrase);
+            const landingPos = ((noteCount - 1) % cycleLengthVal) + 1;  // 1-indexed landing position
+            const targetPos = eduppu - 1;  // Convert to match calculation
+            
+            return {
+                valid: landingPos === targetPos || landingPos === eduppu,
+                landingPos: landingPos,
+                message: landingPos === targetPos ? 
+                    `✓ Lands at position ${landingPos} (eduppu-1)` : 
+                    `✗ Lands at position ${landingPos}, expected ${targetPos}`
+            };
+        }
+
+        /**
+         * CREATE NEW KALPANA LINE
+         * 
+         * Purpose: Adds a new Kalpana variation line to the kalpanaLines array
+         *
+         * @param {string} phrase - The swara phrase (without leading commas)
+         * @param {number} eduppu - Starting position for this variation
+         * @returns {object} The created Kalpana line object
+         */
+        function createKalpanaLine(phrase, eduppu) {
+            const cycleLengthVal = (parseInt(beatsInput.value) || 8) * (parseInt(nadaiInput.value) || 4);
+            const noteCount = countNotesInPhrase(phrase);
+            const leadingCommas = calculateLeadingCommas(noteCount, cycleLengthVal, eduppu);
+            
+            const kalpana = {
+                id: nextKalpanaId++,
+                label: `Kalpana ${kalpanaLines.length + 1}`,
+                phrase: phrase,
+                eduppu: eduppu,
+                leadingCommas: leadingCommas,
+                fullPhrase: addLeadingCommas(phrase, leadingCommas)
+            };
+            
+            kalpanaLines.push(kalpana);
+            return kalpana;
+        }
+
+        /**
+         * REMOVE KALPANA LINE
+         * 
+         * Purpose: Removes a Kalpana variation by ID
+         *
+         * @param {number} kalpanaId - ID of Kalpana line to remove
+         * @returns {boolean} True if removed, false if not found
+         */
+        function removeKalpanaLine(kalpanaId) {
+            const index = kalpanaLines.findIndex(k => k.id === kalpanaId);
+            if (index !== -1) {
+                kalpanaLines.splice(index, 1);
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * GET KALPANA DATA
+         * 
+         * Purpose: Returns all Kalpana variations in a structured format for
+         *          export, MIDI generation, or data persistence
+         *
+         * @returns {array} Array of Kalpana line objects
+         */
+        function getKalpanaData() {
+            return kalpanaLines.map(k => ({
+                id: k.id,
+                label: k.label,
+                phrase: k.phrase,
+                eduppu: k.eduppu,
+                leadingCommas: k.leadingCommas
+            }));
+        }
+
+        // ============================================================================
+        // MODULE 2: KALPANA UI MANAGEMENT
+        // ============================================================================
+        // These functions handle rendering, updating, and removing Kalpana lines
+        // from the user interface, and synchronizing with the calculation logic.
+
+        /**
+         * RENDER KALPANA LINE IN UI
+         * 
+         * Purpose: Creates and inserts a Kalpana line element in the DOM,
+         *          with input fields for phrase, eduppu, and controls
+         *
+         * @param {object} kalpana - The Kalpana line object to render
+         */
+        function renderKalpanaLine(kalpana) {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'kalpana-line';
+            lineDiv.id = `kalpana-${kalpana.id}`;
+            lineDiv.innerHTML = `
+                <div class="kalpana-line-label">${kalpana.label}</div>
+                <div class="kalpana-line-content">
+                    <textarea class="kalpana-line-input" placeholder="Enter swara phrase" data-kalpana-id="${kalpana.id}" data-field="phrase" style="min-height: 40px; resize: vertical;">${kalpana.phrase}</textarea>
+                    <div class="kalpana-line-controls">
+                        <label style="font-size: 0.7em; color: #666; white-space: nowrap;">Eduppu:</label>
+                        <input type="number" class="kalpana-eduppu-input" placeholder="1" min="1" max="32" value="${kalpana.eduppu}" data-kalpana-id="${kalpana.id}" data-field="eduppu">
+                        <span class="kalpana-info" style="flex: 1;" id="kalpana-info-${kalpana.id}">Leading commas: <strong>${kalpana.leadingCommas}</strong></span>
+                        <button class="kalpana-remove-btn" data-kalpana-id="${kalpana.id}" title="Remove this Kalpana">✕</button>
+                    </div>
+                </div>
+            `;
+            
+            kalpanaContainer.appendChild(lineDiv);
+            
+            // Add event listeners for this Kalpana line
+            const phraseInput = lineDiv.querySelector('[data-field="phrase"]');
+            const eduppuInput = lineDiv.querySelector('[data-field="eduppu"]');
+            const removeBtn = lineDiv.querySelector('.kalpana-remove-btn');
+            
+            phraseInput.addEventListener('input', (e) => handleKalpanaUpdate(kalpana.id, 'phrase', e.target.value));
+            eduppuInput.addEventListener('input', (e) => handleKalpanaUpdate(kalpana.id, 'eduppu', parseInt(e.target.value) || 1));
+            removeBtn.addEventListener('click', () => handleRemoveKalpana(kalpana.id));
+        }
+
+        /**
+         * UPDATE KALPANA UI
+         * 
+         * Purpose: Refreshes the entire Kalpana lines display,
+         *          showing/hiding container based on whether lines exist
+         */
+        function updateKalpanaUI() {
+            // Clear the container
+            kalpanaContainer.innerHTML = '';
+            
+            if (kalpanaLines.length === 0) {
+                kalpanaContainer.style.display = 'none';
+                kalpanaEmpty.style.display = 'block';
+            } else {
+                kalpanaContainer.style.display = 'block';
+                kalpanaEmpty.style.display = 'none';
+                
+                // Render all Kalpana lines in order
+                kalpanaLines.forEach((kalpana, index) => {
+                    kalpana.label = `Kalpana ${index + 1}`;  // Update label based on position
+                    renderKalpanaLine(kalpana);
+                });
+            }
+        }
+
+        /**
+         * HANDLE KALPANA UPDATE
+         * 
+         * Purpose: Updates a Kalpana line when user changes phrase or eduppu,
+         *          recalculates leading commas, and updates UI display
+         *
+         * @param {number} kalpanaId - ID of Kalpana to update
+         * @param {string} field - Field being updated ('phrase' or 'eduppu')
+         * @param {string|number} value - New value for the field
+         */
+        function handleKalpanaUpdate(kalpanaId, field, value) {
+            const kalpana = kalpanaLines.find(k => k.id === kalpanaId);
+            if (!kalpana) return;
+            
+            if (field === 'phrase') {
+                kalpana.phrase = value;
+            } else if (field === 'eduppu') {
+                kalpana.eduppu = value;
+            }
+            
+            // Recalculate leading commas based on new values
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const cycleLengthVal = beats * nadai;
+            const noteCount = countNotesInPhrase(kalpana.phrase);
+            kalpana.leadingCommas = calculateLeadingCommas(noteCount, cycleLengthVal, kalpana.eduppu);
+            kalpana.fullPhrase = addLeadingCommas(kalpana.phrase, kalpana.leadingCommas);
+            
+            // Update the info display for leading commas
+            const infoSpan = document.getElementById(`kalpana-info-${kalpanaId}`);
+            if (infoSpan) {
+                infoSpan.innerHTML = `Leading commas: <strong>${kalpana.leadingCommas}</strong>`;
+            }
+        }
+
+        /**
+         * HANDLE ADD KALPANA LINE
+         * 
+         * Purpose: Creates a new Kalpana line with default eduppu value,
+         *          adds to array, and updates UI
+         */
+        function handleAddKalpana() {
+            const defaultEduppu = parseInt(eduppuInput.value) || 1;
+            const kalpana = createKalpanaLine('', defaultEduppu);
+            updateKalpanaUI();
+        }
+
+        /**
+         * HANDLE REMOVE KALPANA LINE
+         * 
+         * Purpose: Deletes a Kalpana line by ID and updates UI
+         *
+         * @param {number} kalpanaId - ID of Kalpana to remove
+         */
+        function handleRemoveKalpana(kalpanaId) {
+            removeKalpanaLine(kalpanaId);
+            updateKalpanaUI();
+        }
+
         // Event Listeners
         beatsInput.addEventListener('input', () => {
             const beats = parseInt(beatsInput.value) || 8;
@@ -932,6 +1317,14 @@
                 phraseInput.value = reformattedPhrase;
                 notesEnteredSpan.textContent = countSwaras(reformattedPhrase);
             }
+            
+            // Recalculate leading commas for all Kalpana lines
+            kalpanaLines.forEach(kalpana => {
+                const noteCount = countNotesInPhrase(kalpana.phrase);
+                kalpana.leadingCommas = calculateLeadingCommas(noteCount, cycleLengthVal, kalpana.eduppu);
+                kalpana.fullPhrase = addLeadingCommas(kalpana.phrase, kalpana.leadingCommas);
+            });
+            updateKalpanaUI();
             
             calculate();
         });
@@ -960,6 +1353,14 @@
                 phraseInput.value = reformattedPhrase;
                 notesEnteredSpan.textContent = countSwaras(reformattedPhrase);
             }
+            
+            // Recalculate leading commas for all Kalpana lines
+            kalpanaLines.forEach(kalpana => {
+                const noteCount = countNotesInPhrase(kalpana.phrase);
+                kalpana.leadingCommas = calculateLeadingCommas(noteCount, cycleLengthVal, kalpana.eduppu);
+                kalpana.fullPhrase = addLeadingCommas(kalpana.phrase, kalpana.leadingCommas);
+            });
+            updateKalpanaUI();
             
             calculate();
         });
@@ -1248,6 +1649,11 @@
             currentKanakkuId = null;  // Clear the loaded kanakku reference
             calculate();
             updateUndoRedo();
+        });
+
+        // KALPANA BUTTON EVENT LISTENER
+        addKalpanaBtn.addEventListener('click', () => {
+            handleAddKalpana();
         });
 
         formatBtn.addEventListener('click', () => {
