@@ -2798,53 +2798,9 @@
         }
 
         // MIDI Generation Function
-        function generateMidiData() {
-            const phraseRaw = phraseInput.value;  // Keep original with dots
-            const beats = parseInt(beatsInput.value) || 8;
-            const nadai = parseInt(nadaiInput.value) || 4;
-            const eduppu = parseInt(eduppuInput.value) || 1;
-            const sruthi = sruthiSelect.value;
-            const bpm = parseInt(bpmSelect.value) || 80;
-            
-            if (!phraseRaw.trim()) {
-                alert('Please enter a phrase first');
-                return null;
-            }
-
-            // Calculate phrase length (count valid swaras only, not numbers)
-            const phraseLength = countSwaras(phraseRaw);
-            
-            // Calculate starting position (matching the staff calculation)
-            const cycleLengthVal = beats * nadai;
-            let startingPos = eduppu - phraseLength;
-            while (startingPos <= 0) {
-                startingPos += cycleLengthVal;
-            }
-
-            // Map sruthi to MIDI base pitch (C=0, C#=1, ... B=11 in octave 4)
-            const sruthiMap = {
-                'C': 60, 'C#': 61, 'D': 62, 'D#': 63, 'E': 64,
-                'F': 65, 'F#': 66, 'G': 67, 'G#': 68, 'A': 69,
-                'A#': 70, 'B': 71
-            };
-            
-            // Swara intervals (semitones from base note in Indian music)
-            // Sa=0, Ri=2, Ga=4, Ma=5, Pa=7, Dha=9, Ni=11
-            const swaraOffsets = {
-                's': 0,    // Sa
-                'r': 2,    // Ri
-                'g': 4,    // Ga
-                'm': 5,    // Ma
-                'p': 7,    // Pa
-                'd': 9,    // Dha
-                'n': 11    // Ni
-            };
-            
-            const baseNote = sruthiMap[sruthi] || sruthiMap['C'];
-            
-            // Build MIDI notes with leading rests to match staff layout
+        // Helper function to generate notes array for any phrase
+        function generateNotesArray(phraseRaw, startingPos, beatDuration, baseNote, swaraOffsets) {
             const notes = [];
-            const beatDuration = 60 / (bpm * nadai);  // Duration in seconds for each nadai unit
             let currentTime = 0;
             
             // Add leading rests for starting position
@@ -2935,13 +2891,90 @@
                 i++;
             }
             
+            return notes;
+        }
+
+        function generateMidiData() {
+            const phraseRaw = phraseInput.value;  // Keep original with dots
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const eduppu = parseInt(eduppuInput.value) || 1;
+            const sruthi = sruthiSelect.value;
+            const bpm = parseInt(bpmSelect.value) || 80;
+            
+            if (!phraseRaw.trim()) {
+                alert('Please enter a phrase first');
+
+                return null;
+            }
+
+            // Calculate phrase length (count valid swaras only, not numbers)
+            const phraseLength = countSwaras(phraseRaw);
+            
+            // Calculate starting position (matching the staff calculation)
+            const cycleLengthVal = beats * nadai;
+            let startingPos = eduppu - phraseLength;
+            while (startingPos <= 0) {
+                startingPos += cycleLengthVal;
+            }
+
+            // Map sruthi to MIDI base pitch (C=0, C#=1, ... B=11 in octave 4)
+            const sruthiMap = {
+                'C': 60, 'C#': 61, 'D': 62, 'D#': 63, 'E': 64,
+                'F': 65, 'F#': 66, 'G': 67, 'G#': 68, 'A': 69,
+                'A#': 70, 'B': 71
+            };
+            
+            // Swara intervals (semitones from base note in Indian music)
+            // Sa=0, Ri=2, Ga=4, Ma=5, Pa=7, Dha=9, Ni=11
+            const swaraOffsets = {
+                's': 0,    // Sa
+                'r': 2,    // Ri
+                'g': 4,    // Ga
+                'm': 5,    // Ma
+                'p': 7,    // Pa
+                'd': 9,    // Dha
+                'n': 11    // Ni
+            };
+            
+            const baseNote = sruthiMap[sruthi] || sruthiMap['C'];
+            const beatDuration = 60 / (bpm * nadai);  // Duration in seconds for each nadai unit
+            
+            // Generate notes for main phrase
+            const notes = generateNotesArray(phraseRaw, startingPos, beatDuration, baseNote, swaraOffsets);
+            
+            // Generate MIDI data for all Kalpana variations
+            const kalpanasData = [];
+            kalpanaLines.forEach((kalpana) => {
+                // Calculate starting position for this Kalpana variation
+                const kalpanaLength = countNotesInPhrase(kalpana.phrase);
+                const kalpanaStartingPos = kalpana.eduppu - kalpanaLength;
+                // Note: kalpanaStartingPos could be negative, but the fullPhrase already has leading commas
+                // So we need to use the full phrase with the commas
+                const fullPhraseWithCommas = addLeadingCommas(kalpana.phrase, kalpana.leadingCommas);
+                const kalpanaStartPos = kalpana.eduppu - countSwaras(fullPhraseWithCommas);
+                let adjStartPos = kalpanaStartPos;
+                while (adjStartPos <= 0) {
+                    adjStartPos += cycleLengthVal;
+                }
+                
+                const kalpanaNotes = generateNotesArray(fullPhraseWithCommas, adjStartPos, beatDuration, baseNote, swaraOffsets);
+                kalpanasData.push({
+                    label: kalpana.label,
+                    notes: kalpanaNotes,
+                    phrase: kalpana.phrase,
+                    comment: kalpana.comment || ''
+                });
+            });
+            
             return {
                 notes: notes,
                 bpm: bpm,
                 sruthi: sruthi,
                 phrase: phraseRaw,
                 beats: beats,
-                nadai: nadai
+                nadai: nadai,
+                kalpanas: kalpanasData
             };
         }
 
@@ -3057,11 +3090,27 @@
                 return;
             }
 
+            // Build multiple tracks: one for main phrase, one for each Kalpana
+            const tracks = [];
+            
+            // Track 1: Main phrase
+            tracks.push(createMidiTrack(midiData.notes, midiData.bpm, 'Main'));
+            
+            // Additional tracks for Kalpana variations
+            if (midiData.kalpanas && midiData.kalpanas.length > 0) {
+                midiData.kalpanas.forEach((kalpana, index) => {
+                    tracks.push(createMidiTrack(kalpana.notes, midiData.bpm, kalpana.label));
+                });
+            }
+            
             // MIDI file header
             const header = [0x4D, 0x54, 0x68, 0x64]; // "MThd"
             const headerLength = [0x00, 0x00, 0x00, 0x06]; // Header length = 6
-            const format = [0x00, 0x00]; // Format 0 (single track)
-            const tracks = [0x00, 0x01]; // 1 track
+            const format = [0x00, 0x01]; // Format 1 (multiple tracks)
+            const numTracks = [
+                (tracks.length >> 8) & 0xFF,
+                tracks.length & 0xFF
+            ];
             
             // Ticks per quarter note (standard: 480)
             const ticksPerQuarter = 480;
@@ -3071,14 +3120,44 @@
             ];
 
             // Build header
-            let midiFile = [...header, ...headerLength, ...format, ...tracks, ...ticksPerByte];
+            let midiFile = [...header, ...headerLength, ...format, ...numTracks, ...ticksPerByte];
+            
+            // Add all tracks
+            tracks.forEach(trackData => {
+                const trackHeader = [0x4D, 0x54, 0x72, 0x6B]; // "MTrk"
+                const trackLength = [
+                    (trackData.length >> 24) & 0xFF,
+                    (trackData.length >> 16) & 0xFF,
+                    (trackData.length >> 8) & 0xFF,
+                    trackData.length & 0xFF
+                ];
+                midiFile.push(...trackHeader, ...trackLength, ...trackData);
+            });
 
-            // Build track data
+            // Convert to binary and create blob
+            const uint8Array = new Uint8Array(midiFile);
+            const blob = new Blob([uint8Array], { type: 'audio/midi' });
+
+            // Create download link
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            const kanakkuName = kanakkuNameInput.value || 'Kanakku';
+            link.download = `${kanakkuName}.mid`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Helper function to create a MIDI track from notes array
+        function createMidiTrack(notes, bpm, trackLabel = '') {
+            const ticksPerQuarter = 480;
             let trackData = [];
 
             // Set tempo (microseconds per quarter note)
             // BPM to microseconds: tempo = 60,000,000 / BPM
-            const tempo = Math.round(60000000 / midiData.bpm);
+            const tempo = Math.round(60000000 / bpm);
             const tempoBytes = [
                 (tempo >> 16) & 0xFF,
                 (tempo >> 8) & 0xFF,
@@ -3092,14 +3171,21 @@
             // Set time signature (4/4) - meta event FF 58 04 with delta time 0
             trackData.push(0x00);  // Delta time = 0
             trackData.push(0xFF, 0x58, 0x04, 0x04, 0x02, 0x18, 0x08);
+            
+            // Add track name if provided
+            if (trackLabel) {
+                const nameBytes = Array.from(trackLabel).map(c => c.charCodeAt(0));
+                trackData.push(0x00);  // Delta time = 0
+                trackData.push(0xFF, 0x03, nameBytes.length, ...nameBytes);  // Meta event: Sequence/Track Name
+            }
 
             // Convert notes to MIDI events
             let currentTick = 0;
             
-            midiData.notes.forEach((note, index) => {
+            notes.forEach((note, index) => {
                 // Calculate tick position and duration for all entries
-                const noteTick = Math.round(note.startTime * (midiData.bpm / 60) * ticksPerQuarter);
-                const noteDurationTick = Math.round(note.duration * (midiData.bpm / 60) * ticksPerQuarter);
+                const noteTick = Math.round(note.startTime * (bpm / 60) * ticksPerQuarter);
+                const noteDurationTick = Math.round(note.duration * (bpm / 60) * ticksPerQuarter);
                 
                 // Delta time (time since last event)
                 const deltaTime = noteTick - currentTick;
@@ -3137,34 +3223,10 @@
             // End of track meta event (FF 2F 00) with delta time 0
             trackData.push(0x00);  // Delta time = 0
             trackData.push(0xFF, 0x2F, 0x00);
-
-            // Track header
-            const trackHeader = [0x4D, 0x54, 0x72, 0x6B]; // "MTrk"
-            const trackLength = [
-                (trackData.length >> 24) & 0xFF,
-                (trackData.length >> 16) & 0xFF,
-                (trackData.length >> 8) & 0xFF,
-                trackData.length & 0xFF
-            ];
-
-            // Combine all
-            midiFile.push(...trackHeader, ...trackLength, ...trackData);
-
-            // Convert to binary and create blob
-            const uint8Array = new Uint8Array(midiFile);
-            const blob = new Blob([uint8Array], { type: 'audio/midi' });
-
-            // Create download link
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            const kanakkuName = kanakkuNameInput.value || 'Kanakku';
-            link.download = `${kanakkuName}.mid`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            
+            return trackData;
         }
+
 
         // Helper function to encode variable length quantity (used in MIDI)
         function encodeVariableLength(value) {
