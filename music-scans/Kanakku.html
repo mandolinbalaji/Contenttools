@@ -2249,6 +2249,11 @@
             landingBeatSpan.textContent = eduppu;
 
             displayStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu, groupingInput.value);
+            
+            // Display Kalpana variations if any exist
+            if (kalpanaLines.length > 0) {
+                displayKalpanaStaffs(beats, nadai, cycleLengthVal, eduppu);
+            }
         }
 
         // Helper function to parse grouping digits and create color map
@@ -2410,6 +2415,120 @@
             }
 
             staffContainer.innerHTML = html;
+        }
+
+        // ============================================================================
+        // MODULE 4: KALPANA STAFF DISPLAY
+        // ============================================================================
+        // This function renders compact mini-staff sections for each Kalpana variation
+
+        /**
+         * DISPLAY KALPANA STAFF SECTIONS
+         * 
+         * Purpose: Renders each Kalpana variation as a separate mini-staff below
+         *          the main phrase staff. Each Kalpana shows the full phrase with
+         *          leading commas already included.
+         *
+         * Design: Compact display - minimal cycle wrapping, no numbering,
+         *         focused on showing how phrase lands at target position.
+         *
+         * @param {number} beats - Beats per cycle
+         * @param {number} nadai - Nadai (subdivisions per beat)
+         * @param {number} cycleLengthVal - Total notes per cycle
+         * @param {number} eduppu - Target landing position
+         */
+        function displayKalpanaStaffs(beats, nadai, cycleLengthVal, eduppu) {
+            if (kalpanaLines.length === 0) return;  // No Kalpanas to display
+            
+            let html = '<div style="margin-top: 30px; border-top: 2px solid #e9ecef; padding-top: 15px;">';
+            
+            kalpanaLines.forEach((kalpana, index) => {
+                const fullPhrase = kalpana.fullPhrase;  // Already has leading commas
+                const totalNotes = fullPhrase.length;
+                const totalCycles = Math.ceil(totalNotes / cycleLengthVal);
+                
+                html += `<div style="margin-bottom: 20px;">`;
+                html += `<div class="staff-title" style="font-size: 0.85em; margin-bottom: 8px; color: #667eea;">`;
+                html += `${kalpana.label} (${kalpana.phrase.length} notes + ${kalpana.leadingCommas} commas)`;
+                html += `</div>`;
+                
+                // Render compact mini staff - show all cycles in a more condensed view
+                for (let cycleNum = 1; cycleNum <= totalCycles; cycleNum++) {
+                    // Compute star position for target landing (eduppu - 1)
+                    const targetPos = eduppu - 1;
+                    const subdivisionWidth = 25;
+                    const normalBorder = 1;
+                    const beatEndBorder = 3;
+                    const borderDifference = beatEndBorder - normalBorder;
+                    const completedBeats = Math.floor((targetPos - 1) / nadai);
+                    const starLeft = (targetPos - 1) * (subdivisionWidth + normalBorder) + completedBeats * borderDifference + 12;
+                    
+                    html += `<div style="position: relative; margin-bottom: 2px;">`;
+                    html += `<div class="staff-title" style="position: relative; font-size: 0.75em; color: #999; margin-bottom: 3px;">Cycle ${cycleNum}`;
+                    html += `<div class="cycle-star" style="position: absolute; top: 0; left: ${starLeft}px; font-size: 1em; color: #d32;">*</div>`;
+                    html += `</div>`;
+                    
+                    html += '<div class="staff-grid"><div class="staff-row" style="position: relative; margin-top: 0px;">';
+                    
+                    for (let beat = 1; beat <= beats; beat++) {
+                        html += '<div class="beat-group">';
+                        
+                        for (let sub = 1; sub <= nadai; sub++) {
+                            const posInCycle = (beat - 1) * nadai + sub;
+                            const globalPos = (cycleNum - 1) * cycleLengthVal + posInCycle;
+                            
+                            let character = ',';
+                            let bgColor = 'white';
+                            
+                            // Find the note at this position in fullPhrase
+                            let noteCount = 0;
+                            for (let i = 0; i < fullPhrase.length; i++) {
+                                const char = fullPhrase[i];
+                                if (/[srgmpdnSRGMPDN,ṡṙġṁṗḋṅṣṛṃḍṇ\u0323\d]/.test(char)) {
+                                    noteCount++;
+                                    if (noteCount === globalPos) {
+                                        character = char;
+                                        
+                                        // Color coding: leading commas are light gray, actual notes are light green
+                                        if (noteCount <= kalpana.leadingCommas) {
+                                            bgColor = '#f0f0f0';
+                                        } else {
+                                            bgColor = '#e8f5e9';  // Light green for actual phrase notes
+                                        }
+                                        
+                                        // Highlight landing position
+                                        if (posInCycle === targetPos || 
+                                            (cycleNum > 1 && posInCycle === eduppu % cycleLengthVal)) {
+                                            bgColor = '#ffebee';  // Light red
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            let cellClass = 'subdivision';
+                            if (sub === nadai) cellClass += ' beat-end';
+                            if (posInCycle === cycleLengthVal) cellClass += ' cycle-end';
+                            
+                            html += `<div class="${cellClass}" style="background: ${bgColor};">`;
+                            html += `<div class="subdivision-char" style="font-size: 0.8em;">${character}</div>`;
+                            html += `</div>`;
+                        }
+                        
+                        html += '</div>';
+                    }
+                    
+                    html += '</div></div>';
+                    html += '</div>';
+                }
+                
+                html += `</div>`;
+            });
+            
+            html += '</div>';
+            
+            // Append to staff container
+            staffContainer.innerHTML += html;
         }
 
         function loadSavedKanakkus() {
