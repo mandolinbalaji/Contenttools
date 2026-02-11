@@ -1726,6 +1726,12 @@
             dotMode = null;
             dotAboveBtn.classList.remove('active');
             dotBelowBtn.classList.remove('active');
+            
+            // MODULE 6C: CLEAR KALPANAS ON RESET
+            kalpanaLines = [];
+            nextKalpanaId = 1;
+            updateKalpanaUI();
+            
             calculate();
             updateUndoRedo();
         });
@@ -1761,7 +1767,7 @@
             const notes = [];
             for (let char of phrase) {
                 // Include swaras, dots, numbers, and commas (rests)
-                if (char !== ' ') {  // Skip only spaces
+                if (char !== ' ' && char !== '\n' && char !== '\r') {  // Skip spaces and newlines
                     notes.push(char);
                 }
             }
@@ -1778,6 +1784,7 @@
             const notesPerCycle = beats * nadai;
             
             let output = `${name}\nBeats: ${beats}, Nadai: ${nadai}\n\n`;
+            output += `MAIN PHRASE:\n`;
             
             let noteIndex = 0;
             let cycleNum = 1;
@@ -1823,6 +1830,56 @@
                 output += cycleLine + '\n';
                 cycleNum++;
                 posInCycle = 1;  // Reset for subsequent cycles
+            }
+            
+            // ============================================================================
+            // MODULE 5A: EXPORT KALPANA VARIATIONS
+            // ============================================================================
+            // Add each Kalpana variation to the export file
+            if (kalpanaLines.length > 0) {
+                output += `\nKALPANA VARIATIONS:\n`;
+                
+                kalpanaLines.forEach((kalpana, index) => {
+                    output += `\n${kalpana.label}:\n`;
+                    output += `Eduppu: ${kalpana.eduppu}, Notes: ${kalpana.phrase.length}, Leading Commas: ${kalpana.leadingCommas}\n`;
+                    
+                    // Parse Kalpana notes with leading commas
+                    const kalpanaNotesArray = [];
+                    for (let char of kalpana.fullPhrase) {
+                        if (char !== ' ' && char !== '\n' && char !== '\r') {
+                            kalpanaNotesArray.push(char);
+                        }
+                    }
+                    
+                    // Render Kalpana cycles (similar to main phrase but with Kalpana data)
+                    const targetLanding = eduppu - 1;
+                    let kNoteIndex = 0;
+                    let kCycleNum = 1;
+                    const kalpanaTotalNotes = kalpana.fullPhrase.length;
+                    const kalpanaTotalCycles = Math.ceil(kalpanaTotalNotes / cycleLengthVal);
+                    
+                    for (let cNum = 1; cNum <= kalpanaTotalCycles && kNoteIndex < kalpanaNotesArray.length; cNum++) {
+                        let cycleLine = `${cNum}: `;
+                        let noteInBeat = 0;
+                        
+                        // Add notes for this cycle
+                        for (let i = 1; i <= notesPerCycle && kNoteIndex < kalpanaNotesArray.length; i++) {
+                            cycleLine += kalpanaNotesArray[kNoteIndex];
+                            noteInBeat++;
+                            kNoteIndex++;
+                            
+                            // Add vertical line after each beat
+                            if (noteInBeat === nadai && i < notesPerCycle) {
+                                cycleLine += '|';
+                                noteInBeat = 0;
+                            }
+                        }
+                        
+                        // Add double vertical line at end of cycle
+                        cycleLine += '||';
+                        output += cycleLine + '\n';
+                    }
+                });
             }
             
             // Create and download file
@@ -2124,6 +2181,14 @@
             const grouping = groupingInput.value;  // Get grouping
 
             const kanakku = { name, phrase, beats, nadai, eduppu, sruthi, ragaNotes, tags, comment, grouping };
+            
+            // ============================================================================
+            // MODULE 6A: SAVE KALPANA DATA
+            // ============================================================================
+            // Include all Kalpana variations in the saved kanakku
+            if (kalpanaLines.length > 0) {
+                kanakku.kalpanas = getKalpanaData();
+            }
             
             // Include MIDI file data if it exists
             if (currentMidiData) {
@@ -2601,6 +2666,29 @@
                                 historyIndex = 0;
                                 notesEnteredSpan.textContent = countSwaras(k.phrase);
                                 updateUndoRedo();
+                                
+                                // ============================================================================
+                                // MODULE 6B: LOAD KALPANA DATA
+                                // ============================================================================
+                                // Restore Kalpana variations when loading a kanakku
+                                kalpanaLines = [];  // Clear existing Kalpanas
+                                nextKalpanaId = 1;  // Reset ID counter
+                                
+                                if (k.kalpanas && k.kalpanas.length > 0) {
+                                    k.kalpanas.forEach((kData) => {
+                                        const kalpana = {
+                                            id: nextKalpanaId++,
+                                            label: kData.label || 'Kalpana',
+                                            phrase: kData.phrase,
+                                            eduppu: kData.eduppu,
+                                            leadingCommas: kData.leadingCommas,
+                                            fullPhrase: kData.phrase + ''.substring(0, kData.leadingCommas).padStart(kData.leadingCommas, ',')
+                                        };
+                                        kalpanaLines.push(kalpana);
+                                    });
+                                }
+                                updateKalpanaUI();
+                                
                                 calculate();
                                 // Display MIDI if available
                                 if (currentMidiData) {
