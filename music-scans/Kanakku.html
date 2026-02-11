@@ -525,6 +525,11 @@
             white-space: nowrap;
         }
 
+        .cycle-star {
+            font-weight: 700;
+            pointer-events: none;
+        }
+
         .footer {
             background: #f8f9fa;
             padding: 10px 20px;
@@ -873,8 +878,51 @@
             }
         });
 
+        // Function to reformat phrase with newlines based on cycle length
+        function reformatPhraseWithCycleBreaks(phrase, cycleLengthVal) {
+            if (!phrase || cycleLengthVal <= 0) return phrase;
+            
+            const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n', 'S', 'R', 'G', 'M', 'P', 'D', 'N', ',',
+                'ṡ', 'ṙ', 'ġ', 'ṁ', 'ṗ', 'ḋ', 'ṅ', 'ṣ', 'ṛ', 'ṃ', 'ḍ', 'ṇ', '\u0323',
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+            
+            let result = '';
+            let noteCount = 0;
+            
+            for (let char of phrase) {
+                // Count valid swara characters
+                if (validSwaras.has(char)) {
+                    if (noteCount > 0 && noteCount % cycleLengthVal === 0) {
+                        result += '\n';  // Insert newline after every cycleLengthVal notes
+                    }
+                    noteCount++;
+                    result += char;
+                } else if (char === '\n' || char === '\r') {
+                    // Skip existing newlines - we'll add our own
+                    continue;
+                } else {
+                    // Keep other characters (shouldn't happen with current format)
+                    result += char;
+                }
+            }
+            
+            return result;
+        }
+
         // Event Listeners
         beatsInput.addEventListener('input', () => {
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const cycleLengthVal = beats * nadai;
+            const currentPhrase = phraseInput.value;
+            
+            // Reformat phrase with new cycle breaks
+            const reformattedPhrase = reformatPhraseWithCycleBreaks(currentPhrase, cycleLengthVal);
+            if (reformattedPhrase !== currentPhrase) {
+                phraseInput.value = reformattedPhrase;
+                notesEnteredSpan.textContent = countSwaras(reformattedPhrase);
+            }
+            
             calculate();
         });
 
@@ -891,6 +939,18 @@
         };
 
         nadaiInput.addEventListener('change', () => {
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const cycleLengthVal = beats * nadai;
+            const currentPhrase = phraseInput.value;
+            
+            // Reformat phrase with new cycle breaks
+            const reformattedPhrase = reformatPhraseWithCycleBreaks(currentPhrase, cycleLengthVal);
+            if (reformattedPhrase !== currentPhrase) {
+                phraseInput.value = reformattedPhrase;
+                notesEnteredSpan.textContent = countSwaras(reformattedPhrase);
+            }
+            
             calculate();
         });
 
@@ -1027,6 +1087,34 @@
                 historyIndex++;
                 updateUndoRedo();
             }
+            calculate();
+        });
+        
+        // Handle paste events to auto-format with cycle breaks
+        phraseInput.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const cycleLengthVal = beats * nadai;
+            
+            // Reformat pasted text with cycle breaks
+            const reformattedText = reformatPhraseWithCycleBreaks(pastedText, cycleLengthVal);
+            
+            const start = phraseInput.selectionStart;
+            const end = phraseInput.selectionEnd;
+            const currentText = phraseInput.value;
+            const newText = currentText.substring(0, start) + reformattedText + currentText.substring(end);
+            
+            phraseInput.value = newText;
+            phraseInput.setSelectionRange(start + reformattedText.length, start + reformattedText.length);
+            
+            // Trigger input event to update history and calculate
+            notesEnteredSpan.textContent = countSwaras(newText);
+            history = history.slice(0, historyIndex + 1);
+            history.push(newText);
+            historyIndex++;
+            updateUndoRedo();
             calculate();
         });
 
@@ -1795,8 +1883,22 @@
             const totalCycles = Math.ceil(totalNotes / cycleLengthVal);
 
             for (let cycleNum = 1; cycleNum <= totalCycles; cycleNum++) {
-                html += `<div class="staff-title">Cycle ${cycleNum}</div>`;
-                html += '<div class="staff-grid"><div class="staff-row" style="position: relative; margin-top: 25px;">';
+                // Compute left offset for star based on eduppu (Start Pos input value directly)
+                // Each subdivision is 25px wide + 1px border = 26px per note
+                // Beat-end has 3px border instead of 1px, so +2px extra per completed beat
+                const notePos = eduppu; // 1-indexed note position based on Start Pos dropdown (1..cycleLengthVal)
+                const subdivisionWidth = 25; // .subdivision width in CSS
+                const normalBorder = 1;
+                const beatEndBorder = 3;
+                const borderDifference = beatEndBorder - normalBorder;
+                const completedBeats = Math.floor((notePos - 1) / nadai); // number of beat borders before this note
+                const starLeft = (notePos - 1) * (subdivisionWidth + normalBorder) + completedBeats * borderDifference + 12;
+
+                html += `<div class="staff-title" style="position: relative;">Cycle ${cycleNum}` +
+                        `<div class="cycle-star" style="position: absolute; top: 0; left: ${starLeft}px; font-size: 1.1em; color: #d32;">*</div>` +
+                        `</div>`;
+
+                html += `<div class="staff-grid" style="position: relative;"><div class="staff-row" style="position: relative; margin-top: 25px;">`;
 
                 for (let beat = 1; beat <= beats; beat++) {
                     html += '<div class="beat-group">';

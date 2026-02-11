@@ -1,16 +1,17 @@
 [
   {
     "name": "555ending_Misra_3",
-    "phrase": ",,,,,,,,,,,,1234512123451212345\n,,,,,,,,12345112212345121212345",
+    "phrase": ",,,,,,,,,ġṙṡndṡ,ṙṡndpd,ṡndpṁ\n,,,,,grsndṡ,ṡ,rsndpd,d,ṡndpm\n,grsndṡ,ṡ,ṡ,rsndpd,d,d,ṡndpm",
     "beats": 7,
-    "nadai": 2,
+    "nadai": 4,
     "eduppu": 4,
     "sruthi": "C#",
-    "ragaNotes": "",
+    "ragaNotes": "r2g2m1d2n2",
     "tags": [],
-    "comment": "",
+    "comment": "555 ending. Dont see the values for L S And E they are for single compositions only.\n\nTriple 5 endng for thakia begining like Manasuna in pakkala nilabadi\n52525\n5225225",
     "grouping": "",
-    "id": "2b23fff4-0707-4d47-8d33-b75dda7e2aa3"
+    "id": "2b23fff4-0707-4d47-8d33-b75dda7e2aa3",
+    "midiFilePath": "midi_files/555ending_Misra_3.mid"
   },
   {
     "name": "Makelara_Ravichandrika",
@@ -28,7 +29,7 @@
   },
   {
     "name": "Begada-Phrase-01",
-    "phrase": "mpdpmdpmgmdp,pmdppmgmr",
+    "phrase": ",,mpdpmdpmgmdp,pmdppmgmr",
     "beats": 6,
     "nadai": 4,
     "eduppu": 1,
