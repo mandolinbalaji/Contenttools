@@ -1,7 +1,7 @@
 [
   {
     "name": "555ending_Misra_3",
-    "phrase": ",,,,,,,,,ġṙṡndṡ,ṙṡndpd,ṡndpṁ\n,,,,,grsndṡ,ṡ,rsndpd,d,ṡndpm\n,grsndṡ,ṡ,ṡ,rsndpd,d,d,ṡndpm",
+    "phrase": "ns,r,,,r,,,rrg",
     "beats": 7,
     "nadai": 4,
     "eduppu": 4,
@@ -10,6 +10,32 @@
     "tags": [],
     "comment": "555 ending. Dont see the values for L S And E they are for single compositions only.\n\nTriple 5 endng for thakia begining like Manasuna in pakkala nilabadi\n52525\n5225225",
     "grouping": "",
+    "kalpanas": [
+      {
+        "id": 1,
+        "label": "Kalpana 1",
+        "phrase": "ġṙṡndṡ,ṙṡndpd,ṡndpṁ",
+        "comment": "",
+        "eduppu": 4,
+        "leadingCommas": 12
+      },
+      {
+        "id": 2,
+        "label": "Kalpana 2",
+        "phrase": "grsndṡ,ṡ,rsndpd,d,ṡndpm",
+        "comment": "",
+        "eduppu": 4,
+        "leadingCommas": 8
+      },
+      {
+        "id": 3,
+        "label": "Kalpana 3",
+        "phrase": "grsndṡ,ṡ,ṡ,rsndpd,d,d,ṡndpm",
+        "comment": "",
+        "eduppu": 4,
+        "leadingCommas": 4
+      }
+    ],
     "id": "2b23fff4-0707-4d47-8d33-b75dda7e2aa3",
     "midiFilePath": "midi_files/555ending_Misra_3.mid"
   },
