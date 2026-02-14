@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chromatic Variant Tests</title>
+</head>
+<body>
+    <h1>KalpanaSwaramComposer - Chromatic Variant Tests</h1>
+    <div id="results"></div>
+
+    <script>
+        // Test utility functions
+        function countNotes(text) {
+            let count = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i].toLowerCase();
+                if (char === ' ') continue;
+                
+                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    // Check if this note has a variant digit (e.g., r1, r2, g3)
+                    if (i + 1 < text.length && /[1-9]/.test(text[i + 1])) {
+                        count++;
+                        i++; // Skip the digit
+                    } else {
+                        count++;
+                    }
+                } else if (char === ',') {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        function parseScale(scaleText) {
+            const scaleMap = {};
+            if (!scaleText) return scaleMap;
+            
+            const parts = scaleText.toLowerCase().split(/[\s,]+/);
+            for (const part of parts) {
+                if (part.length >= 2) {
+                    const swara = part[0];
+                    const variant = part.slice(1);
+                    if (['r', 'g', 'm', 'd', 'n'].includes(swara) && /^[1-9]/.test(variant)) {
+                        scaleMap[swara] = part;
+                    }
+                }
+            }
+            return scaleMap;
+        }
+
+        function resolvePhrase(phraseDisplay, scaleMap) {
+            let resolved = '';
+            for (let i = 0; i < phraseDisplay.length; i++) {
+                const char = phraseDisplay[i].toLowerCase();
+                
+                if (char === ',' || char === ' ') {
+                    resolved += char;
+                } else if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    // Check if this note has an explicit variant in phrase
+                    if (i + 1 < phraseDisplay.length && /[1-9]/.test(phraseDisplay[i + 1])) {
+                        // Phrase has explicit variant (e.g., r2, g3) - use it
+                        resolved += char + phraseDisplay[i + 1];
+                        i++; // Skip the digit
+                    } else if (char !== 's' && char !== 'p' && scaleMap[char]) {
+                        // No explicit variant, but scale has default for this swara
+                        resolved += scaleMap[char];
+                    } else {
+                        // No variant, use bare swara or fixed note (s, p)
+                        resolved += char;
+                    }
+                } else {
+                    resolved += char;
+                }
+            }
+            return resolved;
+        }
+
+        // Test cases
+        let testResults = [];
+
+        function test(name, condition, details = '') {
+            const pass = condition ? '✓ PASS' : '✗ FAIL';
+            const result = `${pass}: ${name}${details ? ' - ' + details : ''}`;
+            testResults.push(result);
+            console.log(result);
+        }
+
+        // Test countNotes
+        test('countNotes: bare notes', countNotes('srgmpdns') === 8, `got ${countNotes('srgmpdns')}`);
+        test('countNotes: with commas', countNotes('s,rg,,m') === 5, `got ${countNotes('s,rg,,m')}`);
+        test('countNotes: with variants', countNotes('sr1g2m') === 4, `got ${countNotes('sr1g2m')}`);
+        test('countNotes: only variants', countNotes('r1g2m1d2n2') === 5, `got ${countNotes('r1g2m1d2n2')}`);
+        test('countNotes: mixed', countNotes('srgmpdns r1g2m1d2n2') === 13, `got ${countNotes('srgmpdns r1g2m1d2n2')}`);
+
+        // Test parseScale
+        const scale1 = parseScale('r2 g2 m1 d2 n2');
+        test('parseScale: r2g2m1d2n2', Object.keys(scale1).length === 5, `got keys: ${Object.keys(scale1).join(',')}`);
+        test('parseScale: r value', scale1['r'] === 'r2', `got ${scale1['r']}`);
+        test('parseScale: n value', scale1['n'] === 'n2', `got ${scale1['n']}`);
+
+        // Test resolvePhrase
+        const emptyScale = parseScale('');
+        test('resolvePhrase: bare notes with empty scale', resolvePhrase('srgm', emptyScale) === 'srgm', 
+             `got ${resolvePhrase('srgm', emptyScale)}`);
+
+        const scale2 = parseScale('r2 g2 m1 d2 n2');
+        test('resolvePhrase: bare notes with scale', resolvePhrase('rgm', scale2) === 'r2g2m1', 
+             `got ${resolvePhrase('rgm', scale2)}`);
+        
+        test('resolvePhrase: explicit override', resolvePhrase('r1gm', scale2) === 'r1g2m1', 
+             `got ${resolvePhrase('r1gm', scale2)}`);
+        
+        test('resolvePhrase: partial override', resolvePhrase('srgmpdns', scale2) === 'sr2g2m1pd2n2s', 
+             `got ${resolvePhrase('srgmpdns', scale2)}`);
+
+        test('resolvePhrase: commas with scale', resolvePhrase('s,r g,m', scale2) === 's,r2 g,m1', 
+             `got ${resolvePhrase('s,r g,m', scale2)}`);
+
+        // Display results
+        document.getElementById('results').innerHTML = '<pre>' + testResults.join('\n') + '</pre>';
+    </script>
+</body>
+</html>

@@ -1137,6 +1137,13 @@
                     <div class="tags-display" id="tagsDisplay"></div>
                 </div>
 
+                <!-- Scale Definition -->
+                <div class="form-group">
+                    <label>Scale (Raga Variants)</label>
+                    <input type="text" id="scaleInput" placeholder="e.g., r2 g2 m1 d2 n2" title="Define default swara variants for this raga">
+                    <small style="color: #888; display: block; margin-top: 4px;">Specify r1-r3, g1-g3, m1-m2, d1-d3, n1-n3 as defaults. Phrase notation overrides.</small>
+                </div>
+
                 <div class="divider"></div>
 
                 <!-- Thalam Settings -->
@@ -1305,6 +1312,7 @@
             nadai: 4,
             eduppu: 4,
             tags: [],
+            scale: '', // e.g., "r2 g2 m1 d2 n2"
             mainPhrase: {
                 phraseText: '',
                 phraseDisplay: '',
@@ -1357,8 +1365,16 @@
             for (let i = 0; i < text.length; i++) {
                 const char = text[i].toLowerCase();
                 if (char === ' ') continue;
+                
                 if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
-                    count++;
+                    // Check if this note has a variant digit (e.g., r1, r2, g3)
+                    // If so, the digit is part of the note notation, count as 1
+                    if (i + 1 < text.length && /[1-9]/.test(text[i + 1])) {
+                        count++;
+                        i++; // Skip the digit
+                    } else {
+                        count++;
+                    }
                 } else if (char === ',') {
                     count++;
                 }
@@ -1376,6 +1392,54 @@
             return text.replace(/\s+/g, '');
         }
 
+        // Parse scale definition and return map of swara -> variant
+        // E.g., "r2 g2 m1 d2 n2" returns {r: '2', g: '2', m: '1', d: '2', n: '2'}
+        function parseScale(scaleText) {
+            const scaleMap = {};
+            if (!scaleText) return scaleMap;
+            
+            const parts = scaleText.toLowerCase().split(/[\s,]+/);
+            for (const part of parts) {
+                if (part.length >= 2) {
+                    const swara = part[0];
+                    const variant = part.slice(1);
+                    if (['r', 'g', 'm', 'd', 'n'].includes(swara) && /^[1-9]/.test(variant)) {
+                        scaleMap[swara] = part; // Store full notation (e.g., "r2" not just "2")
+                    }
+                }
+            }
+            return scaleMap;
+        }
+
+        // Resolve phrase with scale defaults and phrase-level overrides
+        // Returns the fully resolved phrase where each bare swara is replaced with variant
+        function resolvePhrase(phraseDisplay, scaleMap) {
+            let resolved = '';
+            for (let i = 0; i < phraseDisplay.length; i++) {
+                const char = phraseDisplay[i].toLowerCase();
+                
+                if (char === ',' || char === ' ') {
+                    resolved += char;
+                } else if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    // Check if this note has an explicit variant in phrase
+                    if (i + 1 < phraseDisplay.length && /[1-9]/.test(phraseDisplay[i + 1])) {
+                        // Phrase has explicit variant (e.g., r2, g3) - use it
+                        resolved += char + phraseDisplay[i + 1];
+                        i++; // Skip the digit
+                    } else if (char !== 's' && char !== 'p' && scaleMap[char]) {
+                        // No explicit variant, but scale has default for this swara
+                        resolved += scaleMap[char];
+                    } else {
+                        // No variant, use bare swara or fixed note (s, p)
+                        resolved += char;
+                    }
+                } else {
+                    resolved += char;
+                }
+            }
+            return resolved;
+        }
+
         // ============================================================================
         // MODULE 3: METADATA MANAGEMENT
         // ============================================================================
@@ -1389,6 +1453,7 @@
             currentSong.beats = parseInt(document.getElementById('beats').value) || 8;
             currentSong.nadai = parseInt(document.getElementById('nadai').value) || 4;
             currentSong.eduppu = parseInt(document.getElementById('eduppu').value) || 1;
+            currentSong.scale = document.getElementById('scaleInput').value.trim();
             recalculate();
         }
 
@@ -1692,39 +1757,74 @@
         }
 
         function renderSpreadsheetLine(tbody, label, lineData, cycleLength) {
-            // Notes row
-            const notesRow = tbody.insertRow();
-            const labelCell = notesRow.insertCell();
-            labelCell.className = 'spreadsheet-label';
-            labelCell.textContent = label;
-
+            // Get phrase display (with chromatic variants applied)
+            const scaleMap = parseScale(currentSong.scale);
             const phraseDisplay = lineData.phraseDisplay || '';
-            const notes = phraseDisplay.padEnd(cycleLength, ' ').substring(0, cycleLength);
-
-            for (let i = 0; i < cycleLength; i++) {
-                const cell = notesRow.insertCell();
-                cell.textContent = notes[i] === ',' ? '-' : (notes[i] === ' ' ? '' : notes[i]);
-                if (i === lineData.eduppu - 1) {
-                    cell.className = 'spreadsheet-landing';
-                }
+            const resolvedPhrase = resolvePhrase(phraseDisplay, scaleMap);
+            
+            // Calculate leading commas and total items
+            const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu);
+            const fullPhrase = ','.repeat(leadingCommas) + resolvedPhrase;
+            
+            // Split into rows based on cycleLength
+            const rows = [];
+            for (let i = 0; i < fullPhrase.length; i += cycleLength) {
+                rows.push(fullPhrase.substring(i, i + cycleLength));
             }
-
-            // Lyrics row
-            const lyricsRow = tbody.insertRow();
-            const lyricsLabel = lyricsRow.insertCell();
-            lyricsLabel.className = 'spreadsheet-label';
-            lyricsLabel.textContent = 'Lyrics';
-
-            if (lineData.lyrics) {
-                const lyricsParts = lineData.lyrics.split('|');
+            
+            // If empty phrase, show one empty row
+            if (rows.length === 0) {
+                rows.push('');
+            }
+            
+            // Render rows
+            rows.forEach((rowContent, rowIndex) => {
+                // Notes row
+                const notesRow = tbody.insertRow();
+                const labelCell = notesRow.insertCell();
+                labelCell.className = 'spreadsheet-label';
+                
+                // Only show label on first row of multi-row phrase
+                if (rowIndex === 0) {
+                    labelCell.textContent = label;
+                } else {
+                    labelCell.textContent = `  (cont'd)`;
+                }
+                
+                // Pad row to cycleLength and render cells
+                const paddedRow = rowContent.padEnd(cycleLength, ' ');
+                let landingCellIndex = -1;
+                
+                // Calculate if landing falls on this row (only for first row)
+                if (rowIndex === 0) {
+                    landingCellIndex = lineData.eduppu - 1;
+                }
+                
                 for (let i = 0; i < cycleLength; i++) {
-                    const cell = lyricsRow.insertCell();
-                    cell.textContent = lyricsParts[i] || '';
-                    if (i === lineData.eduppu - 1) {
+                    const cell = notesRow.insertCell();
+                    cell.textContent = paddedRow[i] === ',' ? '-' : (paddedRow[i] === ' ' ? '' : paddedRow[i]);
+                    if (i === landingCellIndex) {
                         cell.className = 'spreadsheet-landing';
                     }
                 }
-            }
+                
+                // Lyrics row (only for first row of phrase)
+                if (rowIndex === 0 && lineData.lyrics) {
+                    const lyricsRow = tbody.insertRow();
+                    const lyricsLabel = lyricsRow.insertCell();
+                    lyricsLabel.className = 'spreadsheet-label';
+                    lyricsLabel.textContent = 'Lyrics';
+                    
+                    const lyricsParts = lineData.lyrics.split('|');
+                    for (let i = 0; i < cycleLength; i++) {
+                        const cell = lyricsRow.insertCell();
+                        cell.textContent = lyricsParts[i] || '';
+                        if (i === landingCellIndex) {
+                            cell.className = 'spreadsheet-landing';
+                        }
+                    }
+                }
+            });
         }
 
         // ============================================================================
@@ -1892,6 +1992,7 @@
                         nadai: 4,
                         eduppu: 4,
                         tags: [],
+                        scale: '',
                         mainPhrase: {
                             phraseText: '',
                             phraseDisplay: '',
@@ -2118,6 +2219,7 @@
             document.getElementById('beats').value = currentSong.beats;
             document.getElementById('nadai').value = currentSong.nadai;
             document.getElementById('eduppu').value = currentSong.eduppu;
+            document.getElementById('scaleInput').value = currentSong.scale || '';
             document.getElementById('phraseInput').value = currentSong.mainPhrase.phraseText || '';
             document.getElementById('phraseComments').value = currentSong.phraseComments || '';
 
@@ -2162,6 +2264,7 @@
             document.getElementById('beats').addEventListener('change', updateMetadata);
             document.getElementById('nadai').addEventListener('change', updateMetadata);
             document.getElementById('eduppu').addEventListener('change', updateMetadata);
+            document.getElementById('scaleInput').addEventListener('change', updateMetadata);
             document.getElementById('phraseInput').addEventListener('input', () => {
                 updatePhrase();
                 captureHistory();
