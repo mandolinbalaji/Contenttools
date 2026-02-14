@@ -567,6 +567,7 @@ def media(relpath):
 
 # ===== KANAKKU ENDPOINTS =====
 KANAKKU_FILE = BASE_DIR / "kanakku.json"
+KALPANA_SWARA_FILE = BASE_DIR / "kalpana-swara-composer.json"
 
 def _load_kanakkus():
     """Load all saved kanakkus from kanakku.json"""
@@ -582,6 +583,21 @@ def _save_kanakkus(kanakkus):
     """Save kanakkus to kanakku.json"""
     with open(KANAKKU_FILE, 'w', encoding='utf-8') as f:
         json.dump(kanakkus, f, indent=2, ensure_ascii=False)
+
+def _load_kalpana_swara_songs():
+    """Load all KalpanaSwaramComposer songs from kalpana-swara-composer.json"""
+    if not KALPANA_SWARA_FILE.exists():
+        return []
+    try:
+        with open(KALPANA_SWARA_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return []
+
+def _save_kalpana_swara_songs(songs):
+    """Save KalpanaSwaramComposer songs to kalpana-swara-composer.json"""
+    with open(KALPANA_SWARA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(songs, f, indent=2, ensure_ascii=False)
 
 def _save_midi_file(kanakku_name, midi_file_data_b64):
     """
@@ -696,6 +712,84 @@ def delete_kanakku(kanakku_id):
     kanakkus = [k for k in kanakkus if k.get('id') != kanakku_id]
     _save_kanakkus(kanakkus)
     return jsonify({"success": True})
+
+
+# ===== KALPANA SWARA COMPOSER ENDPOINTS =====
+
+@app.route('/api/kalpana-swara-songs', methods=['GET'])
+def get_kalpana_swara_songs():
+    """Get all saved KalpanaSwaramComposer songs"""
+    songs = _load_kalpana_swara_songs()
+    return jsonify(songs)
+
+
+@app.route('/api/kalpana-swara-songs', methods=['POST'])
+def save_kalpana_swara_song():
+    """Save a new KalpanaSwaramComposer song"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    # Generate unique ID if not present
+    if not data.get('id'):
+        data['id'] = str(uuid.uuid4())
+    
+    # Add timestamp
+    data['lastModified'] = datetime.now().isoformat()
+    if not data.get('createdDate'):
+        data['createdDate'] = data['lastModified']
+    
+    songs = _load_kalpana_swara_songs()
+    
+    # Check if updating existing song
+    existing_idx = next((i for i, s in enumerate(songs) if s.get('id') == data['id']), None)
+    if existing_idx is not None:
+        songs[existing_idx] = data
+    else:
+        songs.insert(0, data)  # Add to front of list
+    
+    _save_kalpana_swara_songs(songs)
+    return jsonify(data), 201
+
+
+@app.route('/api/kalpana-swara-songs/<song_id>', methods=['GET'])
+def get_kalpana_swara_song(song_id):
+    """Get a specific KalpanaSwaramComposer song"""
+    songs = _load_kalpana_swara_songs()
+    song = next((s for s in songs if s.get('id') == song_id), None)
+    if song:
+        return jsonify(song)
+    return jsonify({"error": "Song not found"}), 404
+
+
+@app.route('/api/kalpana-swara-songs/<song_id>', methods=['PUT'])
+def update_kalpana_swara_song(song_id):
+    """Update an existing KalpanaSwaramComposer song"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    data['id'] = song_id
+    data['lastModified'] = datetime.now().isoformat()
+    
+    songs = _load_kalpana_swara_songs()
+    for i, song in enumerate(songs):
+        if song.get('id') == song_id:
+            songs[i] = data
+            _save_kalpana_swara_songs(songs)
+            return jsonify(data)
+    
+    return jsonify({"error": "Song not found"}), 404
+
+
+@app.route('/api/kalpana-swara-songs/<song_id>', methods=['DELETE'])
+def delete_kalpana_swara_song(song_id):
+    """Delete a KalpanaSwaramComposer song"""
+    songs = _load_kalpana_swara_songs()
+    songs = [s for s in songs if s.get('id') != song_id]
+    _save_kalpana_swara_songs(songs)
+    return jsonify({"success": True})
+
 
 @app.route('/api/open-midi', methods=['POST'])
 def open_midi():

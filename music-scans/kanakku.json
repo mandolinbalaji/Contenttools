@@ -1,9 +1,9 @@
 [
   {
     "name": "555ending_Misra_3",
-    "phrase": "ns,r,,,r,,,rrg",
+    "phrase": "ns,r,,,r,,,\nrrg",
     "beats": 7,
-    "nadai": 4,
+    "nadai": 2,
     "eduppu": 4,
     "sruthi": "C#",
     "ragaNotes": "r2g2m1d2n2",

@@ -1611,7 +1611,7 @@
       "/KrishnaneeBegane Yaman Kalyani.jpeg.png",
       "https://karnatik.com/c1298.shtml"
     ],
-    "lyrics": "krishnaa nee bEganE baarO\nraagam: yamunaa kalyaaNi\n\n65 mEcakalyaaNi janya\nAa: S R2 G3 P M2 P D2 S\nAv: S D2 P M2 P G3 R2 S\n\nThalam: Misra Chapu, Mishra chapu\nComposer: Vyaasaraaya\nLanguage: KannaDa\n\npallavi\n\nkrishna nee bEganE baarO\n\nanupallavi\n\nbEganE baarO mukhavannu tOrO\n(krishna nee bEganE baarO)\n\ncaraNam 1\n\nkaalaalandhugE gejje nIlada baavuli\nnIlavarNane naaTya vaaduta baarO\n(krishna nee bEganE baarO)\n\ncaraNam 2\n\nUdiyalli udigejje beraLalli ungura\nkoraLalli haakida vaijayantiya maalE\n(krishna nee bEganE baarO)\n\ncaraNam 3\n\nkaashi peethambara kaiyalli koLalu\npUsida shreegandha mayyOLagamma!\n(krishna nee bEganE baarO)\n\ncaraNam 4\n\ntaayige baayalli jagavannu torida\njagadhOddhaaraka namma uDupi shree krishna\n(krishna nee bEganE baarO)",
+    "lyrics": "krishnaa nee bEganE baarO\nraagam: yamunaa kalyaaNi\n\n65 mEcakalyaaNi janya\nAa: S R2 G3 P M2 P D2 S\nAv: S D2 P M2 P G3 R2 S\n\ntaaLam: caapu\nComposer: Vyaasaraaya\nLanguage: KannaDa\n\npallavi\n\nkrishna nee bEganE baarO\n\nanupallavi\n\nbEganE baarO mukhavannu tOrO\n(krishna nee bEganE baarO)\n\ncaraNam 1\n\nkaalaalandhugE gejje nIlada baavuli\nnIlavarNane naaTya vaaduta baarO\n(krishna nee bEganE baarO)\n\ncaraNam 2\n\nUdiyalli udigejje beraLalli ungura\nkoraLalli haakida vaijayantiya maalE\n(krishna nee bEganE baarO)\n\ncaraNam 3\n\nkaashi peethambara kaiyalli koLalu\npUsida shreegandha mayyOLagamma!\n(krishna nee bEganE baarO)\n\ncaraNam 4\n\ntaayige baayalli jagavannu torida\njagadhOddhaaraka namma uDupi shree krishna\n(krishna nee bEganE baarO)",
     "id": "d149810f-5251-4ea7-a37e-6cf2cefae263",
     "tags": []
   },
@@ -2151,24 +2151,13 @@
   },
   {
     "title": "Bhajare Bhaja Mansa",
-    "lyrics": "Raga Kanada, Kannada\nThalam Mishra Chapu, Misra Chapu\npallavi\nbhajarE bhaja mAnasa rAmaM\n\nanupallavi\naja mukha Suka vinutaM Subha caritaM (bhaja)\n\ncaraNam 1\nnirmita lOkaM nirjita SOkaM\npAlita muni janam-adhunA nRpa pAkaM (bhaja)\n\ncaraNam 2\nSankara mitraM SyAmaLa gAtraM\nkinkara jana gaNa 1tApa traya 2tamO-mitraM (bhaja)\n\ncaraNam 3\nbhU sama SAntaM bhUjA kAntaM\nvAram-akhiladaM tyAgarAja hRd-bhAntaM (bhaja)",
+    "lyrics": "bajarE rE maanasaa\nraagam: aabhEri\n22 karaharapriya janya\nAa: S G2 M1 P N2 S\nAv: S N2 D2 P M1 G2 R2 S\n\ntaaLam: aadi\nComposer: Mysore VaasudEvaacaarya\nLanguage:\n\npallavi\n\nbhajarE rE mAnasa shrI raghuvIram bhukti mukti pradam vAsudEvam harim\n(bhajarE)\n\nanupallavi\n\nvrjina vidUram vishvAdhAram sujana mandAram sundarAkAram\n(bhajarE)\n\ncaraNam\n\nrAvana mardanam rakSita bhuvanam ravi shashi nayanam ravijAri mathanam\nravijAdi vAnara parivrtam naravaram ratnahAra parishObhita kandgharam\n\nmadhyama kaalam\n\nravi shashi kuja budha guru shukra shanaishcara rAhu kEtu nEtAram\nrAjakumAram rAmam pavanajAptam avanijA manOharam\n(bhajarE)",
     "links": [
       "https://www.youtube.com/watch?v=-e4ImCCTtZI&list=RD-e4ImCCTtZI&start_radio=1"
     ],
     "tags": [
-      "Thyagaraja",
-      "Misra Chapu"
+      "Thyagaraja"
     ],
     "id": "16a74ee2-ef39-4df5-9c0d-5daf01af97c0"
-  },
-  {
-    "title": "Sujanajeevana",
-    "lyrics": "Ragam: Khamas (28th Mela janyam)\n\n                ARO:  S M1 G3 M1 N2 D2 N2 P D2 N2 S                 ||\n                AVA:  S N2 D2 P M1 G3 R2 S                        ||\n\nTalam: Rupakam\nComposer: Tyagaraja\n\n \n\nPallavi:\n\nSujana Jivana Rama Suguna Bhushana! Rama!\n\n \n\nAnupallavi:\n\nBhujaga Bhushanarccita! Budhajanavanat\n\najavandita! Sritachandana! Dashaturanga! Maamava\n\n \n\nCharanam:\n\nCharunetra! Srikalatra! Sriramya Gatra!\n\nTarakanama Sucharitra Dasharatha Putra\n\nTarakaadhipanana! Dharmapaalaka\n\nTaraya Raghuvara! Nirmala Tyagarajasannuta",
-    "links": [],
-    "tags": [
-      "Thyagaraja",
-      "Rupakam"
-    ],
-    "id": "ef11458c-8877-46e8-b93d-d4b725ca50c6"
   }
 ]

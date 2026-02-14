@@ -640,6 +640,363 @@
                 width: 25px;
             }
         }
+
+        /* ===== PRACTICE MODE STYLES ===== */
+        /* High-contrast color palette */
+        :root {
+            --practice-primary: #667eea;
+            --practice-dark: #2d3561;
+            --practice-accent: #1dd1a1;
+            --practice-warning: #ff6b6b;
+            --practice-bg: #ffffff;
+            --practice-bg-light: #f8f9fa;
+            --practice-border-dark: #1a1a1a;
+            --practice-border-light: #d0d0d0;
+            --practice-text-dark: #2d3561;
+            --practice-text-light: #666666;
+        }
+
+        /* Practice mode container - full screen layout */
+        .practice-mode {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            background: var(--practice-bg);
+            z-index: 1000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+        }
+
+        .practice-mode.active {
+            display: flex;
+        }
+
+        /* Hide normal UI when in practice mode */
+        .app-container {
+            transition: opacity 0.3s ease;
+        }
+
+        .app-container.practice-active {
+            display: none;
+        }
+
+        /* Practice header */
+        .practice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, var(--practice-primary), #764ba2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        .practice-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .practice-info-badges {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .practice-badge {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .practice-exit-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .practice-exit-btn:hover {
+            background: white;
+            color: var(--practice-primary);
+        }
+
+        /* Practice viewport - scrollable staff area */
+        .practice-viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 40px;
+            background: var(--practice-bg-light);
+            overflow-y: auto;
+            gap: 40px;
+        }
+
+        /* Large staff cells for practice */
+        .practice-mode .subdivision {
+            width: 60px !important;
+            height: 80px !important;
+            border: 2px solid var(--practice-border-light) !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: default;
+            background: var(--practice-bg) !important;
+        }
+
+        /* Large swara text */
+        .practice-mode .subdivision-char {
+            font-size: 40px !important;
+            font-weight: 700 !important;
+            color: var(--practice-text-dark) !important;
+            line-height: 1 !important;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Large beat numbers */
+        .practice-mode .subdivision-number {
+            font-size: 18px !important;
+            color: #999 !important;
+            font-weight: 600 !important;
+            line-height: 1 !important;
+        }
+
+        /* Rest cells - visually distinct */
+        .practice-mode .subdivision.rest {
+            background: #f0f0f0 !important;
+        }
+
+        /* Beat separators - stronger in practice */
+        .practice-mode .subdivision.beat-end {
+            border-right: 4px solid var(--practice-primary) !important;
+        }
+
+        /* Cycle boundaries - very strong */
+        .practice-mode .subdivision.cycle-end {
+            border-right: 6px solid var(--practice-border-dark) !important;
+        }
+
+        /* Grouping colors */
+        .practice-mode .subdivision.grouping-highlight {
+            background: #ffd89b !important;
+        }
+
+        /* Playing now - animated highlight */
+        .practice-mode .subdivision.now-playing {
+            background: var(--practice-accent) !important;
+            color: white !important;
+            box-shadow: 0 0 12px var(--practice-accent) !important;
+            animation: practice-pulse 0.6s ease-in-out;
+        }
+
+        .practice-mode .subdivision.now-playing .subdivision-char {
+            color: white !important;
+        }
+
+        @keyframes practice-pulse {
+            0%, 100% { box-shadow: 0 0 8px var(--practice-accent); }
+            50% { box-shadow: 0 0 16px var(--practice-accent); }
+        }
+
+        /* Cycle section */
+        .practice-cycle-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .practice-cycle-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 12px;
+        }
+
+        .practice-cycle-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--practice-text-dark);
+        }
+
+        .practice-landing-marker {
+            font-size: 24px;
+            color: var(--practice-warning);
+            font-weight: bold;
+        }
+
+        .practice-landing-label {
+            font-size: 12px;
+            color: var(--practice-text-light);
+            font-style: italic;
+        }
+
+        /* Staff grid - larger in practice */
+        .practice-mode .staff-grid {
+            border: 3px solid var(--practice-border-dark) !important;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .practice-mode .staff-row {
+            height: 80px !important;
+        }
+
+        .practice-mode .beat-group {
+            border-right: 4px solid var(--practice-primary) !important;
+        }
+
+        /* Kalpana sections */
+        .practice-kalpana-section {
+            padding: 20px;
+            background: white;
+            border-left: 4px solid var(--practice-accent);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .practice-kalpana-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--practice-primary);
+            margin-bottom: 8px;
+        }
+
+        .practice-kalpana-info {
+            font-size: 12px;
+            color: var(--practice-text-light);
+            margin-bottom: 8px;
+        }
+
+        .practice-kalpana-comment {
+            font-size: 13px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #f9f9f9;
+            border-left: 2px solid #ccc;
+            border-radius: 2px;
+        }
+
+        /* Practice controls bar */
+        .practice-controls {
+            display: flex;
+            gap: 16px;
+            padding: 20px 40px;
+            background: var(--practice-bg-light);
+            border-top: 2px solid var(--practice-border-light);
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .practice-control-btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 2px solid var(--practice-primary);
+            background: white;
+            color: var(--practice-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .practice-control-btn:hover {
+            background: var(--practice-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .practice-control-btn:active {
+            transform: translateY(0);
+        }
+
+        .practice-control-btn.primary {
+            background: var(--practice-primary);
+            color: white;
+            font-size: 16px;
+            padding: 14px 32px;
+        }
+
+        .practice-control-btn.primary:hover {
+            background: #764ba2;
+        }
+
+        .practice-speed-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid var(--practice-border-light);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .practice-speed-control label {
+            font-weight: 600;
+            color: var(--practice-text-dark);
+            white-space: nowrap;
+        }
+
+        .practice-speed-control select {
+            font-size: 13px;
+            padding: 4px 8px;
+            border: 1px solid var(--practice-border-light);
+            border-radius: 3px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .practice-control-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--practice-border-light);
+        }
+
+        /* Toggle button in main header */
+        .practice-mode-btn {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .practice-mode-btn:hover {
+            background: white;
+            color: #667eea;
+        }
     </style>
 </head>
 <body>
@@ -675,6 +1032,7 @@
                 <button class="header-btn" id="renderMidiBtn" title="Render MIDI">🎹 MIDI</button>
                 <button class="header-btn" id="openMidiBtn" title="Open MIDI">📂 MIDI</button>
                 <button class="header-btn" id="saveBtn" title="Save phrase (Ctrl+S)">💾 Save</button>
+                <button class="practice-mode-btn" id="practiceModeBtn" title="Practice Mode">👁 Practice</button>
             </div>
         </div>
 
@@ -799,6 +1157,13 @@
                         <button class="toolbar-btn" id="numberingToggleBtn" title="Toggle numbering direction (Reverse/Forward)">Rev</button>
                         <button class="toolbar-btn" id="exportBtn" title="Export as Text">Export</button>
                     </div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; padding: 8px; background: #f9f9f9; border-radius: 4px; border: 1px solid #eee;">
+                        <label for="playVariationSelect" style="font-weight: 600; color: #333; font-size: 0.85em; white-space: nowrap;">Play:</label>
+                        <select id="playVariationSelect" style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.85em; flex: 1; min-width: 150px;">
+                            <option value="main">Main Phrase</option>
+                        </select>
+                        <button class="toolbar-btn" id="playVariationBtn" style="padding: 6px 12px; font-size: 0.85em; white-space: nowrap;">▶ Play</button>
+                    </div>
                     <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                         <textarea class="phrase-input" id="phrase" placeholder="Type: s, r, g, m, p, d, n or enter pattern" autocomplete="off" spellcheck="false" style="width: 50%; min-height: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-family: monospace; font-size: 15px; resize: vertical; word-wrap: break-word; white-space: pre-wrap;" wrap="soft"></textarea>
                         <textarea id="commentInput" placeholder="Comments (optional)" autocomplete="off" spellcheck="false" style="width: 50%; min-height: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-family: monospace; font-size: 0.9em; resize: vertical; word-wrap: break-word; white-space: pre-wrap;" wrap="soft"></textarea>
@@ -874,6 +1239,45 @@
         </div>
     </div>
 
+    <!-- PRACTICE MODE VIEW -->
+    <div class="practice-mode" id="practiceMode">
+        <div class="practice-header">
+            <h1>♪ Practice</h1>
+            <div class="practice-info-badges">
+                <div class="practice-badge"><span id="practicePhraseName">Phrase</span></div>
+                <div class="practice-badge">Beats: <span id="practiceBeats">8</span></div>
+                <div class="practice-badge">Nadai: <span id="practiceNadai">4</span></div>
+                <div class="practice-badge">Cycle: <span id="practiceCycle">32</span></div>
+            </div>
+            <button class="practice-exit-btn" id="practiceExitBtn">✕ Exit</button>
+        </div>
+
+        <div class="practice-viewport" id="practiceViewport">
+            <div style="color: #999; font-style: italic; text-align: center;">Loading practice view...</div>
+        </div>
+
+        <div class="practice-controls">
+            <button class="practice-control-btn primary" id="practicePlayBtn">▶ Play</button>
+            <div class="practice-control-divider"></div>
+            <div class="practice-speed-control">
+                <label>BPM:</label>
+                <select id="practiceBpmSelect">
+                    <option value="60">60</option>
+                    <option value="70">70</option>
+                    <option value="80" selected>80</option>
+                    <option value="90">90</option>
+                    <option value="100">100</option>
+                    <option value="120">120</option>
+                    <option value="140">140</option>
+                    <option value="160">160</option>
+                </select>
+            </div>
+            <div class="practice-control-divider"></div>
+            <button class="practice-control-btn" id="practiceRepeatBtn">🔁 Repeat</button>
+            <button class="practice-control-btn" id="practiceResetBtn">⟲ Reset</button>
+        </div>
+    </div>
+
     <script>
         // DOM Elements
         const beatsInput = document.getElementById('beats');
@@ -926,6 +1330,24 @@
         const kalpanaContainer = document.getElementById('kalpanaContainer');
         const kalpanaEmpty = document.getElementById('kalpanaEmpty');
 
+        // PRACTICE MODE DOM ELEMENTS
+        const practiceMode = document.getElementById('practiceMode');
+        const practiceViewport = document.getElementById('practiceViewport');
+        const practiceModeBtn = document.getElementById('practiceModeBtn');
+        const practiceExitBtn = document.getElementById('practiceExitBtn');
+        const practicePlayBtn = document.getElementById('practicePlayBtn');
+        const practiceRepeatBtn = document.getElementById('practiceRepeatBtn');
+        const practiceResetBtn = document.getElementById('practiceResetBtn');
+        const practiceBpmSelect = document.getElementById('practiceBpmSelect');
+        const practicePhraseName = document.getElementById('practicePhraseName');
+        const practiceBeatsDisplay = document.getElementById('practiceBeats');
+        const practiceNadaiDisplay = document.getElementById('practiceNadai');
+        const practiceCycleDisplay = document.getElementById('practiceCycle');
+
+        // PLAY VARIATION SELECTOR
+        const playVariationSelect = document.getElementById('playVariationSelect');
+        const playVariationBtn = document.getElementById('playVariationBtn');
+
         // State
         let dotMode = null;
         let history = [''];
@@ -939,6 +1361,462 @@
         let isPlaying = false;  // Track if audio is currently playing
         let currentAudioContext = null;  // Store reference to current audio context
         let currentOscillators = [];  // Store oscillators to stop them
+        let practiceMode_active = false;  // Track if practice mode is enabled
+
+        // ============================================================================
+        // PRACTICE MODE FUNCTIONS
+        // ============================================================================
+        
+        /**
+         * Update play variation selector with current Kalpana lines
+         */
+        function updatePlayVariationSelect() {
+            const currentValue = playVariationSelect.value;
+            playVariationSelect.innerHTML = '<option value="main">Main Phrase</option>';
+            
+            kalpanaLines.forEach((kalpana, index) => {
+                const option = document.createElement('option');
+                option.value = `kalpana_${kalpana.id}`;
+                option.textContent = kalpana.label;
+                playVariationSelect.appendChild(option);
+            });
+            
+            // Restore previous selection if it still exists, otherwise select main
+            if (playVariationSelect.querySelector(`option[value="${currentValue}"]`)) {
+                playVariationSelect.value = currentValue;
+            } else {
+                playVariationSelect.value = 'main';
+            }
+        }
+        
+        /**
+         * Play a specific phrase variation (main or Kalpana)
+         * @param {string} phraseToPlay - The phrase to play (with any leading commas already included)
+         * @param {number} startingPos - Where in the cycle to start
+         */
+        async function playPhrase(phraseToPlay, startingPos) {
+            if (!phraseToPlay.trim()) {
+                alert('No phrase to play');
+                return;
+            }
+            
+            // If already playing, stop it
+            if (isPlaying) {
+                isPlaying = false;
+                playVariationBtn.textContent = '▶ Play';
+                if (currentOscillators) {
+                    currentOscillators.forEach(osc => {
+                        try {
+                            osc.stop();
+                        } catch (e) {}
+                    });
+                    currentOscillators = [];
+                }
+                if (currentAudioContext) {
+                    try {
+                        currentAudioContext.close();
+                    } catch (e) {}
+                    currentAudioContext = null;
+                }
+                return;
+            }
+            
+            isPlaying = true;
+            playVariationBtn.textContent = '⏸️ Stop';
+            
+            const sruthi = sruthiSelect.value;
+            const bpm = parseInt(bpmSelect.value) || 80;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            currentAudioContext = audioContext;
+            currentOscillators = [];
+            
+            const sruthiFrequencies = {
+                'C': { baseFreq: 261.63, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'C#': { baseFreq: 277.18, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'D': { baseFreq: 293.66, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'D#': { baseFreq: 311.13, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'E': { baseFreq: 329.63, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'F': { baseFreq: 349.23, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'F#': { baseFreq: 369.99, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'G': { baseFreq: 392.00, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'G#': { baseFreq: 415.30, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'A': { baseFreq: 440.00, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'A#': { baseFreq: 466.16, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+                'B': { baseFreq: 493.88, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } }
+            };
+            
+            const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
+            const beatDuration = 60 / bpm;
+            const noteDuration = beatDuration / (parseInt(nadaiInput.value) || 4);
+            
+            let currentTime = audioContext.currentTime;
+            let oscArray = [];
+            
+            const swaraNames = { 's': 'Sa', 'r': 'Ri', 'g': 'Ga', 'm': 'Ma', 'p': 'Pa', 'd': 'Dha', 'n': 'Ni' };
+            
+            let i = 0;
+            let noteIndex = 1;
+            while (i < phraseToPlay.length) {
+                const char = phraseToPlay[i].toLowerCase();
+                let actualChar = char;
+                let octaveOffset = 0;
+                
+                if (precomposedDots[char]) {
+                    const dotInfo = precomposedDots[char];
+                    actualChar = dotInfo.base.toLowerCase();
+                    octaveOffset = dotInfo.dotType === 'above' ? 12 : -12;
+                }
+                
+                if (sruthiInfo.notes.hasOwnProperty(actualChar)) {
+                    let j = i + 1;
+                    let ragaOctaveNum = null;
+                    
+                    while (j < phraseToPlay.length) {
+                        const nextChar = phraseToPlay[j];
+                        if (dotAboveMarks.has(nextChar)) {
+                            octaveOffset += 12;
+                            j++;
+                        } else if (dotBelowMarks.has(nextChar)) {
+                            octaveOffset -= 12;
+                            j++;
+                        } else if (nextChar === '\u0300' || nextChar === '\u0301' || nextChar === '\u0302' || nextChar === '\u0303' || nextChar === '\u0304' || nextChar === '\u0305' || nextChar === '\u0306') {
+                            j++;
+                        } else if (/\d/.test(nextChar)) {
+                            ragaOctaveNum = parseInt(nextChar);
+                            j++;
+                        } else {
+                            break;
+                        }
+                    }
+                    i = j - 1;
+                    
+                    if (ragaOctaveNum === null && Object.keys(ragaNotesMap).length > 0) {
+                        if (ragaNotesMap[actualChar] !== undefined) {
+                            ragaOctaveNum = ragaNotesMap[actualChar];
+                        }
+                    }
+                    
+                    let octaveAdjustment = 0;
+                    if (ragaOctaveNum !== null && swaraVariants[actualChar]) {
+                        const variantOffset = swaraVariants[actualChar][ragaOctaveNum];
+                        if (variantOffset !== undefined) {
+                            octaveAdjustment = variantOffset;
+                        }
+                    }
+                    
+                    let baseSemitones = sruthiInfo.notes[actualChar];
+                    const semitones = baseSemitones + octaveOffset + octaveAdjustment;
+                    const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
+                    
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    
+                    currentOscillators.push(osc);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    
+                    osc.frequency.value = frequency;
+                    osc.type = 'sine';
+                    
+                    const attackTime = Math.min(0.01, noteDuration * 0.1);
+                    const releaseTime = Math.min(0.05, noteDuration * 0.2);
+                    const sustainEnd = Math.max(currentTime + noteDuration - releaseTime, currentTime + attackTime);
+                    
+                    gain.gain.setValueAtTime(0, currentTime);
+                    gain.gain.linearRampToValueAtTime(0.3, currentTime + attackTime);
+                    gain.gain.setValueAtTime(0.3, sustainEnd);
+                    gain.gain.linearRampToValueAtTime(0.01, currentTime + noteDuration);
+                    
+                    osc.start(currentTime);
+                    osc.stop(currentTime + noteDuration);
+                    oscArray.push(osc);
+                    
+                    currentTime += noteDuration;
+                    noteIndex++;
+                    
+                } else if (char === ',') {
+                    currentTime += noteDuration;
+                    noteIndex++;
+                } else {
+                    // Unknown character or combining mark - skip
+                }
+                
+                i++;
+            }
+            
+            const totalPlaybackTime = currentTime;
+            setTimeout(() => {
+                if (isPlaying) {
+                    isPlaying = false;
+                    playVariationBtn.textContent = '▶ Play';
+                    currentOscillators = [];
+                }
+            }, totalPlaybackTime * 1000);
+        }
+        
+        /**
+         * Toggle between edit and practice modes
+         */
+        function togglePracticeMode() {
+            practiceMode_active = !practiceMode_active;
+            
+            if (practiceMode_active) {
+                // Enter practice mode
+                document.querySelector('.app-container').classList.add('practice-active');
+                practiceMode.classList.add('active');
+                
+                // Update practice view with current data
+                updatePracticeView();
+                
+                // Sync BPM selector
+                practiceBpmSelect.value = bpmSelect.value;
+            } else {
+                // Exit practice mode
+                document.querySelector('.app-container').classList.remove('practice-active');
+                practiceMode.classList.remove('active');
+                
+                // Stop any playing audio
+                if (isPlaying) {
+                    playBtn.click();
+                }
+            }
+        }
+        
+        /**
+         * Update practice view with current phrase and settings
+         */
+        function updatePracticeView() {
+            const phrase = phraseInput.value;
+            const beats = parseInt(beatsInput.value) || 8;
+            const nadai = parseInt(nadaiInput.value) || 4;
+            const eduppu = parseInt(eduppuInput.value) || 1;
+            const name = kanakkuNameInput.value || 'Unnamed Phrase';
+            const cycleLengthVal = beats * nadai;
+            
+            // Update info displays
+            practicePhraseName.textContent = name;
+            practiceBeatsDisplay.textContent = beats;
+            practiceNadaiDisplay.textContent = nadai;
+            practiceCycleDisplay.textContent = cycleLengthVal;
+            
+            if (!phrase || phrase.length === 0) {
+                practiceViewport.innerHTML = '<div style="color: #999; font-style: italic; text-align: center; padding: 40px;">Enter a phrase to start practicing</div>';
+                return;
+            }
+            
+            // Calculate phrase length and starting position
+            const phraseLength = countSwaras(phrase);
+            let startingPos = eduppu - phraseLength;
+            while (startingPos <= 0) {
+                startingPos += cycleLengthVal;
+            }
+            
+            // Render practice staff
+            renderPracticeStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu, groupingInput.value);
+            
+            // Add Kalpana sections if any
+            if (kalpanaLines.length > 0) {
+                renderPracticeKalpanas(beats, nadai, cycleLengthVal, eduppu);
+            }
+        }
+        
+        /**
+         * Render practice mode staff with large cells
+         */
+        function renderPracticeStaff(phrase, beats, nadai, cycleLengthVal, startingPos, eduppu, grouping) {
+            let html = '';
+            const groupColorMap = parseGroupingColors(grouping);
+            const totalNotes = startingPos - 1 + countSwaras(phrase);
+            const totalCycles = Math.ceil(totalNotes / cycleLengthVal);
+            
+            for (let cycleNum = 1; cycleNum <= totalCycles; cycleNum++) {
+                // Calculate star position for landing marker
+                const notePos = eduppu;
+                const subdivisionWidth = 60; // Practice mode cell width
+                const normalBorder = 2;
+                const beatEndBorder = 4;
+                const borderDifference = beatEndBorder - normalBorder;
+                const completedBeats = Math.floor((notePos - 1) / nadai);
+                const starLeft = (notePos - 1) * (subdivisionWidth + normalBorder) + completedBeats * borderDifference + 25;
+                
+                html += `
+                    <div class="practice-cycle-section">
+                        <div class="practice-cycle-header">
+                            <div class="practice-cycle-number">Cycle ${cycleNum}</div>
+                            <div class="practice-landing-marker">★</div>
+                            <div class="practice-landing-label">(Position ${eduppu})</div>
+                        </div>
+                        <div class="staff-grid" style="position: relative;"><div class="staff-row" style="position: relative;">
+                `;
+                
+                for (let beat = 1; beat <= beats; beat++) {
+                    html += '<div class="beat-group">';
+                    for (let sub = 1; sub <= nadai; sub++) {
+                        const posInCycle = (beat - 1) * nadai + sub;
+                        const posInPhrase = cycleNum === 1 ? 
+                            posInCycle - startingPos + 1 : 
+                            posInCycle + (cycleNum - 1) * cycleLengthVal - startingPos + 1;
+                        
+                        let cellClass = 'subdivision';
+                        let cellContent = '';
+                        let indexDisplay = '';
+                        
+                        // First cycle: account for starting position
+                        if (cycleNum === 1 && posInCycle < startingPos) {
+                            cellClass += ' rest';
+                            cellContent = ',';
+                            indexDisplay = posInCycle;
+                        } else if (posInPhrase > 0 && posInPhrase <= countSwaras(phrase)) {
+                            // Extract character from phrase
+                            let charCount = 0;
+                            for (let i = 0; i < phrase.length; i++) {
+                                const c = phrase[i];
+                                if (c !== '\n' && c !== '\r' && c !== ' ') {
+                                    const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n', 'S', 'R', 'G', 'M', 'P', 'D', 'N', ',',
+                                        'ṡ', 'ṙ', 'ġ', 'ṁ', 'ṗ', 'ḋ', 'ṅ', 'ṣ', 'ṛ', 'ṃ', 'ḍ', 'ṇ', '\u0323',
+                                        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+                                    if (validSwaras.has(c)) {
+                                        charCount++;
+                                        if (charCount === posInPhrase) {
+                                            cellContent = c;
+                                            indexDisplay = charCount;
+                                            if (c === ',') cellClass += ' rest';
+                                            if (groupColorMap && groupColorMap[charCount]) {
+                                                cellClass += ' grouping-highlight';
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            cellClass += ' rest';
+                            cellContent = ',';
+                            indexDisplay = posInCycle;
+                        }
+                        
+                        // Apply beat/cycle end styling
+                        if (beat < beats && sub === nadai) {
+                            cellClass += ' beat-end';
+                        } else if (beat === beats && sub === nadai && cycleNum < totalCycles) {
+                            cellClass += ' cycle-end';
+                        }
+                        
+                        html += `
+                            <div class="${cellClass}">
+                                <div class="subdivision-char">${cellContent}</div>
+                                <div class="subdivision-number">${indexDisplay}</div>
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                }
+                
+                html += '</div></div></div></div>';
+            }
+            
+            practiceViewport.innerHTML = html;
+        }
+        
+        /**
+         * Render Kalpana variations in practice view
+         */
+        function renderPracticeKalpanas(beats, nadai, cycleLengthVal, eduppu) {
+            let html = '<hr style="margin: 40px 0; border: 1px solid #ddd;">';
+            
+            kalpanaLines.forEach((kalpana, index) => {
+                html += `
+                    <div class="practice-kalpana-section">
+                        <div class="practice-kalpana-label">${kalpana.label}</div>
+                        <div class="practice-kalpana-info">Eduppu: ${kalpana.eduppu} | Leading commas: ${kalpana.leadingCommas}</div>
+                `;
+                
+                if (kalpana.comment) {
+                    html += `<div class="practice-kalpana-comment">${kalpana.comment}</div>`;
+                }
+                
+                // Render Kalpana staff
+                const fullPhrase = addLeadingCommas(kalpana.phrase, kalpana.leadingCommas);
+                const kalpanaLength = countSwaras(fullPhrase);
+                let kalpanaStartPos = kalpana.eduppu - kalpanaLength;
+                while (kalpanaStartPos <= 0) {
+                    kalpanaStartPos += cycleLengthVal;
+                }
+                
+                const totalNotes = kalpanaStartPos - 1 + kalpanaLength;
+                const totalCycles = Math.ceil(totalNotes / cycleLengthVal);
+                
+                for (let cycleNum = 1; cycleNum <= totalCycles; cycleNum++) {
+                    html += `<div class="practice-cycle-section" style="margin-top: 16px;">`;
+                    html += `<div class="staff-grid"><div class="staff-row">`;
+                    
+                    for (let beat = 1; beat <= beats; beat++) {
+                        html += '<div class="beat-group">';
+                        for (let sub = 1; sub <= nadai; sub++) {
+                            const posInCycle = (beat - 1) * nadai + sub;
+                            const posInPhrase = cycleNum === 1 ? 
+                                posInCycle - kalpanaStartPos + 1 : 
+                                posInCycle + (cycleNum - 1) * cycleLengthVal - kalpanaStartPos + 1;
+                            
+                            let cellClass = 'subdivision';
+                            let cellContent = '';
+                            let indexDisplay = '';
+                            
+                            if (cycleNum === 1 && posInCycle < kalpanaStartPos) {
+                                cellClass += ' rest';
+                                cellContent = ',';
+                                indexDisplay = posInCycle;
+                            } else if (posInPhrase > 0 && posInPhrase <= countSwaras(fullPhrase)) {
+                                let charCount = 0;
+                                for (let i = 0; i < fullPhrase.length; i++) {
+                                    const c = fullPhrase[i];
+                                    if (c !== '\n' && c !== '\r' && c !== ' ') {
+                                        const validSwaras = new Set(['s', 'r', 'g', 'm', 'p', 'd', 'n', 'S', 'R', 'G', 'M', 'P', 'D', 'N', ',',
+                                            'ṡ', 'ṙ', 'ġ', 'ṁ', 'ṗ', 'ḋ', 'ṅ', 'ṣ', 'ṛ', 'ṃ', 'ḍ', 'ṇ', '\u0323',
+                                            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+                                        if (validSwaras.has(c)) {
+                                            charCount++;
+                                            if (charCount === posInPhrase) {
+                                                cellContent = c;
+                                                indexDisplay = charCount;
+                                                if (c === ',') cellClass += ' rest';
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                cellClass += ' rest';
+                                cellContent = ',';
+                                indexDisplay = posInCycle;
+                            }
+                            
+                            if (beat < beats && sub === nadai) {
+                                cellClass += ' beat-end';
+                            } else if (beat === beats && sub === nadai && cycleNum < totalCycles) {
+                                cellClass += ' cycle-end';
+                            }
+                            
+                            html += `
+                                <div class="${cellClass}">
+                                    <div class="subdivision-char">${cellContent}</div>
+                                    <div class="subdivision-number">${indexDisplay}</div>
+                                </div>
+                            `;
+                        }
+                        html += '</div>';
+                    }
+                    
+                    html += '</div></div></div>';
+                }
+                
+                html += '</div>';
+            });
+            
+            practiceViewport.innerHTML += html;
+        }
 
         // ============================================================================
         // KALPANA SWARA (MULTIPLE VARIATIONS) STATE
@@ -1248,6 +2126,9 @@
                     renderKalpanaLine(kalpana);
                 });
             }
+            
+            // Update the play variation selector dropdown
+            updatePlayVariationSelect();
         }
 
         /**
@@ -2169,6 +3050,35 @@
             }, totalPlaybackTime * 1000);
         });
 
+        /**
+         * Play button for variation selector - plays main phrase or selected Kalpana
+         */
+        playVariationBtn.addEventListener('click', async () => {
+            const selectedValue = playVariationSelect.value;
+            let phraseToPlay = '';
+            let startingPos = 0;
+            
+            if (selectedValue === 'main') {
+                // Play main phrase
+                phraseToPlay = phraseInput.value;
+                startingPos = parseInt(eduppuInput.value) || 1;
+            } else if (selectedValue.startsWith('kalpana_')) {
+                // Find and play selected Kalpana
+                const kalpanaId = selectedValue.replace('kalpana_', '');
+                const kalpana = kalpanaLines.find(k => k.id === kalpanaId);
+                if (kalpana) {
+                    phraseToPlay = kalpana.fullPhrase;  // Use fullPhrase which includes leading commas
+                    startingPos = kalpana.eduppu;
+                }
+            }
+            
+            if (phraseToPlay.trim()) {
+                await playPhrase(phraseToPlay, startingPos);
+            } else {
+                alert('No variation selected to play');
+            }
+        });
+
         saveBtn.addEventListener('click', async () => {
             const phrase = phraseInput.value;
 
@@ -2250,6 +3160,69 @@
             applyFilters();
         });
 
+        // PRACTICE MODE EVENT LISTENERS
+        practiceModeBtn.addEventListener('click', () => {
+            if (!phraseInput.value.trim()) {
+                alert('Please enter a phrase first');
+                return;
+            }
+            togglePracticeMode();
+        });
+
+        practiceExitBtn.addEventListener('click', () => {
+            togglePracticeMode();
+        });
+
+        practicePlayBtn.addEventListener('click', () => {
+            // Sync BPM between practice mode and main view
+            bpmSelect.value = practiceBpmSelect.value;
+            playBtn.click();
+        });
+
+        practiceRepeatBtn.addEventListener('click', () => {
+            // Restart from beginning
+            playBtn.textContent = '▶️ Play';
+            isPlaying = false;
+            if (currentOscillators) {
+                currentOscillators.forEach(osc => {
+                    try {
+                        osc.stop();
+                    } catch (e) {}
+                });
+                currentOscillators = [];
+            }
+            if (currentAudioContext) {
+                try {
+                    currentAudioContext.close();
+                } catch (e) {}
+                currentAudioContext = null;
+            }
+            playBtn.click();
+        });
+
+        practiceResetBtn.addEventListener('click', () => {
+            playBtn.textContent = '▶️ Play';
+            isPlaying = false;
+            if (currentOscillators) {
+                currentOscillators.forEach(osc => {
+                    try {
+                        osc.stop();
+                    } catch (e) {}
+                });
+                currentOscillators = [];
+            }
+            if (currentAudioContext) {
+                try {
+                    currentAudioContext.close();
+                } catch (e) {}
+                currentAudioContext = null;
+            }
+        });
+
+        practiceBpmSelect.addEventListener('change', () => {
+            bpmSelect.value = practiceBpmSelect.value;
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
@@ -2329,6 +3302,14 @@
             if (kalpanaLines.length > 0) {
                 displayKalpanaStaffs(beats, nadai, cycleLengthVal, eduppu);
             }
+            
+            // Update practice view if active
+            if (practiceMode_active) {
+                updatePracticeView();
+            }
+            
+            // Update the play variation selector (in case phrase or Kalpanas changed)
+            updatePlayVariationSelect();
         }
 
         // Helper function to parse grouping digits and create color map

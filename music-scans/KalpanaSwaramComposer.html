@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KalpanaSwaramComposer - Carnatic Music Phrase Composer</title>
+    <style>
+        /* ============================================================================
+           GLOBAL STYLES
+           ============================================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            color: #2d3561;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ============================================================================
+           HEADER
+           ============================================================================ */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        header button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        header button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ============================================================================
+           TOP NAVIGATION (STICKY)
+           ============================================================================ */
+        .top-nav {
+            position: sticky;
+            top: 60px;
+            z-index: 150;
+            background: white;
+            border-bottom: 2px solid #ddd;
+            padding: 12px 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .top-nav a {
+            text-decoration: none;
+            color: #667eea;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .top-nav a:hover {
+            background: #f0f0f0;
+            color: #764ba2;
+        }
+
+        .top-nav a.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* ============================================================================
+           MAIN LAYOUT (Sidebar + Content)
+           ============================================================================ */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+            gap: 0;
+            margin-left: 50px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           LEFT SIDEBAR (Playlist, Search, Index)
+           ───────────────────────────────────────────────────────────────────────── */
+        .left-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 2px solid #ddd;
+            padding: 16px;
+            overflow-y: auto;
+            position: sticky;
+            top: 120px;
+            max-height: calc(100vh - 120px);
+            transition: width 0.3s ease, transform 0.3s ease;
+        }
+
+        .left-sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            border-right: none;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section-title {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-toggle {
+            background: transparent;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+
+        .section-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 1000px;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        /* Alphabet Index - Vertical Left Bar */
+        .alphabet-index {
+            position: fixed;
+            left: 0;
+            top: 120px;
+            width: 50px;
+            height: calc(100vh - 120px);
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 8px 0;
+            overflow-y: auto;
+            z-index: 150;
+            border-right: 2px solid #666;
+        }
+
+        .alpha-btn {
+            flex: 1;
+            min-height: 40px;
+            max-height: 50px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-weight: 600;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alpha-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: white;
+        }
+
+        /* Search Box */
+        .search-box {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            transition: border 0.2s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Tags Filter */
+        .tags-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tag-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .tag-checkbox input {
+            cursor: pointer;
+        }
+
+        /* Playlist */
+        .playlist {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .playlist-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .playlist-item > div:first-child {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .playlist-item:hover {
+            background: #f0f0f0;
+        }
+
+        .playlist-item.active {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .playlist-item-meta {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .playlist-item-delete {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: background 0.2s;
+            opacity: 0;
+        }
+
+        .playlist-item:hover .playlist-item-delete {
+            opacity: 1;
+        }
+
+        .playlist-item-delete:hover {
+            background: #ff5555;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           MAIN CONTENT AREA (Sections)
+           ───────────────────────────────────────────────────────────────────────── */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Section Styling */
+        section {
+            scroll-margin-top: 140px;
+            margin-bottom: 40px;
+        }
+
+        section h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #764ba2;
+            margin: 16px 0 12px 0;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           FORM ELEMENTS & INPUTS
+           ───────────────────────────────────────────────────────────────────────── */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3561;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            border-color: #764ba2;
+        }
+
+        .btn-success {
+            background: #1dd1a1;
+            color: white;
+            border-color: #1dd1a1;
+        }
+
+        .btn-success:hover {
+            background: #0fa66f;
+            border-color: #0fa66f;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .btn-danger:hover {
+            background: #e63946;
+            border-color: #e63946;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar .btn {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           METADATA SECTION
+           ───────────────────────────────────────────────────────────────────────── */
+        #section-metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .thala-shortcuts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .thala-shortcut-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+            border: 2px solid #1dd1a1;
+            background: white;
+            color: #1dd1a1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .thala-shortcut-btn:hover {
+            background: #1dd1a1;
+            color: white;
+        }
+
+        /* Tags Display */
+        .tags-display {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           PHRASE SECTION
+           ───────────────────────────────────────────────────────────────────────── */
+        #section-phrase {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .octave-modifier-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .octave-btn {
+            padding: 10px 16px;
+            border: 2px solid #764ba2;
+            background: white;
+            color: #764ba2;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 60px;
+        }
+
+        .octave-btn.active {
+            background: #764ba2;
+            color: white;
+        }
+
+        .octave-btn:hover {
+            background: #764ba2;
+            color: white;
+        }
+
+        .phrase-info {
+            display: flex;
+            gap: 20px;
+            margin-top: 12px;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .landing-valid {
+            color: #1dd1a1;
+            font-weight: 600;
+        }
+
+        .landing-invalid {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           CYCLE MANAGEMENT SECTION
+           ───────────────────────────────────────────────────────────────────────── */
+        #section-cycles {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .cycle-card {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .cycle-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .cycle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .cycle-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .cycle-toggle {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .cycle-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .cycle-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cycle-content.collapsed {
+            display: none;
+        }
+
+        .line-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .line-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .line-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #764ba2;
+        }
+
+        .line-inputs {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 12px;
+        }
+
+        .line-lyrics {
+            margin-top: 8px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           PLAY CONTROL PANEL
+           ───────────────────────────────────────────────────────────────────────── */
+        #section-play {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            position: sticky;
+            top: 140px;
+            z-index: 100;
+        }
+
+        .play-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .bpm-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bpm-control label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .bpm-control input {
+            width: 60px;
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .bpm-control input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .play-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .play-buttons .btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-color: white;
+        }
+
+        .play-buttons .btn:hover {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           SPREADSHEET SECTION
+           ───────────────────────────────────────────────────────────────────────── */
+        #section-spreadsheet {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .spreadsheet-container {
+            border: 2px solid #667eea;
+            border-radius: 4px;
+            overflow: auto;
+            background: white;
+        }
+
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .spreadsheet-table th,
+        .spreadsheet-table td {
+            border: 1px solid #ddd;
+            padding: 4px 2px;
+            text-align: center;
+            font-size: 11px;
+            min-width: 28px;
+            height: 28px;
+        }
+
+        .spreadsheet-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .spreadsheet-table td {
+            background: white;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .spreadsheet-table tr:nth-child(even) td {
+            background: #f8f9fa;
+        }
+
+        .spreadsheet-label {
+            background: #f0f0f0;
+            font-weight: 600;
+            text-align: left;
+            color: #667eea;
+        }
+
+        .spreadsheet-landing {
+            background: #efe;
+            border: 2px solid #1dd1a1;
+        }
+
+        .spreadsheet-playing {
+            background: #ffd;
+            animation: pulse 0.6s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { background: #ffd; }
+            50% { background: #ffc; }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           FLOATING NAVIGATOR (Right Edge)
+           ───────────────────────────────────────────────────────────────────────── */
+        .floating-nav {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+            z-index: 180;
+            width: 140px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .floating-nav.collapsed {
+            width: 50px;
+        }
+
+        .floating-nav-header {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .floating-nav-header:hover {
+            background: #764ba2;
+        }
+
+        .floating-nav.collapsed .floating-nav-header {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            padding: 16px 8px;
+            flex-direction: column;
+        }
+
+        .floating-nav-bullets {
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .floating-nav.collapsed .floating-nav-bullets {
+            display: none;
+        }
+
+        .nav-bullet {
+            padding: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .nav-bullet:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-bullet.active {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            border-color: #667eea;
+        }
+
+        .nav-bullet::before {
+            content: "● ";
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .nav-bullet:not(.active)::before {
+            content: "○ ";
+            color: #999;
+        }
+
+        .floating-nav-buttons {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .floating-nav.collapsed .floating-nav-buttons {
+            padding: 8px 4px;
+        }
+
+        .float-nav-btn {
+            padding: 8px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .float-nav-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           RESPONSIVE DESIGN
+           ───────────────────────────────────────────────────────────────────────── */
+        @media (max-width: 1200px) {
+            .left-sidebar {
+                width: 250px;
+            }
+
+            .content-area {
+                padding: 16px 24px;
+            }
+
+            .floating-nav {
+                width: 120px;
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .left-sidebar {
+                width: 100%;
+                max-height: 200px;
+                position: relative;
+                top: auto;
+                border-right: none;
+                border-bottom: 2px solid #ddd;
+                padding: 12px;
+            }
+
+            .content-area {
+                padding: 12px 16px;
+            }
+
+            .top-nav {
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+
+            .floating-nav {
+                width: 50px;
+                right: 10px;
+                top: auto;
+                bottom: 20px;
+                transform: none;
+            }
+
+            .floating-nav.collapsed {
+                width: 50px;
+            }
+
+            .floating-nav-bullets {
+                display: none;
+            }
+
+            .play-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           UTILITY CLASSES
+           ───────────────────────────────────────────────────────────────────────── */
+        .hidden {
+            display: none !important;
+        }
+
+        .error {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .success {
+            color: #1dd1a1;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .divider {
+            border-top: 2px solid #ddd;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================================================
+         HEADER
+         ============================================================================ -->
+    <header>
+        <h1>🎵 KalpanaSwaramComposer</h1>
+        <header-right>
+            <a href="index.html" style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">← Back to Kanakku</a>
+            <button onclick="openHelp()">?</button>
+            <button onclick="toggleSettings()">⚙</button>
+        </header-right>
+    </header>
+
+    <!-- ============================================================================
+         TOP NAVIGATION (STICKY)
+         ============================================================================ -->
+    <nav class="top-nav" id="topNav">
+        <a href="#" onclick="jumpToSection('top'); return false;">↑ Top</a>
+        <a href="#section-metadata" onclick="jumpToSection('metadata'); return false;">① Metadata</a>
+        <a href="#section-phrase" onclick="jumpToSection('phrase'); return false;">② Phrase</a>
+        <a href="#section-cycles" onclick="jumpToSection('cycles'); return false;">③ Cycles</a>
+        <a href="#section-play" onclick="jumpToSection('play'); return false;">④ Play</a>
+        <a href="#section-spreadsheet" onclick="jumpToSection('spreadsheet'); return false;">⑤ Spreadsheet</a>
+        <a href="#" onclick="jumpToBottom(); return false;">Bottom ↓</a>
+    </nav>
+
+    <!-- ============================================================================
+         VERTICAL ALPHABET INDEX (Fixed Left Edge)
+         ============================================================================ -->
+    <div class="alphabet-index" id="alphabetIndex"></div>
+
+    <!-- ============================================================================
+         MAIN CONTAINER
+         ============================================================================ -->
+    <div class="main-container">
+        <!-- ─────────────────────────────────────────────────────────────────────
+             LEFT SIDEBAR (Playlist, Search, Index)
+             ───────────────────────────────────────────────────────────────────── -->
+        <aside class="left-sidebar">
+            <!-- Search Box -->
+            <div class="sidebar-section">
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search...">
+            </div>
+
+            <!-- Tags Filter (Collapsible) -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    Tags
+                    <button class="section-toggle" id="tagsToggle" onclick="toggleSidebarSection('tags')">▼</button>
+                </div>
+                <div class="section-content" id="tagsContent">
+                    <div class="tags-filter" id="tagsFilter"></div>
+                </div>
+            </div>
+
+            <!-- Playlist (Collapsible) -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">
+                    📄 Songs
+                    <button class="section-toggle" id="playlistToggle" onclick="toggleSidebarSection('playlist')">▼</button>
+                </div>
+                <div class="section-content" id="playlistContent">
+                    <div class="playlist" id="playlistContainer"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ─────────────────────────────────────────────────────────────────────
+             MAIN CONTENT AREA
+             ───────────────────────────────────────────────────────────────────── -->
+        <main class="content-area">
+            <!-- ① METADATA SECTION -->
+            <section id="section-metadata">
+                <h2>① Metadata Section</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Song Name *</label>
+                        <input type="text" id="songName" placeholder="e.g., Pakkala_Nilabadi">
+                    </div>
+                    <div class="form-group">
+                        <label>Ragam</label>
+                        <input type="text" id="ragam" placeholder="e.g., Mayamalavagowla">
+                    </div>
+                    <div class="form-group">
+                        <label>Composer</label>
+                        <input type="text" id="composer" placeholder="e.g., Dikshithar">
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="form-group">
+                    <label>Tags</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="tagInput" placeholder="Add tag..." style="flex: 1;">
+                        <button class="btn btn-small" onclick="addTag()">+ Add</button>
+                    </div>
+                    <div class="tags-display" id="tagsDisplay"></div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Thalam Settings -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Sruthi (Key)</label>
+                        <select id="sruthi">
+                            <option>C</option><option>C#</option><option>D</option><option>D#</option>
+                            <option>E</option><option>F</option><option>F#</option><option>G</option>
+                            <option>G#</option><option>A</option><option>A#</option><option>B</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Thalam</label>
+                        <select id="thalam">
+                            <option>Adhi</option><option>Rupakam</option><option>Misra</option><option>Kanda</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Beats</label>
+                        <input type="number" id="beats" min="1" max="16" value="8">
+                    </div>
+                    <div class="form-group">
+                        <label>Nadai</label>
+                        <input type="number" id="nadai" min="1" max="9" value="4">
+                    </div>
+                    <div class="form-group">
+                        <label>Eduppu (Landing)</label>
+                        <select id="eduppu"></select>
+                    </div>
+                </div>
+
+                <!-- Thala Shortcuts -->
+                <div>
+                    <label>Thala Shortcuts</label>
+                    <div class="thala-shortcuts">
+                        <button class="thala-shortcut-btn" onclick="applyThala(8, 4)">Adhi: 8, 4</button>
+                        <button class="thala-shortcut-btn" onclick="applyThala(6, 4)">Rup: 6, 4</button>
+                        <button class="thala-shortcut-btn" onclick="applyThala(7, 2)">Misra: 7, 2</button>
+                        <button class="thala-shortcut-btn" onclick="applyThala(5, 2)">Kanda: 5, 2</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ② PHRASE SECTION -->
+            <section id="section-phrase">
+                <h2>② Main Phrase</h2>
+
+                <!-- Octave Modifiers & Toolbar -->
+                <div class="form-group">
+                    <label>Octave Modifiers</label>
+                    <div class="toolbar">
+                        <button class="octave-btn" id="octaveUpBtn" onclick="toggleOctaveModifier('up')">↑ Dot Above</button>
+                        <button class="octave-btn" id="octaveDownBtn" onclick="toggleOctaveModifier('down')">↓ Dot Below</button>
+                        <button class="btn" onclick="undoPhrase()">↶ Undo</button>
+                        <button class="btn" onclick="redoPhrase()">↷ Redo</button>
+                        <button class="btn" onclick="clearPhrase()">🗑 Clear</button>
+                        <button class="btn" onclick="togglePatternMode()">🔢 Pattern</button>
+                    </div>
+                </div>
+
+                <!-- Main Phrase Textarea -->
+                <div class="form-group">
+                    <label>Phrase (s, r, g, m, p, d, n)</label>
+                    <textarea id="phraseInput" placeholder="Enter swaras: s r g m p d n"></textarea>
+                </div>
+
+                <!-- Phrase Info -->
+                <div class="phrase-info">
+                    <div class="info-item">
+                        Notes: <strong id="phraseNoteCount">0</strong>
+                    </div>
+                    <div class="info-item">
+                        Landing: <strong id="phraseStatus" class="landing-valid">✓ Valid</strong>
+                    </div>
+                </div>
+
+                <!-- Comments -->
+                <div class="form-group">
+                    <label>📝 Comments</label>
+                    <textarea id="phraseComments" placeholder="Add notes about this phrase..."></textarea>
+                </div>
+            </section>
+
+            <!-- ③ CYCLE MANAGEMENT SECTION -->
+            <section id="section-cycles">
+                <h2>③ Cycle Management</h2>
+
+                <div id="cyclesContainer"></div>
+
+                <button class="btn btn-primary" onclick="addCycle()" style="width: 100%; margin-top: 16px;">+ Add New Cycle</button>
+            </section>
+
+            <!-- ④ PLAY CONTROL PANEL -->
+            <section id="section-play">
+                <div class="play-content">
+                    <div class="bpm-control">
+                        <label for="bpmInput">🎵 BPM:</label>
+                        <input type="number" id="bpmInput" value="80" min="0" max="250" step="5">
+                    </div>
+                    <div class="play-buttons">
+                        <button class="btn btn-success" onclick="playPhrase()">▶ Play Phrase</button>
+                        <button class="btn" onclick="stopPlayback()">⏹ Stop</button>
+                        <button class="btn" onclick="playAllCycles()">▶ Play All</button>
+                        <button class="btn" onclick="openPracticeMode()">🎓 Practice</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ⑤ SPREADSHEET DISPLAY -->
+            <section id="section-spreadsheet">
+                <h2>⑤ Spreadsheet Display</h2>
+
+                <div class="spreadsheet-container">
+                    <table class="spreadsheet-table" id="spreadsheet">
+                        <thead id="spreadsheetHeader"></thead>
+                        <tbody id="spreadsheetBody"></tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                    <button class="btn btn-primary" onclick="saveSong()">+ Save Song</button>
+                    <button class="btn" onclick="importSong()">↙ Import</button>
+                    <button class="btn" onclick="exportSong()">↗ Export</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ============================================================================
+         FLOATING NAVIGATOR
+         ============================================================================ -->
+    <nav class="floating-nav" id="floatingNav">
+        <div class="floating-nav-header" onclick="toggleFloatingNav()">Sections <span id="floatingToggleBtn">−</span></div>
+        <div class="floating-nav-bullets" id="floatingBullets">
+            <div class="nav-bullet active" onclick="jumpToSection('metadata')">Metadata</div>
+            <div class="nav-bullet" onclick="jumpToSection('phrase')">Phrase</div>
+            <div class="nav-bullet" onclick="jumpToSection('cycles')">Cycles</div>
+            <div class="nav-bullet" onclick="jumpToSection('play')">Play</div>
+            <div class="nav-bullet" onclick="jumpToSection('spreadsheet')">Spreadsheet</div>
+        </div>
+        <div class="floating-nav-buttons">
+            <button class="float-nav-btn" onclick="scrollSections('up', 3)">▲▲▲</button>
+            <button class="float-nav-btn" onclick="scrollSections('up', 1)">↑↑↑</button>
+            <button class="float-nav-btn" onclick="scrollSections('down', 1)">↓↓↓</button>
+            <button class="float-nav-btn" onclick="scrollSections('down', 3)">▼▼▼</button>
+        </div>
+    </nav>
+
+    <!-- ============================================================================
+         JAVASCRIPT - APPLICATION LOGIC
+         ============================================================================ -->
+    <script>
+        // ============================================================================
+        // MODULE 1: GLOBAL STATE & INITIALIZATION
+        // ============================================================================
+
+        let currentSong = {
+            id: generateUUID(),
+            name: '',
+            ragam: '',
+            composer: '',
+            sruthi: 'C',
+            thalam: 'Adhi',
+            beats: 8,
+            nadai: 4,
+            eduppu: 4,
+            tags: [],
+            mainPhrase: {
+                phraseText: '',
+                phraseDisplay: '',
+                lyrics: '',
+                noteCount: 0,
+                leadingCommas: 0,
+                fullPhrase: ''
+            },
+            phraseComments: '',
+            cycles: []
+        };
+
+        let phraseHistory = [''];
+        let historyIndex = 0;
+        let patternModeActive = false;
+        let octaveModifier = null; // 'up' | 'down' | null
+        let allSongs = [];
+        let isPlaying = false;
+        let currentAudioContext = null;
+        let currentOscillators = [];
+
+        const sruthiFrequencies = {
+            'C': { baseFreq: 261.63, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'C#': { baseFreq: 277.18, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'D': { baseFreq: 293.66, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'D#': { baseFreq: 311.13, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'E': { baseFreq: 329.63, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'F': { baseFreq: 349.23, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'F#': { baseFreq: 369.99, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'G': { baseFreq: 392.00, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'G#': { baseFreq: 415.30, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'A': { baseFreq: 440.00, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'A#': { baseFreq: 466.16, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } },
+            'B': { baseFreq: 493.88, notes: { 's': 0, 'r': 2, 'g': 4, 'm': 5, 'p': 7, 'd': 9, 'n': 11 } }
+        };
+
+        // ============================================================================
+        // MODULE 2: UTILITY FUNCTIONS
+        // ============================================================================
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function countNotes(text) {
+            let count = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i].toLowerCase();
+                if (char === ' ') continue;
+                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    count++;
+                } else if (char === ',') {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        function calculateLeadingCommas(noteCount, cycleLength, eduppu) {
+            if (cycleLength === 0) return 0;
+            let result = (eduppu - 1 - noteCount) % cycleLength;
+            return result < 0 ? result + cycleLength : result;
+        }
+
+        function cleanPhrase(text) {
+            return text.replace(/\s+/g, '');
+        }
+
+        // ============================================================================
+        // MODULE 3: METADATA MANAGEMENT
+        // ============================================================================
+
+        function updateMetadata() {
+            currentSong.name = document.getElementById('songName').value;
+            currentSong.ragam = document.getElementById('ragam').value;
+            currentSong.composer = document.getElementById('composer').value;
+            currentSong.sruthi = document.getElementById('sruthi').value;
+            currentSong.thalam = document.getElementById('thalam').value;
+            currentSong.beats = parseInt(document.getElementById('beats').value) || 8;
+            currentSong.nadai = parseInt(document.getElementById('nadai').value) || 4;
+            currentSong.eduppu = parseInt(document.getElementById('eduppu').value) || 1;
+            recalculate();
+        }
+
+        function applyThala(beats, nadai) {
+            document.getElementById('beats').value = beats;
+            document.getElementById('nadai').value = nadai;
+            updateMetadata();
+        }
+
+        function updateEduppuOptions() {
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            const select = document.getElementById('eduppu');
+            select.innerHTML = '';
+            for (let i = 1; i <= cycleLength; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                select.appendChild(option);
+            }
+            select.value = currentSong.eduppu;
+        }
+
+        function addTag() {
+            const input = document.getElementById('tagInput');
+            const tag = input.value.trim();
+            if (tag && !currentSong.tags.includes(tag)) {
+                currentSong.tags.push(tag);
+                input.value = '';
+                renderTags();
+            }
+        }
+
+        function removeTag(tag) {
+            currentSong.tags = currentSong.tags.filter(t => t !== tag);
+            renderTags();
+        }
+
+        function renderTags() {
+            const tagsDisplay = document.getElementById('tagsDisplay');
+            tagsDisplay.innerHTML = currentSong.tags.map(tag =>
+                `<div class="tag">${tag}<span class="tag-remove" onclick="removeTag('${tag}')">×</span></div>`
+            ).join('');
+        }
+
+        // ============================================================================
+        // MODULE 4: PHRASE EDITING
+        // ============================================================================
+
+        function updatePhrase() {
+            const phraseText = document.getElementById('phraseInput').value;
+            
+            // Auto-convert ; to ,,
+            const processed = phraseText.replace(/;/g, ',,');
+            if (processed !== phraseText) {
+                document.getElementById('phraseInput').value = processed;
+            }
+
+            currentSong.mainPhrase.phraseText = processed;
+            currentSong.mainPhrase.phraseDisplay = cleanPhrase(processed);
+            currentSong.mainPhrase.noteCount = countNotes(processed);
+
+            // Calculate leading commas
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            currentSong.mainPhrase.leadingCommas = calculateLeadingCommas(
+                currentSong.mainPhrase.noteCount,
+                cycleLength,
+                currentSong.eduppu
+            );
+            currentSong.mainPhrase.fullPhrase = ','.repeat(currentSong.mainPhrase.leadingCommas) + currentSong.mainPhrase.phraseDisplay;
+
+            updatePhraseDisplay();
+            updateSpreadsheet();
+        }
+
+        function updatePhraseDisplay() {
+            document.getElementById('phraseNoteCount').textContent = currentSong.mainPhrase.noteCount;
+            
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            const isValid = (currentSong.mainPhrase.leadingCommas + currentSong.mainPhrase.noteCount) % cycleLength === 0 ||
+                           (currentSong.mainPhrase.leadingCommas + currentSong.mainPhrase.noteCount) <= cycleLength;
+            
+            const status = document.getElementById('phraseStatus');
+            if (isValid) {
+                status.textContent = '✓ Valid';
+                status.className = 'landing-valid';
+            } else {
+                status.textContent = '✗ Invalid';
+                status.className = 'landing-invalid';
+            }
+        }
+
+        function toggleOctaveModifier(type) {
+            if (octaveModifier === type) {
+                octaveModifier = null;
+                document.getElementById(`octave${type.charAt(0).toUpperCase() + type.slice(1)}Btn`).classList.remove('active');
+            } else {
+                // Deactivate previous
+                if (octaveModifier) {
+                    document.getElementById(`octave${octaveModifier.charAt(0).toUpperCase() + octaveModifier.slice(1)}Btn`).classList.remove('active');
+                }
+                octaveModifier = type;
+                document.getElementById(`octave${type.charAt(0).toUpperCase() + type.slice(1)}Btn`).classList.add('active');
+            }
+        }
+
+        function undoPhrase() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                document.getElementById('phraseInput').value = phraseHistory[historyIndex];
+                updatePhrase();
+            }
+        }
+
+        function redoPhrase() {
+            if (historyIndex < phraseHistory.length - 1) {
+                historyIndex++;
+                document.getElementById('phraseInput').value = phraseHistory[historyIndex];
+                updatePhrase();
+            }
+        }
+
+        function clearPhrase() {
+            if (confirm('Clear phrase?')) {
+                document.getElementById('phraseInput').value = '';
+                updatePhrase();
+            }
+        }
+
+        function captureHistory() {
+            phraseHistory = phraseHistory.slice(0, historyIndex + 1);
+            phraseHistory.push(document.getElementById('phraseInput').value);
+            historyIndex++;
+            if (phraseHistory.length > 20) {
+                phraseHistory.shift();
+                historyIndex--;
+            }
+        }
+
+        function togglePatternMode() {
+            patternModeActive = !patternModeActive;
+            alert('Pattern mode: ' + (patternModeActive ? 'Enter digits (e.g., 54545)' : 'Normal input'));
+            // TODO: Implement pattern mode UI and logic
+        }
+
+        // ============================================================================
+        // MODULE 5: CYCLE MANAGEMENT
+        // ============================================================================
+
+        function addCycle() {
+            const cycleId = `cycle-${Date.now()}`;
+            const cycle = {
+                id: cycleId,
+                label: `Cycle ${currentSong.cycles.length + 1}`,
+                expanded: true,
+                lines: []
+            };
+            currentSong.cycles.push(cycle);
+            renderCycles();
+        }
+
+        function addLineToCycle(cycleId) {
+            const cycle = currentSong.cycles.find(c => c.id === cycleId);
+            if (cycle) {
+                const lineId = `line-${Date.now()}`;
+                cycle.lines.push({
+                    id: lineId,
+                    phraseText: '',
+                    phraseDisplay: '',
+                    eduppu: 1,
+                    lyrics: '',
+                    noteCount: 0,
+                    leadingCommas: 0,
+                    fullPhrase: ''
+                });
+                renderCycles();
+            }
+        }
+
+        function deleteCycle(cycleId) {
+            if (confirm('Delete cycle?')) {
+                currentSong.cycles = currentSong.cycles.filter(c => c.id !== cycleId);
+                renderCycles();
+                updateSpreadsheet();
+            }
+        }
+
+        function updateLine(cycleId, lineId, field, value) {
+            const cycle = currentSong.cycles.find(c => c.id === cycleId);
+            const line = cycle.lines.find(l => l.id === lineId);
+            if (line) {
+                if (field === 'phraseText') {
+                    const processed = value.replace(/;/g, ',,');
+                    line.phraseText = processed;
+                    line.phraseDisplay = cleanPhrase(processed);
+                    line.noteCount = countNotes(processed);
+                }  else if (field === 'eduppu') {
+                    line.eduppu = parseInt(value) || 1;
+                } else if (field === 'lyrics') {
+                    line.lyrics = value;
+                }
+
+                // Recalculate leading commas
+                const cycleLength = currentSong.beats * currentSong.nadai;
+                line.leadingCommas = calculateLeadingCommas(line.noteCount, cycleLength, line.eduppu);
+                line.fullPhrase = ','.repeat(line.leadingCommas) + line.phraseDisplay;
+
+                updateSpreadsheet();
+            }
+        }
+
+        function renderCycles() {
+            const container = document.getElementById('cyclesContainer');
+            container.innerHTML = '';
+
+            currentSong.cycles.forEach((cycle, cycleIndex) => {
+                const cycleCard = document.createElement('div');
+                cycleCard.className = 'cycle-card';
+                cycleCard.innerHTML = `
+                    <div class="cycle-header">
+                        <div class="cycle-title">${cycle.label}</div>
+                        <div>
+                            <button class="cycle-toggle ${!cycle.expanded ? 'collapsed' : ''}" 
+                                    onclick="toggleCycleExpansion('${cycle.id}')">⌄</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteCycle('${cycle.id}')">🗑</button>
+                        </div>
+                    </div>
+                    <div class="cycle-content ${!cycle.expanded ? 'collapsed' : ''}" id="cycle-content-${cycle.id}">
+                        ${cycle.lines.map((line, lineIndex) => `
+                            <div class="line-item">
+                                <div class="line-label">Line ${lineIndex + 1}</div>
+                                <div class="line-inputs">
+                                    <textarea placeholder="Swaras..." 
+                                              onchange="updateLine('${cycle.id}', '${line.id}', 'phraseText', this.value)">${line.phraseText}</textarea>
+                                    <select onchange="updateLine('${cycle.id}', '${line.id}', 'eduppu', this.value)">
+                                        ${Array.from({length: currentSong.beats * currentSong.nadai}, (_, i) => 
+                                            `<option value="${i+1}" ${line.eduppu === i+1 ? 'selected' : ''}>Eduppu ${i+1}</option>`
+                                        ).join('')}
+                                    </select>
+                                </div>
+                                <div class="line-lyrics">
+                                    <textarea placeholder="Lyrics..." 
+                                              onchange="updateLine('${cycle.id}', '${line.id}', 'lyrics', this.value)" style="min-height: 60px;">${line.lyrics}</textarea>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <button class="btn" onclick="addLineToCycle('${cycle.id}')" style="width: 100%; margin-top: 8px;">+ Add Line</button>
+                    </div>
+                `;
+                container.appendChild(cycleCard);
+            });
+        }
+
+        function toggleCycleExpansion(cycleId) {
+            const cycle = currentSong.cycles.find(c => c.id === cycleId);
+            if (cycle) {
+                cycle.expanded = !cycle.expanded;
+                renderCycles();
+            }
+        }
+
+        // ============================================================================
+        // MODULE 6: SPREADSHEET DISPLAY
+        // ============================================================================
+
+        function updateSpreadsheet() {
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            const header = document.getElementById('spreadsheetHeader');
+            const body = document.getElementById('spreadsheetBody');
+
+            // Create header with beat numbers and nadai subdivisions
+            let beatHeaderHTML = '<tr><th></th>';  // Empty cell for label column
+            let nadaiHeaderHTML = '<tr><th></th>';  // Empty cell for label column
+            
+            for (let beat = 1; beat <= currentSong.beats; beat++) {
+                // Add beat number spanning nadai cells
+                beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #667eea; color: white; font-weight: 600;">Beat ${beat}</th>`;
+                
+                // Add nadai subdivisions
+                for (let n = 1; n <= currentSong.nadai; n++) {
+                    nadaiHeaderHTML += `<th style="background: #888; color: white; font-size: 10px;">n${n}</th>`;
+                }
+            }
+            beatHeaderHTML += '</tr>';
+            nadaiHeaderHTML += '</tr>';
+            
+            header.innerHTML = beatHeaderHTML + nadaiHeaderHTML;
+
+            // Create body with PHRASE + all cycles
+            body.innerHTML = '';
+
+            // Add main phrase row
+            renderSpreadsheetLine(body, 'PHRASE', currentSong.mainPhrase, cycleLength);
+
+            // Add all cycle lines
+            currentSong.cycles.forEach((cycle, cycleIndex) => {
+                cycle.lines.forEach((line, lineIndex) => {
+                    const label = `Cycle ${cycleIndex + 1} Line ${lineIndex + 1}`;
+                    renderSpreadsheetLine(body, label, line, cycleLength);
+                });
+            });
+        }
+
+        function renderSpreadsheetLine(tbody, label, lineData, cycleLength) {
+            // Notes row
+            const notesRow = tbody.insertRow();
+            const labelCell = notesRow.insertCell();
+            labelCell.className = 'spreadsheet-label';
+            labelCell.textContent = label;
+
+            const phraseDisplay = lineData.phraseDisplay || '';
+            const notes = phraseDisplay.padEnd(cycleLength, ' ').substring(0, cycleLength);
+
+            for (let i = 0; i < cycleLength; i++) {
+                const cell = notesRow.insertCell();
+                cell.textContent = notes[i] === ',' ? '-' : (notes[i] === ' ' ? '' : notes[i]);
+                if (i === lineData.eduppu - 1) {
+                    cell.className = 'spreadsheet-landing';
+                }
+            }
+
+            // Lyrics row
+            const lyricsRow = tbody.insertRow();
+            const lyricsLabel = lyricsRow.insertCell();
+            lyricsLabel.className = 'spreadsheet-label';
+            lyricsLabel.textContent = 'Lyrics';
+
+            if (lineData.lyrics) {
+                const lyricsParts = lineData.lyrics.split('|');
+                for (let i = 0; i < cycleLength; i++) {
+                    const cell = lyricsRow.insertCell();
+                    cell.textContent = lyricsParts[i] || '';
+                    if (i === lineData.eduppu - 1) {
+                        cell.className = 'spreadsheet-landing';
+                    }
+                }
+            }
+        }
+
+        // ============================================================================
+        // MODULE 7: PLAYBACK (Web Audio API)
+        // ============================================================================
+
+        async function playPhrase() {
+            if (isPlaying) {
+                stopPlayback();
+                return;
+            }
+
+            const phrase = currentSong.mainPhrase.fullPhrase || currentSong.mainPhrase.phraseDisplay;
+            if (!phrase) {
+                alert('Please enter a phrase first');
+                return;
+            }
+
+            await playAudio(phrase);
+        }
+
+        async function playAllCycles() {
+            // TODO: Implement playing all cycles in sequence
+            alert('Feature coming soon!');
+        }
+
+        async function playAudio(phrase) {
+            isPlaying = true;
+            const bpm = parseInt(document.getElementById('bpmInput').value) || 80;
+            const sruthi = currentSong.sruthi;
+            const beatDuration = 60 / bpm;
+            const noteDuration = beatDuration / currentSong.nadai;
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                currentAudioContext = audioContext;
+                currentOscillators = [];
+
+                const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
+                let currentTime = audioContext.currentTime;
+
+                for (let char of phrase) {
+                    if (char === ' ' || char === '\n') continue;
+
+                    const charLower = char.toLowerCase();
+                    if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(charLower)) {
+                        const semitones = sruthiInfo.notes[charLower] || 0;
+                        const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
+
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = frequency;
+                        osc.type = 'sine';
+
+                        gain.gain.setValueAtTime(0, currentTime);
+                        gain.gain.linearRampToValueAtTime(0.3, currentTime + 0.01);
+                        gain.gain.setValueAtTime(0.3, currentTime + noteDuration - 0.05);
+                        gain.gain.linearRampToValueAtTime(0, currentTime + noteDuration);
+
+                        osc.start(currentTime);
+                        osc.stop(currentTime + noteDuration);
+
+                        currentOscillators.push(osc);
+                        currentTime += noteDuration;
+                    } else if (char === ',') {
+                        currentTime += noteDuration;
+                    }
+                }
+
+                setTimeout(() => {
+                    isPlaying = false;
+                }, currentTime * 1000);
+
+            } catch (e) {
+                console.error('Error playing audio:', e);
+                isPlaying = false;
+            }
+        }
+
+        // ============================================================================
+        // MODULE 8A: API INTEGRATION
+        // ============================================================================
+
+        const API_BASE = 'http://localhost:5000/api';
+
+        async function loadAllSongs() {
+            try {
+                const response = await fetch(`${API_BASE}/kalpana-swara-songs`);
+                if (response.ok) {
+                    allSongs = await response.json();
+                    renderPlaylist();
+                    renderTagsFilter();
+                } else {
+                    console.error('Failed to load songs');
+                }
+            } catch (e) {
+                console.error('Error loading songs:', e);
+            }
+        }
+
+        async function saveSongToServer() {
+            updateMetadata();
+            if (!currentSong.name) {
+                alert('Please enter song name');
+                return;
+            }
+
+            try {
+                // Always use POST - backend handles both create and update
+                const response = await fetch(`${API_BASE}/kalpana-swara-songs`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentSong)
+                });
+
+                if (response.ok) {
+                    const savedSong = await response.json();
+                    currentSong.id = savedSong.id;
+                    currentSong.createdDate = savedSong.createdDate;
+                    currentSong.lastModified = savedSong.lastModified;
+                    alert('Song saved successfully!');
+                    await loadAllSongs();
+                    highlightCurrentSong();
+                } else {
+                    alert('Failed to save song');
+                }
+            } catch (e) {
+                console.error('Error saving song:', e);
+                alert('Error saving song: ' + e.message);
+            }
+        }
+
+        async function loadSongFromServer(songId) {
+            try {
+                const response = await fetch(`${API_BASE}/kalpana-swara-songs/${songId}`);
+                if (response.ok) {
+                    currentSong = await response.json();
+                    loadSongToUI();
+                    highlightCurrentSong();
+                }
+            } catch (e) {
+                console.error('Error loading song:', e);
+            }
+        }
+
+        async function deleteSongFromServer(songId) {
+            if (!confirm('Delete this song?')) return;
+            try {
+                const response = await fetch(`${API_BASE}/kalpana-swara-songs/${songId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('Song deleted!');
+                    currentSong = {
+                        id: generateUUID(),
+                        name: '',
+                        ragam: '',
+                        composer: '',
+                        sruthi: 'C',
+                        thalam: 'Adhi',
+                        beats: 8,
+                        nadai: 4,
+                        eduppu: 4,
+                        tags: [],
+                        mainPhrase: {
+                            phraseText: '',
+                            phraseDisplay: '',
+                            lyrics: '',
+                            noteCount: 0,
+                            leadingCommas: 0,
+                            fullPhrase: ''
+                        },
+                        phraseComments: '',
+                        cycles: []
+                    };
+                    loadSongToUI();
+                    await loadAllSongs();
+                }
+            } catch (e) {
+                console.error('Error deleting song:', e);
+            }
+        }
+
+        function highlightCurrentSong() {
+            document.querySelectorAll('.playlist-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.songId === currentSong.id) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlistContainer');
+            container.innerHTML = allSongs.map(song => `
+                <div class="playlist-item" data-song-id="${song.id}">
+                    <div onclick="loadSongFromServer('${song.id}')" style="flex: 1;">
+                        <div style="font-weight: 600;">${song.name}</div>
+                        <div class="playlist-item-meta">${song.ragam || 'Unknown'} • ${song.thalam || 'Adhi'}</div>
+                    </div>
+                    <button class="playlist-item-delete" onclick="event.stopPropagation(); deleteSongFromServer('${song.id}');">Delete</button>
+                </div>
+            `).join('');
+            highlightCurrentSong();
+        }
+
+        function renderTagsFilter() {
+            const tagsSet = new Set();
+            allSongs.forEach(song => {
+                song.tags?.forEach(tag => tagsSet.add(tag));
+            });
+            const tagsFilter = document.getElementById('tagsFilter');
+            tagsFilter.innerHTML = Array.from(tagsSet).map(tag => `
+                <label class="tag-checkbox">
+                    <input type="checkbox" onchange="filterPlaylist()" data-tag="${tag}">
+                    ${tag}
+                </label>
+            `).join('');
+        }
+
+        function filterPlaylist() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const selectedTags = Array.from(document.querySelectorAll('[data-tag]:checked')).map(el => el.dataset.tag);
+            
+            const filtered = allSongs.filter(song => {
+                const matchSearch = !searchTerm || 
+                    song.name.toLowerCase().includes(searchTerm) ||
+                    song.ragam?.toLowerCase().includes(searchTerm) ||
+                    song.composer?.toLowerCase().includes(searchTerm) ||
+                    song.tags?.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                const matchTags = selectedTags.length === 0 || 
+                    selectedTags.some(tag => song.tags?.includes(tag));
+                
+                return matchSearch && matchTags;
+            });
+
+            const container = document.getElementById('playlistContainer');
+            container.innerHTML = filtered.map(song => `
+                <div class="playlist-item" data-song-id="${song.id}">
+                    <div onclick="loadSongFromServer('${song.id}')" style="flex: 1;">
+                        <div style="font-weight: 600;">${song.name}</div>
+                        <div class="playlist-item-meta">${song.ragam || 'Unknown'} • ${song.thalam || 'Adhi'}</div>
+                    </div>
+                    <button class="playlist-item-delete" onclick="event.stopPropagation(); deleteSongFromServer('${song.id}');">Delete</button>
+                </div>
+            `).join('');
+            highlightCurrentSong();
+        }
+
+        function stopPlayback() {
+            isPlaying = false;
+            if (currentOscillators) {
+                currentOscillators.forEach(osc => {
+                    try { osc.stop(); } catch (e) {}
+                });
+                currentOscillators = [];
+            }
+            if (currentAudioContext) {
+                try { currentAudioContext.close(); } catch (e) {}
+                currentAudioContext = null;
+            }
+        }
+
+        // ============================================================================
+        // MODULE 8: NAVIGATION & SCROLLING
+        // ============================================================================
+
+        const sections = [
+            { id: 'section-metadata', name: 'metadata' },
+            { id: 'section-phrase', name: 'phrase' },
+            { id: 'section-cycles', name: 'cycles' },
+            { id: 'section-play', name: 'play' },
+            { id: 'section-spreadsheet', name: 'spreadsheet' }
+        ];
+
+        function jumpToSection(name) {
+            const section = sections.find(s => s.name === name);
+            if (section) {
+                const element = document.getElementById(section.id);
+                element.scrollIntoView({ behavior: 'smooth' });
+                updateActiveNavigation();
+            }
+        }
+
+        function jumpToBottom() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function scrollSections(direction, count) {
+            const current = document.querySelector('.nav-bullet.active');
+            const bullets = Array.from(document.querySelectorAll('.nav-bullet'));
+            const index = bullets.indexOf(current);
+
+            if (direction === 'up') {
+                const newIndex = Math.max(0, index - count);
+                jumpToSection(sections[newIndex].name);
+            } else {
+                const newIndex = Math.min(sections.length - 1, index + count);
+                jumpToSection(sections[newIndex].name);
+            }
+        }
+
+        function updateActiveNavigation() {
+            // Update top nav
+            Array.from(document.querySelectorAll('.top-nav a')).forEach(a => a.classList.remove('active'));
+            
+            // Update floating nav bullets
+            Array.from(document.querySelectorAll('.nav-bullet')).forEach(b => b.classList.remove('active'));
+
+            const scrollPos = window.scrollY + 200;
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const section = document.getElementById(sections[i].id);
+                if (section.offsetTop <= scrollPos) {
+                    // Highlight in floating nav
+                    const bullets = document.querySelectorAll('.nav-bullet');
+                    if (bullets[i]) bullets[i].classList.add('active');
+                    break;
+                }
+            }
+        }
+
+        function toggleFloatingNav() {
+            const nav = document.getElementById('floatingNav');
+            nav.classList.toggle('collapsed');
+            const btn = document.getElementById('floatingToggleBtn');
+            if (nav.classList.contains('collapsed')) {
+                btn.textContent = '+';
+            } else {
+                btn.textContent = '−';
+            }
+        }
+
+        function toggleSidebarSection(section) {
+            const toggle = document.getElementById(section + 'Toggle');
+            const content = document.getElementById(section + 'Content');
+            toggle.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        // ============================================================================
+        // MODULE 9: DATA PERSISTENCE
+        // ============================================================================
+
+        function saveSong() {
+            saveSongToServer();
+        }
+
+        function importSong() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        currentSong = JSON.parse(event.target.result);
+                        currentSong.id = generateUUID(); // New ID for imported song
+                        loadSongToUI();
+                        saveSongToServer();
+                    } catch (e) {
+                        alert('Invalid file');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function exportSong() {
+            updateMetadata();
+            const dataStr = JSON.stringify(currentSong, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${currentSong.name.replace(/\s+/g, '_')}.json`;
+            link.click();
+        }
+
+        function loadSongToUI() {
+            document.getElementById('songName').value = currentSong.name;
+            document.getElementById('ragam').value = currentSong.ragam;
+            document.getElementById('composer').value = currentSong.composer;
+            document.getElementById('sruthi').value = currentSong.sruthi;
+            document.getElementById('thalam').value = currentSong.thalam;
+            document.getElementById('beats').value = currentSong.beats;
+            document.getElementById('nadai').value = currentSong.nadai;
+            document.getElementById('eduppu').value = currentSong.eduppu;
+            document.getElementById('phraseInput').value = currentSong.mainPhrase.phraseText || '';
+            document.getElementById('phraseComments').value = currentSong.phraseComments || '';
+
+            renderTags();
+            updateEduppuOptions();
+            renderCycles();
+            updatePhrase();
+            updateSpreadsheet();
+        }
+
+        // ============================================================================
+        // MODULE 10: RECALCULATION ENGINE
+        // ============================================================================
+
+        function recalculate() {
+            updateEduppuOptions();
+            updatePhrase();
+            renderCycles();
+            updateSpreadsheet();
+        }
+
+        // ============================================================================
+        // MODULE 11: UI INITIALIZATION
+        // ============================================================================
+
+        function initializeApp() {
+            // Create alphabet index
+            const alphabetIndex = document.getElementById('alphabetIndex');
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('').forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'alpha-btn';
+                btn.textContent = letter;
+                btn.onclick = () => alert('Search for: ' + letter);
+                alphabetIndex.appendChild(btn);
+            });
+
+            // Event listeners
+            document.getElementById('songName').addEventListener('change', updateMetadata);
+            document.getElementById('ragam').addEventListener('change', updateMetadata);
+            document.getElementById('composer').addEventListener('change', updateMetadata);
+            document.getElementById('sruthi').addEventListener('change', updateMetadata);
+            document.getElementById('beats').addEventListener('change', updateMetadata);
+            document.getElementById('nadai').addEventListener('change', updateMetadata);
+            document.getElementById('eduppu').addEventListener('change', updateMetadata);
+            document.getElementById('phraseInput').addEventListener('input', () => {
+                updatePhrase();
+                captureHistory();
+            });
+            document.getElementById('phraseComments').addEventListener('input', (e) => {
+                currentSong.phraseComments = e.target.value;
+            });
+            document.getElementById('tagInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addTag();
+            });
+            document.getElementById('searchBox').addEventListener('input', filterPlaylist);
+
+            // Window scroll for navigation updates
+            window.addEventListener('scroll', updateActiveNavigation);
+
+            // Initialize UI
+            updateEduppuOptions();
+            renderTags();
+            updateSpreadsheet();
+            loadAllSongs();
+        }
+
+        function openHelp() {
+            alert('KalpanaSwaramComposer v1.0\n\nHelp & Documentation coming soon!');
+        }
+
+        function toggleSettings() {
+            alert('Settings panel coming soon!');
+        }
+
+        function openPracticeMode() {
+            alert('Practice mode coming soon!');
+        }
+
+        // ============================================================================
+        // START APPLICATION
+        // ============================================================================
+
+        window.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>

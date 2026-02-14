@@ -1,0 +1,44 @@
+[
+  {
+    "beats": 7,
+    "composer": "Thyagaraja",
+    "createdDate": "2026-02-14T22:01:52.304639",
+    "cycles": [
+      {
+        "expanded": true,
+        "id": "cycle-1771106988121",
+        "label": "Cycle 1",
+        "lines": [
+          {
+            "eduppu": 4,
+            "fullPhrase": ",,,,,nsrggrsgnggs",
+            "id": "line-1771106994562",
+            "leadingCommas": 5,
+            "lyrics": "",
+            "noteCount": 12,
+            "phraseDisplay": "nsrggrsgnggs",
+            "phraseText": "nsrggrsgnggs"
+          }
+        ]
+      }
+    ],
+    "eduppu": 4,
+    "id": "fbc5330f-ec99-439b-b7a5-150ec1be45dd",
+    "lastModified": "2026-02-14T22:16:32.512255",
+    "mainPhrase": {
+      "fullPhrase": ",srgmmgrssrgmmgrs",
+      "leadingCommas": 1,
+      "lyrics": "",
+      "noteCount": 16,
+      "phraseDisplay": "srgmmgrssrgmmgrs",
+      "phraseText": "srgmmgrssrgmmgrs"
+    },
+    "nadai": 2,
+    "name": "PakkalaNilabadi",
+    "phraseComments": "",
+    "ragam": "",
+    "sruthi": "C#",
+    "tags": [],
+    "thalam": "Misra"
+  }
+]
