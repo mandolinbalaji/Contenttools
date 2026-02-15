@@ -1382,9 +1382,14 @@
             return count;
         }
 
-        function calculateLeadingCommas(noteCount, cycleLength, eduppu) {
+        function calculateLeadingCommas(noteCount, cycleLength, eduppu, nadai = 1) {
+            // eduppu is a beat number (1 to beats)
+            // Convert beat to cell position: (eduppu - 1) * nadai + 1
+            // Then calculate leading commas
             if (cycleLength === 0) return 0;
-            let result = (eduppu - 1 - noteCount) % cycleLength;
+            
+            const eduppuCell = (eduppu - 1) * nadai + 1;
+            let result = (eduppuCell - 1 - noteCount) % cycleLength;
             return result < 0 ? result + cycleLength : result;
         }
 
@@ -1464,16 +1469,24 @@
         }
 
         function updateEduppuOptions() {
-            const cycleLength = currentSong.beats * currentSong.nadai;
+            // Eduppu is beat number (1 to beats), not cell number
             const select = document.getElementById('eduppu');
             select.innerHTML = '';
-            for (let i = 1; i <= cycleLength; i++) {
+            for (let i = 1; i <= currentSong.beats; i++) {
                 const option = document.createElement('option');
                 option.value = i;
-                option.textContent = i;
+                option.textContent = `Beat ${i}`;
                 select.appendChild(option);
             }
-            select.value = currentSong.eduppu;
+            
+            // Ensure eduppu is within valid range
+            if (currentSong.eduppu > currentSong.beats) {
+                currentSong.eduppu = Math.min(currentSong.eduppu, currentSong.beats);
+            }
+            if (currentSong.eduppu < 1) {
+                currentSong.eduppu = 1;
+            }
+            select.value = Math.min(currentSong.eduppu, currentSong.beats);
         }
 
         function addTag() {
@@ -1520,7 +1533,8 @@
             currentSong.mainPhrase.leadingCommas = calculateLeadingCommas(
                 currentSong.mainPhrase.noteCount,
                 cycleLength,
-                currentSong.eduppu
+                currentSong.eduppu,
+                currentSong.nadai
             );
             currentSong.mainPhrase.fullPhrase = ','.repeat(currentSong.mainPhrase.leadingCommas) + currentSong.mainPhrase.phraseDisplay;
 
@@ -1657,7 +1671,7 @@
 
                 // Recalculate leading commas
                 const cycleLength = currentSong.beats * currentSong.nadai;
-                line.leadingCommas = calculateLeadingCommas(line.noteCount, cycleLength, line.eduppu);
+                line.leadingCommas = calculateLeadingCommas(line.noteCount, cycleLength, line.eduppu, currentSong.nadai);
                 line.fullPhrase = ','.repeat(line.leadingCommas) + line.phraseDisplay;
 
                 updateSpreadsheet();
@@ -1745,24 +1759,24 @@
             body.innerHTML = '';
 
             // Add main phrase row
-            renderSpreadsheetLine(body, 'PHRASE', currentSong.mainPhrase, cycleLength);
+            renderSpreadsheetLine(body, 'PHRASE', currentSong.mainPhrase, cycleLength, currentSong.nadai);
 
             // Add all cycle lines
             currentSong.cycles.forEach((cycle, cycleIndex) => {
                 cycle.lines.forEach((line, lineIndex) => {
                     const label = `Cycle ${cycleIndex + 1} Line ${lineIndex + 1}`;
-                    renderSpreadsheetLine(body, label, line, cycleLength);
+                    renderSpreadsheetLine(body, label, line, cycleLength, currentSong.nadai);
                 });
             });
         }
 
-        function renderSpreadsheetLine(tbody, label, lineData, cycleLength) {
+        function renderSpreadsheetLine(tbody, label, lineData, cycleLength, nadai) {
             // Display phrase exactly as typed (no scale transformation)
             // Scale is metadata for context/playback, not display
             const phraseDisplay = lineData.phraseDisplay || '';
             
             // Calculate leading commas and total items
-            const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu);
+            const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu, nadai);
             const fullPhrase = ','.repeat(leadingCommas) + phraseDisplay;
             
             // Split into rows based on cycleLength
