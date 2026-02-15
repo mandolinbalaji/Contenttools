@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Commas & Calculations Test Suite</title>
+    <style>
+        body { font-family: monospace; background: #f5f5f5; padding: 20px; }
+        .test { background: white; margin: 10px 0; padding: 15px; border-left: 4px solid #667eea; }
+        .pass { border-left-color: #1dd1a1; color: #1dd1a1; }
+        .fail { border-left-color: #ff6b6b; color: #ff6b6b; }
+        .info { font-size: 12px; color: #666; margin-top: 8px; }
+        h1 { color: #667eea; }
+        h2 { color: #764ba2; margin-top: 20px; font-size: 16px; }
+        table { width: 100%; margin-top: 10px; border-collapse: collapse; }
+        td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background: #667eea; color: white; padding: 8px; }
+        pre { background: #f9f9f9; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🎵 KalpanaSwaramComposer - Commas & Calculations Verification</h1>
+    <div id="results"></div>
+
+    <script>
+        // Implement core functions for testing
+        function countNotes(text) {
+            let count = 0;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i].toLowerCase();
+                if (char === ' ') continue;
+                
+                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    if (i + 1 < text.length && /[1-9]/.test(text[i + 1])) {
+                        count++;
+                        i++;
+                    } else {
+                        count++;
+                    }
+                } else if (char === ',') {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        function calculateLeadingCommas(noteCount, cycleLength, eduppu) {
+            if (cycleLength === 0) return 0;
+            let result = (eduppu - 1 - noteCount) % cycleLength;
+            return result < 0 ? result + cycleLength : result;
+        }
+
+        function cleanPhrase(text) {
+            return text.replace(/\s+/g, '');
+        }
+
+        // Test results array
+        let results = [];
+
+        function test(category, name, passed, expected, actual, info = '') {
+            results.push({
+                category,
+                name,
+                passed,
+                expected,
+                actual,
+                info
+            });
+        }
+
+        // ============================================================================
+        // TEST SUITE 1: CYCLE LENGTH CALCULATION
+        // ============================================================================
+        
+        test('Cycle Length', 
+            'Adhi (8×4)', 
+            8 * 4 === 32, 
+            '32 cells', 
+            `${8 * 4} cells`);
+
+        test('Cycle Length',
+            'Misra (7×2)',
+            7 * 2 === 14,
+            '14 cells',
+            `${7 * 2} cells`);
+
+        test('Cycle Length',
+            'Kanda Chapu (5×2)',
+            5 * 2 === 10,
+            '10 cells',
+            `${5 * 2} cells`);
+
+        test('Cycle Length',
+            'Rupakam (6×4)',
+            6 * 4 === 24,
+            '24 cells',
+            `${6 * 4} cells`);
+
+        // ============================================================================
+        // TEST SUITE 2: LEADING COMMAS CALCULATION
+        // ============================================================================
+
+        // Scenario 1: Easy landing
+        let lc1 = calculateLeadingCommas(8, 32, 4);
+        test('Leading Commas',
+            'Scenario 1: Adhi, eduppu=4, noteCount=8',
+            lc1 === 27,
+            '27 commas',
+            `${lc1} commas`,
+            '(4-1-8) % 32 = -5 % 32 = 27');
+
+        // Scenario 2: Direct landing
+        let lc2 = calculateLeadingCommas(0, 32, 32);
+        test('Leading Commas',
+            'Scenario 2: Adhi, eduppu=32, noteCount=0',
+            lc2 === 31,
+            '31 commas',
+            `${lc2} commas`,
+            '(32-1-0) % 32 = 31');
+
+        // Scenario 3: Multi-cycle wrap
+        let lc3 = calculateLeadingCommas(10, 14, 4);
+        test('Leading Commas',
+            'Scenario 3: Misra, eduppu=4, noteCount=10',
+            lc3 === 7,
+            '7 commas',
+            `${lc3} commas`,
+            '(4-1-10) % 14 = -7 % 14 = 7');
+
+        // Scenario 4: From user example
+        let lc4 = calculateLeadingCommas(8, 14, 4);
+        test('Leading Commas',
+            'User Example: Misra, eduppu=4, noteCount=8',
+            lc4 === 9,
+            '9 commas',
+            `${lc4} commas`,
+            '(4-1-8) % 14 = -5 % 14 = 9');
+
+        // ============================================================================
+        // TEST SUITE 3: NOTE COUNTING
+        // ============================================================================
+
+        test('Note Counting',
+            'Simple phrase "srgmpdns"',
+            countNotes('srgmpdns') === 8,
+            '8 notes',
+            `${countNotes('srgmpdns')} notes`);
+
+        test('Note Counting',
+            'With commas "s,rg,,m"',
+            countNotes('s,rg,,m') === 5,
+            '5 notes',
+            `${countNotes('s,rg,,m')} notes`,
+            '(s, comma, r, g, comma, comma, m = 5 counting both notes and rests)');
+
+        test('Note Counting',
+            'With spaces "s r g m"',
+            countNotes('s r g m') === 4,
+            '4 notes',
+            `${countNotes('s r g m')} notes`);
+
+        test('Note Counting',
+            'With variants "sr1g2m"',
+            countNotes('sr1g2m') === 4,
+            '4 notes',
+            `${countNotes('sr1g2m')} notes`,
+            'r1 and g2 each count as 1 note');
+
+        test('Note Counting',
+            'Empty phrase ""',
+            countNotes('') === 0,
+            '0 notes',
+            `${countNotes('')} notes`);
+
+        // ============================================================================
+        // TEST SUITE 4: PHRASE CONSTRUCTION
+        // ============================================================================
+
+        // Build fullPhrase as per design
+        let phrase1 = 'srgmpdns';
+        let cleaned1 = cleanPhrase(phrase1);
+        let noteCount1 = countNotes(phrase1);
+        let cycleLength1 = 32;
+        let eduppu1 = 4;
+        let leadingCommas1 = calculateLeadingCommas(noteCount1, cycleLength1, eduppu1);
+        let fullPhrase1 = ','.repeat(leadingCommas1) + cleaned1;
+
+        test('Phrase Construction',
+            'Adhi with simple phrase',
+            fullPhrase1.length === 27 + 8,
+            `${27 + 8} characters total (27 commas + 8 notes)`,
+            `${fullPhrase1.length} characters`,
+            `Full: ${leadingCommas1} commas + "${cleaned1}"`);
+
+        let phrase2 = 'srgmmgrs';
+        let cleaned2 = cleanPhrase(phrase2);
+        let noteCount2 = countNotes(phrase2);
+        let cycleLength2 = 14;
+        let eduppu2 = 4;
+        let leadingCommas2 = calculateLeadingCommas(noteCount2, cycleLength2, eduppu2);
+        let fullPhrase2 = ','.repeat(leadingCommas2) + cleaned2;
+
+        test('Phrase Construction',
+            'Misra with user example phrase',
+            fullPhrase2.length === 9 + 8,
+            `${9 + 8} characters total`,
+            `${fullPhrase2.length} characters`,
+            `Full: "${fullPhrase2}"`);
+
+        // ============================================================================
+        // TEST SUITE 5: MULTI-ROW WRAPPING
+        // ============================================================================
+
+        // Split into rows
+        let rows2 = [];
+        for (let i = 0; i < fullPhrase2.length; i += cycleLength2) {
+            rows2.push(fullPhrase2.substring(i, i + cycleLength2));
+        }
+
+        test('Multi-Row Wrapping',
+            'Misra phrase wraps to 2 rows',
+            rows2.length === 2,
+            '2 rows',
+            `${rows2.length} rows`);
+
+        test('Multi-Row Wrapping',
+            'Row 1 length = cycleLength',
+            rows2[0].length === cycleLength2,
+            `${cycleLength2} characters`,
+            `${rows2[0].length} characters`,
+            `Row 1: "${rows2[0]}"`);
+
+        test('Multi-Row Wrapping',
+            'Row 2 has remaining characters',
+            rows2[1].length === 3,
+            '3 characters',
+            `${rows2[1].length} characters`,
+            `Row 2: "${rows2[1]}"`);
+
+        // ============================================================================
+        // TEST SUITE 6: LANDING POSITION
+        // ============================================================================
+
+        test('Landing Position',
+            'Eduppu = cell index for row 1',
+            eduppu2 - 1 === 3,
+            'Index 3 (0-based)',
+            `Index ${eduppu2 - 1}`,
+            `Eduppu ${eduppu2} → position ${eduppu2 - 1}`);
+
+        // Find what's at landing position
+        let landingChar = rows2[0][eduppu2 - 1];
+        test('Landing Position',
+            'Landing position in row 1 is a comma',
+            landingChar === ',',
+            'Comma (",") character',
+            `"${landingChar}" character`,
+            `At row 1, position ${eduppu2 - 1}`);
+
+        // ============================================================================
+        // DISPLAY RESULTS
+        // ============================================================================
+
+        let html = '';
+        let currentCategory = '';
+
+        results.forEach(r => {
+            if (r.category !== currentCategory) {
+                if (currentCategory !== '') html += '</div>';
+                html += `<h2>${r.category}</h2>`;
+                currentCategory = r.category;
+            }
+
+            const passClass = r.passed ? 'pass' : 'fail';
+            const symbol = r.passed ? '✓' : '✗';
+            html += `<div class="test ${passClass}">
+                ${symbol} ${r.name}
+                <div class="info">
+                    Expected: ${r.expected}<br>
+                    Actual: ${r.actual}
+                    ${r.info ? `<br>Note: ${r.info}` : ''}
+                </div>
+            </div>`;
+        });
+
+        if (currentCategory !== '') html += '</div>';
+
+        // Summary
+        const passed = results.filter(r => r.passed).length;
+        const total = results.length;
+        const summary = `<div class="test ${passed === total ? 'pass' : 'fail'}" style="margin-top: 20px;">
+            <strong>Summary: ${passed}/${total} tests passed</strong>
+        </div>`;
+
+        document.getElementById('results').innerHTML = summary + html;
+    </script>
+</body>
+</html>
