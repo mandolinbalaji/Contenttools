@@ -2408,11 +2408,6 @@
                 updatePhrase();
                 captureHistory();
             });
-            document.getElementById('phraseInput').addEventListener('click', () => {
-                if (octaveModifier) {
-                    applyDotToNoteInPhrase('phraseInput', octaveModifier);
-                }
-            });
             document.getElementById('phraseComments').addEventListener('input', (e) => {
                 currentSong.phraseComments = e.target.value;
             });
