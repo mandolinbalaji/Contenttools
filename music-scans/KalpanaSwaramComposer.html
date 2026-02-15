@@ -1319,7 +1319,8 @@
                 lyrics: '',
                 noteCount: 0,
                 leadingCommas: 0,
-                fullPhrase: ''
+                fullPhrase: '',
+                eduppu: 4
             },
             phraseComments: '',
             cycles: []
@@ -1528,13 +1529,14 @@
             currentSong.mainPhrase.phraseText = processed;
             currentSong.mainPhrase.phraseDisplay = cleanPhrase(processed);
             currentSong.mainPhrase.noteCount = countNotes(processed);
+            currentSong.mainPhrase.eduppu = currentSong.eduppu;
 
             // Calculate leading commas
             const cycleLength = currentSong.beats * currentSong.nadai;
             currentSong.mainPhrase.leadingCommas = calculateLeadingCommas(
                 currentSong.mainPhrase.noteCount,
                 cycleLength,
-                currentSong.eduppu
+                currentSong.mainPhrase.eduppu
             );
             currentSong.mainPhrase.fullPhrase = ','.repeat(currentSong.mainPhrase.leadingCommas) + currentSong.mainPhrase.phraseDisplay;
 
