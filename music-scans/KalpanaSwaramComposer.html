@@ -2186,7 +2186,6 @@
 
         const sections = [
             { id: 'section-metadata', name: 'metadata' },
-            { id: 'section-phrase', name: 'phrase' },
             { id: 'section-cycles', name: 'cycles' },
             { id: 'section-play', name: 'play' },
             { id: 'section-spreadsheet', name: 'spreadsheet' }
@@ -2229,7 +2228,7 @@
             const scrollPos = window.scrollY + 200;
             for (let i = sections.length - 1; i >= 0; i--) {
                 const section = document.getElementById(sections[i].id);
-                if (section.offsetTop <= scrollPos) {
+                if (section && section.offsetTop <= scrollPos) {
                     // Highlight in floating nav
                     const bullets = document.querySelectorAll('.nav-bullet');
                     if (bullets[i]) bullets[i].classList.add('active');
