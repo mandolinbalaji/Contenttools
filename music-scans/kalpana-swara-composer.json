@@ -5,38 +5,47 @@
     "createdDate": "2026-02-14T22:01:52.304639",
     "cycles": [
       {
+        "comments": "Charanam",
         "expanded": true,
+        "fullPhrase": ",,ġṙṡndṙṡndpṡndpṁ",
         "id": "cycle-1771106988121",
         "label": "Cycle 1",
-        "lines": [
-          {
-            "eduppu": 4,
-            "fullPhrase": ",,grsndrsndpsndpm",
-            "id": "line-1771106994562",
-            "leadingCommas": 2,
-            "lyrics": "",
-            "noteCount": 15,
-            "phraseDisplay": "grsndrsndpsndpm",
-            "phraseText": "grsndrsndpsndpm"
-          }
-        ]
+        "leadingCommas": 2,
+        "lyrics": "",
+        "noteCount": 15,
+        "phraseDisplay": "ġṙṡndṙṡndpṡndpṁ",
+        "phraseText": "ġṙṡndṙṡndpṡndpṁ"
+      },
+      {
+        "comments": "",
+        "expanded": true,
+        "fullPhrase": ",,ġṙṡndṙṡndpṡndpṁ",
+        "id": "cycle-1771178954367",
+        "label": "Cycle 2",
+        "leadingCommas": 2,
+        "lyrics": "",
+        "noteCount": 15,
+        "phraseDisplay": "ġṙṡndṙṡndpṡndpṁ",
+        "phraseText": "ġṙṡndṙṡndpṡndpṁ"
+      },
+      {
+        "comments": "",
+        "expanded": true,
+        "fullPhrase": ",,,,,,,,,,,,ġṙṡndn,ṙṡndpd,ṡndpṁ",
+        "id": "cycle-1771178960365",
+        "label": "Cycle 3",
+        "leadingCommas": 12,
+        "lyrics": "",
+        "noteCount": 19,
+        "phraseDisplay": "ġṙṡndn,ṙṡndpd,ṡndpṁ",
+        "phraseText": "ġṙṡndn,ṙṡndpd,ṡndpṁ"
       }
     ],
     "eduppu": 4,
     "id": "fbc5330f-ec99-439b-b7a5-150ec1be45dd",
-    "lastModified": "2026-02-15T16:39:17.193298",
-    "mainPhrase": {
-      "eduppu": 4,
-      "fullPhrase": ",,,ns,r,,,r,,,rrg",
-      "leadingCommas": 3,
-      "lyrics": "",
-      "noteCount": 14,
-      "phraseDisplay": "ns,r,,,r,,,rrg",
-      "phraseText": "ns,r,,,r,,,\nrrg"
-    },
+    "lastModified": "2026-02-15T18:52:26.683649",
     "nadai": 2,
     "name": "PakkalaNilabadi",
-    "phraseComments": "",
     "ragam": "Karaharapriya",
     "scale": "r2 g2 m1 d2 n2",
     "sruthi": "C#",

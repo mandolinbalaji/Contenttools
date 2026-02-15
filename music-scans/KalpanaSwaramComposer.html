@@ -1338,8 +1338,8 @@
             if (cycleLength === 0) return 0;
             
             const landingPosition = eduppu === 1 ? cycleLength : eduppu - 1;
-            let result = landingPosition - noteCount;
-            if (result < 0) result += cycleLength;
+            // Use proper modulo to handle negative numbers correctly
+            const result = ((landingPosition - noteCount) % cycleLength + cycleLength) % cycleLength;
             
             return result;
         }
@@ -1873,7 +1873,7 @@
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
                     const item = rowItems[i] || '';
-                    cell.textContent = item === ',' ? '-' : item;
+                    cell.textContent = item;
                     if (i === landingCellIndex) {
                         cell.className = 'spreadsheet-landing';
                     }
