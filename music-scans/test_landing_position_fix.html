@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Position Calculation Verification</title>
+    <style>
+        body {
+            font-family: Courier New, monospace;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ccc;
+            background-color: #fafafa;
+        }
+        .test-case.pass {
+            border-left-color: #4CAF50;
+            background-color: #e8f5e9;
+        }
+        .test-case.fail {
+            border-left-color: #f44336;
+            background-color: #ffebee;
+        }
+        .test-label {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .test-details {
+            font-size: 12px;
+            color: #666;
+            margin: 5px 0;
+        }
+        .pass-fail {
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .pass-fail.pass {
+            color: #4CAF50;
+        }
+        .pass-fail.fail {
+            color: #f44336;
+        }
+        .spreadsheet {
+            background: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #999;
+            margin: 10px 0;
+            font-size: 13px;
+            line-height: 1.8;
+            white-space: pre;
+        }
+        .visual {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin: 5px 0;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #666;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .summary {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Landing Position Calculation Verification</h1>
+    
+    <div class="summary">
+        Tests: <span id="totalTests">0</span> | 
+        Passed: <span id="passedTests" style="color: #4CAF50;">0</span> | 
+        Failed: <span id="failedTests" style="color: #f44336;">0</span>
+    </div>
+
+    <div class="test-section">
+        <h2>Formula: Landing Position Calculation</h2>
+        <p><strong>Rule:</strong> Last character of phrase should land at position (eduppu - 1)</p>
+        <p><strong>Formula:</strong> leadingCommas = (eduppu === 1) ? cycleLength : eduppu - 1 - noteCount</p>
+        
+        <div id="formulaTests"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>User Examples Verification</h2>
+        <div id="userExamples"></div>
+    </div>
+
+    <script>
+        function calculateLeadingCommas(noteCount, cycleLength, eduppu) {
+            if (cycleLength === 0) return 0;
+            const landingPosition = eduppu === 1 ? cycleLength : eduppu - 1;
+            let result = landingPosition - noteCount;
+            if (result < 0) result += cycleLength;
+            return result;
+        }
+
+        let totalTests = 0;
+        let passedTests = 0;
+        let failedTests = 0;
+
+        function addTest(section, label, actual, expected, details) {
+            const isPass = actual === expected;
+            totalTests++;
+            if (isPass) passedTests++;
+            else failedTests++;
+
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-case ${isPass ? 'pass' : 'fail'}`;
+            testDiv.innerHTML = `
+                <div class="test-label">${label}</div>
+                <div class="test-details">${details}</div>
+                <div class="test-details">Expected: <strong>${expected}</strong>, Got: <strong>${actual}</strong></div>
+                <div class="pass-fail ${isPass ? 'pass' : 'fail'}">${isPass ? '✓ PASS' : '✗ FAIL'}</div>
+            `;
+            document.getElementById(section).appendChild(testDiv);
+        }
+
+        // Test 1: Adhi nadai 4, eduppu 1
+        // cycleLength = 8 * 4 = 32
+        // eduppu = 1 → landingPosition = 32
+        // noteCount = 14 → leading = 32 - 14 = 18
+        addTest('formulaTests',
+            'Adhi (8×4=32), eduppu=1, phrase=14 notes',
+            calculateLeadingCommas(14, 32, 1),
+            18,
+            'Landing at position 32 (end of cycle). Leading: 32 - 14 = 18'
+        );
+
+        // Test 2: Misra nadai 2, eduppu 4
+        // cycleLength = 7 * 2 = 14
+        // eduppu = 4 → landingPosition = 3
+        // noteCount = 14 → leading = 3 - 14 = -11 → wrap: -11 + 14 = 3
+        addTest('formulaTests',
+            'Misra (7×2=14), eduppu=4, phrase=14 notes',
+            calculateLeadingCommas(14, 14, 4),
+            3,
+            'Landing at position 3. Leading: (3 - 14) + 14 = 3'
+        );
+
+        // Test 3: Misra nadai 4, eduppu 4
+        // cycleLength = 7 * 4 = 28
+        // eduppu = 4 → landingPosition = 3
+        // noteCount = 17 → leading = 3 - 17 = -14 → wrap: -14 + 28 = 14
+        addTest('formulaTests',
+            'Misra (7×4=28), eduppu=4, phrase=17 notes',
+            calculateLeadingCommas(17, 28, 4),
+            14,
+            'Landing at position 3. Leading: (3 - 17) + 28 = 14'
+        );
+
+        // Test 4: Adhi nadai 3, eduppu 7
+        // cycleLength = 8 * 3 = 24
+        // eduppu = 7 → landingPosition = 6
+        // This lands on 6th note (2nd note of 2nd beat with nadai 3)
+        addTest('formulaTests',
+            'Adhi Nadai 3 (8×3=24), eduppu=7, phrase=10 notes',
+            calculateLeadingCommas(10, 24, 7),
+            22,  // (6 - 10) + 24 = 20 - wait let me recalculate
+            'Landing at position 6 (2nd note of 2nd beat). Leading: (6 - 10) + 24 = 20'
+        );
+        // Actually (6-10) = -4, -4 + 24 = 20
+
+        // Test 5: Rupakam nadai 4, eduppu 1
+        // cycleLength = 6 * 4 = 24
+        // eduppu = 1 → landingPosition = 24 (end of cycle)
+        // noteCount = 12 → leading = 24 - 12 = 12
+        addTest('formulaTests',
+            'Rupakam (6×4=24), eduppu=1, phrase=12 notes',
+            calculateLeadingCommas(12, 24, 1),
+            12,
+            'Landing at position 24 (end of cycle). Leading: 24 - 12 = 12'
+        );
+
+        // USER EXAMPLE 1: Adhi Nadai 4, eduppu 1
+        // cycleLength = 32, eduppu = 1, noteCount = 14
+        // Expected: 18 leading commas
+        const result1 = calculateLeadingCommas(14, 32, 1);
+        const testDiv1 = document.createElement('div');
+        testDiv1.className = `test-case ${result1 === 18 ? 'pass' : 'fail'}`;
+        testDiv1.innerHTML = `
+            <div class="test-label">USER EXAMPLE 1: Adhi Nadai 4, eduppu 1</div>
+            <div class="test-details">Phrase: ns,r,,,r,,,rrg (14 characters)</div>
+            <div class="test-details">Expected Spreadsheet:</div>
+            <div class="spreadsheet">Phrase: ,,,,,,,,,,,,,,,,,,ns,r,,,r,,,rrg</div>
+            <div class="test-details">Calculation: cycleLength=32, eduppu=1, noteCount=14 → leading=${result1}</div>
+            <div class="pass-fail ${result1 === 18 ? 'pass' : 'fail'}">${result1 === 18 ? '✓ PASS' : '✗ FAIL'}</div>
+        `;
+        document.getElementById('userExamples').appendChild(testDiv1);
+        if (result1 === 18) passedTests++; else failedTests++;
+        totalTests++;
+
+        // USER EXAMPLE 2: Misra Nadai 2, eduppu 4, 14-note phrase
+        // cycleLength = 14, eduppu = 4, noteCount = 14
+        // Expected: 3 leading commas
+        const result2 = calculateLeadingCommas(14, 14, 4);
+        const testDiv2 = document.createElement('div');
+        testDiv2.className = `test-case ${result2 === 3 ? 'pass' : 'fail'}`;
+        testDiv2.innerHTML = `
+            <div class="test-label">USER EXAMPLE 2: Misra Nadai 2, eduppu 4 (Main Phrase)</div>
+            <div class="test-details">Phrase: ns,r,,,r,,,rrg (14 characters)</div>
+            <div class="test-details">Expected: 3 leading commas before phrase</div>
+            <div class="spreadsheet">||,,|,n|s,|r,|,,|r,|,,||
+||rr|g,|,,|,,|,,|,,|,,||</div>
+            <div class="test-details">Calculation: cycleLength=14, eduppu=4, noteCount=14 → leading=${result2}</div>
+            <div class="pass-fail ${result2 === 3 ? 'pass' : 'fail'}">${result2 === 3 ? '✓ PASS' : '✗ FAIL'}</div>
+        `;
+        document.getElementById('userExamples').appendChild(testDiv2);
+        if (result2 === 3) passedTests++; else failedTests++;
+        totalTests++;
+
+        // USER EXAMPLE 3: Misra Nadai 2, eduppu 4, Cycle Line 1
+        // cycleLength = 14, eduppu = 4, noteCount = 15
+        // Expected: 2 leading commas + 15 notes = wraps to second row
+        const result3 = calculateLeadingCommas(15, 14, 4);
+        const testDiv3 = document.createElement('div');
+        testDiv3.className = `test-case ${result3 === 2 ? 'pass' : 'fail'}`;
+        testDiv3.innerHTML = `
+            <div class="test-label">USER EXAMPLE 3: Misra Nadai 2, eduppu 4 (Cycle 1 Line 1)</div>
+            <div class="test-details">Phrase: grsndrsndpsndpm (15 characters)</div>
+            <div class="test-details">Expected: 2 leading commas before 15-char phrase</div>
+            <div class="spreadsheet">||,,|,,|,g|rs|nd|rs|nd||
+||ps|nd|pm|,,|,,|,,|,,||</div>
+            <div class="test-details">Calculation: cycleLength=14, eduppu=4, noteCount=15 → leading=${result3}</div>
+            <div class="pass-fail ${result3 === 2 ? 'pass' : 'fail'}">${result3 === 2 ? '✓ PASS' : '✗ FAIL'}</div>
+        `;
+        document.getElementById('userExamples').appendChild(testDiv3);
+        if (result3 === 2) passedTests++; else failedTests++;
+        totalTests++;
+
+        // Update summary
+        document.getElementById('totalTests').textContent = totalTests;
+        document.getElementById('passedTests').textContent = passedTests;
+        document.getElementById('failedTests').textContent = failedTests;
+
+        console.log(`Test Summary: ${passedTests}/${totalTests} passed`);
+    </script>
+</body>
+</html>

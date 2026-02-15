@@ -1382,15 +1382,19 @@
             return count;
         }
 
-        function calculateLeadingCommas(noteCount, cycleLength, eduppu, nadai = 1) {
-            // eduppu is a beat number (1 to beats)
-            // Convert beat to cell position: (eduppu - 1) * nadai + 1
-            // Then calculate leading commas
+        function calculateLeadingCommas(noteCount, cycleLength, eduppu) {
+            // eduppu defines where the phrase ENDS (landing position within the cycle)
+            // eduppu = 1 means end at last position of cycle (wraps around)
+            // eduppu = N means end at position N-1 (for N > 1)
+            // The last character of the phrase should land at this position
+            
             if (cycleLength === 0) return 0;
             
-            const eduppuCell = (eduppu - 1) * nadai + 1;
-            let result = (eduppuCell - 1 - noteCount) % cycleLength;
-            return result < 0 ? result + cycleLength : result;
+            const landingPosition = eduppu === 1 ? cycleLength : eduppu - 1;
+            let result = landingPosition - noteCount;
+            if (result < 0) result += cycleLength;
+            
+            return result;
         }
 
         function cleanPhrase(text) {
@@ -1469,24 +1473,21 @@
         }
 
         function updateEduppuOptions() {
-            // Eduppu is beat number (1 to beats), not cell number
+            // Eduppu is position within cycle (1 to cycleLength)
             const select = document.getElementById('eduppu');
             select.innerHTML = '';
-            for (let i = 1; i <= currentSong.beats; i++) {
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            for (let i = 1; i <= cycleLength; i++) {
                 const option = document.createElement('option');
                 option.value = i;
-                option.textContent = `Beat ${i}`;
+                option.textContent = i;
                 select.appendChild(option);
             }
             
-            // Ensure eduppu is within valid range
-            if (currentSong.eduppu > currentSong.beats) {
-                currentSong.eduppu = Math.min(currentSong.eduppu, currentSong.beats);
-            }
-            if (currentSong.eduppu < 1) {
-                currentSong.eduppu = 1;
-            }
-            select.value = Math.min(currentSong.eduppu, currentSong.beats);
+            // Clamp eduppu within valid range
+            if (currentSong.eduppu < 1) currentSong.eduppu = 1;
+            if (currentSong.eduppu > cycleLength) currentSong.eduppu = cycleLength;
+            select.value = currentSong.eduppu;
         }
 
         function addTag() {
@@ -1533,8 +1534,7 @@
             currentSong.mainPhrase.leadingCommas = calculateLeadingCommas(
                 currentSong.mainPhrase.noteCount,
                 cycleLength,
-                currentSong.eduppu,
-                currentSong.nadai
+                currentSong.eduppu
             );
             currentSong.mainPhrase.fullPhrase = ','.repeat(currentSong.mainPhrase.leadingCommas) + currentSong.mainPhrase.phraseDisplay;
 
@@ -1671,7 +1671,7 @@
 
                 // Recalculate leading commas
                 const cycleLength = currentSong.beats * currentSong.nadai;
-                line.leadingCommas = calculateLeadingCommas(line.noteCount, cycleLength, line.eduppu, currentSong.nadai);
+                line.leadingCommas = calculateLeadingCommas(line.noteCount, cycleLength, line.eduppu);
                 line.fullPhrase = ','.repeat(line.leadingCommas) + line.phraseDisplay;
 
                 updateSpreadsheet();
@@ -1759,24 +1759,24 @@
             body.innerHTML = '';
 
             // Add main phrase row
-            renderSpreadsheetLine(body, 'PHRASE', currentSong.mainPhrase, cycleLength, currentSong.nadai);
+            renderSpreadsheetLine(body, 'PHRASE', currentSong.mainPhrase, cycleLength);
 
             // Add all cycle lines
             currentSong.cycles.forEach((cycle, cycleIndex) => {
                 cycle.lines.forEach((line, lineIndex) => {
                     const label = `Cycle ${cycleIndex + 1} Line ${lineIndex + 1}`;
-                    renderSpreadsheetLine(body, label, line, cycleLength, currentSong.nadai);
+                    renderSpreadsheetLine(body, label, line, cycleLength);
                 });
             });
         }
 
-        function renderSpreadsheetLine(tbody, label, lineData, cycleLength, nadai) {
+        function renderSpreadsheetLine(tbody, label, lineData, cycleLength) {
             // Display phrase exactly as typed (no scale transformation)
             // Scale is metadata for context/playback, not display
             const phraseDisplay = lineData.phraseDisplay || '';
             
             // Calculate leading commas and total items
-            const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu, nadai);
+            const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu);
             const fullPhrase = ','.repeat(leadingCommas) + phraseDisplay;
             
             // Split into rows based on cycleLength
