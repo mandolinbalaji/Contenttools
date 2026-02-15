@@ -1208,7 +1208,7 @@
                 <!-- Main Phrase Textarea -->
                 <div class="form-group">
                     <label>Phrase (s, r, g, m, p, d, n)</label>
-                    <textarea id="phraseInput" placeholder="Enter swaras: s r g m p d n"></textarea>
+                    <textarea id="phraseInput" placeholder="Enter swaras: s r g m p d n" onclick="handlePhraseInputClick(event)"></textarea>
                 </div>
 
                 <!-- Phrase Info -->
@@ -1330,6 +1330,7 @@
         let historyIndex = 0;
         let patternModeActive = false;
         let octaveModifier = null; // 'up' | 'down' | null
+        let lastActivePhraseInput = 'main'; // 'main' or cycleId+lineId
         let allSongs = [];
         let isPlaying = false;
         let currentAudioContext = null;
@@ -1411,13 +1412,21 @@
                 if (char === ' ') continue;
                 
                 if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    let item = text[i]; // Keep original case
+                    
                     // Check if this note has a variant digit (e.g., r1, r2, g3)
                     if (i + 1 < text.length && /[1-9]/.test(text[i + 1])) {
-                        items.push(text[i] + text[i + 1]);
+                        item += text[i + 1];
                         i++; // Skip the digit
-                    } else {
-                        items.push(char);
                     }
+                    
+                    // Check for combining characters (dot above U+0307 or dot below U+0323)
+                    while (i + 1 < text.length && ['\u0307', '\u0323'].includes(text[i + 1])) {
+                        item += text[i + 1];
+                        i++; // Skip the combining character
+                    }
+                    
+                    items.push(item);
                 } else if (char === ',') {
                     items.push(',');
                 }
@@ -1584,18 +1593,22 @@
             }
         }
 
-        function toggleOctaveModifier(type) {
-            if (octaveModifier === type) {
+        function toggleOctaveModifier(mode) {
+            // Toggle dot mode: clicking same button turns it off, clicking different button switches
+            if (octaveModifier === mode) {
                 octaveModifier = null;
-                document.getElementById(`octave${type.charAt(0).toUpperCase() + type.slice(1)}Btn`).classList.remove('active');
             } else {
-                // Deactivate previous
-                if (octaveModifier) {
-                    document.getElementById(`octave${octaveModifier.charAt(0).toUpperCase() + octaveModifier.slice(1)}Btn`).classList.remove('active');
-                }
-                octaveModifier = type;
-                document.getElementById(`octave${type.charAt(0).toUpperCase() + type.slice(1)}Btn`).classList.add('active');
+                octaveModifier = mode;
             }
+            
+            console.log('[DEBUG] toggleOctaveModifier called with mode:', mode, 'New octaveModifier:', octaveModifier);
+            
+            // Update button active states
+            const upBtn = document.getElementById('octaveUpBtn');
+            const downBtn = document.getElementById('octaveDownBtn');
+            
+            upBtn.classList.toggle('active', octaveModifier === 'up');
+            downBtn.classList.toggle('active', octaveModifier === 'down');
         }
 
         function undoPhrase() {
@@ -1635,6 +1648,91 @@
             patternModeActive = !patternModeActive;
             alert('Pattern mode: ' + (patternModeActive ? 'Enter digits (e.g., 54545)' : 'Normal input'));
             // TODO: Implement pattern mode UI and logic
+        }
+
+        function applyDotToCurrentCursor(textarea, mode) {
+            console.log('[DEBUG] applyDotToCurrentCursor called', {mode, textareaId: textarea.id, textareaValue: textarea.value});
+            if (!octaveModifier) {
+                console.log('[DEBUG] octaveModifier is null, returning');
+                return null;
+            }
+            
+            const cursorPos = textarea.selectionStart;
+            const text = textarea.value;
+            console.log('[DEBUG] Cursor position:', cursorPos, 'Text:', text);
+            
+            // Find the note at or before cursor
+            let noteStart = cursorPos - 1;
+            while (noteStart >= 0) {
+                const char = text[noteStart].toLowerCase();
+                console.log('[DEBUG] Checking char at', noteStart, ':', char);
+                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    // Found a note, find its end
+                    let noteEnd = noteStart + 1;
+                    
+                    // Skip variant digit if present (e.g., r1, g3)
+                    if (noteEnd < text.length && /[1-9]/.test(text[noteEnd])) {
+                        noteEnd++;
+                    }
+                    
+                    // Skip existing dot marks
+                    while (noteEnd < text.length && ['\u0307', '\u0323'].includes(text[noteEnd])) {
+                        noteEnd++;
+                    }
+                    
+                    const noteText = text.substring(noteStart, noteEnd);
+                    let newNoteText = noteText;
+                    console.log('[DEBUG] Found note at', noteStart, ':', noteText, 'Mode:', mode);
+                    
+                    if (mode === 'up') {
+                        // Add dot above (U+0307), remove dot below first
+                        newNoteText = noteText.replace(/\u0323/g, '') + '\u0307';
+                    } else if (mode === 'down') {
+                        // Add dot below (U+0323), remove dot above first
+                        newNoteText = noteText.replace(/\u0307/g, '') + '\u0323';
+                    }
+                    
+                    const newText = text.substring(0, noteStart) + newNoteText + text.substring(noteEnd);
+                    console.log('[DEBUG] New text:', newText);
+                    textarea.value = newText;
+                    textarea.selectionStart = textarea.selectionEnd = noteStart + newNoteText.length;
+                    
+                    return newText;
+                } else if (char === ',' || char === ' ') {
+                    // Hit separator without finding note
+                    console.log('[DEBUG] Hit separator, breaking');
+                    break;
+                }
+                noteStart--;
+            }
+            console.log('[DEBUG] No note found, returning null');
+            return null;
+        }
+
+        function handlePhraseInputClick(event) {
+            console.log('[DEBUG] handlePhraseInputClick called, octaveModifier:', octaveModifier);
+            if (octaveModifier) {
+                const textarea = event.target;
+                const newText = applyDotToCurrentCursor(textarea, octaveModifier);
+                if (newText !== null) {
+                    console.log('[DEBUG] Dot applied successfully, updating phrase');
+                    updatePhrase();
+                    captureHistory();
+                }
+            }
+        }
+
+        function handleCycleLineInputClick(event, cycleId, lineId) {
+            console.log('[DEBUG] handleCycleLineInputClick called', {cycleId, lineId, octaveModifier});
+            if (octaveModifier) {
+                const textarea = event.target;
+                const newText = applyDotToCurrentCursor(textarea, octaveModifier);
+                if (newText !== null) {
+                    console.log('[DEBUG] Dot applied successfully, updating line', {cycleId, lineId, newText});
+                    updateLine(cycleId, lineId, 'phraseText', newText);
+                    captureHistory();
+                }
+            }
         }
 
         // ============================================================================
@@ -1688,15 +1786,13 @@
                     line.phraseText = processed;
                     line.phraseDisplay = cleanPhrase(processed);
                     line.noteCount = countNotes(processed);
-                }  else if (field === 'eduppu') {
-                    line.eduppu = parseInt(value) || 1;
                 } else if (field === 'lyrics') {
                     line.lyrics = value;
                 }
 
-                // Recalculate leading commas
+                // Recalculate leading commas using currentSong.eduppu (shared across all cycles)
                 const cycleLength = currentSong.beats * currentSong.nadai;
-                line.leadingCommas = calculateLeadingCommas(line.noteCount, cycleLength, line.eduppu);
+                line.leadingCommas = calculateLeadingCommas(line.noteCount, cycleLength, currentSong.eduppu);
                 line.fullPhrase = ','.repeat(line.leadingCommas) + line.phraseDisplay;
 
                 updateSpreadsheet();
@@ -1724,13 +1820,10 @@
                             <div class="line-item">
                                 <div class="line-label">Line ${lineIndex + 1}</div>
                                 <div class="line-inputs">
-                                    <textarea placeholder="Swaras..." 
-                                              onchange="updateLine('${cycle.id}', '${line.id}', 'phraseText', this.value)">${line.phraseText}</textarea>
-                                    <select onchange="updateLine('${cycle.id}', '${line.id}', 'eduppu', this.value)">
-                                        ${Array.from({length: currentSong.beats * currentSong.nadai}, (_, i) => 
-                                            `<option value="${i+1}" ${line.eduppu === i+1 ? 'selected' : ''}>Eduppu ${i+1}</option>`
-                                        ).join('')}
-                                    </select>
+                                    <textarea id="cycleLine-${cycle.id}-${line.id}" 
+                                              placeholder="Swaras..." 
+                                              onchange="updateLine('${cycle.id}', '${line.id}', 'phraseText', this.value)"
+                                              onclick="handleCycleLineInputClick(event, '${cycle.id}', '${line.id}')">${line.phraseText}</textarea>
                                 </div>
                                 <div class="line-lyrics">
                                     <textarea placeholder="Lyrics..." 
@@ -1800,8 +1893,11 @@
             // Scale is metadata for context/playback, not display
             const phraseDisplay = lineData.phraseDisplay || '';
             
+            // Determine eduppu to use: mainPhrase uses its own, cycle lines use currentSong.eduppu
+            const eduppu = lineData === currentSong.mainPhrase ? lineData.eduppu : currentSong.eduppu;
+            
             // Calculate leading commas and total items
-            const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu);
+            const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, eduppu);
             
             // Convert to items array (treating r1, g3 etc as single items)
             const items = [];
@@ -1839,7 +1935,7 @@
                 
                 // Calculate if landing falls on this row (only for first row)
                 if (rowIndex === 0) {
-                    landingCellIndex = lineData.eduppu - 1;
+                    landingCellIndex = eduppu - 1;
                 }
                 
                 for (let i = 0; i < cycleLength; i++) {
@@ -2311,6 +2407,11 @@
             document.getElementById('phraseInput').addEventListener('input', () => {
                 updatePhrase();
                 captureHistory();
+            });
+            document.getElementById('phraseInput').addEventListener('click', () => {
+                if (octaveModifier) {
+                    applyDotToNoteInPhrase('phraseInput', octaveModifier);
+                }
             });
             document.getElementById('phraseComments').addEventListener('input', (e) => {
                 currentSong.phraseComments = e.target.value;
