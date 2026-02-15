@@ -1402,6 +1402,29 @@
             return text.replace(/\s+/g, '');
         }
 
+        // Convert phrase string to array of items, treating variants as single items
+        // E.g., "ns,r1,,,r,,,rrg" → ["n", "s", ",", "r1", ",", ",", "r", ",", ",", "r", "r", "g"]
+        function phraseToItems(text) {
+            const items = [];
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i].toLowerCase();
+                if (char === ' ') continue;
+                
+                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    // Check if this note has a variant digit (e.g., r1, r2, g3)
+                    if (i + 1 < text.length && /[1-9]/.test(text[i + 1])) {
+                        items.push(text[i] + text[i + 1]);
+                        i++; // Skip the digit
+                    } else {
+                        items.push(char);
+                    }
+                } else if (char === ',') {
+                    items.push(',');
+                }
+            }
+            return items;
+        }
+
         // Parse scale definition and return map of swara -> variant
         // E.g., "r2 g2 m1 d2 n2" returns {r: '2', g: '2', m: '1', d: '2', n: '2'}
         function parseScale(scaleText) {
@@ -1779,21 +1802,27 @@
             
             // Calculate leading commas and total items
             const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu);
-            const fullPhrase = ','.repeat(leadingCommas) + phraseDisplay;
             
-            // Split into rows based on cycleLength
+            // Convert to items array (treating r1, g3 etc as single items)
+            const items = [];
+            for (let i = 0; i < leadingCommas; i++) {
+                items.push(',');
+            }
+            items.push(...phraseToItems(phraseDisplay));
+            
+            // Split items into rows of cycleLength
             const rows = [];
-            for (let i = 0; i < fullPhrase.length; i += cycleLength) {
-                rows.push(fullPhrase.substring(i, i + cycleLength));
+            for (let i = 0; i < items.length; i += cycleLength) {
+                rows.push(items.slice(i, i + cycleLength));
             }
             
-            // If empty phrase, show one empty row
+            // If empty, show one empty row
             if (rows.length === 0) {
-                rows.push('');
+                rows.push([]);
             }
             
             // Render rows
-            rows.forEach((rowContent, rowIndex) => {
+            rows.forEach((rowItems, rowIndex) => {
                 // Notes row
                 const notesRow = tbody.insertRow();
                 const labelCell = notesRow.insertCell();
@@ -1806,8 +1835,6 @@
                     labelCell.textContent = `  (cont'd)`;
                 }
                 
-                // Pad row to cycleLength and render cells
-                const paddedRow = rowContent.padEnd(cycleLength, ' ');
                 let landingCellIndex = -1;
                 
                 // Calculate if landing falls on this row (only for first row)
@@ -1817,7 +1844,8 @@
                 
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
-                    cell.textContent = paddedRow[i] === ',' ? '-' : (paddedRow[i] === ' ' ? '' : paddedRow[i]);
+                    const item = rowItems[i] || '';
+                    cell.textContent = item === ',' ? '-' : item;
                     if (i === landingCellIndex) {
                         cell.className = 'spreadsheet-landing';
                     }
