@@ -1757,14 +1757,13 @@
         }
 
         function renderSpreadsheetLine(tbody, label, lineData, cycleLength) {
-            // Get phrase display (with chromatic variants applied)
-            const scaleMap = parseScale(currentSong.scale);
+            // Display phrase exactly as typed (no scale transformation)
+            // Scale is metadata for context/playback, not display
             const phraseDisplay = lineData.phraseDisplay || '';
-            const resolvedPhrase = resolvePhrase(phraseDisplay, scaleMap);
             
             // Calculate leading commas and total items
             const leadingCommas = calculateLeadingCommas(lineData.noteCount, cycleLength, lineData.eduppu);
-            const fullPhrase = ','.repeat(leadingCommas) + resolvedPhrase;
+            const fullPhrase = ','.repeat(leadingCommas) + phraseDisplay;
             
             // Split into rows based on cycleLength
             const rows = [];
