@@ -2099,19 +2099,8 @@
                 rows.push([]);
             }
 
-            // Get lyrics array - NO RULES APPLIED, just split as typed by user
+            // Get lyrics text - NO RULES APPLIED, just display as user typed
             const lyricsDisplay = cycleData.lyrics || '';
-            const lyricsItems = phraseToItems(lyricsDisplay); // No leading commas!
-            
-            const lyricsRows = [];
-            for (let i = 0; i < rows.length; i++) {
-                const rowLyrics = [];
-                for (let j = 0; j < cycleLength; j++) {
-                    const lyricsIndex = i * cycleLength + j;
-                    rowLyrics.push(lyricsItems[lyricsIndex] || '');
-                }
-                lyricsRows.push(rowLyrics);
-            }
             
             // Render swaras rows
             rows.forEach((rowItems, rowIndex) => {
@@ -2144,27 +2133,20 @@
                 }
             });
 
-            // Render lyrics rows directly below swaras rows - ONLY if they have content
-            lyricsRows.forEach((rowItems, rowIndex) => {
-                // Check if this row has any content
-                const hasContent = rowItems.some(item => item.trim() !== '');
-                
-                if (!hasContent) {
-                    return; // Skip empty lyrics rows
-                }
-                
+            // Render lyrics row ONLY ONCE (first row only) - applies to ALL swaras rows
+            // This prevents confusion when cycle has multiple continuation rows
+            if (lyricsDisplay.trim()) {
                 const lyricsRow = tbody.insertRow();
                 const lyricsLabel = lyricsRow.insertCell();
                 lyricsLabel.className = 'spreadsheet-label';
-                if (rowIndex === 0) {
-                    lyricsLabel.textContent = '    Lyrics';
-                } else {
-                    lyricsLabel.textContent = '';
-                }
+                lyricsLabel.textContent = '    Lyrics';
+                
+                // Show ALL lyrics items in the first row
+                const allLyricsItems = phraseToItems(lyricsDisplay);
                 
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = lyricsRow.insertCell();
-                    const item = rowItems[i] || '';
+                    const item = allLyricsItems[i] || '';
                     
                     // Make cell editable on single click
                     cell.contentEditable = true;
@@ -2173,12 +2155,10 @@
                     cell.style.fontStyle = 'italic';
                     cell.style.cursor = 'text';
                     cell.dataset.cycleId = cycleData.id;
-                    cell.dataset.rowIndex = rowIndex;
-                    cell.dataset.cellIndex = i;
                     
                     // Save lyrics on blur
                     cell.addEventListener('blur', function() {
-                        saveLyricsFromSpreadsheet(cycleData.id, lyricsRows, cycleLength);
+                        saveLyricsFromSpreadsheet(cycleData.id);
                     });
                     
                     // Prevent Enter from inserting line break
@@ -2189,26 +2169,26 @@
                         }
                     });
                 }
-            });
+            }
         }
 
-        function saveLyricsFromSpreadsheet(cycleId, lyricsRows, cycleLength) {
-            // Read CURRENT DOM values from spreadsheet cells
-            // This ensures edited content is preserved, not stale array values
+        function saveLyricsFromSpreadsheet(cycleId) {
+            // Collect all edited lyrics cells for this cycle and join them
             const spreadsheetTable = document.querySelector('.spreadsheet-table');
             if (!spreadsheetTable) return;
             
-            // Collect all contenteditable cells currently on screen for this cycle
-            const allLyricsItems = [];
+            // Find all contenteditable cells for this cycle (should only be one row)
             const editableCells = spreadsheetTable.querySelectorAll('td[contenteditable="true"]');
             
+            // Collect text from each cell in order, only for this cycle
+            const allLyricsItems = [];
             editableCells.forEach(cell => {
-                // Only collect cells belonging to this cycle
                 if (cell.dataset.cycleId === cycleId) {
-                    allLyricsItems.push(cell.textContent);
+                    allLyricsItems.push(cell.textContent || '');
                 }
             });
             
+            // Join items back into single lyrics string
             const lyricsText = allLyricsItems.join('');
             
             // Save back to cycle
