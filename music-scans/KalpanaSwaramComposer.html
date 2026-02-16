@@ -1041,6 +1041,14 @@
            ───────────────────────────────────────────────────────────────────────── */
         #practiceMode {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background: white;
+            z-index: 1000;
         }
 
         #practiceMode.active {
@@ -1048,74 +1056,72 @@
         }
 
         .practice-container {
-            max-width: 210mm;
-            margin: 0 auto;
-            padding: 20mm 15mm 15mm 15mm;
+            width: 100%;
+            margin: 0;
+            padding: 10mm 8mm 8mm 8mm;
             background: white;
             min-height: 297mm;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: none;
         }
 
         .practice-metadata {
             text-align: center;
-            margin-bottom: 12mm;
-            border-bottom: 2px solid #333;
-            padding-bottom: 8mm;
+            margin-bottom: 4mm;
+            border-bottom: 1px solid #666;
+            padding-bottom: 2mm;
             font-weight: 700;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .practice-metadata-title {
-            font-size: 24pt;
+            font-size: 16pt;
             font-weight: 700;
-            margin-bottom: 3mm;
             color: #000;
         }
 
         .practice-metadata-row {
-            font-size: 11pt;
+            font-size: 9pt;
             font-weight: 600;
-            margin: 1mm 0;
             color: #333;
+            display: inline;
         }
 
         .practice-metadata-label {
-            display: inline-block;
-            width: 80px;
             font-weight: 700;
-            text-align: right;
-            margin-right: 8px;
         }
 
         .practice-metadata-value {
-            display: inline-block;
             font-weight: 600;
         }
 
         .practice-spreadsheet-container {
             overflow-x: auto;
-            margin-top: 8mm;
+            margin-top: 2mm;
         }
 
         .practice-spreadsheet-table {
             width: 100%;
             border-collapse: collapse;
             font-weight: 700;
-            font-size: 13pt;
-            line-height: 1.8;
+            font-size: 10pt;
+            line-height: 1.2;
         }
 
         .practice-spreadsheet-table th {
             background: #333;
             color: white;
-            padding: 4px 3px;
+            padding: 2px 2px;
             font-weight: 700;
-            font-size: 10pt;
+            font-size: 8pt;
             border: 1px solid #000;
         }
 
         .practice-spreadsheet-table td {
             border: 1px solid #ccc;
-            padding: 5px 4px;
+            padding: 3px 2px;
             text-align: center;
             font-weight: 700;
             font-size: 12pt;
@@ -1126,30 +1132,31 @@
             font-weight: 700;
             text-align: left;
             color: #333;
-            padding-left: 6px;
-            width: 100px;
+            padding-left: 3px;
+            width: 50px;
+            font-size: 9pt;
         }
 
         .practice-spreadsheet-table .practice-lyrics-row td {
             background: #f5f5f5;
-            font-size: 11pt;
+            font-size: 9pt;
             font-weight: 600;
             color: #555;
             font-style: italic;
-            padding: 4px 3px;
+            padding: 2px 2px;
         }
 
         .practice-spreadsheet-table .practice-landing {
             background: #90ee90;
-            border: 2px solid #1dd1a1;
+            border: 1px solid #1dd1a1;
             font-weight: 700;
         }
 
         .practice-buttons {
             text-align: center;
-            margin-top: 16mm;
+            margin-top: 4mm;
             display: flex;
-            gap: 10mm;
+            gap: 6mm;
             justify-content: center;
         }
 
@@ -1195,9 +1202,10 @@
             .practice-container {
                 max-width: 100%;
                 margin: 0;
-                padding: 20mm 15mm;
+                padding: 6mm 6mm 6mm 6mm;
                 box-shadow: none;
                 page-break-after: always;
+                min-height: auto;
             }
 
             .practice-spreadsheet-table {
@@ -2641,9 +2649,9 @@
         }
 
         function renderPracticeModeView() {
-            // Render metadata
+            // Render metadata - compact format on 1-2 lines
             const metadataHTML = `
-                <div class="practice-metadata-title">${currentSong.name || 'Untitled Song'}</div>
+                <div class="practice-metadata-title">${currentSong.name || 'Untitled'}</div>
                 <div class="practice-metadata-row">
                     <span class="practice-metadata-label">Raga:</span>
                     <span class="practice-metadata-value">${currentSong.ragam || 'N/A'}</span>
@@ -2655,10 +2663,12 @@
                 <div class="practice-metadata-row">
                     <span class="practice-metadata-label">Composer:</span>
                     <span class="practice-metadata-value">${currentSong.composer || 'N/A'}</span>
-                </div>
-                <div class="practice-metadata-row">
-                    <span class="practice-metadata-label">Beats:</span>
-                    <span class="practice-metadata-value">${currentSong.beats} | Nadai: ${currentSong.nadai} | Eduppu: ${currentSong.eduppu}</span>
+                    | <span class="practice-metadata-label">Beats:</span>
+                    <span class="practice-metadata-value">${currentSong.beats}</span>
+                    | <span class="practice-metadata-label">Nadai:</span>
+                    <span class="practice-metadata-value">${currentSong.nadai}</span>
+                    | <span class="practice-metadata-label">Eduppu:</span>
+                    <span class="practice-metadata-value">${currentSong.eduppu}</span>
                 </div>
             `;
             document.getElementById('practiceMetadata').innerHTML = metadataHTML;
