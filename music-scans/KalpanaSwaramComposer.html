@@ -1035,6 +1035,180 @@
             border-top: 2px solid #ddd;
             margin: 16px 0;
         }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           PRACTICE MODE (A4 PRINT-OPTIMIZED)
+           ───────────────────────────────────────────────────────────────────────── */
+        #practiceMode {
+            display: none;
+        }
+
+        #practiceMode.active {
+            display: block;
+        }
+
+        .practice-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm 15mm 15mm 15mm;
+            background: white;
+            min-height: 297mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .practice-metadata {
+            text-align: center;
+            margin-bottom: 12mm;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8mm;
+            font-weight: 700;
+        }
+
+        .practice-metadata-title {
+            font-size: 24pt;
+            font-weight: 700;
+            margin-bottom: 3mm;
+            color: #000;
+        }
+
+        .practice-metadata-row {
+            font-size: 11pt;
+            font-weight: 600;
+            margin: 1mm 0;
+            color: #333;
+        }
+
+        .practice-metadata-label {
+            display: inline-block;
+            width: 80px;
+            font-weight: 700;
+            text-align: right;
+            margin-right: 8px;
+        }
+
+        .practice-metadata-value {
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .practice-spreadsheet-container {
+            overflow-x: auto;
+            margin-top: 8mm;
+        }
+
+        .practice-spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-weight: 700;
+            font-size: 13pt;
+            line-height: 1.8;
+        }
+
+        .practice-spreadsheet-table th {
+            background: #333;
+            color: white;
+            padding: 4px 3px;
+            font-weight: 700;
+            font-size: 10pt;
+            border: 1px solid #000;
+        }
+
+        .practice-spreadsheet-table td {
+            border: 1px solid #ccc;
+            padding: 5px 4px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 12pt;
+        }
+
+        .practice-spreadsheet-table .practice-label {
+            background: #e8e8e8;
+            font-weight: 700;
+            text-align: left;
+            color: #333;
+            padding-left: 6px;
+            width: 100px;
+        }
+
+        .practice-spreadsheet-table .practice-lyrics-row td {
+            background: #f5f5f5;
+            font-size: 11pt;
+            font-weight: 600;
+            color: #555;
+            font-style: italic;
+            padding: 4px 3px;
+        }
+
+        .practice-spreadsheet-table .practice-landing {
+            background: #90ee90;
+            border: 2px solid #1dd1a1;
+            font-weight: 700;
+        }
+
+        .practice-buttons {
+            text-align: center;
+            margin-top: 16mm;
+            display: flex;
+            gap: 10mm;
+            justify-content: center;
+        }
+
+        .practice-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .practice-btn:hover {
+            background: #764ba2;
+        }
+
+        .practice-btn-close {
+            background: #999;
+        }
+
+        .practice-btn-close:hover {
+            background: #777;
+        }
+
+        /* Print-optimized styling */
+        @media print {
+            body, html {
+                margin: 0;
+                padding: 0;
+            }
+
+            .main-container,
+            header,
+            .top-nav,
+            .floating-nav,
+            .practice-buttons,
+            #practiceMode.active::before {
+                display: none;
+            }
+
+            .practice-container {
+                max-width: 100%;
+                margin: 0;
+                padding: 20mm 15mm;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .practice-spreadsheet-table {
+                page-break-inside: avoid;
+            }
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -1045,6 +1219,7 @@
         <h1>🎵 KalpanaSwaramComposer</h1>
         <header-right>
             <a href="index.html" style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">← Back to Kanakku</a>
+            <button onclick="openPracticeMode()" style="background: #ffd700; color: #333; font-weight: 600;">🎯 Practice</button>
             <button onclick="openHelp()">?</button>
             <button onclick="toggleSettings()">⚙</button>
         </header-right>
@@ -1230,6 +1405,25 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- ============================================================================
+         PRACTICE MODE VIEW (Hidden by default)
+         ============================================================================ -->
+    <div id="practiceMode">
+        <div class="practice-container">
+            <div class="practice-metadata" id="practiceMetadata"></div>
+            <div class="practice-spreadsheet-container">
+                <table class="practice-spreadsheet-table" id="practiceSpreadsheet">
+                    <thead id="practiceSpreadsheetHeader"></thead>
+                    <tbody id="practiceSpreadsheetBody"></tbody>
+                </table>
+            </div>
+            <div class="practice-buttons">
+                <button class="practice-btn" onclick="printPracticeMode()">🖨 Print</button>
+                <button class="practice-btn practice-btn-close" onclick="exitPracticeMode()">✕ Close Practice</button>
+            </div>
+        </div>
     </div>
 
     <!-- ============================================================================
@@ -1848,8 +2042,21 @@
             if (rows.length === 0) {
                 rows.push([]);
             }
+
+            // Get lyrics array (same leading commas as swaras)
+            const lyricsDisplay = cycleData.lyrics || '';
+            const lyricsItems = [];
+            for (let i = 0; i < leadingCommas; i++) {
+                lyricsItems.push('');
+            }
+            lyricsItems.push(...phraseToItems(lyricsDisplay));
             
-            // Render rows
+            const lyricsRows = [];
+            for (let i = 0; i < lyricsItems.length; i += cycleLength) {
+                lyricsRows.push(lyricsItems.slice(i, i + cycleLength));
+            }
+            
+            // Render swaras rows
             rows.forEach((rowItems, rowIndex) => {
                 // Notes row
                 const notesRow = tbody.insertRow();
@@ -1878,22 +2085,26 @@
                         cell.className = 'spreadsheet-landing';
                     }
                 }
+            });
+
+            // Render lyrics rows directly below swaras rows
+            lyricsRows.forEach((rowItems, rowIndex) => {
+                const lyricsRow = tbody.insertRow();
+                const lyricsLabel = lyricsRow.insertCell();
+                lyricsLabel.className = 'spreadsheet-label';
+                if (rowIndex === 0) {
+                    lyricsLabel.textContent = '    Lyrics';
+                } else {
+                    lyricsLabel.textContent = '';
+                }
                 
-                // Lyrics row (only for first row of phrase)
-                if (rowIndex === 0 && cycleData.lyrics) {
-                    const lyricsRow = tbody.insertRow();
-                    const lyricsLabel = lyricsRow.insertCell();
-                    lyricsLabel.className = 'spreadsheet-label';
-                    lyricsLabel.textContent = '   Lyrics';
-                    
-                    const lyricsParts = cycleData.lyrics.split('|');
-                    for (let i = 0; i < cycleLength; i++) {
-                        const cell = lyricsRow.insertCell();
-                        cell.textContent = lyricsParts[i] || '';
-                        if (i === landingCellIndex) {
-                            cell.className = 'spreadsheet-landing';
-                        }
-                    }
+                for (let i = 0; i < cycleLength; i++) {
+                    const cell = lyricsRow.insertCell();
+                    const item = rowItems[i] || '';
+                    cell.textContent = item;
+                    // Light background for lyrics rows for visual distinction
+                    cell.style.backgroundColor = '#f9f9f9';
+                    cell.style.fontStyle = 'italic';
                 }
             });
         }
@@ -2371,7 +2582,166 @@
         }
 
         function openPracticeMode() {
-            alert('Practice mode coming soon!');
+            // Show practice mode view
+            document.getElementById('practiceMode').classList.add('active');
+            
+            // Hide main editor
+            document.querySelector('.main-container').style.display = 'none';
+            document.querySelector('header').style.display = 'none';
+            document.querySelector('.top-nav').style.display = 'none';
+            document.querySelector('.floating-nav').style.display = 'none';
+            
+            // Render practice mode content
+            renderPracticeModeView();
+        }
+
+        function exitPracticeMode() {
+            // Hide practice mode
+            document.getElementById('practiceMode').classList.remove('active');
+            
+            // Show main editor
+            document.querySelector('.main-container').style.display = 'flex';
+            document.querySelector('header').style.display = 'flex';
+            document.querySelector('.top-nav').style.display = 'flex';
+            document.querySelector('.floating-nav').style.display = 'block';
+        }
+
+        function renderPracticeModeView() {
+            // Render metadata
+            const metadataHTML = `
+                <div class="practice-metadata-title">${currentSong.name || 'Untitled Song'}</div>
+                <div class="practice-metadata-row">
+                    <span class="practice-metadata-label">Raga:</span>
+                    <span class="practice-metadata-value">${currentSong.ragam || 'N/A'}</span>
+                </div>
+                <div class="practice-metadata-row">
+                    <span class="practice-metadata-label">Thalam:</span>
+                    <span class="practice-metadata-value">${currentSong.thalam || 'N/A'}</span>
+                </div>
+                <div class="practice-metadata-row">
+                    <span class="practice-metadata-label">Composer:</span>
+                    <span class="practice-metadata-value">${currentSong.composer || 'N/A'}</span>
+                </div>
+                <div class="practice-metadata-row">
+                    <span class="practice-metadata-label">Beats:</span>
+                    <span class="practice-metadata-value">${currentSong.beats} | Nadai: ${currentSong.nadai} | Eduppu: ${currentSong.eduppu}</span>
+                </div>
+            `;
+            document.getElementById('practiceMetadata').innerHTML = metadataHTML;
+
+            // Render spreadsheet with lyrics
+            renderPracticeSpreadsheet();
+        }
+
+        function renderPracticeSpreadsheet() {
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            const header = document.getElementById('practiceSpreadsheetHeader');
+            const body = document.getElementById('practiceSpreadsheetBody');
+
+            // Create header with beat numbers and nadai subdivisions
+            let beatHeaderHTML = '<tr><th></th>';
+            let nadaiHeaderHTML = '<tr><th></th>';
+            
+            for (let beat = 1; beat <= currentSong.beats; beat++) {
+                beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #333; color: white;">Beat ${beat}</th>`;
+                for (let n = 1; n <= currentSong.nadai; n++) {
+                    nadaiHeaderHTML += `<th style="background: #666; color: white; font-size: 9pt;">n${n}</th>`;
+                }
+            }
+            beatHeaderHTML += '</tr>';
+            nadaiHeaderHTML += '</tr>';
+            
+            header.innerHTML = beatHeaderHTML + nadaiHeaderHTML;
+
+            // Create body with all cycles + lyrics rows
+            body.innerHTML = '';
+
+            currentSong.cycles.forEach((cycle, cycleIndex) => {
+                const label = `Cycle ${cycleIndex + 1}`;
+                renderPracticeSpreadsheetLine(body, label, cycle, cycleLength);
+            });
+        }
+
+        function renderPracticeSpreadsheetLine(tbody, label, cycleData, cycleLength) {
+            const phraseDisplay = cycleData.phraseDisplay || '';
+            const eduppu = currentSong.eduppu;
+            
+            // Calculate leading commas using fixed formula
+            const leadingCommas = ((eduppu - 1 - cycleData.noteCount) % cycleLength + cycleLength) % cycleLength;
+            
+            // Create items array
+            const items = [];
+            for (let i = 0; i < leadingCommas; i++) {
+                items.push(',');
+            }
+            items.push(...phraseToItems(phraseDisplay));
+            
+            // Split items and lyrics into rows
+            const rows = [];
+            for (let i = 0; i < items.length; i += cycleLength) {
+                rows.push(items.slice(i, i + cycleLength));
+            }
+            
+            if (rows.length === 0) {
+                rows.push([]);
+            }
+
+            // Get lyrics array
+            const lyricsPhrase = cycleData.lyrics || '';
+            const lyricsItems = [];
+            for (let i = 0; i < leadingCommas; i++) {
+                lyricsItems.push('');
+            }
+            lyricsItems.push(...phraseToItems(lyricsPhrase));
+            
+            const lyricsRows = [];
+            for (let i = 0; i < lyricsItems.length; i += cycleLength) {
+                lyricsRows.push(lyricsItems.slice(i, i + cycleLength));
+            }
+
+            // Render swaras rows
+            rows.forEach((rowItems, rowIndex) => {
+                const notesRow = tbody.insertRow();
+                const labelCell = notesRow.insertCell();
+                labelCell.className = 'practice-label';
+                
+                if (rowIndex === 0) {
+                    labelCell.textContent = label;
+                } else {
+                    labelCell.textContent = '(cont)';
+                }
+                
+                const landingCellIndex = (rowIndex === 0) ? eduppu - 1 : -1;
+                
+                for (let i = 0; i < cycleLength; i++) {
+                    const cell = notesRow.insertCell();
+                    const item = rowItems[i] || '';
+                    cell.textContent = item;
+                    if (i === landingCellIndex) {
+                        cell.className = 'practice-landing';
+                    }
+                }
+            });
+
+            // Render lyrics rows directly below each swaras row
+            lyricsRows.forEach((rowItems, rowIndex) => {
+                const lyricsRow = tbody.insertRow();
+                lyricsRow.className = 'practice-lyrics-row';
+                
+                const labelCell = lyricsRow.insertCell();
+                labelCell.className = 'practice-label';
+                labelCell.textContent = '';
+                
+                for (let i = 0; i < cycleLength; i++) {
+                    const cell = lyricsRow.insertCell();
+                    const item = rowItems[i] || '';
+                    cell.textContent = item;
+                }
+            });
+        }
+
+        function printPracticeMode() {
+            window.print();
         }
 
         // ============================================================================
