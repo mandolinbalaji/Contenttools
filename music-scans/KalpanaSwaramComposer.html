@@ -1888,12 +1888,15 @@
                 fullPhrase: ''
             };
             currentSong.cycles.push(cycle);
+            updateCycleLabels();
             renderCycles();
+            updateSpreadsheet();
         }
 
         function deleteCycle(cycleId) {
             if (confirm('Delete cycle?')) {
                 currentSong.cycles = currentSong.cycles.filter(c => c.id !== cycleId);
+                updateCycleLabels();
                 renderCycles();
                 updateSpreadsheet();
             }
@@ -1932,7 +1935,9 @@
                 cycleCard.innerHTML = `
                     <div class="cycle-header">
                         <div class="cycle-title">${cycle.label}</div>
-                        <div>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            ${cycleIndex > 0 ? `<button class="btn btn-small" onclick="moveCycleUp('${cycle.id}')" title="Move Up">▲</button>` : ''}
+                            ${cycleIndex < currentSong.cycles.length - 1 ? `<button class="btn btn-small" onclick="moveCycleDown('${cycle.id}')" title="Move Down">▼</button>` : ''}
                             <button class="cycle-toggle ${!cycle.expanded ? 'collapsed' : ''}" 
                                     onclick="toggleCycleExpansion('${cycle.id}')">⌄</button>
                             <button class="btn btn-danger btn-small" onclick="deleteCycle('${cycle.id}')">🗑</button>
@@ -1972,6 +1977,38 @@
                 cycle.expanded = !cycle.expanded;
                 renderCycles();
             }
+        }
+
+        function moveCycleUp(cycleId) {
+            const index = currentSong.cycles.findIndex(c => c.id === cycleId);
+            if (index > 0) {
+                // Swap cycles
+                [currentSong.cycles[index - 1], currentSong.cycles[index]] = 
+                [currentSong.cycles[index], currentSong.cycles[index - 1]];
+                // Update labels
+                updateCycleLabels();
+                renderCycles();
+                updateSpreadsheet();
+            }
+        }
+
+        function moveCycleDown(cycleId) {
+            const index = currentSong.cycles.findIndex(c => c.id === cycleId);
+            if (index < currentSong.cycles.length - 1) {
+                // Swap cycles
+                [currentSong.cycles[index + 1], currentSong.cycles[index]] = 
+                [currentSong.cycles[index], currentSong.cycles[index + 1]];
+                // Update labels
+                updateCycleLabels();
+                renderCycles();
+                updateSpreadsheet();
+            }
+        }
+
+        function updateCycleLabels() {
+            currentSong.cycles.forEach((cycle, index) => {
+                cycle.label = `Cycle ${index + 1}`;
+            });
         }
 
         // ============================================================================
