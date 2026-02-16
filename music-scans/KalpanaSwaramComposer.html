@@ -2654,12 +2654,11 @@
             body.innerHTML = '';
 
             currentSong.cycles.forEach((cycle, cycleIndex) => {
-                const label = `Cycle ${cycleIndex + 1}`;
-                renderPracticeSpreadsheetLine(body, label, cycle, cycleLength);
+                renderPracticeSpreadsheetLine(tbody, cycleIndex + 1, cycle, cycleLength);
             });
         }
 
-        function renderPracticeSpreadsheetLine(tbody, label, cycleData, cycleLength) {
+        function renderPracticeSpreadsheetLine(tbody, cycleNumber, cycleData, cycleLength) {
             const phraseDisplay = cycleData.phraseDisplay || '';
             const eduppu = currentSong.eduppu;
             
@@ -2703,9 +2702,9 @@
                 labelCell.className = 'practice-label';
                 
                 if (rowIndex === 0) {
-                    labelCell.textContent = label;
+                    labelCell.textContent = cycleNumber;
                 } else {
-                    labelCell.textContent = '(cont)';
+                    labelCell.textContent = '';
                 }
                 
                 const landingCellIndex = (rowIndex === 0) ? eduppu - 1 : -1;
