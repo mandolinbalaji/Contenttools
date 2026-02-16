@@ -1219,7 +1219,10 @@
         <h1>🎵 KalpanaSwaramComposer</h1>
         <header-right>
             <a href="index.html" style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">← Back to Kanakku</a>
-            <button onclick="openPracticeMode()" style="background: #ffd700; color: #333; font-weight: 600;">🎯 Practice</button>
+            <button onclick="saveSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Save Song">💾 Save</button>
+            <button onclick="importSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import Song">📥 Import</button>
+            <button onclick="exportSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Export Song">📤 Export</button>
+            <button onclick="openPracticeMode()" style="background: #ffd700; color: #333; font-weight: 600; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;" title="Practice Mode">🎯 Practice</button>
             <button onclick="openHelp()">?</button>
             <button onclick="toggleSettings()">⚙</button>
         </header-right>
@@ -1396,12 +1399,6 @@
                         <thead id="spreadsheetHeader"></thead>
                         <tbody id="spreadsheetBody"></tbody>
                     </table>
-                </div>
-
-                <div style="display: flex; gap: 12px; margin-top: 16px;">
-                    <button class="btn btn-primary" onclick="saveSong()">+ Save Song</button>
-                    <button class="btn" onclick="importSong()">↙ Import</button>
-                    <button class="btn" onclick="exportSong()">↗ Export</button>
                 </div>
             </section>
         </main>
