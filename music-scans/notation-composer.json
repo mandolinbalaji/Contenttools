@@ -5,67 +5,68 @@
     "composer": "",
     "id": "init-sujana",
     "nadai": "4",
-    "name": "Sujana Jīvana",
+    "name": "Sujana Jeevana",
     "ragam": "Khamas (Mēḷa 28)",
     "rawText": "Composition: Sujana Jīvana\n• Rāga: Khamas (Mēḷa 28)\n• Ārōhaṇa: S M¹ G³ M¹ P D² N² Ṡ\n• Avarōhaṇa: Ṡ N² D² P M¹ G³ R² S\n• Tāḷa: Rupakam\n\n--------------------------------------------------------------------------------\nPallavi (P.1)\nLine 1:\nM,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||\nsu ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma\nLine 2:\nM,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, DNŚ, ND     | P,,, ,, P,ŚN NDP||\nsu ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā  ma\nVariation 3:\nM,G,GS S,M,G,     | PPMM ,, ,, PGM,     | P, D,DP PDN,ṘŚND   | M,P, ,, PŚN³ DP,,D ||\nsu ja na jī  va     na        rā ma       sugu na bhū  sha     na    rā  ma (sujanajīvana)\n\n--------------------------------------------------------------------------------\nAnupallavi (A.1)\nLine 1:\n* M  N,D DNṠ,ṠN   | S Ṡ, ,, ,, Ṡ, Ṡ, | ,, - ND, N Ṡ, ,, Ṡ,   | ṠṘN, N, ,, NDD, || ,*\n  bhu ja ga bhū sha   ṇā    rccita           budha janā va        na\nLine 1 (Variation):\n* M  N,D DNṠ, ṠN  | ṘṘṠṠ,, ,, Ṡ, Ṡ, | ,, - Ṡ Ṁ, Ġ Ṡ, ,, ṠN  | DNṠ,ṘṠN,NDD, ||\n  bhu ja ga bhū sha   ṇā    rccita           budha ja nā  va        nā-\nLine 2:\nṠ, Ṙ, Ṡ, ,, N,D,  | N, Ṡ, ṠDṠN N, ND   | P,D,DP PDN,D,      | M P, ,, ,, D,N DP,, ||\ntmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma vā-\nLine 2 (Variation):\nṠ, Ṙ, Ṡ, ,, N,D,  | DNṘṠ ṠDṠN N, ND    | P,D,DP PDN,ṘŚND    | M P, ,, ,, Ṡ,N³ DP,, ||\ntmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma va (sujanajīvana)\n\n--------------------------------------------------------------------------------\nCharaṇam (C.)\nLine 1:\n,, * MG,M P , ,, D, | ṠNṘṠ ṠN NDDP M, | ,, - PND, PMM, MGRG | G M, ,, ,, ,, ,, ||\n     cā  ru nē tra    śrī  ka  ḷa    tra      śrī ra mya  gā      tra\nLine 2:\n,, * PG,MP, DNṘṠ   | ṠN ND DP PNDP M, | ,, - PN,D PMM, ,, R,G, | MP,M G M, ,, ,, ,, ||\n     tā  ra ka nā    ma su ca ri    tra      daśara tha   pu       tra\nRemaining Charaṇam Lines (Follow music same as Anupallavi):\ntārakādhi           pā nana             dharmapāla           ka\ntāraya raghu        varanirmala         tyāgarāja           sannuta    (sujanajīvana)\n\n-------------------------------------------------------------------------------",
     "sections": [
       {
+        "title": "Pallavi (P.1)",
         "lines": [
           {
-            "lyrics": "su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma",
-            "swaras": "M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||"
+            "swaras": "M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||",
+            "lyrics": "su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma"
           },
           {
-            "lyrics": "su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā  ma",
-            "swaras": "M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, DNŚ, ND     | P,,, ,, P,ŚN NDP||"
+            "swaras": "M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, DNŚ, ND     | P,,, ,, P,ŚN NDP||",
+            "lyrics": "su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā  ma"
           },
           {
-            "lyrics": "su ja na jī  va     na        rā ma       sugu na bhū  sha     na    rā  ma (sujanajīvana)",
-            "swaras": "M,G,GS S,M,G,     | PPMM ,, ,, PGM,     | P, D,DP PDN,ṘŚND   | M,P, ,, PŚN³ DP,,D ||"
+            "swaras": "M,G,GS S,M,G,     | PPMM ,, ,, PGM,     | P, D,DP PDN,ṘŚND   | M,P, ,, PŚN³ DP,,D ||",
+            "lyrics": "su ja na jī  va     na        rā ma       sugu na bhū  sha     na    rā  ma (sujanajīvana)"
           }
-        ],
-        "title": "Pallavi (P.1)"
+        ]
       },
       {
+        "title": "Anupallavi (A.1)",
         "lines": [
           {
-            "lyrics": "  bhu ja ga bhū sha   ṇā    rccita           budha janā va        na",
-            "swaras": "* M  N,D DNṠ,ṠN   | S Ṡ, ,, ,, Ṡ, Ṡ, | ,, - ND, N Ṡ, ,, Ṡ,   | ṠṘN, N, ,, NDD, || ,*"
+            "swaras": "* M  N,D DNṠ,ṠN   | S Ṡ, ,, ,, Ṡ, Ṡ, | ,, - ND, N Ṡ, ,, Ṡ,   | ṠṘN, N, ,, NDD, || ,*",
+            "lyrics": "  bhu ja ga bhū sha   ṇā    rccita           budha janā va        na"
           },
           {
-            "lyrics": "  bhu ja ga bhū sha   ṇā    rccita           budha ja nā  va        nā-",
-            "swaras": "* M  N,D DNṠ, ṠN  | ṘṘṠṠ,, ,, Ṡ, Ṡ, | ,, - Ṡ Ṁ, Ġ Ṡ, ,, ṠN  | DNṠ,ṘṠN,NDD, ||"
+            "swaras": "* M  N,D DNṠ, ṠN  | ṘṘṠṠ,, ,, Ṡ, Ṡ, | ,, - Ṡ Ṁ, Ġ Ṡ, ,, ṠN  | DNṠ,ṘṠN,NDD, ||",
+            "lyrics": "  bhu ja ga bhū sha   ṇā    rccita           budha ja nā  va        nā-"
           },
           {
-            "lyrics": "tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma vā-",
-            "swaras": "Ṡ, Ṙ, Ṡ, ,, N,D,  | N, Ṡ, ṠDṠN N, ND   | P,D,DP PDN,D,      | M P, ,, ,, D,N DP,, ||"
+            "swaras": "Ṡ, Ṙ, Ṡ, ,, N,D,  | N, Ṡ, ṠDṠN N, ND   | P,D,DP PDN,D,      | M P, ,, ,, D,N DP,, ||",
+            "lyrics": "tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma vā-"
           },
           {
-            "lyrics": "tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma va (sujanajīvana)",
-            "swaras": "Ṡ, Ṙ, Ṡ, ,, N,D,  | DNṘṠ ṠDṠN N, ND    | P,D,DP PDN,ṘŚND    | M P, ,, ,, Ṡ,N³ DP,, ||"
+            "swaras": "Ṡ, Ṙ, Ṡ, ,, N,D,  | DNṘṠ ṠDṠN N, ND    | P,D,DP PDN,ṘŚND    | M P, ,, ,, Ṡ,N³ DP,, ||",
+            "lyrics": "tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma va (sujanajīvana)"
           }
-        ],
-        "title": "Anupallavi (A.1)"
+        ]
       },
       {
+        "title": "Charaṇam (C.)",
         "lines": [
           {
-            "lyrics": "     cā  ru nē tra    śrī  ka  ḷa    tra      śrī ra mya  gā      tra",
-            "swaras": ",, * MG,M P , ,, D, | ṠNṘṠ ṠN NDDP M, | ,, - PND, PMM, MGRG | G M, ,, ,, ,, ,, ||"
+            "swaras": ",, * MG,M P , ,, D, | ṠNṘṠ ṠN NDDP M, | ,, - PND, PMM, MGRG | G M, ,, ,, ,, ,, ||",
+            "lyrics": "     cā  ru nē tra    śrī  ka  ḷa    tra      śrī ra mya  gā      tra"
           },
           {
-            "lyrics": "     tā  ra ka nā    ma su ca ri    tra      daśara tha   pu       tra",
-            "swaras": ",, * PG,MP, DNṘṠ   | ṠN ND DP PNDP M, | ,, - PN,D PMM, ,, R,G, | MP,M G M, ,, ,, ,, ||"
+            "swaras": ",, * PG,MP, DNṘṠ   | ṠN ND DP PNDP M, | ,, - PN,D PMM, ,, R,G, | MP,M G M, ,, ,, ,, ||",
+            "lyrics": "     tā  ra ka nā    ma su ca ri    tra      daśara tha   pu       tra"
           }
-        ],
-        "title": "Charaṇam (C.)"
+        ]
       },
       {
-        "lines": [],
-        "title": "Remaining Charaṇam Lines (Follow music same as Anupallavi):"
+        "title": "Remaining Charaṇam Lines (Follow music same as Anupallavi):",
+        "lines": []
       }
     ],
     "sruthi": "C",
-    "thalam": "3x4 (Rūpaka structure as shown in the source)"
+    "thalam": "Rupakam",
+    "rawText_oldName": "Sujana Jīvana"
   }
 ]

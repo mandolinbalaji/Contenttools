@@ -359,6 +359,7 @@
                 if (trimmed.startsWith('Composition:')) songMetadata.name = trimmed.replace('Composition:', '').trim();
                 else if (trimmed.includes('Rāga:')) songMetadata.ragam = trimmed.split('Rāga:')[1].trim();
                 else if (trimmed.includes('Tāḷa:')) songMetadata.thalam = trimmed.split('Tāḷa:')[1].trim();
+                else if (trimmed.includes('Composer:')) songMetadata.composer = trimmed.split('Composer:')[1].trim();
                 else if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charaṇam')) {
                     currentSection = { title: trimmed, lines: [] };
                     sections.push(currentSection);
@@ -383,7 +384,13 @@
                 }
             }
 
-            currentSong = { ...currentSong, ...songMetadata, sections: sections };
+            // Only update name from metadata if it's NOT already set or if the input text specifically changed its name part
+            if (!currentSong.name || currentSong.name === "Unnamed Song" || currentSong.rawText_oldName !== songMetadata.name) {
+                currentSong.name = songMetadata.name;
+                currentSong.rawText_oldName = songMetadata.name; // Track what was in the text area
+            }
+
+            currentSong = { ...currentSong, ragam: songMetadata.ragam, thalam: songMetadata.thalam, composer: songMetadata.composer, sections: sections };
             renderSong();
         }
 
@@ -393,7 +400,13 @@
             viewer.innerHTML = '';
             metadataDiv.innerHTML = `
                 <div style="margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
-                    <h2 style="color: var(--secondary); margin-bottom: 5px;">${currentSong.name}</h2>
+                    <input type="text" id="songNameInput" 
+                        style="font-size: 24px; font-weight: bold; color: var(--secondary); border: none; background: transparent; padding: 4px 0; margin-bottom: 5px; width: 100%; border-bottom: 1px solid transparent; outline: none; transition: 0.2s;" 
+                        value="${currentSong.name || 'Unnamed Song'}" 
+                        onfocus="this.style.borderBottom='1px solid var(--primary)'"
+                        onblur="this.style.borderBottom='1px solid transparent'"
+                        oninput="updatecurrentSongName(this.value)"
+                        placeholder="Unnamed Song">
                     <p style="color: #666; font-size: 14px;">
                         <strong>Ragam:</strong> ${currentSong.ragam} | <strong>Thalam:</strong> ${currentSong.thalam}
                     </p>
@@ -636,6 +649,20 @@
             document.getElementById('renderedNotation').innerHTML = '<p style="color: #888; text-align: center; padding: 40px;">Ready for new notation.</p>';
             currentSong = { name: '', ragam: '', thalam: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '' };
             renderPlaylist();
+        }
+
+        function updatecurrentSongName(newName) {
+            currentSong.name = newName;
+            // Update sidebar specifically
+            // Find the active playlist item and update its primary text
+            const activeItem = document.querySelector('.playlist-item.active');
+            if (activeItem) {
+                // Find the name div - it's usually the first div inside the first div
+                const nameDiv = activeItem.querySelector('div div:first-child');
+                if (nameDiv) {
+                    nameDiv.textContent = newName || 'Unnamed Song';
+                }
+            }
         }
 
         window.onload = async () => {
