@@ -43,6 +43,8 @@ MIDI_DIR = BASE_DIR / "midi_files"
 app = Flask(__name__, static_folder=None)
 _write_lock = False  # single process guard
 
+NOTATION_FILE = BASE_DIR / "notation-composer.json"
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -1574,6 +1576,59 @@ def test_file_recognition(filename):
     except Exception as e:
         logger.error(f"[API/test-file] Error: {e}")
         return jsonify({"error": str(e), "success": False}), 500
+
+# ===== NOTATION COMPOSER ENDPOINTS =====
+
+def _load_notations():
+    if not NOTATION_FILE.exists():
+        return []
+    try:
+        with open(NOTATION_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading notations: {e}")
+        return []
+
+def _save_notations(notations):
+    try:
+        with open(NOTATION_FILE, 'w', encoding='utf-8') as f:
+            json.dump(notations, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        logger.error(f"Error saving notations: {e}")
+
+@app.route('/api/notation-composer', methods=['GET'])
+def get_notations():
+    return jsonify(_load_notations())
+
+@app.route('/api/notation-composer', methods=['POST'])
+def save_notation():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data"}), 400
+    
+    if not data.get('id'):
+        data['id'] = str(uuid.uuid4())
+    
+    notations = _load_notations()
+    # Find existing by ID or Name (since user liked name-based sharing)
+    idx = next((i for i, n in enumerate(notations) if n.get('id') == data['id'] or n.get('name') == data['name']), None)
+    
+    if idx is not None:
+        notations[idx] = data
+    else:
+        notations.insert(0, data)
+        
+    _save_notations(notations)
+    return jsonify(data), 200
+
+@app.route('/api/notation-composer/<notation_id>', methods=['DELETE'])
+def delete_notation(notation_id):
+    notations = _load_notations()
+    new_notations = [n for n in notations if n.get('id') != notation_id]
+    if len(new_notations) == len(notations):
+        return jsonify({"error": "Not found"}), 404
+    _save_notations(new_notations)
+    return jsonify({"status": "ok"})
 
 # ============================================================================
 # SwaraScript App Server

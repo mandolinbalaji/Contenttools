@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SongNotationComposer</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --dark: #2d3436;
+            --light: #f9f9f9;
+            --accent: #ff7675;
+            --sidebar-width: 300px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f0f2f5;
+            color: var(--dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .search-box {
+            padding: 10px;
+            margin: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: calc(100% - 30px);
+        }
+
+        .playlist {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .playlist-item {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .playlist-item:hover {
+            background: #f8f9ff;
+        }
+
+        .playlist-item.active {
+            background: #edf2ff;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        .input-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        textarea#notationInput {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+
+        .viewer-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Ribbon-style Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd6;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #ddd;
+            color: #555;
+        }
+
+        .btn-outline:hover {
+            background: #f9f9f9;
+        }
+
+        .share-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Notation Grid Styles */
+        .notation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }
+
+        .notation-table td {
+            border: 1px solid #eee;
+            padding: 8px;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .swara-cell {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--dark);
+            padding-bottom: 4px;
+        }
+
+        .lyrics-cell {
+            font-style: italic;
+            font-size: 13px;
+            color: #0047b3;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            font-weight: bold;
+            padding: 15px;
+            text-align: left;
+            border-left: 5px solid var(--primary);
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>🎵 Notation Composer</h3>
+        </div>
+        <input type="text" class="search-box" id="playlistSearch" placeholder="🔍 Search Raga, Composer, Tags...">
+        <div class="playlist" id="playlistContainer">
+            <!-- Playlist items will be injected here -->
+            <div class="playlist-item active">Sujana Jīvana</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <div class="header-controls">
+                <div style="width: 80px;">
+                    <label>Sruthi</label>
+                    <select id="sruthi">
+                        <option>C</option>
+                        <option>C#</option>
+                        <option>D</option>
+                        <option>D#</option>
+                        <option>E</option>
+                        <option>F</option>
+                        <option>F#</option>
+                        <option>G</option>
+                        <option>G#</option>
+                        <option>A</option>
+                        <option>A#</option>
+                        <option>B</option>
+                    </select>
+                </div>
+                <div style="width: 60px;">
+                    <label>Beats</label>
+                    <input type="number" id="beats" value="8" min="1">
+                </div>
+                <div style="width: 60px;">
+                    <label>Nadai</label>
+                    <input type="number" id="nadai" value="4" min="1">
+                </div>
+                <div style="width: 80px;">
+                    <label>BPM</label>
+                    <input type="number" id="bpm" value="120" min="40">
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="newSong()">📄 New</button>
+                <button class="btn btn-outline" onclick="importFile()">📥 Import</button>
+                <button class="btn btn-outline" onclick="exportFile()">📤 Export</button>
+                <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
+                    Share</button>
+                <button class="btn btn-primary" onclick="saveSong()">💾 Save</button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="input-section">
+                <label>Paste Notation Text</label>
+                <textarea id="notationInput" spellcheck="false"
+                    placeholder="Composition: Sujana Jīvana\n• Rāga: Khamas (Mēḷa 28)\n..."></textarea>
+                <button class="btn btn-primary" onclick="parseAndRender()">⚡ Parse & Display</button>
+            </div>
+
+            <div class="viewer-section" id="notationViewer">
+                <div id="metadataDisplay"></div>
+                <div id="renderedNotation">
+                    <p style="color: #888; text-align: center; padding: 40px;">Rendered notation will appear here after
+                        parsing.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION & CONSTANTS ---
+        const NOTE_MAPPING = {
+            'S': 0, 'R1': 1, 'R2': 2, 'R3': 3, 'G1': 2, 'G2': 3, 'G3': 4,
+            'M1': 5, 'M2': 6, 'P': 7, 'D1': 8, 'D2': 9, 'D3': 10, 'N1': 9, 'N2': 10, 'N3': 11
+        };
+
+        // --- 2. STATE ---
+        let currentSong = {
+            id: null, name: '', ragam: '', thalam: '', composer: '',
+            sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: []
+        };
+
+        function parseAndRender() {
+            const text = document.getElementById('notationInput').value;
+            if (!text) return;
+
+            const lines = text.split('\n');
+            let songMetadata = { name: 'Untitled Song', ragam: '', thalam: '', composer: '' };
+            let sections = [];
+            let currentSection = null;
+
+            for (let i = 0; i < lines.length; i++) {
+                const rawLine = lines[i];
+                const trimmed = rawLine.trim();
+                if (!trimmed) continue;
+
+                if (trimmed.startsWith('Composition:')) songMetadata.name = trimmed.replace('Composition:', '').trim();
+                else if (trimmed.includes('Rāga:')) songMetadata.ragam = trimmed.split('Rāga:')[1].trim();
+                else if (trimmed.includes('Tāḷa:')) songMetadata.thalam = trimmed.split('Tāḷa:')[1].trim();
+                else if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charaṇam')) {
+                    currentSection = { title: trimmed, lines: [] };
+                    sections.push(currentSection);
+                }
+                else if (currentSection) {
+                    const isNotation = /[SRGMPDNsrgmpdn,;]/.test(trimmed) && trimmed.includes(',');
+                    if (isNotation) {
+                        let lyricsLine = "";
+                        if (i + 1 < lines.length) {
+                            const nextLine = lines[i + 1];
+                            const nextTrimmed = nextLine.trim();
+                            const nextIsNotation = /[SRGMPDNsrgmpdn,;]/.test(nextTrimmed) && nextTrimmed.includes(',');
+                            const nextIsSection = nextTrimmed.includes('Pallavi') || nextTrimmed.includes('Anupallavi') || nextTrimmed.includes('Charaṇam');
+
+                            if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
+                                lyricsLine = nextLine;
+                                i++;
+                            }
+                        }
+                        currentSection.lines.push({ swaras: rawLine, lyrics: lyricsLine });
+                    }
+                }
+            }
+
+            currentSong = { ...currentSong, ...songMetadata, sections: sections };
+            renderSong();
+        }
+
+        function renderSong() {
+            const viewer = document.getElementById('renderedNotation');
+            const metadataDiv = document.getElementById('metadataDisplay');
+            viewer.innerHTML = '';
+            metadataDiv.innerHTML = `
+                <div style="margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
+                    <h2 style="color: var(--secondary); margin-bottom: 5px;">${currentSong.name}</h2>
+                    <p style="color: #666; font-size: 14px;">
+                        <strong>Ragam:</strong> ${currentSong.ragam} | <strong>Thalam:</strong> ${currentSong.thalam}
+                    </p>
+                </div>
+            `;
+
+            currentSong.sections.forEach(section => {
+                const sectionContainer = document.createElement('div');
+                sectionContainer.style.marginBottom = '40px';
+                const title = document.createElement('div');
+                title.className = 'section-header';
+                title.textContent = section.title;
+                sectionContainer.appendChild(title);
+
+                const table = document.createElement('table');
+                table.className = 'notation-table';
+
+                section.lines.forEach(line => {
+                    const tr = document.createElement('tr');
+                    const swaraAtoms = tokenizeWithPosition(line.swaras);
+                    const lyricAtoms = alignLyrics(line.lyrics, swaraAtoms);
+
+                    swaraAtoms.forEach((atom, idx) => {
+                        const cell = document.createElement('td');
+                        const swaraDiv = document.createElement('div');
+                        swaraDiv.className = 'swara-cell';
+                        swaraDiv.textContent = formatSwaraForDisplay(atom.text);
+                        const lyricDiv = document.createElement('div');
+                        lyricDiv.className = 'lyrics-cell';
+                        lyricDiv.textContent = lyricAtoms[idx] || '';
+                        cell.appendChild(swaraDiv);
+                        cell.appendChild(lyricDiv);
+                        tr.appendChild(cell);
+                    });
+                    table.appendChild(tr);
+                });
+                sectionContainer.appendChild(table);
+                viewer.appendChild(sectionContainer);
+            });
+        }
+
+        function tokenizeWithPosition(line) {
+            // Updated regex:
+            // 1. Matches swaras including precomposed variants (Latin Extended A and Additional)
+            //    followed by optional numbers/superscripts and combining marks.
+            // 2. Matches delimiters and special notation characters.
+            // 3. Matches any other non-whitespace character as a fallback token.
+            const regex = /([SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?)|([,;|*\-.[\]/])|(\S)/g;
+            let tokens = []; let match;
+            while ((match = regex.exec(line)) !== null) {
+                tokens.push({ text: match[0], index: match.index });
+            }
+            return tokens;
+        }
+
+        function alignLyrics(lyricLine, swaraAtoms) {
+            if (!lyricLine) return new Array(swaraAtoms.length).fill('');
+
+            const lyricRegex = /\S+/g;
+            let lyricTokens = [];
+            let match;
+            while ((match = lyricRegex.exec(lyricLine)) !== null) {
+                lyricTokens.push({ text: match[0], index: match.index });
+            }
+
+            let result = new Array(swaraAtoms.length).fill('');
+
+            lyricTokens.forEach(token => {
+                let bestIdx = -1;
+                let minDiff = Infinity;
+
+                swaraAtoms.forEach((atom, sIdx) => {
+                    let diff = Math.abs(atom.index - token.index);
+
+                    // Penalty logic: Prioritize musical notes over delimiters.
+                    // If the token is a delimiter/extension, add a penalty to the distance.
+                    // This favors assigning lyrics to a nearby note (within 1 char) even if a delimiter is at the exact index.
+                    const isNote = /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F]/.test(atom.text);
+                    if (!isNote) {
+                        diff += 1.1; // Penalty ensures notes within 1 char are preferred over exact delimiters.
+                    }
+
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        bestIdx = sIdx;
+                    }
+                });
+
+                if (bestIdx !== -1) {
+                    result[bestIdx] = result[bestIdx] ? result[bestIdx] + ' ' + token.text : token.text;
+                }
+            });
+
+            return result;
+        }
+
+        function formatSwaraForDisplay(atom) {
+            if (/[SRGMPDNsrgmpdn]/.test(atom)) {
+                const isUppercase = atom[0] === atom[0].toUpperCase();
+                const hasNumber = /[0-9]/.test(atom);
+                if (isUppercase && hasNumber) {
+                    return atom.replace(/[0-9]/g, '').toUpperCase();
+                }
+                return atom.toUpperCase();
+            }
+            return atom;
+        }
+
+        async function saveSong() {
+            if (!currentSong.name) {
+                alert('Please parse a song first or provide a composition name.');
+                return;
+            }
+            // Sync current header settings to song
+            currentSong.sruthi = document.getElementById('sruthi').value;
+            currentSong.beats = document.getElementById('beats').value;
+            currentSong.nadai = document.getElementById('nadai').value;
+            currentSong.bpm = document.getElementById('bpm').value;
+            currentSong.rawText = document.getElementById('notationInput').value;
+
+            try {
+                const response = await fetch('/api/notation-composer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentSong)
+                });
+                const saved = await response.json();
+                currentSong.id = saved.id;
+                await renderPlaylist();
+                document.getElementById('shareBtn').style.display = 'inline-flex';
+                showToast('Song "' + currentSong.name + '" saved to server.');
+            } catch (err) {
+                console.error('Save failed:', err);
+                alert('Failed to save song to server.');
+            }
+        }
+
+        async function deleteSong(id, event) {
+            if (event) event.stopPropagation();
+            if (!confirm('Are you sure you want to delete this song?')) return;
+            try {
+                await fetch(`/api/notation-composer/${id}`, { method: 'DELETE' });
+                await renderPlaylist();
+                if (currentSong && currentSong.id === id) newSong();
+                showToast('Song deleted.');
+            } catch (err) {
+                alert('Delete failed.');
+            }
+        }
+
+        function loadSongIntoUI(song) {
+            currentSong = song;
+            document.getElementById('sruthi').value = song.sruthi || 'C';
+            document.getElementById('beats').value = song.beats || 8;
+            document.getElementById('nadai').value = song.nadai || 4;
+            document.getElementById('bpm').value = song.bpm || 120;
+            document.getElementById('notationInput').value = song.rawText || '';
+            renderSong();
+            document.getElementById('shareBtn').style.display = 'inline-flex';
+        }
+
+        function shareSong() {
+            if (!currentSong.name) return;
+            const url = new URL(window.location.href);
+            url.searchParams.set('song', currentSong.name);
+
+            navigator.clipboard.writeText(url.toString()).then(() => {
+                showToast('URL copied to clipboard!');
+            }).catch(err => {
+                alert('Failed to copy URL: ' + err);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('shareToast') || createToast();
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function createToast() {
+            const toast = document.createElement('div');
+            toast.id = 'shareToast';
+            toast.className = 'share-toast';
+            document.body.appendChild(toast);
+            return toast;
+        }
+
+        async function renderPlaylist() {
+            const container = document.getElementById('playlistContainer');
+            try {
+                const response = await fetch('/api/notation-composer');
+                const stored = await response.json();
+                container.innerHTML = '';
+
+                if (stored.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; color: #888; font-size: 13px;">No songs saved yet.</div>';
+                    return;
+                }
+
+                stored.forEach(song => {
+                    const item = document.createElement('div');
+                    item.className = 'playlist-item' + (currentSong && (currentSong.id === song.id || currentSong.name === song.name) ? ' active' : '');
+                    item.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <div style="font-weight: bold;">${song.name}</div>
+                                <div style="font-size: 11px; color: #888;">${song.ragam || 'No Raga'} | ${song.thalam || 'No Thala'}</div>
+                            </div>
+                            <button onclick="deleteSong('${song.id}', event)" style="background:none; border:none; color:#ff7675; cursor:pointer; font-size:16px;">&times;</button>
+                        </div>
+                    `;
+                    item.onclick = () => {
+                        loadSongIntoUI(song);
+                        renderPlaylist(); // Update active class
+                    };
+                    container.appendChild(item);
+                });
+            } catch (err) {
+                container.innerHTML = '<div style="padding: 20px; color: #ff7675; font-size: 13px;">Failed to load library.</div>';
+            }
+        }
+
+        function loadSongIntoUI(song) {
+            currentSong = song;
+            document.getElementById('sruthi').value = song.sruthi || 'C';
+            document.getElementById('beats').value = song.beats || 8;
+            document.getElementById('nadai').value = song.nadai || 4;
+            document.getElementById('bpm').value = song.bpm || 120;
+            document.getElementById('notationInput').value = song.rawText || '';
+            renderSong();
+            document.getElementById('shareBtn').style.display = 'inline-flex';
+        }
+
+        function newSong() {
+            document.getElementById('notationInput').value = '';
+            document.getElementById('metadataDisplay').innerHTML = '';
+            document.getElementById('renderedNotation').innerHTML = '<p style="color: #888; text-align: center; padding: 40px;">Ready for new notation.</p>';
+            currentSong = { name: '', ragam: '', thalam: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '' };
+            renderPlaylist();
+        }
+
+        window.onload = async () => {
+            await renderPlaylist();
+
+            // Search functionality
+            document.getElementById('playlistSearch').addEventListener('input', function (e) {
+                const term = e.target.value.toLowerCase();
+                const items = document.querySelectorAll('.playlist-item');
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    item.style.display = text.includes(term) ? 'block' : 'none';
+                });
+            });
+
+            // Initial load from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const songName = urlParams.get('song');
+            if (songName) {
+                try {
+                    const response = await fetch('/api/notation-composer');
+                    const stored = await response.json();
+                    const song = stored.find(s => s.name === songName);
+                    if (song) {
+                        loadSongIntoUI(song);
+                        renderPlaylist();
+                    }
+                } catch (err) {
+                    console.error('URL load failed:', err);
+                }
+            }
+        };
+
+        function importFile() { alert('Import feature: Paste text into the input box and click "Parse".'); }
+        function exportFile() {
+            if (!currentSong.rawText) {
+                alert('No notation text to export.');
+                return;
+            }
+            const blob = new Blob([currentSong.rawText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentSong.name || 'song'}.txt`;
+            a.click();
+        }
+
+    </script>
+</body>
+
+</html>
