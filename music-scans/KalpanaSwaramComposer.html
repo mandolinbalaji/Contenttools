@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -278,7 +279,7 @@
             gap: 8px;
         }
 
-        .playlist-item > div:first-child {
+        .playlist-item>div:first-child {
             flex: 1;
             overflow: hidden;
         }
@@ -822,8 +823,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { background: #ffd; }
-            50% { background: #ffc; }
+
+            0%,
+            100% {
+                background: #ffd;
+            }
+
+            50% {
+                background: #ffc;
+            }
         }
 
         /* Editable lyrics cells in spreadsheet */
@@ -1155,7 +1163,7 @@
             background: #f5f5f5;
             font-size: 9pt;
             font-weight: 600;
-            color: #555;
+            color: #0047b3;
             font-style: italic;
             padding: 2px 2px;
         }
@@ -1199,7 +1207,9 @@
 
         /* Print-optimized styling */
         @media print {
-            body, html {
+
+            body,
+            html {
                 margin: 0;
                 padding: 0;
             }
@@ -1233,6 +1243,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- ============================================================================
          HEADER
@@ -1240,11 +1251,24 @@
     <header>
         <h1>🎵 KalpanaSwaramComposer</h1>
         <header-right>
-            <a href="index.html" style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">← Back to Kanakku</a>
-            <button onclick="saveSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Save Song">💾 Save</button>
-            <button onclick="importSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import Song">📥 Import</button>
-            <button onclick="exportSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Export Song">📤 Export</button>
-            <button onclick="openPracticeMode()" style="background: #ffd700; color: #333; font-weight: 600; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;" title="Practice Mode">🎯 Practice</button>
+            <a href="index.html"
+                style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">←
+                Back to Library</a>
+            <button onclick="createNewSong()"
+                style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;"
+                title="New Song">📄 New</button>
+            <button onclick="saveSong()"
+                style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;"
+                title="Save Song">💾 Save</button>
+            <button onclick="importSong()"
+                style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;"
+                title="Import Song">📥 Import</button>
+            <button onclick="exportSong()"
+                style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;"
+                title="Export Song">📤 Export</button>
+            <button onclick="openPracticeMode()"
+                style="background: #ffd700; color: #333; font-weight: 600; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;"
+                title="Practice Mode">🎯 Practice</button>
             <button onclick="openHelp()">?</button>
             <button onclick="toggleSettings()">⚙</button>
         </header-right>
@@ -1295,7 +1319,8 @@
             <div class="sidebar-section">
                 <div class="sidebar-section-title">
                     📄 Songs
-                    <button class="section-toggle" id="playlistToggle" onclick="toggleSidebarSection('playlist')">▼</button>
+                    <button class="section-toggle" id="playlistToggle"
+                        onclick="toggleSidebarSection('playlist')">▼</button>
                 </div>
                 <div class="section-content" id="playlistContent">
                     <div class="playlist" id="playlistContainer"></div>
@@ -1339,8 +1364,10 @@
                 <!-- Scale Definition -->
                 <div class="form-group">
                     <label>Scale (Raga Variants)</label>
-                    <input type="text" id="scaleInput" placeholder="e.g., r2 g2 m1 d2 n2" title="Define default swara variants for this raga">
-                    <small style="color: #888; display: block; margin-top: 4px;">Specify r1-r3, g1-g3, m1-m2, d1-d3, n1-n3 as defaults. Phrase notation overrides.</small>
+                    <input type="text" id="scaleInput" placeholder="e.g., r2 g2 m1 d2 n2"
+                        title="Define default swara variants for this raga">
+                    <small style="color: #888; display: block; margin-top: 4px;">Specify r1-r3, g1-g3, m1-m2, d1-d3,
+                        n1-n3 as defaults. Phrase notation overrides.</small>
                 </div>
 
                 <div class="divider"></div>
@@ -1350,15 +1377,27 @@
                     <div class="form-group">
                         <label>Sruthi (Key)</label>
                         <select id="sruthi">
-                            <option>C</option><option>C#</option><option>D</option><option>D#</option>
-                            <option>E</option><option>F</option><option>F#</option><option>G</option>
-                            <option>G#</option><option>A</option><option>A#</option><option>B</option>
+                            <option>C</option>
+                            <option>C#</option>
+                            <option>D</option>
+                            <option>D#</option>
+                            <option>E</option>
+                            <option>F</option>
+                            <option>F#</option>
+                            <option>G</option>
+                            <option>G#</option>
+                            <option>A</option>
+                            <option>A#</option>
+                            <option>B</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Thalam</label>
                         <select id="thalam">
-                            <option>Adhi</option><option>Rupakam</option><option>Misra</option><option>Kanda</option>
+                            <option>Adhi</option>
+                            <option>Rupakam</option>
+                            <option>Misra</option>
+                            <option>Kanda</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1387,13 +1426,61 @@
                 </div>
             </section>
 
+            <!-- ④ PHRASE EDITING RIBBON (Redesigned) -->
+            <section id="section-phrase"
+                style="padding: 10px 20px; background: #f8f9fa; border-bottom: 1px solid #ddd; margin-bottom: 0;">
+                <div class="ribbon-toolbar" style="display: flex; gap: 15px; align-items: center;">
+                    <div style="font-size: 14px; font-weight: 600; color: #555; margin-right: 10px;">Phrase Tools:</div>
+
+                    <!-- Octave Controls -->
+                    <div class="ribbon-group"
+                        style="display: flex; gap: 5px; border-right: 1px solid #ddd; padding-right: 15px;">
+                        <button class="btn btn-small" id="octaveUpBtn" onclick="toggleOctaveModifier('up')"
+                            title="Add dot above (Higher Octave)">
+                            <span style="font-size: 16px;">Ȧ</span> Upper
+                        </button>
+                        <button class="btn btn-small" id="octaveDownBtn" onclick="toggleOctaveModifier('down')"
+                            title="Add dot below (Lower Octave)">
+                            <span style="font-size: 16px;">Ạ</span> Lower
+                        </button>
+                    </div>
+
+                    <!-- History Controls -->
+                    <div class="ribbon-group"
+                        style="display: flex; gap: 5px; border-right: 1px solid #ddd; padding-right: 15px;">
+                        <button class="btn btn-small" onclick="undoPhrase()" title="Undo">
+                            <span style="font-size: 16px;">↶</span> Undo
+                        </button>
+                        <button class="btn btn-small" onclick="redoPhrase()" title="Redo">
+                            <span style="font-size: 16px;">↷</span> Redo
+                        </button>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="ribbon-group" style="display: flex; gap: 5px;">
+                        <button class="btn btn-small btn-danger" onclick="clearPhrase()" title="Clear">
+                            <span style="font-size: 16px;">🗑</span> Clear
+                        </button>
+                        <button class="btn btn-small" onclick="togglePatternMode()" title="Pattern Mode">
+                            <span style="font-size: 16px;">🔢</span> Pattern
+                        </button>
+                    </div>
+
+                    <div style="flex: 1;"></div>
+                    <div style="font-size: 12px; color: #888; font-style: italic;">
+                        Select a cycle input to apply changes
+                    </div>
+                </div>
+            </section>
+
             <!-- ② CYCLE MANAGEMENT SECTION -->
             <section id="section-cycles">
                 <h2>② Cycle Management</h2>
 
                 <div id="cyclesContainer"></div>
 
-                <button class="btn btn-primary" onclick="addCycle()" style="width: 100%; margin-top: 16px;">+ Add New Cycle</button>
+                <button class="btn btn-primary" onclick="addCycle()" style="width: 100%; margin-top: 16px;">+ Add New
+                    Cycle</button>
             </section>
 
             <!-- ③ PLAY CONTROL PANEL -->
@@ -1449,7 +1536,8 @@
          FLOATING NAVIGATOR
          ============================================================================ -->
     <nav class="floating-nav" id="floatingNav">
-        <div class="floating-nav-header" onclick="toggleFloatingNav()">Sections <span id="floatingToggleBtn">−</span></div>
+        <div class="floating-nav-header" onclick="toggleFloatingNav()">Sections <span id="floatingToggleBtn">−</span>
+        </div>
         <div class="floating-nav-bullets" id="floatingBullets">
             <div class="nav-bullet active" onclick="jumpToSection('metadata')">Metadata</div>
             <div class="nav-bullet" onclick="jumpToSection('cycles')">Cycles</div>
@@ -1514,7 +1602,7 @@
         // ============================================================================
 
         function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
@@ -1525,7 +1613,7 @@
             for (let i = 0; i < text.length; i++) {
                 const char = text[i].toLowerCase();
                 if (char === ' ') continue;
-                
+
                 if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
                     // Check if this note has a variant digit (e.g., r1, r2, g3)
                     // If so, the digit is part of the note notation, count as 1
@@ -1547,13 +1635,13 @@
             // eduppu = 1 means end at last position of cycle (wraps around)
             // eduppu = N means end at position N-1 (for N > 1)
             // The last character of the phrase should land at this position
-            
+
             if (cycleLength === 0) return 0;
-            
+
             const landingPosition = eduppu === 1 ? cycleLength : eduppu - 1;
             // Use proper modulo to handle negative numbers correctly
             const result = ((landingPosition - noteCount) % cycleLength + cycleLength) % cycleLength;
-            
+
             return result;
         }
 
@@ -1568,22 +1656,22 @@
             for (let i = 0; i < text.length; i++) {
                 const char = text[i].toLowerCase();
                 if (char === ' ') continue;
-                
+
                 if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
                     let item = text[i]; // Keep original case
-                    
+
                     // Check if this note has a variant digit (e.g., r1, r2, g3)
                     if (i + 1 < text.length && /[1-9]/.test(text[i + 1])) {
                         item += text[i + 1];
                         i++; // Skip the digit
                     }
-                    
+
                     // Check for combining characters (dot above U+0307 or dot below U+0323)
                     while (i + 1 < text.length && ['\u0307', '\u0323'].includes(text[i + 1])) {
                         item += text[i + 1];
                         i++; // Skip the combining character
                     }
-                    
+
                     items.push(item);
                 } else if (char === ',') {
                     items.push(',');
@@ -1597,7 +1685,7 @@
         function parseScale(scaleText) {
             const scaleMap = {};
             if (!scaleText) return scaleMap;
-            
+
             const parts = scaleText.toLowerCase().split(/[\s,]+/);
             for (const part of parts) {
                 if (part.length >= 2) {
@@ -1617,7 +1705,7 @@
             let resolved = '';
             for (let i = 0; i < phraseDisplay.length; i++) {
                 const char = phraseDisplay[i].toLowerCase();
-                
+
                 if (char === ',' || char === ' ') {
                     resolved += char;
                 } else if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
@@ -1674,7 +1762,7 @@
                 option.textContent = i;
                 select.appendChild(option);
             }
-            
+
             // Clamp eduppu within valid range
             if (currentSong.eduppu < 1) currentSong.eduppu = 1;
             if (currentSong.eduppu > cycleLength) currentSong.eduppu = cycleLength;
@@ -1708,12 +1796,14 @@
         // ============================================================================
 
         function updatePhrase() {
-            const phraseText = document.getElementById('phraseInput').value;
-            
+            const input = document.getElementById('phraseInput');
+            if (!input) return;
+            const phraseText = input.value;
+
             // Auto-convert ; to ,,
             const processed = phraseText.replace(/;/g, ',,');
             if (processed !== phraseText) {
-                document.getElementById('phraseInput').value = processed;
+                if (input) input.value = processed;
             }
 
             currentSong.mainPhrase.phraseText = processed;
@@ -1735,13 +1825,15 @@
         }
 
         function updatePhraseDisplay() {
-            document.getElementById('phraseNoteCount').textContent = currentSong.mainPhrase.noteCount;
-            
+            const countDisplay = document.getElementById('phraseNoteCount');
+            if (countDisplay) countDisplay.textContent = currentSong.mainPhrase.noteCount;
+
             const cycleLength = currentSong.beats * currentSong.nadai;
             const isValid = (currentSong.mainPhrase.leadingCommas + currentSong.mainPhrase.noteCount) % cycleLength === 0 ||
-                           (currentSong.mainPhrase.leadingCommas + currentSong.mainPhrase.noteCount) <= cycleLength;
-            
+                (currentSong.mainPhrase.leadingCommas + currentSong.mainPhrase.noteCount) <= cycleLength;
+
             const status = document.getElementById('phraseStatus');
+            if (!status) return;
             if (isValid) {
                 status.textContent = '✓ Valid';
                 status.className = 'landing-valid';
@@ -1758,9 +1850,9 @@
             } else {
                 octaveModifier = mode;
             }
-            
+
             console.log('[DEBUG] toggleOctaveModifier called with mode:', mode, 'New octaveModifier:', octaveModifier);
-            
+
             // Update button active states (if buttons exist)
             const upBtn = document.getElementById('octaveUpBtn');
             const downBtn = document.getElementById('octaveDownBtn');
@@ -1770,30 +1862,39 @@
 
         function undoPhrase() {
             if (historyIndex > 0) {
+                const input = document.getElementById('phraseInput');
+                if (!input) return;
                 historyIndex--;
-                document.getElementById('phraseInput').value = phraseHistory[historyIndex];
+                input.value = phraseHistory[historyIndex];
                 updatePhrase();
             }
         }
 
         function redoPhrase() {
             if (historyIndex < phraseHistory.length - 1) {
+                const input = document.getElementById('phraseInput');
+                if (!input) return;
                 historyIndex++;
-                document.getElementById('phraseInput').value = phraseHistory[historyIndex];
+                input.value = phraseHistory[historyIndex];
                 updatePhrase();
             }
         }
 
         function clearPhrase() {
             if (confirm('Clear phrase?')) {
-                document.getElementById('phraseInput').value = '';
-                updatePhrase();
+                const input = document.getElementById('phraseInput');
+                if (input) {
+                    input.value = '';
+                    updatePhrase();
+                }
             }
         }
 
         function captureHistory() {
+            const input = document.getElementById('phraseInput');
+            if (!input) return;
             phraseHistory = phraseHistory.slice(0, historyIndex + 1);
-            phraseHistory.push(document.getElementById('phraseInput').value);
+            phraseHistory.push(input.value);
             historyIndex++;
             if (phraseHistory.length > 20) {
                 phraseHistory.shift();
@@ -1808,16 +1909,16 @@
         }
 
         function applyDotToCurrentCursor(textarea, mode) {
-            console.log('[DEBUG] applyDotToCurrentCursor called', {mode, textareaId: textarea.id, textareaValue: textarea.value});
+            console.log('[DEBUG] applyDotToCurrentCursor called', { mode, textareaId: textarea.id, textareaValue: textarea.value });
             if (!octaveModifier) {
                 console.log('[DEBUG] octaveModifier is null, returning');
                 return null;
             }
-            
+
             const cursorPos = textarea.selectionStart;
             const text = textarea.value;
             console.log('[DEBUG] Cursor position:', cursorPos, 'Text:', text);
-            
+
             // Find the note at or before cursor
             let noteStart = cursorPos - 1;
             while (noteStart >= 0) {
@@ -1826,21 +1927,21 @@
                 if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
                     // Found a note, find its end
                     let noteEnd = noteStart + 1;
-                    
+
                     // Skip variant digit if present (e.g., r1, g3)
                     if (noteEnd < text.length && /[1-9]/.test(text[noteEnd])) {
                         noteEnd++;
                     }
-                    
+
                     // Skip existing dot marks
                     while (noteEnd < text.length && ['\u0307', '\u0323'].includes(text[noteEnd])) {
                         noteEnd++;
                     }
-                    
+
                     const noteText = text.substring(noteStart, noteEnd);
                     let newNoteText = noteText;
                     console.log('[DEBUG] Found note at', noteStart, ':', noteText, 'Mode:', mode);
-                    
+
                     if (mode === 'up') {
                         // Add dot above (U+0307), remove dot below first
                         newNoteText = noteText.replace(/\u0323/g, '') + '\u0307';
@@ -1848,12 +1949,12 @@
                         // Add dot below (U+0323), remove dot above first
                         newNoteText = noteText.replace(/\u0307/g, '') + '\u0323';
                     }
-                    
+
                     const newText = text.substring(0, noteStart) + newNoteText + text.substring(noteEnd);
                     console.log('[DEBUG] New text:', newText);
                     textarea.value = newText;
                     textarea.selectionStart = textarea.selectionEnd = noteStart + newNoteText.length;
-                    
+
                     return newText;
                 } else if (char === ',' || char === ' ') {
                     // Hit separator without finding note
@@ -1880,12 +1981,12 @@
         }
 
         function handleCycleInputClick(event, cycleId) {
-            console.log('[DEBUG] handleCycleInputClick called', {cycleId, octaveModifier});
+            console.log('[DEBUG] handleCycleInputClick called', { cycleId, octaveModifier });
             if (octaveModifier) {
                 const textarea = event.target;
                 const newText = applyDotToCurrentCursor(textarea, octaveModifier);
                 if (newText !== null) {
-                    console.log('[DEBUG] Dot applied successfully, updating cycle', {cycleId, newText});
+                    console.log('[DEBUG] Dot applied successfully, updating cycle', { cycleId, newText });
                     updateCycle(cycleId, 'phraseText', newText);
                 }
             }
@@ -1932,11 +2033,17 @@
                     cycle.phraseText = processed;
                     cycle.phraseDisplay = cleanPhrase(processed);
                     cycle.noteCount = countNotes(processed);
-                    
+
                     // Recalculate leading commas using currentSong.eduppu (shared across all cycles)
                     const cycleLength = currentSong.beats * currentSong.nadai;
                     cycle.leadingCommas = calculateLeadingCommas(cycle.noteCount, cycleLength, currentSong.eduppu);
                     cycle.fullPhrase = ','.repeat(cycle.leadingCommas) + cycle.phraseDisplay;
+
+                    // Update note count display immediately
+                    const countSpan = document.getElementById(`cycleNoteCount-${cycleId}`);
+                    if (countSpan) {
+                        countSpan.textContent = `${cycle.noteCount} notes`;
+                    }
                 } else if (field === 'lyrics') {
                     cycle.lyrics = value;
                 } else if (field === 'comments') {
@@ -1967,24 +2074,29 @@
                     </div>
                     <div class="cycle-content ${!cycle.expanded ? 'collapsed' : ''}" id="cycle-content-${cycle.id}">
                         <div class="form-group">
-                            <label>Swaras (s, r, g, m, p, d, n)</label>
+                            <label style="display: flex; justify-content: space-between;">
+                                <span>Swaras (s, r, g, m, p, d, n)</span>
+                                <span id="cycleNoteCount-${cycle.id}" style="color: #667eea; font-weight: bold;">${cycle.noteCount || 0} notes</span>
+                            </label>
                             <textarea id="cycleSwaras-${cycle.id}" 
                                       placeholder="Enter swaras..." 
-                                      onchange="updateCycle('${cycle.id}', 'phraseText', this.value)"
-                                      onclick="handleCycleInputClick(event, '${cycle.id}')">${cycle.phraseText}</textarea>
+                                      oninput="updateCycle('${cycle.id}', 'phraseText', this.value)"
+                                      onclick="handleCycleInputClick(event, '${cycle.id}')"
+                                      spellcheck="false">${cycle.phraseText}</textarea>
                         </div>
                         <div class="form-group">
                             <label>Lyrics</label>
                             <textarea id="cycleLyrics-${cycle.id}" 
                                       placeholder="Add lyrics..." 
-                                      onchange="updateCycle('${cycle.id}', 'lyrics', this.value)" 
-                                      style="min-height: 80px;">${cycle.lyrics}</textarea>
+                                      oninput="updateCycle('${cycle.id}', 'lyrics', this.value)" 
+                                      style="min-height: 80px;"
+                                      spellcheck="false">${cycle.lyrics}</textarea>
                         </div>
                         <div class="form-group">
                             <label>Comments (Optional)</label>
                             <textarea id="cycleComments-${cycle.id}" 
                                       placeholder="Add notes about this cycle..." 
-                                      onchange="updateCycle('${cycle.id}', 'comments', this.value)" 
+                                      oninput="updateCycle('${cycle.id}', 'comments', this.value)" 
                                       style="min-height: 60px;">${cycle.comments}</textarea>
                         </div>
                     </div>
@@ -2005,8 +2117,8 @@
             const index = currentSong.cycles.findIndex(c => c.id === cycleId);
             if (index > 0) {
                 // Swap cycles
-                [currentSong.cycles[index - 1], currentSong.cycles[index]] = 
-                [currentSong.cycles[index], currentSong.cycles[index - 1]];
+                [currentSong.cycles[index - 1], currentSong.cycles[index]] =
+                    [currentSong.cycles[index], currentSong.cycles[index - 1]];
                 // Update labels
                 updateCycleLabels();
                 renderCycles();
@@ -2018,8 +2130,8 @@
             const index = currentSong.cycles.findIndex(c => c.id === cycleId);
             if (index < currentSong.cycles.length - 1) {
                 // Swap cycles
-                [currentSong.cycles[index + 1], currentSong.cycles[index]] = 
-                [currentSong.cycles[index], currentSong.cycles[index + 1]];
+                [currentSong.cycles[index + 1], currentSong.cycles[index]] =
+                    [currentSong.cycles[index], currentSong.cycles[index + 1]];
                 // Update labels
                 updateCycleLabels();
                 renderCycles();
@@ -2045,19 +2157,19 @@
             // Create header with beat numbers and nadai subdivisions
             let beatHeaderHTML = '<tr><th></th>';  // Empty cell for label column
             let nadaiHeaderHTML = '<tr><th></th>';  // Empty cell for label column
-            
+
             for (let beat = 1; beat <= currentSong.beats; beat++) {
                 // Add beat number spanning nadai cells
                 beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #667eea; color: white; font-weight: 600;">Beat ${beat}</th>`;
-                
+
                 // Add nadai subdivisions
                 for (let n = 1; n <= currentSong.nadai; n++) {
-                    nadaiHeaderHTML += `<th style="background: #888; color: white; font-size: 10px;">n${n}</th>`;
+                    nadaiHeaderHTML += `<th style="background: #888; color: white; font-size: 10px;">${n}</th>`;
                 }
             }
             beatHeaderHTML += '</tr>';
             nadaiHeaderHTML += '</tr>';
-            
+
             header.innerHTML = beatHeaderHTML + nadaiHeaderHTML;
 
             // Create body with all cycles
@@ -2072,97 +2184,119 @@
 
         function renderSpreadsheetLine(tbody, label, cycleData, cycleLength) {
             // Display phrase exactly as typed (no scale transformation)
-            // Scale is metadata for context/playback, not display
             const phraseDisplay = cycleData.phraseDisplay || '';
-            
-            // All cycles use currentSong.eduppu
             const eduppu = currentSong.eduppu;
-            
+
             // Calculate leading commas and total items
             const leadingCommas = calculateLeadingCommas(cycleData.noteCount, cycleLength, eduppu);
-            
-            // Convert to items array (treating r1, g3 etc as single items)
+
+            // Convert swaras to items array (treating r1, g3 etc as single items)
             const items = [];
             for (let i = 0; i < leadingCommas; i++) {
                 items.push(',');
             }
             items.push(...phraseToItems(phraseDisplay));
-            
-            // Split items into rows of cycleLength
-            const rows = [];
+
+            // Split swara items into rows of cycleLength
+            const swaraRows = [];
             for (let i = 0; i < items.length; i += cycleLength) {
-                rows.push(items.slice(i, i + cycleLength));
+                swaraRows.push(items.slice(i, i + cycleLength));
             }
-            
-            // If empty, show one empty row
-            if (rows.length === 0) {
-                rows.push([]);
+            if (swaraRows.length === 0) {
+                swaraRows.push([]);
             }
 
-            // Get lyrics text - NO RULES APPLIED, just display as user typed
-            const lyricsDisplay = cycleData.lyrics || '';
-            
-            // Render swaras rows
-            rows.forEach((rowItems, rowIndex) => {
-                // Notes row
+            // Prepare lyrics items - NO PARSING RULES, ALL CHARACTERS ALLOWED
+            // We split by delimiter to map content -> cells
+            // Delimiter logic:
+            // 1. If '|' present, split by '|' (new format, robust)
+            // 2. If ',' present and no '|', split by ',' (legacy key format)
+            // 3. Otherwise treat as single string (or split by space? No, allow full string)
+            const lyricsText = cycleData.lyrics || '';
+            let lyricsItems = [];
+
+            if (lyricsText.includes('|')) {
+                lyricsItems = lyricsText.split('|');
+            } else if (lyricsText.includes(',')) {
+                // Legacy support for ",,,man,s" style
+                lyricsItems = lyricsText.split(',');
+            } else {
+                // Just one item if no delimiters found, or empty
+                lyricsItems = lyricsText ? [lyricsText] : [];
+            }
+
+            // Split lyrics items into rows of cycleLength
+            const lyricsRows = [];
+            // Calculate needed lyrics rows based on item count vs cycleLength
+            // Ensure we have at least 1 row if there are lyrics, or if swaras exist
+            const neededRows = Math.ceil(lyricsItems.length / cycleLength);
+            for (let i = 0; i < neededRows; i++) {
+                const start = i * cycleLength;
+                lyricsRows.push(lyricsItems.slice(start, start + cycleLength));
+            }
+
+            // Render interleaved rows
+            // Loop through max(swaraRows.length, lyricsRows.length) to ensure we show everything
+            const rowCount = Math.max(swaraRows.length, lyricsRows.length);
+
+            for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                // --- SWARA ROW ---
                 const notesRow = tbody.insertRow();
                 const labelCell = notesRow.insertCell();
                 labelCell.className = 'spreadsheet-label';
-                
-                // Only show label on first row of multi-row phrase
+
                 if (rowIndex === 0) {
                     labelCell.textContent = label;
                 } else {
                     labelCell.textContent = `  (cont'd)`;
                 }
-                
+
                 let landingCellIndex = -1;
-                
-                // Calculate if landing falls on this row (only for first row)
                 if (rowIndex === 0) {
                     landingCellIndex = eduppu - 1;
                 }
-                
+
+                const currentSwaraRowItems = swaraRows[rowIndex] || [];
+
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
-                    const item = rowItems[i] || '';
+                    const item = currentSwaraRowItems[i] || ''; // Empty if out of bounds
                     cell.textContent = item;
                     if (i === landingCellIndex) {
                         cell.className = 'spreadsheet-landing';
                     }
                 }
-            });
 
-            // Render lyrics row ONLY ONCE (first row only) - applies to ALL swaras rows
-            // This prevents confusion when cycle has multiple continuation rows
-            if (lyricsDisplay.trim()) {
+                // --- LYRICS ROW ---
+                // Render lyrics below EVERY swara line
                 const lyricsRow = tbody.insertRow();
                 const lyricsLabel = lyricsRow.insertCell();
                 lyricsLabel.className = 'spreadsheet-label';
-                lyricsLabel.textContent = '    Lyrics';
-                
-                // Show ALL lyrics items in the first row
-                const allLyricsItems = phraseToItems(lyricsDisplay);
-                
+                lyricsLabel.textContent = '';
+
+                const currentLyricsRowItems = lyricsRows[rowIndex] || [];
+
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = lyricsRow.insertCell();
-                    const item = allLyricsItems[i] || '';
-                    
-                    // Make cell editable on single click
+                    const item = currentLyricsRowItems[i] || '';
+
                     cell.contentEditable = true;
+                    cell.spellcheck = false;
                     cell.textContent = item;
-                    cell.style.backgroundColor = '#f9f9f9';
+                    // Styling for lyrics cells
+                    cell.style.backgroundColor = '#fcfcfc';
+                    cell.style.color = '#0047b3'; // Blue color
+                    cell.style.fontSize = '12px';
                     cell.style.fontStyle = 'italic';
-                    cell.style.cursor = 'text';
                     cell.dataset.cycleId = cycleData.id;
-                    
-                    // Save lyrics on blur
-                    cell.addEventListener('blur', function() {
+
+                    // Save lyrics on blur (stitching all parts together)
+                    cell.addEventListener('blur', function () {
                         saveLyricsFromSpreadsheet(cycleData.id);
                     });
-                    
-                    // Prevent Enter from inserting line break
-                    cell.addEventListener('keydown', function(e) {
+
+                    // Prevent Enter key
+                    cell.addEventListener('keydown', function (e) {
                         if (e.key === 'Enter') {
                             e.preventDefault();
                             this.blur();
@@ -2176,26 +2310,59 @@
             // Collect all edited lyrics cells for this cycle and join them
             const spreadsheetTable = document.querySelector('.spreadsheet-table');
             if (!spreadsheetTable) return;
-            
-            // Find all contenteditable cells for this cycle (should only be one row)
-            const editableCells = spreadsheetTable.querySelectorAll('td[contenteditable="true"]');
-            
-            // Collect text from each cell in order, only for this cycle
+
+            // Find all contenteditable cells for this cycle
+            // We need them IN ORDER of appearance in the DOM, which querySelectorAll guarantees
+            const editableCells = spreadsheetTable.querySelectorAll(`td[contenteditable="true"][data-cycle-id="${cycleId}"]`);
+
+            // Collect text from each cell
             const allLyricsItems = [];
             editableCells.forEach(cell => {
-                if (cell.dataset.cycleId === cycleId) {
-                    allLyricsItems.push(cell.textContent || '');
-                }
+                allLyricsItems.push(cell.textContent || '');
             });
-            
-            // Join items back into single lyrics string
-            const lyricsText = allLyricsItems.join('');
-            
+
+            // Join items with pipe delimiter '|'
+            const lyricsText = allLyricsItems.join('|');
+
             // Save back to cycle
             const cycle = currentSong.cycles.find(c => c.id === cycleId);
             if (cycle) {
                 cycle.lyrics = lyricsText;
+
+                // Update textarea if visible
+                const textarea = document.getElementById(`cycleLyrics-${cycleId}`);
+                if (textarea) {
+                    textarea.value = lyricsText;
+                }
             }
+        }
+
+        function renderPracticeSpreadsheet() {
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            const header = document.getElementById('practiceSpreadsheetHeader');
+            const body = document.getElementById('practiceSpreadsheetBody');
+
+            // Create header with beat numbers and nadai subdivisions
+            let beatHeaderHTML = '<tr><th></th>';
+            let nadaiHeaderHTML = '<tr><th></th>';
+
+            for (let beat = 1; beat <= currentSong.beats; beat++) {
+                beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #333; color: white;">Beat ${beat}</th>`;
+                for (let n = 1; n <= currentSong.nadai; n++) {
+                    nadaiHeaderHTML += `<th style="background: #666; color: white; font-size: 9pt;">${n}</th>`;
+                }
+            }
+            beatHeaderHTML += '</tr>';
+            nadaiHeaderHTML += '</tr>';
+
+            header.innerHTML = beatHeaderHTML + nadaiHeaderHTML;
+
+            // Create body with all cycles + lyrics rows
+            body.innerHTML = '';
+
+            currentSong.cycles.forEach((cycle, cycleIndex) => {
+                renderPracticeSpreadsheetLine(body, cycleIndex + 1, cycle, cycleLength);
+            });
         }
 
         // ============================================================================
@@ -2439,17 +2606,17 @@
         function filterPlaylist() {
             const searchTerm = document.getElementById('searchBox').value.toLowerCase();
             const selectedTags = Array.from(document.querySelectorAll('[data-tag]:checked')).map(el => el.dataset.tag);
-            
+
             const filtered = allSongs.filter(song => {
-                const matchSearch = !searchTerm || 
+                const matchSearch = !searchTerm ||
                     song.name.toLowerCase().includes(searchTerm) ||
                     song.ragam?.toLowerCase().includes(searchTerm) ||
                     song.composer?.toLowerCase().includes(searchTerm) ||
                     song.tags?.some(tag => tag.toLowerCase().includes(searchTerm));
-                
-                const matchTags = selectedTags.length === 0 || 
+
+                const matchTags = selectedTags.length === 0 ||
                     selectedTags.some(tag => song.tags?.includes(tag));
-                
+
                 return matchSearch && matchTags;
             });
 
@@ -2470,12 +2637,12 @@
             isPlaying = false;
             if (currentOscillators) {
                 currentOscillators.forEach(osc => {
-                    try { osc.stop(); } catch (e) {}
+                    try { osc.stop(); } catch (e) { }
                 });
                 currentOscillators = [];
             }
             if (currentAudioContext) {
-                try { currentAudioContext.close(); } catch (e) {}
+                try { currentAudioContext.close(); } catch (e) { }
                 currentAudioContext = null;
             }
         }
@@ -2521,7 +2688,7 @@
         function updateActiveNavigation() {
             // Update top nav
             Array.from(document.querySelectorAll('.top-nav a')).forEach(a => a.classList.remove('active'));
-            
+
             // Update floating nav bullets
             Array.from(document.querySelectorAll('.nav-bullet')).forEach(b => b.classList.remove('active'));
 
@@ -2558,6 +2725,48 @@
         // ============================================================================
         // MODULE 9: DATA PERSISTENCE
         // ============================================================================
+
+        function createNewSong() {
+            if (confirm('Create new song? Unsaved changes will be lost.')) {
+                const newId = Date.now().toString();
+                // Reset currentSong to default state
+                currentSong = {
+                    id: newId,
+                    name: 'New_Song',
+                    ragam: '',
+                    composer: '',
+                    sruthi: 'C',
+                    thalam: 'Adhi',
+                    beats: 8,
+                    nadai: 4,
+                    eduppu: 1,
+                    tags: [], // Ensure tags array exists
+                    scale: '',
+                    cycles: [],
+                    mainPhrase: {
+                        phraseText: '',
+                        phraseDisplay: '',
+                        noteCount: 0,
+                        leadingCommas: 0,
+                        eduppu: 1,
+                        fullPhrase: ''
+                    }
+                };
+
+                // Add one empty cycle
+                addCycle();
+
+                // Refresh UI
+                loadSongToUI();
+                saveSongToServer(); // Save initially so it exists
+                renderPlaylist();
+                highlightCurrentSong();
+
+                // Clear any search/filter
+                document.getElementById('searchBox').value = '';
+                filterPlaylist();
+            }
+        }
 
         function saveSong() {
             saveSongToServer();
@@ -2673,13 +2882,13 @@
         function openPracticeMode() {
             // Show practice mode view
             document.getElementById('practiceMode').classList.add('active');
-            
+
             // Hide main editor
             document.querySelector('.main-container').style.display = 'none';
             document.querySelector('header').style.display = 'none';
             document.querySelector('.top-nav').style.display = 'none';
             document.querySelector('.floating-nav').style.display = 'none';
-            
+
             // Render practice mode content
             renderPracticeModeView();
         }
@@ -2687,7 +2896,7 @@
         function exitPracticeMode() {
             // Hide practice mode
             document.getElementById('practiceMode').classList.remove('active');
-            
+
             // Show main editor
             document.querySelector('.main-container').style.display = 'flex';
             document.querySelector('header').style.display = 'flex';
@@ -2732,16 +2941,16 @@
             // Create header with beat numbers and nadai subdivisions
             let beatHeaderHTML = '<tr><th></th>';
             let nadaiHeaderHTML = '<tr><th></th>';
-            
+
             for (let beat = 1; beat <= currentSong.beats; beat++) {
                 beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #333; color: white;">Beat ${beat}</th>`;
                 for (let n = 1; n <= currentSong.nadai; n++) {
-                    nadaiHeaderHTML += `<th style="background: #666; color: white; font-size: 9pt;">n${n}</th>`;
+                    nadaiHeaderHTML += `<th style="background: #666; color: white; font-size: 9pt;">${n}</th>`;
                 }
             }
             beatHeaderHTML += '</tr>';
             nadaiHeaderHTML += '</tr>';
-            
+
             header.innerHTML = beatHeaderHTML + nadaiHeaderHTML;
 
             // Create body with all cycles + lyrics rows
@@ -2755,79 +2964,106 @@
         function renderPracticeSpreadsheetLine(tbody, cycleNumber, cycleData, cycleLength) {
             const phraseDisplay = cycleData.phraseDisplay || '';
             const eduppu = currentSong.eduppu;
-            
+
             // Calculate leading commas using fixed formula
             const leadingCommas = ((eduppu - 1 - cycleData.noteCount) % cycleLength + cycleLength) % cycleLength;
-            
+
             // Create items array
             const items = [];
             for (let i = 0; i < leadingCommas; i++) {
                 items.push(',');
             }
             items.push(...phraseToItems(phraseDisplay));
-            
-            // Split items and lyrics into rows
-            const rows = [];
+
+            // Split swara items into rows
+            const swaraRows = [];
             for (let i = 0; i < items.length; i += cycleLength) {
-                rows.push(items.slice(i, i + cycleLength));
-            }
-            
-            if (rows.length === 0) {
-                rows.push([]);
+                swaraRows.push(items.slice(i, i + cycleLength));
             }
 
-            // Get lyrics array
-            const lyricsPhrase = cycleData.lyrics || '';
-            const lyricsItems = [];
-            for (let i = 0; i < leadingCommas; i++) {
-                lyricsItems.push('');
+            if (swaraRows.length === 0) {
+                swaraRows.push([]);
             }
-            lyricsItems.push(...phraseToItems(lyricsPhrase));
-            
+
+            // Get lyrics array - use pipe delimiter logic
+            const lyricsText = cycleData.lyrics || '';
+            let lyricsItems = [];
+
+            if (lyricsText.includes('|')) {
+                lyricsItems = lyricsText.split('|');
+            } else if (lyricsText.includes(',')) {
+                // Legacy support for ",,,man,s" style
+                lyricsItems = lyricsText.split(',');
+            } else {
+                // Just one item if no delimiters found, or empty
+                lyricsItems = lyricsText ? [lyricsText] : [];
+            }
+
+            // Pad lyrics with leading empty cells if needed?
+            // Review: In main spreadsheet we didn't pad lyrics with leading commas, we just let user align them.
+            // But here the user might expect alignment.
+            // The previous code padded with empty strings:
+            // "for (let i = 0; i < leadingCommas; i++) { lyricsItems.push(''); }"
+            // But if we are supporting full manual alignment (pipe delimited), we should probably NOT auto-pad
+            // because the user might have already typed "|||Sa" to align.
+            // However, the main spreadsheet does NOT auto-pad lyrics, so for consistency, we should NOT auto-pad here either.
+            // Let the user control alignment via pipes.
+
             const lyricsRows = [];
-            for (let i = 0; i < lyricsItems.length; i += cycleLength) {
-                lyricsRows.push(lyricsItems.slice(i, i + cycleLength));
+            // Ensure we have enough rows for lyrics
+            const neededRows = Math.ceil(lyricsItems.length / cycleLength);
+            for (let i = 0; i < neededRows; i++) {
+                const start = i * cycleLength;
+                lyricsRows.push(lyricsItems.slice(start, start + cycleLength));
             }
 
-            // Render swaras rows
-            rows.forEach((rowItems, rowIndex) => {
+            // Render interleaved rows
+            const rowCount = Math.max(swaraRows.length, lyricsRows.length);
+
+            for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                // --- SWARA ROW ---
                 const notesRow = tbody.insertRow();
                 const labelCell = notesRow.insertCell();
                 labelCell.className = 'practice-label';
-                
+
                 if (rowIndex === 0) {
                     labelCell.textContent = cycleNumber;
                 } else {
                     labelCell.textContent = '';
                 }
-                
+
+                // Only first row has landing indicator
                 const landingCellIndex = (rowIndex === 0) ? eduppu - 1 : -1;
-                
+
+                const currentSwaraRowItems = swaraRows[rowIndex] || [];
+
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
-                    const item = rowItems[i] || '';
+                    const item = currentSwaraRowItems[i] || '';
                     cell.textContent = item;
                     if (i === landingCellIndex) {
                         cell.className = 'practice-landing';
                     }
                 }
-            });
 
-            // Render lyrics rows directly below each swaras row
-            lyricsRows.forEach((rowItems, rowIndex) => {
+                // --- LYRICS ROW ---
+                // Render lyrics directly below corresponding swara row
                 const lyricsRow = tbody.insertRow();
                 lyricsRow.className = 'practice-lyrics-row';
-                
-                const labelCell = lyricsRow.insertCell();
-                labelCell.className = 'practice-label';
-                labelCell.textContent = '';
-                
+
+                const lyricsLabel = lyricsRow.insertCell();
+                lyricsLabel.className = 'practice-label';
+                lyricsLabel.textContent = '';
+
+                const currentLyricsRowItems = lyricsRows[rowIndex] || [];
+
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = lyricsRow.insertCell();
-                    const item = rowItems[i] || '';
+                    const item = currentLyricsRowItems[i] || '';
                     cell.textContent = item;
+                    // Styling is handled by CSS .practice-lyrics-row td
                 }
-            });
+            }
         }
 
         function printPracticeMode() {
@@ -2841,4 +3077,5 @@
         window.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
+
 </html>

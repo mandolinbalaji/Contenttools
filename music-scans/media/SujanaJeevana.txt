@@ -1,0 +1,46 @@
+Composition: Sujana Jīvana
+• Rāga: Khamas (Mēḷa 28)
+• Ārōhaṇa: S M¹ G³ M¹ P D² N² Ṡ
+• Avarōhaṇa: Ṡ N² D² P M¹ G³ R² S
+• Tāḷa: 3x4 (Rūpaka structure as shown in the source)
+
+--------------------------------------------------------------------------------
+Pallavi (P.1)
+Line 1:
+M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||
+su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma
+Line 2:
+M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, DNŚ, ND     | P,,, ,, P,ŚN NDP||
+su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā  ma
+Variation 3:
+M,G,GS S,M,G,     | PPMM ,, ,, PGM,     | P, D,DP PDN,ṘŚND   | M,P, ,, PŚN³ DP,,D ||
+su ja na jī  va     na        rā ma       sugu na bhū  sha     na    rā  ma (sujanajīvana)
+
+--------------------------------------------------------------------------------
+Anupallavi (A.1)
+Line 1:
+* M  N,D DNṠ,ṠN   | S Ṡ, ,, ,, Ṡ, Ṡ, | ,, - ND, N Ṡ, ,, Ṡ,   | ṠṘN, N, ,, NDD, || ,*
+  bhu ja ga bhū sha   ṇā    rccita           budha janā va        na
+Line 1 (Variation):
+* M  N,D DNṠ, ṠN  | ṘṘṠṠ,, ,, Ṡ, Ṡ, | ,, - Ṡ Ṁ, Ġ Ṡ, ,, ṠN  | DNṠ,ṘṠN,NDD, ||
+  bhu ja ga bhū sha   ṇā    rccita           budha ja nā  va        nā-
+Line 2:
+Ṡ, Ṙ, Ṡ, ,, N,D,  | N, Ṡ, ṠDṠN N, ND   | P,D,DP PDN,D,      | M P, ,, ,, D,N DP,, ||
+tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma vā-
+Line 2 (Variation):
+Ṡ, Ṙ, Ṡ, ,, N,D,  | DNṘṠ ṠDṠN N, ND    | P,D,DP PDN,ṘŚND    | M P, ,, ,, Ṡ,N³ DP,, ||
+tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma va (sujanajīvana)
+
+--------------------------------------------------------------------------------
+Charaṇam (C.)
+Line 1:
+,, * MG,M P , ,, D, | ṠNṘṠ ṠN NDDP M, | ,, - PND, PMM, MGRG | G M, ,, ,, ,, ,, ||
+     cā  ru nē tra    śrī  ka  ḷa    tra      śrī ra mya  gā      tra
+Line 2:
+,, * PG,MP, DNṘṠ   | ṠN ND DP PNDP M, | ,, - PN,D PMM, ,, R,G, | MP,M G M, ,, ,, ,, ||
+     tā  ra ka nā    ma su ca ri    tra      daśara tha   pu       tra
+Remaining Charaṇam Lines (Follow music same as Anupallavi):
+tārakādhi           pā nana             dharmapāla           ka
+tāraya raghu        varanirmala         tyāgarāja           sannuta    (sujanajīvana)
+
+-------------------------------------------------------------------------------

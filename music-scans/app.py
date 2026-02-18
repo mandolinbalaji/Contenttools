@@ -38,7 +38,7 @@ BASE_DIR = Path(__file__).parent.absolute()
 DATA_PATH = BASE_DIR / "songs.json"
 MEDIA_ROOT = BASE_DIR / "media"
 BACKUP_DIR = BASE_DIR / "backups"
-MIDI_DIR = BASE_DIR / "midi_files"
+# MIDI_DIR constant removed as it was only used by the deleted Kanakku tool
 
 app = Flask(__name__, static_folder=None)
 _write_lock = False  # single process guard
@@ -489,13 +489,8 @@ def chrome_devtools_config():
 
 
 
-@app.get("/Kanakku.html")
-def kanakku():
-    """Serve Kanakku phrase timing calculator"""
-    kanakku_file = BASE_DIR / "Kanakku.html"
-    if not kanakku_file.exists():
-        return jsonify({"error": "File not found"}), 404
-    return send_from_directory(BASE_DIR, "Kanakku.html")
+
+# Kanakku route removed
 
 
 @app.get("/api/songs")
@@ -567,24 +562,8 @@ def media(relpath):
 
 
 
-# ===== KANAKKU ENDPOINTS =====
-KANAKKU_FILE = BASE_DIR / "kanakku.json"
+
 KALPANA_SWARA_FILE = BASE_DIR / "kalpana-swara-composer.json"
-
-def _load_kanakkus():
-    """Load all saved kanakkus from kanakku.json"""
-    if not KANAKKU_FILE.exists():
-        return []
-    try:
-        with open(KANAKKU_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except:
-        return []
-
-def _save_kanakkus(kanakkus):
-    """Save kanakkus to kanakku.json"""
-    with open(KANAKKU_FILE, 'w', encoding='utf-8') as f:
-        json.dump(kanakkus, f, indent=2, ensure_ascii=False)
 
 def _load_kalpana_swara_songs():
     """Load all KalpanaSwaramComposer songs from kalpana-swara-composer.json"""
@@ -600,120 +579,6 @@ def _save_kalpana_swara_songs(songs):
     """Save KalpanaSwaramComposer songs to kalpana-swara-composer.json"""
     with open(KALPANA_SWARA_FILE, 'w', encoding='utf-8') as f:
         json.dump(songs, f, indent=2, ensure_ascii=False)
-
-def _save_midi_file(kanakku_name, midi_file_data_b64):
-    """
-    Save MIDI file from base64 data. Overwrites existing file if present.
-    
-    Args:
-        kanakku_name: Name of the kanakku (used in filename)
-        midi_file_data_b64: Base64-encoded binary MIDI data
-    
-    Returns:
-        Relative path to saved file, e.g., "midi_files/kanakku-name.mid"
-    """
-    # Ensure midi_files directory exists
-    MIDI_DIR.mkdir(parents=True, exist_ok=True)
-    
-    # Decode base64 to binary
-    try:
-        midi_binary = base64.b64decode(midi_file_data_b64)
-    except Exception as e:
-        logger.error(f"Failed to decode MIDI base64: {e}")
-        return None
-    
-    # Validate MIDI file structure
-    if len(midi_binary) < 14:
-        logger.error(f"MIDI file too small ({len(midi_binary)} bytes)")
-        return None
-    
-    # Check for MThd header
-    if midi_binary[:4] != b'MThd':
-        return None
-    
-    # Check for MTrk header (should be at position 14 minimum for basic MIDI)
-    if b'MTrk' not in midi_binary:
-        return None
-    
-    # Create filename without timestamp (will overwrite existing file)
-    sanitized_name = ''.join(c if c.isalnum() or c in ' -_' else '' for c in kanakku_name)[:50]
-    sanitized_name = sanitized_name.replace(' ', '-')
-    filename = f"{sanitized_name}.mid"
-    filepath = MIDI_DIR / filename
-    
-    # Save to file (overwrites if exists)
-    try:
-        with open(filepath, 'wb') as f:
-            f.write(midi_binary)
-        return f"midi_files/{filename}"
-    except Exception as e:
-        logger.error(f"Failed to save MIDI file: {e}")
-        return None
-
-
-@app.route('/api/kanakkus', methods=['GET'])
-def get_kanakkus():
-    """Get all saved kanakkus"""
-    kanakkus = _load_kanakkus()
-    return jsonify(kanakkus)
-
-@app.route('/api/kanakkus', methods=['POST'])
-def save_kanakku():
-    """Save a new kanakku"""
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
-    
-    # Generate unique ID
-    data['id'] = str(uuid.uuid4())
-    
-    # Save MIDI file if provided
-    if data.get('midiFileData'):
-        midi_file_path = _save_midi_file(data.get('name', 'kanakku'), data['midiFileData'])
-        if midi_file_path:
-            data['midiFilePath'] = midi_file_path
-        # Remove the binary data from JSON (keep only the path)
-        del data['midiFileData']
-    
-    kanakkus = _load_kanakkus()
-    kanakkus.insert(0, data)  # Add to front of list
-    _save_kanakkus(kanakkus)
-    
-    return jsonify(data), 201
-
-@app.route('/api/kanakkus/<kanakku_id>', methods=['PUT'])
-def update_kanakku(kanakku_id):
-    """Update an existing kanakku"""
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
-    
-    kanakkus = _load_kanakkus()
-    for i, kanakku in enumerate(kanakkus):
-        if kanakku.get('id') == kanakku_id:
-            data['id'] = kanakku_id  # Preserve ID
-            
-            # Save MIDI file if provided
-            if data.get('midiFileData'):
-                midi_file_path = _save_midi_file(data.get('name', 'kanakku'), data['midiFileData'])
-                if midi_file_path:
-                    data['midiFilePath'] = midi_file_path
-                # Remove the binary data from JSON (keep only the path)
-                del data['midiFileData']
-            
-            kanakkus[i] = data
-            _save_kanakkus(kanakkus)
-            return jsonify(data)
-    
-    return jsonify({"error": "Kanakku not found"}), 404
-
-@app.route('/api/kanakkus/<kanakku_id>', methods=['DELETE'])
-def delete_kanakku(kanakku_id):
-    """Delete a kanakku"""
-    kanakkus = _load_kanakkus()
-    kanakkus = [k for k in kanakkus if k.get('id') != kanakku_id]
-    _save_kanakkus(kanakkus)
-    return jsonify({"success": True})
 
 
 # ===== KALPANA SWARA COMPOSER ENDPOINTS =====
@@ -1714,7 +1579,6 @@ if __name__ == "__main__":
     print("-"*70)
     print("🎯 AVAILABLE ENDPOINTS:")
     print("  Original:")
-    print("    GET  /Kanakku.html")
     print("    GET  /api/songs")
     print("    POST /api/songs")
     print("    PUT  /api/songs/<id>")
@@ -1729,6 +1593,5 @@ if __name__ == "__main__":
     print("="*70 + "\n")
     print("Starting server at http://127.0.0.1:5000")
     BASE_DIR.mkdir(parents=True, exist_ok=True)
-    MIDI_DIR.mkdir(parents=True, exist_ok=True)
     _ensure_json_file()
     app.run(host="127.0.0.1", port=5000, debug=False)

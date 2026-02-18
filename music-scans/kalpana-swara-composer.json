@@ -1,20 +1,94 @@
 [
   {
+    "id": "1771274045485",
+    "name": "Makelara",
+    "ragam": "Ravichandrika",
+    "composer": "Thyagaraj",
+    "sruthi": "C#",
+    "thalam": "Adhi",
+    "beats": 8,
+    "nadai": 4,
+    "eduppu": 7,
+    "tags": [],
+    "scale": "r2 g3 m1 d2 n2",
+    "cycles": [
+      {
+        "id": "cycle-1771274045485",
+        "label": "Cycle 1",
+        "expanded": true,
+        "phraseText": "",
+        "phraseDisplay": "",
+        "lyrics": "",
+        "comments": "",
+        "noteCount": 0,
+        "leadingCommas": 0,
+        "fullPhrase": ""
+      }
+    ],
+    "mainPhrase": {
+      "phraseText": "",
+      "phraseDisplay": "",
+      "noteCount": 0,
+      "leadingCommas": 0,
+      "eduppu": 1,
+      "fullPhrase": ""
+    },
+    "createdDate": "2026-02-16T20:34:05.806142",
+    "lastModified": "2026-02-16T20:34:55.072574"
+  },
+  {
+    "beats": 8,
+    "composer": "Dikshithar",
+    "createdDate": "2026-02-16T19:12:25.525419",
+    "cycles": [
+      {
+        "comments": "",
+        "expanded": true,
+        "fullPhrase": "g,,,,,r,,,r,s,ṇ,p̣,,r,,s,r,,,sṇsr",
+        "id": "cycle-1771269145513",
+        "label": "Cycle 1",
+        "leadingCommas": 0,
+        "lyrics": "va|,|,|,|,|,|tha|,|,|,|pi|,|ga|,|na|,|pa|,|,|thim|,|,|bha|,|je|,|,|,|h|a|m|m",
+        "noteCount": 32,
+        "phraseDisplay": "g,,,,,r,,,r,s,ṇ,p̣,,r,,s,r,,,sṇsr",
+        "phraseText": "g,,, ,,r, ,,r, s,ṇ, p̣,,r ,,s, r,,, sṇsr"
+      }
+    ],
+    "eduppu": 1,
+    "id": "1771269145513",
+    "lastModified": "2026-02-16T20:08:13.173325",
+    "mainPhrase": {
+      "eduppu": 1,
+      "fullPhrase": "",
+      "leadingCommas": 0,
+      "noteCount": 0,
+      "phraseDisplay": "",
+      "phraseText": ""
+    },
+    "nadai": 4,
+    "name": "Vathapi",
+    "ragam": "Hamsadhwani",
+    "scale": "r2 g3 n3",
+    "sruthi": "C#",
+    "tags": [],
+    "thalam": "Adhi"
+  },
+  {
     "beats": 7,
     "composer": "Thyagaraja",
     "createdDate": "2026-02-14T22:01:52.304639",
     "cycles": [
       {
+        "comments": "",
+        "expanded": true,
+        "fullPhrase": ",,,nṡ,ṙ,,,ṙ,,,ṙṙġ",
         "id": "cycle-1771239527463",
         "label": "Cycle 1",
-        "expanded": true,
-        "phraseText": "ns,r,,,r,,,rrg",
-        "phraseDisplay": "ns,r,,,r,,,rrg",
-        "lyrics": "mana,su,,,lo,,,thalachi",
-        "comments": "",
-        "noteCount": 14,
         "leadingCommas": 3,
-        "fullPhrase": ",,,ns,r,,,r,,,rrg"
+        "lyrics": "|||ma|na||su||||la||||Tha|a|la|||||||||||",
+        "noteCount": 14,
+        "phraseDisplay": "nṡ,ṙ,,,ṙ,,,ṙṙġ",
+        "phraseText": "nṡ,ṙ,,,ṙ,,,ṙṙġ"
       },
       {
         "comments": "Charanam",
@@ -23,7 +97,7 @@
         "id": "cycle-1771106988121",
         "label": "Cycle 2",
         "leadingCommas": 2,
-        "lyrics": "",
+        "lyrics": "|||||||||||||||||||||||||||",
         "noteCount": 15,
         "phraseDisplay": "ġṙṡndṙṡndpṡndpṁ",
         "phraseText": "ġṙṡndṙṡndpṡndpṁ"
@@ -55,7 +129,7 @@
     ],
     "eduppu": 4,
     "id": "fbc5330f-ec99-439b-b7a5-150ec1be45dd",
-    "lastModified": "2026-02-16T11:00:49.593979",
+    "lastModified": "2026-02-16T19:00:20.084368",
     "nadai": 2,
     "name": "PakkalaNilabadi",
     "ragam": "Karaharapriya",

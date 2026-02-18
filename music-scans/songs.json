@@ -701,7 +701,7 @@
       "/makelara_vicharamu.jpg",
       "/makelara__1_.pdf"
     ],
-    "lyrics": "",
+    "lyrics": "• Composition: Mākēlarā Vicāramu\n• Rāga: Ravicandrika (Mēḷa 28)\n• Tāḷa: Dēśādi (8x4)\n• Ārōhaṇa: S R² G³ M¹ D² Ṡ\n• Avarōhaṇa: Ṡ N² D² M¹ G³ R² S\n\n--------------------------------------------------------------------------------\nPallavi (P.1)\n, , , , , *M, ,, G, ,,M, |G, ,, ,, - GR |GRS, ,, R,||G, ,, ,, *             \n          mā  kē  la       rā       vi      cā      ra mu\nM, ,, D, ,,M, |G, ,, ,, -RG |MG GRS, R,||G, ,, ,, *             \n mā  kē  la       rā       vi      cā      ra mu\n*M, ,, D, ,,/N, |NDD,M,-G..M|G..M GRS, R,||G, ,, ,, *             \n   mā  kē  la       rā      vi cā        ra mu             \nM,M,D, ,,/N, |NDD,, -D, |Ṡ,Ṡ, ṠND, ||ṠṠNNDD,*             \nma ru gan na  śrī     rā  macan    dra\nLine 4:             *M, ,, D, ,,Ṡ, |DṠRĠṀĠ-ṘṠ|NDM MGR SR||G, ,, ,, *             \nmā  kē  la       rā      vi cā      ra mu             \nMGM, D, ,, ṠN|NDD,, -D, |Ṡ,Ṡ, ṠNND||MDN D,ṘṠṠN,*             \nma ru gan na śrī     rā  macan    dra (mākēlarā)\n\n--------------------------------------------------------------------------------\nAnupallavi (A.1)\nLine 1: ., , , , , *M,N, NDD, D, |Ṡ,, ,, ṘĠ |ṀĠ Ṙ, ,, ĠṀ||ĠṘṠ, ,, *             \nsā  kē  ta       rā  ja      ku  mā      ra             \nDṠ,N NDD,D, |Ṡ, MDṠ, ṘĠ |ṀĠṘ Ṙ,, ṘĠ ||ṀĠṘ Ṡ,, *             \nsā  kē  ta rā    ja      ku  mā      ra\nLine 2:             *D,Ṡ, ṠNN,D, |M,, D,, /N, |,, ,, ṠNN,D,||ṠṠNNDD,*             \nsad bha kta     mandā ra     śrī  ka  ra             \nD..Ṙ Ṡ..Ṙ ṠNN,D, |DM,D,, N, |D, /ṘṠ ṠNND||ṠNND,D,*             \nsad  bha ktamandā ra         śrī  ka  ra                                               (mākēlarā vicāramu)\n\n--------------------------------------------------------------------------------\nCharaṇam (C.1)\nLine 1: ., , , , , *M,M,M, ,,M, |MGG, ,, G, |M, D, ,, ṠN||NDD,, ,, *             ja ta gūrc ci    nā       ta  ka sū tra mu nu\nLine 2:             D,ṠN NDD,M, |GMGRS, MG| ,M D, ,, ṠN||ND,D,, *             ja ga mel  la  me cca ga ka ra muna ni ḍi\nRemaining Lines: (Note: The source indicates the music for these lines is the same as the Anupallavi)\n            gati tappaka     āḍiñ  cēvu   summi             nata tyāgarāja gi rīśa    vi nuta   (mākēlarāvicāramu)",
     "id": "b7845892-0147-43fc-af4c-2e5f65cc049a",
     "tags": [
       "Thyagaraja"
@@ -1570,31 +1570,6 @@
     ]
   },
   {
-    "title": "Kanakku",
-    "links": [
-      "/Kanakku_64 (1).JPG",
-      "/Kanakku_64.JPG",
-      "/Kanakku_64_42_88_64.JPG",
-      "/Kanakku_64_96_122.JPG",
-      "/Kanakku_64_96_198_99.JPG",
-      "/Kanakku_64_99_64_130.JPG",
-      "/Kanakku_64_126_144_180.JPG",
-      "/Kanakku_68_48_64_96.JPG",
-      "/Kanakku_96_64_108_169.JPG",
-      "/Kanakku_96_128_48.JPG",
-      "/Kanakku_120_114.JPG",
-      "/Kanakku_126_64_192_64.JPG",
-      "/Kanakku_128_66_32_64.JPG",
-      "/Kanakku_misrakoraippu.JPG",
-      "/Kanakku_pete_64.JPG"
-    ],
-    "lyrics": "96\n\ng,,,r,,,s,,,n,,,d,,, 20\ngrsnd,rsndp,sndpm 17\n\nr,,s,,n,,d,,p,, 15\n\nrsndp,sndpm,gmpdn 17\n\ng,r,s,n,d, 10\n\ngrsnd,rsndp,sndpm 17\n",
-    "id": "fa83a4b1-f04c-45a3-b00d-61152930fca5",
-    "tags": [
-      "Kanakku"
-    ]
-  },
-  {
     "title": "Sthayi names",
     "links": [
       "/Sthayi_Names.jpeg"
@@ -2164,7 +2139,10 @@
   {
     "title": "Sujanajeevana",
     "lyrics": "Ragam: Khamas (28th Mela janyam)\n\n                ARO:  S M1 G3 M1 N2 D2 N2 P D2 N2 S                 ||\n                AVA:  S N2 D2 P M1 G3 R2 S                        ||\n\nTalam: Rupakam\nComposer: Tyagaraja\n\n \n\nPallavi:\n\nSujana Jivana Rama Suguna Bhushana! Rama!\n\n \n\nAnupallavi:\n\nBhujaga Bhushanarccita! Budhajanavanat\n\najavandita! Sritachandana! Dashaturanga! Maamava\n\n \n\nCharanam:\n\nCharunetra! Srikalatra! Sriramya Gatra!\n\nTarakanama Sucharitra Dasharatha Putra\n\nTarakaadhipanana! Dharmapaalaka\n\nTaraya Raghuvara! Nirmala Tyagarajasannuta",
-    "links": [],
+    "links": [
+      "/SujanaJeevana.jpeg",
+      "http://localhost:5000/SongNotationComposer.html?song=Sujana+J%C4%ABvana"
+    ],
     "tags": [
       "Thyagaraja",
       "Rupakam"
