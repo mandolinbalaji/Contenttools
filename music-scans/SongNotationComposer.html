@@ -207,6 +207,8 @@
             padding: 8px;
             text-align: center;
             vertical-align: top;
+            padding-top: 30px;
+            position: relative;
         }
 
         .swara-cell {
@@ -375,6 +377,8 @@
                     title="Save ONLY the notation text box">💾 Save Notation</button>
                 <button class="btn btn-primary" onclick="saveRenderedGrid()"
                     title="Save manual corrections in the grid">📊 Save Spreadsheet</button>
+                <button class="btn btn-outline" onclick="openFormatModal()"
+                    title="Format notation grid by beats and nadai">✨ Format</button>
                 <button class="btn btn-outline" id="sourceBtn" onclick="toggleSourceView()"
                     title="Toggle Floating Source Image">📷 Source</button>
                 <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
@@ -430,6 +434,22 @@
         </div>
     </div>
 
+    <!-- Format Modal -->
+    <div id="formatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-width: 500px; width: 90%;">
+            <h2 style="margin-bottom: 20px; color: var(--secondary);">Format Notation Grid</h2>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Eduppu Position (cell number)</label>
+                <input type="number" id="eduppuInput" min="1" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" placeholder="Enter eduppu cell position">
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">This marks where the tala cycle begins (shown in orange above the cell)</p>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeFormatModal()" style="padding: 10px 20px;">Cancel</button>
+                <button class="btn btn-primary" onclick="applyFormatting()" style="padding: 10px 20px;">Apply Format</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- 1. CONFIGURATION & CONSTANTS ---
         const NOTE_MAPPING = {
@@ -439,8 +459,8 @@
 
         // --- 2. STATE ---
         let currentSong = {
-            id: null, name: '', ragam: '', thalam: '', composer: '',
-            sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: []
+            id: null, name: '', ragam: '', thalam: '', composer: '', notation: '',
+            sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], eduppu: 1
         };
 
         let gridIsDirty = false;
@@ -587,6 +607,15 @@
 
                             row.atoms.forEach((atom, aIdx) => {
                                 const cell = document.createElement('td');
+                                cell.style.position = 'relative';
+
+                                // Eduppu marker (if this cell is the eduppu position)
+                                if (atom.isEduppu) {
+                                    const eduppuMarker = document.createElement('div');
+                                    eduppuMarker.style.cssText = 'position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 20px; color: #ff7675; font-weight: bold;';
+                                    eduppuMarker.textContent = '*';
+                                    cell.appendChild(eduppuMarker);
+                                }
 
                                 // Swara Cell
                                 const swaraDiv = document.createElement('div');
@@ -1048,7 +1077,7 @@
             document.getElementById('notationInput').value = '';
             document.getElementById('metadataDisplay').innerHTML = '';
             document.getElementById('renderedNotation').innerHTML = '<p style="color: #888; text-align: center; padding: 40px;">Ready for new notation.</p>';
-            currentSong = { name: '', ragam: '', thalam: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '' };
+            currentSong = { name: '', ragam: '', thalam: '', composer: '', notation: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '', eduppu: 1 };
             gridIsDirty = false;
             renderPlaylist();
         }
@@ -1110,6 +1139,150 @@
             a.href = url;
             a.download = `${currentSong.name || 'song'}.txt`;
             a.click();
+        }
+
+        // --- FORMAT FUNCTIONS ---
+        function openFormatModal() {
+            const totalCells = calculateTotalCells();
+            document.getElementById('eduppuInput').value = currentSong.eduppu || 1;
+            document.getElementById('eduppuInput').max = totalCells;
+            document.getElementById('formatModal').style.display = 'flex';
+        }
+
+        function closeFormatModal() {
+            document.getElementById('formatModal').style.display = 'none';
+        }
+
+        function calculateTotalCells() {
+            return parseInt(document.getElementById('beats').value || 8) * parseInt(document.getElementById('nadai').value || 4);
+        }
+
+        function applyFormatting() {
+            const eduppuPos = parseInt(document.getElementById('eduppuInput').value);
+            const totalCells = calculateTotalCells();
+
+            if (isNaN(eduppuPos) || eduppuPos < 1 || eduppuPos > totalCells) {
+                alert(`Eduppu must be between 1 and ${totalCells} (beats × nadai)`);
+                return;
+            }
+
+            currentSong.eduppu = eduppuPos;
+
+            // Format each section
+            currentSong.sections.forEach((section, sIdx) => {
+                formatSection(section, sIdx, totalCells, eduppuPos);
+            });
+
+            gridIsDirty = true;
+            renderSong();
+            closeFormatModal();
+            showToast('Notation formatted successfully!');
+        }
+
+        function formatSection(section, sectionIdx, totalCells, eduppuPos) {
+            if (!section.rows || section.rows.length === 0) return;
+
+            // Separate swara and lyric rows
+            const swaraLyricPairs = [];
+            for (let i = 0; i < section.rows.length; i++) {
+                if (section.rows[i].type === 'swara') {
+                    const swaraRow = section.rows[i];
+                    const lyricRow = section.rows.find(r => r.type === 'lyric' && r.parentSwaraId === swaraRow.id);
+                    swaraLyricPairs.push({ swara: swaraRow, lyric: lyricRow });
+                }
+            }
+
+            // Flatten all swaras and lyrics together (removing special characters from swaras)
+            // This maintains alignment between swaras and lyrics
+            let allSwaras = [];
+            let allLyrics = [];
+            let eduppuMarkPos = -1; // Position of eduppu in the flattened array
+
+            for (const pair of swaraLyricPairs) {
+                if (pair.swara && pair.swara.atoms) {
+                    for (let atomIdx = 0; atomIdx < pair.swara.atoms.length; atomIdx++) {
+                        const atom = pair.swara.atoms[atomIdx];
+                        
+                        if (atom.text === '*') {
+                            eduppuMarkPos = allSwaras.length; // Track eduppu position
+                        } else if (!['*', '-', '|'].includes(atom.text)) {
+                            // Add swara
+                            allSwaras.push({
+                                text: atom.text,
+                                index: atom.index || 0
+                            });
+                            
+                            // Add corresponding lyric if it exists
+                            let lyricAtom = '';
+                            if (pair.lyric && pair.lyric.atoms && pair.lyric.atoms[atomIdx]) {
+                                lyricAtom = pair.lyric.atoms[atomIdx];
+                            }
+                            allLyrics.push(lyricAtom || '');
+                        }
+                    }
+                }
+            }
+
+            // If no eduppu marked yet, use the provided eduppu position
+            if (eduppuMarkPos === -1) {
+                eduppuMarkPos = eduppuPos - 1; // Convert to 0-indexed
+            }
+
+            // Redistribute into rows with totalCells per row
+            const newRows = [];
+            const newRowId = 'section-' + sectionIdx + '-row-';
+            let currentRowIdx = 0;
+            let cellsInCurrentRow = 0;
+            let currentSwaraRow = null;
+            let currentLyricRow = null;
+
+            for (let i = 0; i < allSwaras.length; i++) {
+                if (cellsInCurrentRow === 0) {
+                    // Start new swara row
+                    currentSwaraRow = {
+                        id: newRowId + currentRowIdx + '-swara',
+                        type: 'swara',
+                        content: '',
+                        atoms: []
+                    };
+                    newRows.push(currentSwaraRow);
+
+                    // Create corresponding lyric row
+                    currentLyricRow = {
+                        id: newRowId + currentRowIdx + '-lyric',
+                        type: 'lyric',
+                        content: '',
+                        atoms: [],
+                        parentSwaraId: currentSwaraRow.id
+                    };
+                    newRows.push(currentLyricRow);
+                }
+
+                // Add swara to cell
+                currentSwaraRow.atoms.push({
+                    text: allSwaras[i].text,
+                    index: i,
+                    isEduppu: (i === eduppuMarkPos)
+                });
+
+                // Add corresponding lyric if available
+                if (i < allLyrics.length) {
+                    currentLyricRow.atoms.push(allLyrics[i]);
+                } else {
+                    currentLyricRow.atoms.push('');
+                }
+
+                cellsInCurrentRow++;
+
+                // Check if row is full
+                if (cellsInCurrentRow === totalCells) {
+                    cellsInCurrentRow = 0;
+                    currentRowIdx++;
+                }
+            }
+
+            // Update section with new formatted rows
+            section.rows = newRows;
         }
 
     </script>
