@@ -218,9 +218,22 @@
         }
 
         .lyrics-cell {
+            font-family: monospace;
             font-style: italic;
             font-size: 13px;
             color: #0047b3;
+            min-height: 1.2em;
+            padding: 2px;
+            border: 1px solid transparent;
+        }
+
+        .swara-cell[contenteditable="true"]:focus,
+        .lyrics-cell[contenteditable="true"]:focus {
+            outline: none;
+            background: #fff;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 5px rgba(108, 92, 231, 0.2);
+            z-index: 10;
         }
 
         .section-header {
@@ -230,6 +243,60 @@
             text-align: left;
             border-left: 5px solid var(--primary);
             margin-top: 30px;
+        }
+
+        /* Source Viewer Layout */
+        .source-viewer-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .source-image-panel {
+            position: fixed;
+            top: 100px;
+            right: 40px;
+            width: 450px;
+            background: white;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .source-image-header {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .source-image-panel img {
+            width: 100%;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .notation-viewer-panel {
+            flex: 1;
+            width: 100%;
+        }
+
+        .upload-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #imageUpload {
+            display: none;
         }
 
         .form-group {
@@ -302,28 +369,62 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn btn-outline" onclick="newSong()">📄 New</button>
-                <button class="btn btn-outline" onclick="importFile()">📥 Import</button>
-                <button class="btn btn-outline" onclick="exportFile()">📤 Export</button>
+                <button class="btn btn-outline" onclick="newSong()" title="Clear and start new">📄 New</button>
+                <button class="btn btn-outline" onclick="importFile()" title="Import from file">📥 Import</button>
+                <button class="btn btn-outline" onclick="saveNotationSource()"
+                    title="Save ONLY the notation text box">💾 Save Notation</button>
+                <button class="btn btn-primary" onclick="saveRenderedGrid()"
+                    title="Save manual corrections in the grid">📊 Save Spreadsheet</button>
+                <button class="btn btn-outline" id="sourceBtn" onclick="toggleSourceView()"
+                    title="Toggle Floating Source Image">📷 Source</button>
                 <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
                     Share</button>
-                <button class="btn btn-primary" onclick="saveSong()">💾 Save</button>
             </div>
         </header>
 
         <div class="content-area">
+
             <div class="input-section">
-                <label>Paste Notation Text</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label>Notation Text</label>
+                    <div class="upload-controls">
+                        <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)">
+                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('imageUpload').click()">
+                            <i class="fas fa-image"></i> Upload Source Image
+                        </button>
+                        <button class="btn btn-secondary btn-sm" id="aiParseBtn" onclick="aiParseImage()"
+                            style="display:none;">
+                            <i class="fas fa-magic"></i> AI Parse Image
+                        </button>
+                    </div>
+                </div>
                 <textarea id="notationInput" spellcheck="false"
-                    placeholder="Composition: Sujana Jīvana\n• Rāga: Khamas (Mēḷa 28)\n..."></textarea>
+                    placeholder="Composition: Sujana Jīvana&#10;• Rāga: Khamas (Mēḷa 28)&#10;• Ārōhaṇa: S M¹ G³ M¹ P D² N² Ṡ&#10;• Avarōhaṇa: Ṡ N² D² P M¹ G³ R² S&#10;• Tāḷa: 3x4 (Rūpaka structure as shown in the source)&#10;&#10;--------------------------------------------------------------------------------&#10;Pallavi (P.1)&#10;Line 1:&#10;M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||&#10;su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma"></textarea>
                 <button class="btn btn-primary" onclick="parseAndRender()">⚡ Parse & Display</button>
             </div>
 
-            <div class="viewer-section" id="notationViewer">
-                <div id="metadataDisplay"></div>
-                <div id="renderedNotation">
-                    <p style="color: #888; text-align: center; padding: 40px;">Rendered notation will appear here after
-                        parsing.</p>
+            <div class="source-viewer-container">
+                <div id="sourceImagePanel" class="source-image-panel">
+                    <div class="source-image-header" id="sourceImageHeader">
+                        <span style="font-weight: 600; color: var(--secondary); font-size: 14px;"><i
+                                class="fas fa-image"></i> Source Image</span>
+                        <button class="btn btn-sm" onclick="toggleSourceView()"
+                            style="padding: 2px 8px; background: transparent; border: none; cursor: pointer;">✖</button>
+                    </div>
+                    <div style="max-height: 70vh; overflow-y: auto;">
+                        <img id="sourceImage" src="" alt="Notation Source">
+                    </div>
+                </div>
+
+                <div class="notation-viewer-panel">
+                    <div class="viewer-section" id="notationViewer">
+                        <div id="metadataDisplay"></div>
+                        <div id="renderedNotation">
+                            <p style="color: #888; text-align: center; padding: 40px;">Rendered notation will appear
+                                here
+                                after parsing.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -342,12 +443,20 @@
             sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: []
         };
 
+        let gridIsDirty = false;
+
         function parseAndRender() {
+            if (gridIsDirty) {
+                if (!confirm("You have manual edits in the grid. Clicking 'Parse' will overwrite them. Continue?")) {
+                    return;
+                }
+            }
+
             const text = document.getElementById('notationInput').value;
             if (!text) return;
 
             const lines = text.split('\n');
-            let songMetadata = { name: 'Untitled Song', ragam: '', thalam: '', composer: '' };
+            let songMetadata = { name: 'Untitled Song', ragam: '', thalam: '', composer: '', arohana: '', avarohana: '' };
             let sections = [];
             let currentSection = null;
 
@@ -358,16 +467,36 @@
 
                 if (trimmed.startsWith('Composition:')) songMetadata.name = trimmed.replace('Composition:', '').trim();
                 else if (trimmed.includes('Rāga:')) songMetadata.ragam = trimmed.split('Rāga:')[1].trim();
-                else if (trimmed.includes('Tāḷa:')) songMetadata.thalam = trimmed.split('Tāḷa:')[1].trim();
+                else if (trimmed.includes('Tāḷa:')) {
+                    const thalam = trimmed.split('Tāḷa:')[1].trim();
+                    songMetadata.thalam = thalam;
+                    // Smart detection of Beats/Nadai if like "3x4"
+                    const talaMatch = thalam.match(/(\d+)\s*x\s*(\d+)/);
+                    if (talaMatch) {
+                        document.getElementById('beats').value = talaMatch[1];
+                        document.getElementById('nadai').value = talaMatch[2];
+                    }
+                }
                 else if (trimmed.includes('Composer:')) songMetadata.composer = trimmed.split('Composer:')[1].trim();
+                else if (trimmed.includes('Ārōhaṇa:')) songMetadata.arohana = trimmed.split('Ārōhaṇa:')[1].trim();
+                else if (trimmed.includes('Avarōhaṇa:')) songMetadata.avarohana = trimmed.split('Avarōhaṇa:')[1].trim();
                 else if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charaṇam')) {
-                    currentSection = { title: trimmed, lines: [] };
+                    currentSection = { title: trimmed, rows: [] };
                     sections.push(currentSection);
                 }
                 else if (currentSection) {
                     const isNotation = /[SRGMPDNsrgmpdn,;]/.test(trimmed) && trimmed.includes(',');
                     if (isNotation) {
-                        let lyricsLine = "";
+                        const swaraRowId = 'row-' + Math.random().toString(36).substr(2, 9);
+                        const swaraAtoms = tokenizeWithPosition(rawLine);
+                        currentSection.rows.push({
+                            id: swaraRowId,
+                            type: 'swara',
+                            content: rawLine,
+                            atoms: swaraAtoms
+                        });
+
+                        // Check for lyrics in next line
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
@@ -375,22 +504,24 @@
                             const nextIsSection = nextTrimmed.includes('Pallavi') || nextTrimmed.includes('Anupallavi') || nextTrimmed.includes('Charaṇam');
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
-                                lyricsLine = nextLine;
+                                const lyricAtoms = alignLyrics(nextLine, swaraAtoms);
+                                currentSection.rows.push({
+                                    id: 'row-' + Math.random().toString(36).substr(2, 9),
+                                    type: 'lyric',
+                                    content: nextLine,
+                                    atoms: lyricAtoms,
+                                    parentSwaraId: swaraRowId
+                                });
                                 i++;
                             }
                         }
-                        currentSection.lines.push({ swaras: rawLine, lyrics: lyricsLine });
                     }
                 }
             }
 
-            // Only update name from metadata if it's NOT already set or if the input text specifically changed its name part
-            if (!currentSong.name || currentSong.name === "Unnamed Song" || currentSong.rawText_oldName !== songMetadata.name) {
-                currentSong.name = songMetadata.name;
-                currentSong.rawText_oldName = songMetadata.name; // Track what was in the text area
-            }
-
-            currentSong = { ...currentSong, ragam: songMetadata.ragam, thalam: songMetadata.thalam, composer: songMetadata.composer, sections: sections };
+            // Persistence Awareness logic removed to favor explicit control (dirty flag + confirmation)
+            currentSong = { ...currentSong, ...songMetadata, sections: sections };
+            gridIsDirty = false;
             renderSong();
         }
 
@@ -405,15 +536,35 @@
                         value="${currentSong.name || 'Unnamed Song'}" 
                         onfocus="this.style.borderBottom='1px solid var(--primary)'"
                         onblur="this.style.borderBottom='1px solid transparent'"
-                        oninput="updatecurrentSongName(this.value)"
+                        oninput="updateCurrentSongName(this.value)"
                         placeholder="Unnamed Song">
                     <p style="color: #666; font-size: 14px;">
                         <strong>Ragam:</strong> ${currentSong.ragam} | <strong>Thalam:</strong> ${currentSong.thalam}
                     </p>
+                    <div style="margin-top: 12px; display: flex; gap: 15px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Composer</label>
+                            <input type="text" id="composerInput" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
+                                value="${currentSong.composer || ''}"
+                                onblur="this.style.borderColor='#ddd'"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="Composer name">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Notation</label>
+                            <input type="text" id="notationFieldInput" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
+                                value="${currentSong.notation || ''}"
+                                onblur="this.style.borderColor='#ddd'"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="Notation reference">
+                        </div>
+                    </div>
                 </div>
             `;
 
-            currentSong.sections.forEach(section => {
+            currentSong.sections.forEach((section, sIdx) => {
                 const sectionContainer = document.createElement('div');
                 sectionContainer.style.marginBottom = '40px';
                 const title = document.createElement('div');
@@ -424,25 +575,65 @@
                 const table = document.createElement('table');
                 table.className = 'notation-table';
 
-                section.lines.forEach(line => {
-                    const tr = document.createElement('tr');
-                    const swaraAtoms = tokenizeWithPosition(line.swaras);
-                    const lyricAtoms = alignLyrics(line.lyrics, swaraAtoms);
+                // Interleave rendering logic (Safe check for rows)
+                if (section.rows && section.rows.length > 0) {
+                    for (let r = 0; r < section.rows.length; r++) {
+                        const row = section.rows[r];
+                        if (row.type === 'swara') {
+                            const tr = document.createElement('tr');
 
-                    swaraAtoms.forEach((atom, idx) => {
-                        const cell = document.createElement('td');
-                        const swaraDiv = document.createElement('div');
-                        swaraDiv.className = 'swara-cell';
-                        swaraDiv.textContent = formatSwaraForDisplay(atom.text);
-                        const lyricDiv = document.createElement('div');
-                        lyricDiv.className = 'lyrics-cell';
-                        lyricDiv.textContent = lyricAtoms[idx] || '';
-                        cell.appendChild(swaraDiv);
-                        cell.appendChild(lyricDiv);
-                        tr.appendChild(cell);
+                            // Find potential corresponding lyric row
+                            const lyricRow = section.rows.find(lr => lr.type === 'lyric' && lr.parentSwaraId === row.id);
+
+                            row.atoms.forEach((atom, aIdx) => {
+                                const cell = document.createElement('td');
+
+                                // Swara Cell
+                                const swaraDiv = document.createElement('div');
+                                swaraDiv.className = 'swara-cell';
+                                swaraDiv.contentEditable = "true";
+                                swaraDiv.textContent = formatSwaraForDisplay(atom.text);
+                                swaraDiv.oninput = (e) => handleCellEdit(sIdx, r, aIdx, 'swara', e.target.textContent);
+
+                                cell.appendChild(swaraDiv);
+
+                                // Lyric Cell (if exists)
+                                if (lyricRow) {
+                                    const lyricDiv = document.createElement('div');
+                                    lyricDiv.className = 'lyrics-cell';
+                                    lyricDiv.contentEditable = "true";
+                                    const lyricRowIdx = section.rows.indexOf(lyricRow);
+                                    lyricDiv.textContent = lyricRow.atoms[aIdx] || '';
+                                    lyricDiv.oninput = (e) => handleCellEdit(sIdx, lyricRowIdx, aIdx, 'lyric', e.target.textContent);
+                                    cell.appendChild(lyricDiv);
+                                }
+
+                                tr.appendChild(cell);
+                            });
+                            table.appendChild(tr);
+                        }
+                    }
+                } else if (section.lines) {
+                    // Fallback for legacy format
+                    section.lines.forEach(line => {
+                        const tr = document.createElement('tr');
+                        const swaraAtoms = tokenizeWithPosition(line.swaras);
+                        const lyricAtoms = alignLyrics(line.lyrics, swaraAtoms);
+                        swaraAtoms.forEach((atom, idx) => {
+                            const cell = document.createElement('td');
+                            const swaraDiv = document.createElement('div');
+                            swaraDiv.className = 'swara-cell';
+                            swaraDiv.textContent = formatSwaraForDisplay(atom.text);
+                            const lyricDiv = document.createElement('div');
+                            lyricDiv.className = 'lyrics-cell';
+                            lyricDiv.textContent = lyricAtoms[idx] || '';
+                            cell.appendChild(swaraDiv);
+                            cell.appendChild(lyricDiv);
+                            tr.appendChild(cell);
+                        });
+                        table.appendChild(tr);
                     });
-                    table.appendChild(tr);
-                });
+                }
                 sectionContainer.appendChild(table);
                 viewer.appendChild(sectionContainer);
             });
@@ -515,19 +706,40 @@
             return atom;
         }
 
-        async function saveSong() {
-            if (!currentSong.name) {
-                alert('Please parse a song first or provide a composition name.');
-                return;
-            }
-            // Sync current header settings to song
+        async function saveNotationSource() {
+            currentSong.rawText = document.getElementById('notationInput').value;
+            // Sync current header settings
             currentSong.sruthi = document.getElementById('sruthi').value;
             currentSong.beats = document.getElementById('beats').value;
             currentSong.nadai = document.getElementById('nadai').value;
             currentSong.bpm = document.getElementById('bpm').value;
-            currentSong.rawText = document.getElementById('notationInput').value;
+            // Sync composer and notation fields
+            currentSong.composer = document.getElementById('composerInput')?.value || '';
+            currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
 
+            await saveSongInternal();
+            showToast('Notation source saved.');
+        }
+
+        async function saveRenderedGrid() {
+            // Sync current header settings
+            currentSong.sruthi = document.getElementById('sruthi').value;
+            currentSong.beats = document.getElementById('beats').value;
+            currentSong.nadai = document.getElementById('nadai').value;
+            currentSong.bpm = document.getElementById('bpm').value;
+            // Sync composer and notation fields
+            currentSong.composer = document.getElementById('composerInput')?.value || '';
+            currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
+
+            // currentSong.sections is already updated via handleCellEdit
+            await saveSongInternal();
+            gridIsDirty = false;
+            showToast('Spreadsheet edits saved.');
+        }
+
+        async function saveSongInternal() {
             try {
+                // Ensure imageSource is part of the save payload
                 const response = await fetch('/api/notation-composer', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -537,10 +749,19 @@
                 currentSong.id = saved.id;
                 await renderPlaylist();
                 document.getElementById('shareBtn').style.display = 'inline-flex';
-                showToast('Song "' + currentSong.name + '" saved to server.');
             } catch (err) {
                 console.error('Save failed:', err);
                 alert('Failed to save song to server.');
+            }
+        }
+
+        function handleCellEdit(sIdx, rIdx, aIdx, type, newValue) {
+            gridIsDirty = true;
+            const targetRow = currentSong.sections[sIdx].rows[rIdx];
+            if (type === 'swara') {
+                targetRow.atoms[aIdx].text = newValue;
+            } else if (type === 'lyric') {
+                targetRow.atoms[aIdx] = newValue;
             }
         }
 
@@ -565,6 +786,16 @@
             document.getElementById('bpm').value = song.bpm || 120;
             document.getElementById('notationInput').value = song.rawText || '';
             renderSong();
+
+            // Re-link image if it exists
+            if (song.imageSource) {
+                updateSourceViewer(song.imageSource);
+                document.getElementById('aiParseBtn').style.display = 'inline-flex';
+            } else {
+                updateSourceViewer(null);
+                document.getElementById('aiParseBtn').style.display = 'none';
+            }
+
             document.getElementById('shareBtn').style.display = 'inline-flex';
         }
 
@@ -580,9 +811,16 @@
             });
         }
 
-        function showToast(message) {
+        function showToast(message, type = 'info') {
             const toast = document.getElementById('shareToast') || createToast();
             toast.textContent = message;
+
+            // Basic color coding
+            if (type === 'error') toast.style.borderLeft = '4px solid #ff7675';
+            else if (type === 'warning') toast.style.borderLeft = '4px solid #fdcb6e';
+            else if (type === 'success') toast.style.borderLeft = '4px solid #55efc4';
+            else toast.style.borderLeft = '4px solid var(--primary)';
+
             toast.style.display = 'block';
             setTimeout(() => {
                 toast.style.display = 'none';
@@ -595,6 +833,163 @@
             toast.className = 'share-toast';
             document.body.appendChild(toast);
             return toast;
+        }
+
+        function toggleSourceView() {
+            const panel = document.getElementById('sourceImagePanel');
+            const isHidden = panel.style.display === 'none' || panel.style.display === '';
+            panel.style.display = isHidden ? 'block' : 'none';
+
+            // Highlight button if active
+            const btn = document.getElementById('sourceBtn');
+            if (isHidden) {
+                btn.style.background = '#edf2ff';
+                btn.style.borderColor = 'var(--primary)';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = '#ddd';
+            }
+        }
+
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Ensure we have a song name for the filename
+            if (!currentSong.name || currentSong.name.trim() === '' || currentSong.name === 'Untitled Song') {
+                const name = prompt("Enter Song Name for this image source (this will be the filename):");
+                if (!name || name.trim() === "") {
+                    showToast("Upload cancelled: Song name required.", "error");
+                    event.target.value = ''; // Reset input
+                    return;
+                }
+                currentSong.name = name.trim();
+                renderSong(); // Update UI
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('songName', currentSong.name);
+
+            try {
+                const response = await fetch('/api/upload-notation-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.imagePath) {
+                    currentSong.imageSource = result.imagePath;
+                    updateSourceViewer(result.imagePath);
+                    document.getElementById('aiParseBtn').style.display = 'inline-flex';
+                    showToast('Image saved as: ' + result.imagePath.split('/').pop());
+                } else if (result.error) {
+                    showToast('Upload failed: ' + result.error, 'error');
+                }
+            } catch (err) {
+                showToast('Upload failed: ' + err, 'error');
+            }
+        }
+
+        function updateSourceViewer(path) {
+            const panel = document.getElementById('sourceImagePanel');
+            const img = document.getElementById('sourceImage');
+            const btn = document.getElementById('sourceBtn');
+
+            if (path) {
+                img.src = path;
+                panel.style.display = 'block';
+                btn.style.background = '#edf2ff';
+                btn.style.borderColor = 'var(--primary)';
+                btn.style.display = 'inline-flex';
+
+                // Initialize draggable if not already done
+                if (!panel.dataset.draggable) {
+                    makeDraggable(panel, document.getElementById('sourceImageHeader'));
+                    panel.dataset.draggable = "true";
+                }
+            } else {
+                panel.style.display = 'none';
+                btn.style.display = 'none';
+                btn.style.background = 'transparent';
+                btn.style.borderColor = '#ddd';
+            }
+        }
+
+        function makeDraggable(elmnt, handle) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            handle.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.right = 'auto'; // Break initial right binding
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        async function aiParseImage() {
+            if (!currentSong.imageSource) {
+                showToast("No image source found to parse.", "error");
+                return;
+            }
+
+            const btn = document.getElementById('aiParseBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Parsing...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/ai-parse-notation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imagePath: currentSong.imageSource })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server returned ' + response.status);
+                }
+
+                const result = await response.json();
+
+                if (result.notation) {
+                    document.getElementById('notationInput').value = result.notation;
+                    showToast(result.message || 'Notation extracted from image!');
+                    try {
+                        parseAndRender(); // Automatically render the results
+                    } catch (renderErr) {
+                        console.error('Render error after parsing:', renderErr);
+                        showToast('Notation extracted but failed to render display grid.', 'warning');
+                    }
+                } else {
+                    showToast(result.error || 'AI Parse failed to extract notation.', 'error');
+                }
+            } catch (err) {
+                console.error('AI Parse Error:', err);
+                showToast('AI Parse failed: ' + err.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
 
         async function renderPlaylist() {
@@ -639,6 +1034,12 @@
             document.getElementById('nadai').value = song.nadai || 4;
             document.getElementById('bpm').value = song.bpm || 120;
             document.getElementById('notationInput').value = song.rawText || '';
+            gridIsDirty = false;
+
+            // Image Source updates
+            updateSourceViewer(song.imageSource);
+            document.getElementById('aiParseBtn').style.display = song.imageSource ? 'inline-flex' : 'none';
+
             renderSong();
             document.getElementById('shareBtn').style.display = 'inline-flex';
         }
@@ -648,10 +1049,11 @@
             document.getElementById('metadataDisplay').innerHTML = '';
             document.getElementById('renderedNotation').innerHTML = '<p style="color: #888; text-align: center; padding: 40px;">Ready for new notation.</p>';
             currentSong = { name: '', ragam: '', thalam: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '' };
+            gridIsDirty = false;
             renderPlaylist();
         }
 
-        function updatecurrentSongName(newName) {
+        function updateCurrentSongName(newName) {
             currentSong.name = newName;
             // Update sidebar specifically
             // Find the active playlist item and update its primary text
