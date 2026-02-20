@@ -259,6 +259,98 @@
             50% { opacity: 0.7; }
         }
 
+        /* Speed markers for 2x and 3x notes */
+        .swara-cell.speed-2x {
+            background: #fff3cd;
+            position: relative;
+        }
+
+        .swara-cell.speed-2x::after {
+            content: '2×';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 10px;
+            background: #ffc107;
+            color: white;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .swara-cell.speed-3x {
+            background: #ffe5e5;
+            position: relative;
+        }
+
+        .swara-cell.speed-3x::after {
+            content: '3×';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 10px;
+            background: #ff7675;
+            color: white;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* Speed marking toolbar */
+        .speed-toolbar {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .speed-toolbar label {
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .speed-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .speed-btn:hover {
+            border-color: #6c5ce7;
+            background: #f0f0ff;
+        }
+
+        .speed-btn.active {
+            background: #6c5ce7;
+            color: white;
+            border-color: #6c5ce7;
+        }
+
+        .speed-toolbar .separator {
+            width: 1px;
+            height: 24px;
+            background: #ddd;
+            margin: 0 4px;
+        }
+
+        .speed-toolbar-help {
+            margin-left: auto;
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
+        }
+
         .section-header {
             background: #f8f9fa;
             font-weight: bold;
@@ -432,6 +524,24 @@
                 <textarea id="notationInput" spellcheck="false"
                     placeholder="Composition: Sujana Jīvana&#10;• Rāga: Khamas (Mēḷa 28)&#10;• Ārōhaṇa: S M¹ G³ M¹ P D² N² Ṡ&#10;• Avarōhaṇa: Ṡ N² D² P M¹ G³ R² S&#10;• Tāḷa: 3x4 (Rūpaka structure as shown in the source)&#10;&#10;--------------------------------------------------------------------------------&#10;Pallavi (P.1)&#10;Line 1:&#10;M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||&#10;su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma"></textarea>
                 <button class="btn btn-primary" onclick="parseAndRender()">⚡ Parse & Display</button>
+                
+                <div id="speedToolbar" class="speed-toolbar" style="display: none;">
+                    <label>Mark cells for speed:</label>
+                    <button id="speedNormalBtn" class="speed-btn" onclick="toggleSpeedMode('normal', this)" title="Normal speed (1x)">
+                        ✓ 1x Normal
+                    </button>
+                    <button id="speed2xBtn" class="speed-btn" onclick="toggleSpeedMode('2x', this)" title="Double speed (2x)">
+                        2x Double
+                    </button>
+                    <button id="speed3xBtn" class="speed-btn" onclick="toggleSpeedMode('3x', this)" title="Triplet (3x)">
+                        3x Triplet
+                    </button>
+                    <div class="separator"></div>
+                    <button id="clearSpeedBtn" class="btn btn-outline" onclick="clearAllSpeeds()" title="Clear all speed marks">
+                        🗑 Clear
+                    </button>
+                    <span class="speed-toolbar-help">Click cells to mark →</span>
+                </div>
             </div>
 
             <div class="source-viewer-container">
@@ -468,6 +578,31 @@
             'M1': 5, 'M2': 6, 'P': 7, 'D1': 8, 'D2': 9, 'D3': 10, 'N1': 9, 'N2': 10, 'N3': 11
         };
 
+        // Unicode mappings for dot above and dot below corrections
+        const DOT_ABOVE_MAP = {
+            'S': 'Ṡ', 's': 'ṡ',
+            'R': 'Ṙ', 'r': 'ṙ',
+            'G': 'Ġ', 'g': 'ġ',
+            'M': 'Ṁ', 'm': 'ṁ',
+            'P': 'Ṗ', 'p': 'ṗ',
+            'D': 'Ḋ', 'd': 'ḋ',
+            'N': 'Ṅ', 'n': 'ṅ'
+        };
+
+        const DOT_BELOW_MAP = {
+            'S': 'Ṣ', 's': 'ṣ',
+            'R': 'Ṛ', 'r': 'ṛ',
+            'G': 'Ģ', 'g': 'ģ',
+            'M': 'Ṃ', 'm': 'ṃ',
+            'P': 'P̣',
+            'D': 'Ḍ', 'd': 'ḍ',
+            'N': 'Ṇ', 'n': 'ṇ'
+        };
+
+        // Reverse mappings for toggling
+        const REVERSE_DOT_ABOVE = Object.fromEntries(Object.entries(DOT_ABOVE_MAP).map(([k,v]) => [v, k]));
+        const REVERSE_DOT_BELOW = Object.fromEntries(Object.entries(DOT_BELOW_MAP).map(([k,v]) => [v, k]));
+
         // --- 2. STATE ---
         let currentSong = {
             id: null, name: '', ragam: '', thalam: '', composer: '', notation: '', ragaswara: '',
@@ -475,6 +610,8 @@
         };
 
         let gridIsDirty = false;
+        let gridSpeedMode = null;  // 'normal', '2x', '3x', null
+        let cellSpeedMap = {};     // cellIndex → speed value (1, 2, or 3)
 
         function parseAndRender() {
             if (gridIsDirty) {
@@ -688,8 +825,31 @@
                 viewer.appendChild(sectionContainer);
             });
 
+            // Show speed toolbar if grid has content
+            document.getElementById('speedToolbar').style.display = currentSong.sections && currentSong.sections.length > 0 ? 'flex' : 'none';
+
             // Update override indicators after rendering
-            setTimeout(() => updateOverrideIndicators(), 0);
+            setTimeout(() => {
+                updateOverrideIndicators();
+                
+                // Add speed marking click listeners to swara cells
+                let cellIndex = 0;
+                document.querySelectorAll('.swara-cell').forEach((cell, idx) => {
+                    cell.onclick = (e) => {
+                        if (gridSpeedMode && e.target === cell) {
+                            e.stopPropagation();
+                            handleSpeedCellClick(cell, idx);
+                        }
+                    };
+                    
+                    // Restore speed marks from map
+                    if (cellSpeedMap[idx] === 2) {
+                        cell.classList.add('speed-2x');
+                    } else if (cellSpeedMap[idx] === 3) {
+                        cell.classList.add('speed-3x');
+                    }
+                });
+            }, 0);
         }
 
         function tokenizeWithPosition(line) {
@@ -788,10 +948,15 @@
             currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
             currentSong.ragaswara = document.getElementById('ragaswaraInput')?.value || '';
 
+            // Extract speed marks from grid and update notation
+            if (Object.keys(cellSpeedMap).length > 0) {
+                updateNotationWithSpeeds();
+            }
+
             // currentSong.sections is already updated via handleCellEdit
             await saveSongInternal();
             gridIsDirty = false;
-            showToast('Spreadsheet edits saved.');
+            showToast('Spreadsheet edits saved with speed marks.');
         }
 
         async function saveSongInternal() {
@@ -1452,7 +1617,18 @@
                         for (const atom of row.atoms) {
                             if (!isPlaying) break;
 
-                            const cellNote = (atom.text || '').trim().toLowerCase();
+                            let cellNote = (atom.text || '').trim().toLowerCase();
+                            let speedMultiplier = 1;  // Default normal speed
+
+                            // Extract speed multiplier if present (e.g., "2*s", "3*p")
+                            if (cellNote.startsWith('2*')) {
+                                speedMultiplier = 2;
+                                cellNote = cellNote.substring(2);
+                            } else if (cellNote.startsWith('3*')) {
+                                speedMultiplier = 3;
+                                cellNote = cellNote.substring(2);
+                            }
+
                             const ragaswaraIndex = cellCounter % ragaswaraArray.length;
                             const ragaswaraNote = ragaswaraArray[ragaswaraIndex];
 
@@ -1472,13 +1648,16 @@
                                 frequency = noteToFrequency(ragaswaraNote, sruthi);
                             }
 
+                            // Calculate adjusted duration based on speed
+                            const adjustedDuration = cellDuration / speedMultiplier;
+
                             // Play sound
                             if (frequency) {
-                                playTone(ctx, frequency, cellDuration);
+                                playTone(ctx, frequency, adjustedDuration);
                             }
 
-                            // Wait for cell duration
-                            await sleep(cellDuration);
+                            // Wait for adjusted duration
+                            await sleep(adjustedDuration);
 
                             highlightPlayingCell(cellCounter, false);
                             cellCounter++;
@@ -1543,6 +1722,96 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Note: This won't work as DOM is already loaded, but we call it manually after updates
         });
+
+        // --- SPEED MARKING FUNCTIONS ---
+
+        function toggleSpeedMode(mode, btn) {
+            if (gridSpeedMode === mode) {
+                // Clicking same button = deactivate
+                gridSpeedMode = null;
+                document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+            } else {
+                // Activate mode
+                gridSpeedMode = mode;
+                
+                // Update button highlights
+                document.querySelectorAll('.speed-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                btn.classList.add('active');
+            }
+        }
+
+        function clearAllSpeeds() {
+            document.querySelectorAll('.swara-cell').forEach(cell => {
+                cell.classList.remove('speed-2x', 'speed-3x');
+            });
+            cellSpeedMap = {};
+            gridSpeedMode = null;
+            document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+            showToast('Speed marks cleared.');
+        }
+
+        function handleSpeedCellClick(cell, cellIndex) {
+            if (!gridSpeedMode) return;
+
+            // Toggle speed class
+            if (gridSpeedMode === 'normal') {
+                cell.classList.remove('speed-2x', 'speed-3x');
+                delete cellSpeedMap[cellIndex];
+            } else if (gridSpeedMode === '2x') {
+                cell.classList.remove('speed-3x');
+                cell.classList.toggle('speed-2x');
+                if (cell.classList.contains('speed-2x')) {
+                    cellSpeedMap[cellIndex] = 2;
+                } else {
+                    delete cellSpeedMap[cellIndex];
+                }
+            } else if (gridSpeedMode === '3x') {
+                cell.classList.remove('speed-2x');
+                cell.classList.toggle('speed-3x');
+                if (cell.classList.contains('speed-3x')) {
+                    cellSpeedMap[cellIndex] = 3;
+                } else {
+                    delete cellSpeedMap[cellIndex];
+                }
+            }
+            
+            gridIsDirty = true;
+        }
+
+        function updateNotationWithSpeeds() {
+            // Rebuild notation text with speed prefixes (2* and 3*)
+            const lines = document.getElementById('notationInput').value.split('\n');
+            let cellIndex = 0;
+            let updatedLines = [];
+
+            lines.forEach((line) => {
+                if (/[SRGMPDNsrgmpdn,;]/.test(line) && line.includes(',')) {
+                    // This is a notation line - add speed prefixes
+                    const atoms = tokenizeWithPosition(line);
+                    let newLine = '';
+                    
+                    atoms.forEach(atom => {
+                        const speed = cellSpeedMap[cellIndex];
+                        if (speed === 2) {
+                            newLine += '2*' + atom.text;
+                        } else if (speed === 3) {
+                            newLine += '3*' + atom.text;
+                        } else {
+                            newLine += atom.text;
+                        }
+                        cellIndex++;
+                    });
+                    
+                    updatedLines.push(newLine);
+                } else {
+                    updatedLines.push(line);
+                }
+            });
+
+            document.getElementById('notationInput').value = updatedLines.join('\n');
+        }
 
     </script>
 </body>
