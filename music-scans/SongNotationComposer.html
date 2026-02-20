@@ -240,6 +240,25 @@
             z-index: 10;
         }
 
+        /* Override indicator - shows when cell note differs from ragaswara */
+        .swara-cell.override {
+            background-color: #fff3cd;
+            border-left: 3px solid #ffc107;
+            font-weight: bold;
+        }
+
+        /* Playing cell indicator */
+        .swara-cell.playing {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
         .section-header {
             background: #f8f9fa;
             font-weight: bold;
@@ -385,6 +404,8 @@
                     title="Save manual corrections in the grid">📊 Save Spreadsheet</button>
                 <button class="btn btn-outline" onclick="openFormatModal()"
                     title="Format notation grid by beats and nadai">✨ Format</button>
+                <button class="btn btn-success" id="playBtn" onclick="playNotation()" 
+                    title="Play notation using Web Audio">🎵 Play</button>
                 <button class="btn btn-outline" id="sourceBtn" onclick="toggleSourceView()"
                     title="Toggle Floating Source Image">📷 Source</button>
                 <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
@@ -577,6 +598,7 @@
                                 value="${currentSong.ragaswara || ''}"
                                 onblur="this.style.borderColor='#ddd'"
                                 onfocus="this.style.borderColor='var(--primary)'"
+                                oninput="updateOverrideIndicators()"
                                 placeholder="e.g., r3 m1 d2 n3">
                         </div>
                     </div>
@@ -665,6 +687,9 @@
                 sectionContainer.appendChild(table);
                 viewer.appendChild(sectionContainer);
             });
+
+            // Update override indicators after rendering
+            setTimeout(() => updateOverrideIndicators(), 0);
         }
 
         function tokenizeWithPosition(line) {
@@ -1207,7 +1232,7 @@
                         
                         if (atom.text === '*') {
                             eduppuMarkPos = allSwaras.length; // Track eduppu position
-                        } else if (!['*', '-', '|'].includes(atom.text)) {
+                        } else if (!['*', '-', '|', '/', '\\'].includes(atom.text)) {
                             // Add swara
                             allSwaras.push({
                                 text: atom.text,
@@ -1286,6 +1311,238 @@
             // Update section with new formatted rows
             section.rows = newRows;
         }
+
+        // --- AUDIO PLAYBACK FUNCTIONS ---
+
+        // Sruthi to base frequency mapping (in Hz)
+        const SRUTHI_FREQUENCIES = {
+            'C': 261.63,    // C4
+            'C#': 277.18,   // C#4
+            'D': 293.66,    // D4
+            'D#': 311.13,   // D#4
+            'E': 329.63,    // E4
+            'F': 349.23,    // F4
+            'F#': 369.99,   // F#4
+            'G': 392.00,    // G4
+            'G#': 415.30,   // G#4
+            'A': 440.00,    // A4
+            'A#': 466.16,   // A#4
+            'B': 493.88     // B4
+        };
+
+        // Note offsets from Sa (in semitones)
+        const NOTE_SEMITONES = {
+            'Ṣ': -12, // Lower Sa
+            'S': 0,   // Sa
+            'R1': 1,  // Ri1
+            'R2': 2,  // Ri2 / G1
+            'R3': 3,  // Ri3 / G2
+            'G3': 4,  // Ga3
+            'M1': 5,  // Ma1
+            'M2': 6,  // Ma2
+            'P': 7,   // Pa
+            'D1': 8,  // Dha1 / N1
+            'D2': 9,  // Dha2 / N2
+            'D3': 10, // Dha3 / N3
+            'N1': 8,  // Nishada1 (same as D1)
+            'N2': 9,  // Nishada2 (same as D2)
+            'N3': 10, // Nishada3 (same as D3)
+            'Ṡ': 12   // Upper Sa
+        };
+
+        let audioContext = null;
+        let isPlaying = false;
+
+        function getAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioContext;
+        }
+
+        // Convert note name to frequency based on sruthi
+        function noteToFrequency(noteName, sruthi) {
+            const baseSruthi = SRUTHI_FREQUENCIES[sruthi] || SRUTHI_FREQUENCIES['C'];
+            const semitones = NOTE_SEMITONES[noteName] || 0;
+            const frequency = baseSruthi * Math.pow(2, semitones / 12);
+            return frequency;
+        }
+
+        // Get ragaswara notes as array
+        function getRagaswaraArray() {
+            const ragaswaraText = (currentSong.ragaswara || '').trim();
+            if (!ragaswaraText) return [];
+            return ragaswaraText.split(/\s+/).map(n => n.toLowerCase());
+        }
+
+        // Detect if a cell note is an override compared to ragaswara
+        function isOverrideNote(cellNote, ragaswaraIndex) {
+            if (!cellNote || cellNote === ',' || cellNote === '-' || cellNote === '*') {
+                return false; // Not an override
+            }
+            
+            const ragaswaraArray = getRagaswaraArray();
+            if (ragaswaraIndex >= ragaswaraArray.length) {
+                return false;
+            }
+
+            const ragaswaraNote = ragaswaraArray[ragaswaraIndex];
+            return cellNote.toLowerCase() !== ragaswaraNote;
+        }
+
+        // Apply override indicators to cells
+        function updateOverrideIndicators() {
+            const ragaswaraArray = getRagaswaraArray();
+            let cellIndex = 0;
+
+            document.querySelectorAll('.swara-cell').forEach(cell => {
+                cell.classList.remove('override');
+                
+                const noteText = cell.textContent.trim().toLowerCase();
+                const ragaswaraIndex = cellIndex % ragaswaraArray.length;
+
+                if (isOverrideNote(noteText, ragaswaraIndex)) {
+                    cell.classList.add('override');
+                }
+                
+                cellIndex++;
+            });
+        }
+
+        // Play notation using Web Audio API
+        async function playNotation() {
+            if (isPlaying) {
+                stopPlayback();
+                return;
+            }
+
+            if (!currentSong.sections || currentSong.sections.length === 0) {
+                alert('No notation to play');
+                return;
+            }
+
+            if (getRagaswaraArray().length === 0) {
+                alert('Please set Raga Swara before playing');
+                return;
+            }
+
+            const ctx = getAudioContext();
+            const sruthi = document.getElementById('sruthi').value || 'C';
+            const bpm = parseInt(document.getElementById('bpm').value) || 120;
+            const nadai = parseInt(document.getElementById('nadai').value) || 4;
+
+            // Calculate timing
+            const beatDuration = (60 / bpm) * 1000; // ms per beat
+            const cellDuration = beatDuration / nadai; // ms per subdivision
+
+            isPlaying = true;
+            document.getElementById('playBtn').textContent = '⏸ Stop';
+            document.getElementById('playBtn').style.background = '#dc3545';
+
+            try {
+                let cellCounter = 0;
+                const ragaswaraArray = getRagaswaraArray();
+
+                for (const section of currentSong.sections) {
+                    if (!section.rows || !isPlaying) break;
+
+                    for (const row of section.rows) {
+                        if (row.type !== 'swara' || !isPlaying) continue;
+
+                        for (const atom of row.atoms) {
+                            if (!isPlaying) break;
+
+                            const cellNote = (atom.text || '').trim().toLowerCase();
+                            const ragaswaraIndex = cellCounter % ragaswaraArray.length;
+                            const ragaswaraNote = ragaswaraArray[ragaswaraIndex];
+
+                            // Highlight playing cell
+                            highlightPlayingCell(cellCounter, true);
+
+                            // Determine frequency to play
+                            let frequency = null;
+                            if (cellNote === ',' || cellNote === '-' || cellNote === '*') {
+                                // Rest - no sound
+                                frequency = null;
+                            } else if (cellNote) {
+                                // Override note
+                                frequency = noteToFrequency(cellNote, sruthi);
+                            } else {
+                                // Use ragaswara note
+                                frequency = noteToFrequency(ragaswaraNote, sruthi);
+                            }
+
+                            // Play sound
+                            if (frequency) {
+                                playTone(ctx, frequency, cellDuration);
+                            }
+
+                            // Wait for cell duration
+                            await sleep(cellDuration);
+
+                            highlightPlayingCell(cellCounter, false);
+                            cellCounter++;
+                        }
+                    }
+                }
+            } finally {
+                stopPlayback();
+            }
+        }
+
+        function playTone(ctx, frequency, duration) {
+            const startTime = ctx.currentTime;
+            const endTime = startTime + (duration / 1000);
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.frequency.value = frequency;
+            osc.type = 'sine';
+
+            // Envelope: fade in, sustain, fade out
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.3, startTime + 0.01);
+            gain.gain.setValueAtTime(0.3, endTime - 0.05);
+            gain.gain.linearRampToValueAtTime(0, endTime);
+
+            osc.start(startTime);
+            osc.stop(endTime);
+        }
+
+        function highlightPlayingCell(cellIndex, isPlaying) {
+            const cells = document.querySelectorAll('.swara-cell');
+            cells.forEach((cell, idx) => {
+                if (idx === cellIndex) {
+                    if (isPlaying) {
+                        cell.classList.add('playing');
+                    } else {
+                        cell.classList.remove('playing');
+                    }
+                }
+            });
+        }
+
+        function stopPlayback() {
+            isPlaying = false;
+            document.getElementById('playBtn').textContent = '🎵 Play';
+            document.getElementById('playBtn').style.background = '';
+            document.querySelectorAll('.swara-cell.playing').forEach(cell => {
+                cell.classList.remove('playing');
+            });
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Update indicators when ragaswara changes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Note: This won't work as DOM is already loaded, but we call it manually after updates
+        });
 
     </script>
 </body>
