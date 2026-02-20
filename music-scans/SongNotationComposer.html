@@ -227,6 +227,8 @@
             min-height: 1.2em;
             padding: 2px;
             border: 1px solid transparent;
+            white-space: nowrap;
+            overflow: visible;
         }
 
         .swara-cell[contenteditable="true"]:focus,
@@ -366,6 +368,10 @@
                     <input type="number" id="nadai" value="4" min="1">
                 </div>
                 <div style="width: 80px;">
+                    <label>Eduppu</label>
+                    <input type="number" id="eduppu" value="1" min="1" title="Tala cycle start position">
+                </div>
+                <div style="width: 80px;">
                     <label>BPM</label>
                     <input type="number" id="bpm" value="120" min="40">
                 </div>
@@ -434,22 +440,6 @@
         </div>
     </div>
 
-    <!-- Format Modal -->
-    <div id="formatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-width: 500px; width: 90%;">
-            <h2 style="margin-bottom: 20px; color: var(--secondary);">Format Notation Grid</h2>
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Eduppu Position (cell number)</label>
-                <input type="number" id="eduppuInput" min="1" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" placeholder="Enter eduppu cell position">
-                <p style="font-size: 12px; color: #666; margin-top: 5px;">This marks where the tala cycle begins (shown in orange above the cell)</p>
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button class="btn btn-outline" onclick="closeFormatModal()" style="padding: 10px 20px;">Cancel</button>
-                <button class="btn btn-primary" onclick="applyFormatting()" style="padding: 10px 20px;">Apply Format</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // --- 1. CONFIGURATION & CONSTANTS ---
         const NOTE_MAPPING = {
@@ -459,7 +449,7 @@
 
         // --- 2. STATE ---
         let currentSong = {
-            id: null, name: '', ragam: '', thalam: '', composer: '', notation: '',
+            id: null, name: '', ragam: '', thalam: '', composer: '', notation: '', ragaswara: '',
             sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], eduppu: 1
         };
 
@@ -579,6 +569,15 @@
                                 onblur="this.style.borderColor='#ddd'"
                                 onfocus="this.style.borderColor='var(--primary)'"
                                 placeholder="Notation reference">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Raga Swara</label>
+                            <input type="text" id="ragaswaraInput" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
+                                value="${currentSong.ragaswara || ''}"
+                                onblur="this.style.borderColor='#ddd'"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="e.g., r3 m1 d2 n3">
                         </div>
                     </div>
                 </div>
@@ -742,9 +741,11 @@
             currentSong.beats = document.getElementById('beats').value;
             currentSong.nadai = document.getElementById('nadai').value;
             currentSong.bpm = document.getElementById('bpm').value;
-            // Sync composer and notation fields
+            currentSong.eduppu = document.getElementById('eduppu').value;
+            // Sync composer, notation, and ragaswara fields
             currentSong.composer = document.getElementById('composerInput')?.value || '';
             currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
+            currentSong.ragaswara = document.getElementById('ragaswaraInput')?.value || '';
 
             await saveSongInternal();
             showToast('Notation source saved.');
@@ -756,9 +757,11 @@
             currentSong.beats = document.getElementById('beats').value;
             currentSong.nadai = document.getElementById('nadai').value;
             currentSong.bpm = document.getElementById('bpm').value;
-            // Sync composer and notation fields
+            currentSong.eduppu = document.getElementById('eduppu').value;
+            // Sync composer, notation, and ragaswara fields
             currentSong.composer = document.getElementById('composerInput')?.value || '';
             currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
+            currentSong.ragaswara = document.getElementById('ragaswaraInput')?.value || '';
 
             // currentSong.sections is already updated via handleCellEdit
             await saveSongInternal();
@@ -812,6 +815,7 @@
             document.getElementById('sruthi').value = song.sruthi || 'C';
             document.getElementById('beats').value = song.beats || 8;
             document.getElementById('nadai').value = song.nadai || 4;
+            document.getElementById('eduppu').value = song.eduppu || 1;
             document.getElementById('bpm').value = song.bpm || 120;
             document.getElementById('notationInput').value = song.rawText || '';
             renderSong();
@@ -1061,6 +1065,7 @@
             document.getElementById('sruthi').value = song.sruthi || 'C';
             document.getElementById('beats').value = song.beats || 8;
             document.getElementById('nadai').value = song.nadai || 4;
+            document.getElementById('eduppu').value = song.eduppu || 1;
             document.getElementById('bpm').value = song.bpm || 120;
             document.getElementById('notationInput').value = song.rawText || '';
             gridIsDirty = false;
@@ -1077,7 +1082,7 @@
             document.getElementById('notationInput').value = '';
             document.getElementById('metadataDisplay').innerHTML = '';
             document.getElementById('renderedNotation').innerHTML = '<p style="color: #888; text-align: center; padding: 40px;">Ready for new notation.</p>';
-            currentSong = { name: '', ragam: '', thalam: '', composer: '', notation: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '', eduppu: 1 };
+            currentSong = { name: '', ragam: '', thalam: '', composer: '', notation: '', ragaswara: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '', eduppu: 1 };
             gridIsDirty = false;
             renderPlaylist();
         }
@@ -1143,14 +1148,11 @@
 
         // --- FORMAT FUNCTIONS ---
         function openFormatModal() {
-            const totalCells = calculateTotalCells();
-            document.getElementById('eduppuInput').value = currentSong.eduppu || 1;
-            document.getElementById('eduppuInput').max = totalCells;
-            document.getElementById('formatModal').style.display = 'flex';
+            applyFormatting();
         }
 
         function closeFormatModal() {
-            document.getElementById('formatModal').style.display = 'none';
+            // No longer needed as modal is removed
         }
 
         function calculateTotalCells() {
@@ -1158,7 +1160,7 @@
         }
 
         function applyFormatting() {
-            const eduppuPos = parseInt(document.getElementById('eduppuInput').value);
+            const eduppuPos = parseInt(document.getElementById('eduppu').value);
             const totalCells = calculateTotalCells();
 
             if (isNaN(eduppuPos) || eduppuPos < 1 || eduppuPos > totalCells) {
