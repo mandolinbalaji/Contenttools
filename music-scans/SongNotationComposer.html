@@ -1706,6 +1706,7 @@
                 return;
             }
 
+            const copyCount = selectedCells.length;
             const allCells = document.querySelectorAll('.swara-cell');
             const data = selectedCells.map(idx => {
                 const cell = allCells[idx];
@@ -1723,7 +1724,10 @@
                 console.warn('Could not copy to system clipboard:', err);
             });
 
-            showToast(`Copied ${selectedCells.length} cells`, 'success');
+            // Clear visual selection but keep clipboard data
+            clearSelection();
+
+            showToast(`Copied ${copyCount} cells. Click destination cell and press Ctrl+V to paste.`, 'success');
         }
 
         function pasteCells() {
