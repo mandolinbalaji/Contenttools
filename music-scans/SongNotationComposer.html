@@ -856,6 +856,11 @@
                 updateBeatIndicators();
                 restoreSpeedMarksFromSections();
                 
+                // Set up global mouse up handler (only once, not per cell)
+                document.onmouseup = () => {
+                    isSelecting = false;
+                };
+                
                 // Add speed marking click listeners to swara cells
                 let cellIndex = 0;
                 document.querySelectorAll('.swara-cell').forEach((cell, idx) => {
@@ -883,10 +888,6 @@
                         if (isSelecting && !gridSpeedMode) {
                             selectCell(idx, true);
                         }
-                    };
-
-                    document.onmouseup = () => {
-                        isSelecting = false;
                     };
                     
                     // Restore speed marks from map
@@ -1700,6 +1701,7 @@
 
         function clearSelection() {
             selectedCells = [];
+            isSelecting = false;  // Reset drag state
             document.querySelectorAll('.swara-cell.selected').forEach(c => c.classList.remove('selected'));
             selectionStart = null;
         }

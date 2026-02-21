@@ -18,590 +18,683 @@
       {
         "rows": [
           {
-            "id": "section-0-row-0-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": ",",
                 "index": 0,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 1,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 2,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 3,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 4,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 5,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 6,
-                "isEduppu": true
+                "isEduppu": true,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 7,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 8,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 9,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G",
                 "index": 10,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 11,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 12,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 13,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 14,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 15,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G",
                 "index": 16,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 17,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 18,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 19,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 20,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 21,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G",
                 "index": 22,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "R",
                 "index": 23,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "G",
                 "index": 24,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "R",
                 "index": 25,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "S",
                 "index": 26,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "S"
               },
               {
-                "text": ",",
                 "index": 27,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 28,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 29,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "R",
                 "index": 30,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": ",",
                 "index": 31,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-0-row-0-swara",
+            "type": "swara"
           },
           {
+            "atoms": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "mā",
+              "",
+              "",
+              "",
+              "kē",
+              "",
+              "",
+              "",
+              "la",
+              "",
+              "rā",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "vi",
+              "",
+              "",
+              "",
+              "cā",
+              "",
+              "",
+              "",
+              "ra",
+              ""
+            ],
+            "content": "",
             "id": "section-0-row-0-lyric",
-            "type": "lyric",
-            "content": "",
-            "atoms": [
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "mā",
-              "",
-              "",
-              "",
-              "kē",
-              "",
-              "",
-              "",
-              "la",
-              "",
-              "rā",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "vi",
-              "",
-              "",
-              "",
-              "cā",
-              "",
-              "",
-              "",
-              "ra",
-              ""
-            ],
-            "parentSwaraId": "section-0-row-0-swara"
+            "parentSwaraId": "section-0-row-0-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-0-row-1-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "G",
                 "index": 32,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 33,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 34,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 35,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 36,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 37,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 38,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 39,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 40,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 41,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 42,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 43,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 44,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 45,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 46,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 47,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G",
                 "index": 48,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 49,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 50,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 51,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 52,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 53,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "R",
                 "index": 54,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "G",
                 "index": 55,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "M",
                 "index": 56,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "G",
                 "index": 57,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "G",
                 "index": 58,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "R",
                 "index": 59,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "S",
                 "index": 60,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "S"
               },
               {
-                "text": ",",
                 "index": 61,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "R",
                 "index": 62,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": ",",
                 "index": 63,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-0-row-1-swara",
+            "type": "swara"
           },
           {
+            "atoms": [
+              "mu",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "mā",
+              "",
+              "",
+              "",
+              "kē",
+              "",
+              "",
+              "",
+              "la",
+              "",
+              "",
+              "",
+              "rā",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "vi",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "content": "",
             "id": "section-0-row-1-lyric",
-            "type": "lyric",
-            "content": "",
-            "atoms": [
-              "mu",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "mā",
-              "",
-              "",
-              "",
-              "kē",
-              "",
-              "",
-              "",
-              "la",
-              "",
-              "",
-              "",
-              "rā",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "vi",
-              "",
-              "",
-              "",
-              "",
-              "",
-              ""
-            ],
-            "parentSwaraId": "section-0-row-1-swara"
+            "parentSwaraId": "section-0-row-1-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-0-row-2-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "G",
                 "index": 64,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 65,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 66,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 67,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 68,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 69,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 70,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 71,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 72,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 73,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 74,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 75,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 76,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 77,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 78,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 79,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 80,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 81,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 82,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 83,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 84,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 85,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G,",
                 "index": 86,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 2,
+                "text": "G,"
               },
               {
-                "text": ",M",
                 "index": 87,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 2,
+                "text": ",M"
               },
               {
-                "text": "G,",
                 "index": 88,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 2,
+                "text": "G,"
               },
               {
-                "text": ",M",
                 "index": 89,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 2,
+                "text": ",M"
               },
               {
-                "text": "G",
                 "index": 90,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ".",
                 "index": 91,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "."
               },
               {
-                "text": ".",
                 "index": 92,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "."
               },
               {
-                "text": "M",
                 "index": 93,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "G",
                 "index": 94,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "R",
                 "index": 95,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-0-row-2-swara",
+            "type": "swara"
           },
           {
-            "id": "section-0-row-2-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -636,179 +729,211 @@
               "",
               ""
             ],
-            "parentSwaraId": "section-0-row-2-swara"
+            "content": "",
+            "id": "section-0-row-2-lyric",
+            "parentSwaraId": "section-0-row-2-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-0-row-3-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "S",
                 "index": 96,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "S"
               },
               {
-                "text": ",",
                 "index": 97,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "R",
                 "index": 98,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": ",",
                 "index": 99,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G",
                 "index": 100,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 101,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 102,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 103,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 104,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 105,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 106,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 107,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 108,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 109,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 110,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 111,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 112,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 113,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 114,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 115,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 116,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 117,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 118,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 119,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 120,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 121,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 122,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 123,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 124,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 125,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 126,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 127,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-0-row-3-swara",
+            "type": "swara"
           },
           {
-            "id": "section-0-row-3-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -843,179 +968,211 @@
               "",
               ""
             ],
-            "parentSwaraId": "section-0-row-3-swara"
+            "content": "",
+            "id": "section-0-row-3-lyric",
+            "parentSwaraId": "section-0-row-3-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-0-row-4-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "N",
                 "index": 128,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 129,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 130,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 131,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "Ṡ",
                 "index": 132,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 133,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 134,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 135,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 136,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 137,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 138,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 139,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 140,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 141,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 142,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 143,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 144,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 145,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 146,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 147,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 148,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "Ṡ",
                 "index": 149,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "R",
                 "index": 150,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "Ġ",
                 "index": 151,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṁ",
                 "index": 152,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṁ"
               },
               {
-                "text": "Ġ",
                 "index": 153,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṙ",
                 "index": 154,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṡ",
                 "index": 155,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 156,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 157,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "M",
                 "index": 158,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "M",
                 "index": 159,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-0-row-4-swara",
+            "type": "swara"
           },
           {
-            "id": "section-0-row-4-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -1050,179 +1207,211 @@
               "cā",
               ""
             ],
-            "parentSwaraId": "section-0-row-4-swara"
+            "content": "",
+            "id": "section-0-row-4-lyric",
+            "parentSwaraId": "section-0-row-4-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-0-row-5-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "G",
                 "index": 160,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "R",
                 "index": 161,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "S",
                 "index": 162,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "S"
               },
               {
-                "text": "R",
                 "index": 163,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "G",
                 "index": 164,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 165,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 166,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 167,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 168,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 169,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 170,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "G",
                 "index": 171,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "M",
                 "index": 172,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 173,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 174,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 175,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 176,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 177,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 178,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 179,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 180,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 181,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 182,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 183,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 184,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 185,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 186,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 187,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 188,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 189,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 190,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 191,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-0-row-5-swara",
+            "type": "swara"
           },
           {
-            "id": "section-0-row-5-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -1257,84 +1446,97 @@
               "",
               ""
             ],
-            "parentSwaraId": "section-0-row-5-swara"
+            "content": "",
+            "id": "section-0-row-5-lyric",
+            "parentSwaraId": "section-0-row-5-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-0-row-6-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "N",
                 "index": 192,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 193,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 194,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "M",
                 "index": 195,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "D",
                 "index": 196,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "N",
                 "index": 197,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 198,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 199,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṙ",
                 "index": 200,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṡ",
                 "index": 201,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "Ṡ",
                 "index": 202,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 203,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 204,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-0-row-6-swara",
+            "type": "swara"
           },
           {
-            "id": "section-0-row-6-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -1350,7 +1552,10 @@
               "",
               ""
             ],
-            "parentSwaraId": "section-0-row-6-swara"
+            "content": "",
+            "id": "section-0-row-6-lyric",
+            "parentSwaraId": "section-0-row-6-swara",
+            "type": "lyric"
           }
         ],
         "title": "Pallavi (P.1)"
@@ -1358,176 +1563,205 @@
       {
         "rows": [
           {
-            "id": "section-1-row-0-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": ",",
                 "index": 0,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 1,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 2,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 3,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 4,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 5,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 6,
-                "isEduppu": true
+                "isEduppu": true,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 7,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 8,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 9,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 10,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 11,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 12,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 13,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 14,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 15,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 16,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 17,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 18,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 19,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 20,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṙ",
                 "index": 21,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ġ",
                 "index": 22,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṁ",
                 "index": 23,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṁ"
               },
               {
-                "text": "Ġ",
                 "index": 24,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṙ",
                 "index": 25,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": ",",
                 "index": 26,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 27,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 28,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ġ",
                 "index": 29,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṁ",
                 "index": 30,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṁ"
               },
               {
-                "text": "Ġ",
                 "index": 31,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-1-row-0-swara",
+            "type": "swara"
           },
           {
-            "id": "section-1-row-0-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -1562,179 +1796,211 @@
               "",
               ""
             ],
-            "parentSwaraId": "section-1-row-0-swara"
+            "content": "",
+            "id": "section-1-row-0-lyric",
+            "parentSwaraId": "section-1-row-0-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-1-row-1-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "Ṙ",
                 "index": 32,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṡ",
                 "index": 33,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 34,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 35,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 36,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 37,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "Ṡ",
                 "index": 38,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 39,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 40,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 41,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 42,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 43,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 44,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 45,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 46,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 47,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 48,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 49,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "D",
                 "index": 50,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "Ṡ",
                 "index": 51,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 52,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṙ",
                 "index": 53,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ġ",
                 "index": 54,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṁ",
                 "index": 55,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṁ"
               },
               {
-                "text": "Ġ",
                 "index": 56,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṙ",
                 "index": 57,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṙ",
                 "index": 58,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": ",",
                 "index": 59,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 60,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṙ",
                 "index": 61,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ġ",
                 "index": 62,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṁ",
                 "index": 63,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṁ"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-1-row-1-swara",
+            "type": "swara"
           },
           {
-            "id": "section-1-row-1-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "ra",
               "",
@@ -1769,179 +2035,211 @@
               "",
               "ra"
             ],
-            "parentSwaraId": "section-1-row-1-swara"
+            "content": "",
+            "id": "section-1-row-1-lyric",
+            "parentSwaraId": "section-1-row-1-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-1-row-2-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "Ġ",
                 "index": 64,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ġ"
               },
               {
-                "text": "Ṙ",
                 "index": 65,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṡ",
                 "index": 66,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 67,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 68,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 69,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 70,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 71,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ",",
                 "index": 72,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 73,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 74,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 75,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 76,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 77,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 78,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 79,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 80,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 81,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 82,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 83,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 84,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 85,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 86,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 87,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 88,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 89,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 90,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 91,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 92,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 93,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 94,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 95,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-1-row-2-swara",
+            "type": "swara"
           },
           {
-            "id": "section-1-row-2-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -1976,179 +2274,211 @@
               "",
               "ra"
             ],
-            "parentSwaraId": "section-1-row-2-swara"
+            "content": "",
+            "id": "section-1-row-2-lyric",
+            "parentSwaraId": "section-1-row-2-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-1-row-3-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": ",",
                 "index": 96,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 97,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "Ṡ",
                 "index": 98,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 99,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 100,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 101,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 102,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 103,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 104,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ".",
                 "index": 105,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "."
               },
               {
-                "text": ".",
                 "index": 106,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "."
               },
               {
-                "text": "Ṙ",
                 "index": 107,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṡ",
                 "index": 108,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": ".",
                 "index": 109,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "."
               },
               {
-                "text": ".",
                 "index": 110,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "."
               },
               {
-                "text": "Ṙ",
                 "index": 111,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṡ",
                 "index": 112,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 113,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 114,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 115,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 116,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 117,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 118,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "M",
                 "index": 119,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 120,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 121,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 122,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 123,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "N",
                 "index": 124,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": ",",
                 "index": 125,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 126,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 127,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-1-row-3-swara",
+            "type": "swara"
           },
           {
-            "id": "section-1-row-3-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -2183,84 +2513,97 @@
               "śrī",
               ""
             ],
-            "parentSwaraId": "section-1-row-3-swara"
+            "content": "",
+            "id": "section-1-row-3-lyric",
+            "parentSwaraId": "section-1-row-3-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-1-row-4-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "Ṙ",
                 "index": 128,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṙ"
               },
               {
-                "text": "Ṡ",
                 "index": 129,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "Ṡ",
                 "index": 130,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 131,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 132,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 133,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "Ṡ",
                 "index": 134,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 135,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 136,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 137,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 138,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 139,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 140,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-1-row-4-swara",
+            "type": "swara"
           },
           {
-            "id": "section-1-row-4-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "ka",
@@ -2276,7 +2619,10 @@
               "",
               ""
             ],
-            "parentSwaraId": "section-1-row-4-swara"
+            "content": "",
+            "id": "section-1-row-4-lyric",
+            "parentSwaraId": "section-1-row-4-swara",
+            "type": "lyric"
           }
         ],
         "title": "Anupallavi (A.1)"
@@ -2284,176 +2630,205 @@
       {
         "rows": [
           {
-            "id": "section-2-row-0-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": ",",
                 "index": 0,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 1,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 2,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 3,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 4,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 5,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 6,
-                "isEduppu": true
+                "isEduppu": true,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 7,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 8,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 9,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 10,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 11,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 12,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 13,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 14,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 15,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 16,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "G",
                 "index": 17,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "G",
                 "index": 18,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 19,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 20,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 21,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G",
                 "index": 22,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 23,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 24,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 25,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 26,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 27,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 28,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 29,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 30,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 31,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-2-row-0-swara",
+            "type": "swara"
           },
           {
-            "id": "section-2-row-0-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "",
@@ -2488,179 +2863,211 @@
               "",
               "tra"
             ],
-            "parentSwaraId": "section-2-row-0-swara"
+            "content": "",
+            "id": "section-2-row-0-lyric",
+            "parentSwaraId": "section-2-row-0-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-2-row-1-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "N",
                 "index": 32,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 33,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 34,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 35,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 36,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 37,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 38,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 39,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 40,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 41,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               },
               {
-                "text": "N",
                 "index": 42,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 43,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 44,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": "D",
                 "index": 45,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 46,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 47,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": ",",
                 "index": 48,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "G",
                 "index": 49,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "M",
                 "index": 50,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "G",
                 "index": 51,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": "R",
                 "index": 52,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "R"
               },
               {
-                "text": "S",
                 "index": 53,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "S"
               },
               {
-                "text": ",",
                 "index": 54,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 55,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "G",
                 "index": 56,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "G"
               },
               {
-                "text": ",",
                 "index": 57,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "M",
                 "index": 58,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "M"
               },
               {
-                "text": "D",
                 "index": 59,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 60,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 61,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 62,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "Ṡ",
                 "index": 63,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "Ṡ"
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-2-row-1-swara",
+            "type": "swara"
           },
           {
-            "id": "section-2-row-1-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "mu",
@@ -2695,54 +3102,61 @@
               "muna",
               ""
             ],
-            "parentSwaraId": "section-2-row-1-swara"
+            "content": "",
+            "id": "section-2-row-1-lyric",
+            "parentSwaraId": "section-2-row-1-swara",
+            "type": "lyric"
           },
           {
-            "id": "section-2-row-2-swara",
-            "type": "swara",
-            "content": "",
             "atoms": [
               {
-                "text": "N",
                 "index": 64,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "N",
                 "index": 65,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "N"
               },
               {
-                "text": "D",
                 "index": 66,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 67,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": "D",
                 "index": 68,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": "D"
               },
               {
-                "text": ",",
                 "index": 69,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               },
               {
-                "text": ",",
                 "index": 70,
-                "isEduppu": false
+                "isEduppu": false,
+                "speed": 1,
+                "text": ","
               }
-            ]
+            ],
+            "content": "",
+            "id": "section-2-row-2-swara",
+            "type": "swara"
           },
           {
-            "id": "section-2-row-2-lyric",
-            "type": "lyric",
-            "content": "",
             "atoms": [
               "",
               "ni",
@@ -2752,7 +3166,10 @@
               "",
               ""
             ],
-            "parentSwaraId": "section-2-row-2-swara"
+            "content": "",
+            "id": "section-2-row-2-lyric",
+            "parentSwaraId": "section-2-row-2-swara",
+            "type": "lyric"
           }
         ],
         "title": "Charaṇam (C.1)"
