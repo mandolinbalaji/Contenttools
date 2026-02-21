@@ -158,6 +158,21 @@
             background: #5a6fd6;
         }
 
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-success.active {
+            background: #1e7e34;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+            border: 2px solid #155724;
+        }
+
         .btn-outline {
             background: transparent;
             border: 1px solid #ddd;
@@ -166,6 +181,14 @@
 
         .btn-outline:hover {
             background: #f9f9f9;
+        }
+
+        .btn-outline.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 700;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
         .share-toast {
@@ -514,6 +537,8 @@
                     title="Format notation grid by beats and nadai">✨ Format</button>
                 <button class="btn btn-success" id="playBtn" onclick="playNotation()" 
                     title="Play notation using Web Audio">🎵 Play</button>
+                <button class="btn btn-outline" id="multiSelectBtn" onclick="toggleMultiSelect()" 
+                    title="Enable multi-cell selection - select cells then copy/paste (ESC to exit)">📋 Multi Select</button>
                 <button class="btn btn-outline" id="sourceBtn" onclick="toggleSourceView()"
                     title="Toggle Floating Source Image">📷 Source</button>
                 <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
@@ -628,12 +653,14 @@
         let gridIsDirty = false;
         let gridSpeedMode = null;  // 'normal', '2x', '3x', null
         let cellSpeedMap = {};     // cellIndex → speed value (1, 2, or 3)
+        let cellLocationMap = {};  // cellIndex → {sectionIdx, rowIdx, atomIdx} for updating data
         
         // Cell selection for copy/paste
         let selectedCells = [];    // Array of cell indices
         let clipboardData = null;  // Stores copied cell data
         let selectionStart = null; // Start cell for range selection
         let isSelecting = false;   // Track if user is dragging to select
+        let multiSelectActive = false; // Multi Select mode toggle state
 
         function parseAndRender() {
             if (gridIsDirty) {
@@ -764,6 +791,9 @@
                 </div>
             `;
 
+            cellLocationMap = {};  // Reset location map for this render
+            let globalCellIndex = 0;  // Track absolute cell position across all sections
+
             currentSong.sections.forEach((section, sIdx) => {
                 const sectionContainer = document.createElement('div');
                 sectionContainer.style.marginBottom = '40px';
@@ -803,6 +833,10 @@
                                 swaraDiv.contentEditable = "true";
                                 swaraDiv.textContent = formatSwaraForDisplay(atom.text);
                                 swaraDiv.oninput = (e) => handleCellEdit(sIdx, r, aIdx, 'swara', e.target.textContent);
+
+                                // Track cell location for pasting
+                                cellLocationMap[globalCellIndex] = { sectionIdx: sIdx, rowIdx: r, atomIdx: aIdx };
+                                globalCellIndex++;
 
                                 cell.appendChild(swaraDiv);
 
@@ -869,23 +903,25 @@
                             e.stopPropagation();
                             handleSpeedCellClick(cell, idx);
                         } else {
-                            // Cell selection for copy/paste
-                            const isCtrlClick = e.ctrlKey || e.metaKey;
-                            const isShiftClick = e.shiftKey;
-                            selectCell(idx, isCtrlClick || isShiftClick);
+                            // Cell selection for copy/paste - only when Multi Select is active
+                            if (multiSelectActive) {
+                                const isCtrlClick = e.ctrlKey || e.metaKey;
+                                const isShiftClick = e.shiftKey;
+                                selectCell(idx, isCtrlClick || isShiftClick);
+                            }
                         }
                     };
 
-                    // Mouse events for selection highlighting
+                    // Mouse events for selection highlighting - only when Multi Select is active
                     cell.onmousedown = (e) => {
-                        if (!gridSpeedMode && (e.button === 0)) { // Left mouse button
+                        if (!gridSpeedMode && (e.button === 0) && multiSelectActive) { // Left mouse button
                             isSelecting = true;
                             selectCell(idx, false);
                         }
                     };
 
                     cell.onmouseover = (e) => {
-                        if (isSelecting && !gridSpeedMode) {
+                        if (isSelecting && !gridSpeedMode && multiSelectActive) {
                             selectCell(idx, true);
                         }
                     };
@@ -904,17 +940,26 @@
         }
 
         function handleCellKeyboard(e) {
+            // Check for ESC key to disable multi select
+            if (e.key === 'Escape') {
+                if (multiSelectActive) {
+                    e.preventDefault();
+                    disableMultiSelect();
+                }
+                return;
+            }
+
             const isCopy = (e.ctrlKey || e.metaKey) && e.key === 'c';
             const isPaste = (e.ctrlKey || e.metaKey) && e.key === 'v';
             const isSelectAll = (e.ctrlKey || e.metaKey) && e.key === 'a';
 
-            if (isCopy) {
+            if (isCopy && multiSelectActive) {
                 e.preventDefault();
                 copyCells();
-            } else if (isPaste) {
+            } else if (isPaste && multiSelectActive) {
                 e.preventDefault();
                 pasteCells();
-            } else if (isSelectAll && selectedCells.length > 0) {
+            } else if (isSelectAll && selectedCells.length > 0 && multiSelectActive) {
                 e.preventDefault();
                 const allCells = document.querySelectorAll('.swara-cell');
                 selectedCells = Array.from({length: allCells.length}, (_, i) => i);
@@ -1706,6 +1751,26 @@
             selectionStart = null;
         }
 
+        function toggleMultiSelect() {
+            multiSelectActive = !multiSelectActive;
+            const btn = document.getElementById('multiSelectBtn');
+            
+            if (multiSelectActive) {
+                btn.classList.add('active');
+                showToast('Multi Select enabled - Click and drag to select, Ctrl+C to copy, Ctrl+V to paste, ESC to exit', 'info');
+            } else {
+                disableMultiSelect();
+            }
+        }
+
+        function disableMultiSelect() {
+            multiSelectActive = false;
+            const btn = document.getElementById('multiSelectBtn');
+            btn.classList.remove('active');
+            clearSelection();
+            showToast('Multi Select disabled', 'info');
+        }
+
         function copyCells() {
             if (selectedCells.length === 0) {
                 showToast('No cells selected to copy', 'warning');
@@ -1732,6 +1797,7 @@
 
             // Clear visual selection but keep clipboard data
             clearSelection();
+            disableMultiSelect();  // Auto-disable multi select after copy
 
             showToast(`Copied ${copyCount} cells. Click destination cell and press Ctrl+V to paste.`, 'success');
         }
@@ -1774,28 +1840,36 @@
                     }
 
                     const cell = allCells[cellIdx];
-                    const swaraRow = currentSong.sections[0]?.rows[0];
+                    const loc = cellLocationMap[cellIdx];  // Get section/row/atom location
 
-                    if (cell && data[i]) {
+                    if (cell && data[i] && loc) {
                         cell.textContent = data[i].text;
                         
-                        // Update internal state
-                        if (swaraRow && swaraRow.atoms[cellIdx]) {
-                            swaraRow.atoms[cellIdx].text = data[i].text;
+                        // Update internal state - use cellLocationMap to find correct section/row
+                        const section = currentSong.sections[loc.sectionIdx];
+                        const row = section?.rows[loc.rowIdx];
+                        
+                        if (row && row.atoms && row.atoms[loc.atomIdx]) {
+                            row.atoms[loc.atomIdx].text = data[i].text;
                         }
 
-                        // Restore speed
-                        const speed = data[i].speed;
+                        // Restore speed to both visual and data structure
+                        const speed = data[i].speed || 1;
+                        cellSpeedMap[cellIdx] = speed;
+                        
+                        // Update internal atom.speed property for persistence
+                        if (row && row.atoms && row.atoms[loc.atomIdx]) {
+                            row.atoms[loc.atomIdx].speed = speed;
+                        }
+                        
+                        // Apply visual speed classes
                         if (speed === 2) {
-                            cellSpeedMap[cellIdx] = 2;
                             cell.classList.add('speed-2x');
                             cell.classList.remove('speed-3x');
                         } else if (speed === 3) {
-                            cellSpeedMap[cellIdx] = 3;
                             cell.classList.add('speed-3x');
                             cell.classList.remove('speed-2x');
                         } else {
-                            delete cellSpeedMap[cellIdx];
                             cell.classList.remove('speed-2x', 'speed-3x');
                         }
                     }
@@ -1810,6 +1884,8 @@
                     }
                 }
 
+                isSelecting = false;  // Reset selection mode after paste
+                disableMultiSelect();  // Auto-disable multi select after paste
                 gridIsDirty = true;
                 updateOverrideIndicators();
                 showToast(`Pasted ${pasteCount} cells`, 'success');

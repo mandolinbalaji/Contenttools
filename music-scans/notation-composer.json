@@ -663,31 +663,31 @@
                 "index": 91,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "."
+                "text": "R"
               },
               {
                 "index": 92,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "."
+                "text": "S"
               },
               {
                 "index": 93,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": ","
               },
               {
                 "index": 94,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "G"
+                "text": "R"
               },
               {
                 "index": 95,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "R"
+                "text": ","
               }
             ],
             "content": "",
@@ -740,7 +740,7 @@
                 "index": 96,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "S"
+                "text": "G"
               },
               {
                 "index": 97,
@@ -752,7 +752,7 @@
                 "index": 98,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "R"
+                "text": ","
               },
               {
                 "index": 99,
@@ -764,7 +764,7 @@
                 "index": 100,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "G"
+                "text": ","
               },
               {
                 "index": 101,
@@ -776,7 +776,7 @@
                 "index": 102,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "M"
               },
               {
                 "index": 103,
@@ -788,7 +788,7 @@
                 "index": 104,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "M"
               },
               {
                 "index": 105,
@@ -800,7 +800,7 @@
                 "index": 106,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": "D"
               },
               {
                 "index": 107,
@@ -812,7 +812,7 @@
                 "index": 108,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": ","
               },
               {
                 "index": 109,
@@ -824,7 +824,7 @@
                 "index": 110,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "N"
               },
               {
                 "index": 111,
@@ -836,19 +836,19 @@
                 "index": 112,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "N"
               },
               {
                 "index": 113,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "D"
               },
               {
                 "index": 114,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": "D"
               },
               {
                 "index": 115,
@@ -860,7 +860,7 @@
                 "index": 116,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": ","
               },
               {
                 "index": 117,
@@ -872,13 +872,13 @@
                 "index": 118,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": ","
               },
               {
                 "index": 119,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "Ṡ"
               },
               {
                 "index": 120,
@@ -890,7 +890,7 @@
                 "index": 121,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "Ṡ"
               },
               {
                 "index": 122,
@@ -908,13 +908,13 @@
                 "index": 124,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "N"
               },
               {
                 "index": 125,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "D"
               },
               {
                 "index": 126,
@@ -979,55 +979,55 @@
                 "index": 128,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": "Ṡ"
               },
               {
                 "index": 129,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "N"
               },
               {
                 "index": 130,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "N"
               },
               {
                 "index": 131,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "D"
               },
               {
                 "index": 132,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "D"
               },
               {
                 "index": 133,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": ","
               },
               {
                 "index": 134,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": "M"
               },
               {
                 "index": 135,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": ","
               },
               {
                 "index": 136,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": ","
               },
               {
                 "index": 137,
@@ -1039,7 +1039,7 @@
                 "index": 138,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": "D"
               },
               {
                 "index": 139,
@@ -1063,7 +1063,7 @@
                 "index": 142,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "Ṡ"
               },
               {
                 "index": 143,
@@ -1075,97 +1075,97 @@
                 "index": 144,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "D"
               },
               {
                 "index": 145,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "Ṡ"
               },
               {
                 "index": 146,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "R"
               },
               {
                 "index": 147,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "Ġ"
               },
               {
                 "index": 148,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "Ṁ"
               },
               {
                 "index": 149,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "Ġ"
               },
               {
                 "index": 150,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "R"
+                "text": "Ṙ"
               },
               {
                 "index": 151,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ġ"
+                "text": "Ṡ"
               },
               {
                 "index": 152,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṁ"
+                "text": "N"
               },
               {
                 "index": 153,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ġ"
+                "text": "D"
               },
               {
                 "index": 154,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṙ"
+                "text": "M"
               },
               {
                 "index": 155,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "M"
               },
               {
                 "index": 156,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": "G"
               },
               {
                 "index": 157,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "R"
               },
               {
                 "index": 158,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": "S"
               },
               {
                 "index": 159,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": "R"
               }
             ],
             "content": "",
@@ -1224,25 +1224,25 @@
                 "index": 161,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "R"
+                "text": ","
               },
               {
                 "index": 162,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "S"
+                "text": ","
               },
               {
                 "index": 163,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "R"
+                "text": ","
               },
               {
                 "index": 164,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "G"
+                "text": ","
               },
               {
                 "index": 165,
@@ -1254,19 +1254,19 @@
                 "index": 166,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "M"
               },
               {
                 "index": 167,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "G"
               },
               {
                 "index": 168,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "M"
               },
               {
                 "index": 169,
@@ -1278,19 +1278,19 @@
                 "index": 170,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": "D"
               },
               {
                 "index": 171,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "G"
+                "text": ","
               },
               {
                 "index": 172,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": ","
               },
               {
                 "index": 173,
@@ -1302,43 +1302,43 @@
                 "index": 174,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "Ṡ"
               },
               {
                 "index": 175,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "N"
               },
               {
                 "index": 176,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "N"
               },
               {
                 "index": 177,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "D"
               },
               {
                 "index": 178,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "D"
               },
               {
                 "index": 179,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": ","
               },
               {
                 "index": 180,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": ","
               },
               {
                 "index": 181,
@@ -1350,13 +1350,13 @@
                 "index": 182,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": ","
               },
               {
                 "index": 183,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "Ṡ"
               },
               {
                 "index": 184,
@@ -1368,7 +1368,7 @@
                 "index": 185,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "Ṡ"
               },
               {
                 "index": 186,
@@ -1386,25 +1386,25 @@
                 "index": 188,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "N"
               },
               {
                 "index": 189,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "N"
               },
               {
                 "index": 190,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "D"
               },
               {
                 "index": 191,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṡ"
+                "text": "M"
               }
             ],
             "content": "",
@@ -1457,7 +1457,7 @@
                 "index": 192,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": "D"
               },
               {
                 "index": 193,
@@ -1475,37 +1475,37 @@
                 "index": 195,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "M"
+                "text": ","
               },
               {
                 "index": 196,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "Ṙ"
               },
               {
                 "index": 197,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "N"
+                "text": "Ṡ"
               },
               {
                 "index": 198,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "D"
+                "text": "Ṡ"
               },
               {
                 "index": 199,
                 "isEduppu": false,
                 "speed": 1,
-                "text": ","
+                "text": "N"
               },
               {
                 "index": 200,
                 "isEduppu": false,
                 "speed": 1,
-                "text": "Ṙ"
+                "text": ","
               },
               {
                 "index": 201,
