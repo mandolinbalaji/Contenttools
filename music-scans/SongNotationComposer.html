@@ -1740,12 +1740,31 @@
             try {
                 const data = JSON.parse(clipboardData);
                 const allCells = document.querySelectorAll('.swara-cell');
+                const startIdx = selectedCells[0];  // First selected cell
+                let pasteCount = data.length;
 
-                // Paste into selected range
-                for (let i = 0; i < Math.min(data.length, selectedCells.length); i++) {
-                    const cellIdx = selectedCells[i];
+                // If multiple cells selected, paste only up to that many
+                if (selectedCells.length > 1) {
+                    pasteCount = Math.min(data.length, selectedCells.length);
+                }
+
+                // Check if paste will exceed grid bounds
+                if (startIdx + pasteCount > allCells.length) {
+                    showToast(`Cannot paste: would exceed grid bounds (${allCells.length} cells available)`, 'warning');
+                    return;
+                }
+
+                // Paste from start position onwards
+                for (let i = 0; i < pasteCount; i++) {
+                    let cellIdx;
+                    if (selectedCells.length === 1) {
+                        cellIdx = startIdx + i;  // Paste starting from first selected cell
+                    } else {
+                        cellIdx = selectedCells[i];  // Paste into each selected cell
+                    }
+
                     const cell = allCells[cellIdx];
-                    const swaraRow = currentSong.sections[0]?.rows[0]; // Simplified (assumes single row for now)
+                    const swaraRow = currentSong.sections[0]?.rows[0];
 
                     if (cell && data[i]) {
                         cell.textContent = data[i].text;
@@ -1772,9 +1791,18 @@
                     }
                 }
 
+                // Select pasted range for visibility
+                if (selectedCells.length === 1) {
+                    selectedCells = [];
+                    for (let i = 0; i < pasteCount; i++) {
+                        selectedCells.push(startIdx + i);
+                        allCells[startIdx + i]?.classList.add('selected');
+                    }
+                }
+
                 gridIsDirty = true;
                 updateOverrideIndicators();
-                showToast(`Pasted ${Math.min(data.length, selectedCells.length)} cells`, 'success');
+                showToast(`Pasted ${pasteCount} cells`, 'success');
             } catch (err) {
                 console.error('Paste error:', err);
                 showToast('Paste failed', 'error');
