@@ -259,6 +259,22 @@
             50% { opacity: 0.7; }
         }
 
+        /* Beat markers based on nadai */
+        .swara-cell.beat-start {
+            border-left: 4px solid #6c5ce7 !important;
+        }
+
+        .swara-cell.beat-mid {
+            border-left: 2px dashed #a29bfe;
+        }
+
+        /* Cell selection for copy/paste */
+        .swara-cell.selected {
+            background-color: #b3e5fc !important;
+            border: 2px solid #0288d1;
+            box-shadow: inset 0 0 4px rgba(2, 136, 209, 0.3);
+        }
+
         /* Speed markers for 2x and 3x notes */
         .swara-cell.speed-2x {
             background: #fff3cd;
@@ -476,7 +492,7 @@
                 </div>
                 <div style="width: 60px;">
                     <label>Nadai</label>
-                    <input type="number" id="nadai" value="4" min="1">
+                    <input type="number" id="nadai" value="4" min="1" onchange="updateBeatIndicators()">
                 </div>
                 <div style="width: 80px;">
                     <label>Eduppu</label>
@@ -612,6 +628,12 @@
         let gridIsDirty = false;
         let gridSpeedMode = null;  // 'normal', '2x', '3x', null
         let cellSpeedMap = {};     // cellIndex → speed value (1, 2, or 3)
+        
+        // Cell selection for copy/paste
+        let selectedCells = [];    // Array of cell indices
+        let clipboardData = null;  // Stores copied cell data
+        let selectionStart = null; // Start cell for range selection
+        let isSelecting = false;   // Track if user is dragging to select
 
         function parseAndRender() {
             if (gridIsDirty) {
@@ -828,9 +850,10 @@
             // Show speed toolbar if grid has content
             document.getElementById('speedToolbar').style.display = currentSong.sections && currentSong.sections.length > 0 ? 'flex' : 'none';
 
-            // Update override indicators after rendering
+            // Update override indicators and beat markers after rendering
             setTimeout(() => {
                 updateOverrideIndicators();
+                updateBeatIndicators();
                 
                 // Add speed marking click listeners to swara cells
                 let cellIndex = 0;
@@ -839,7 +862,30 @@
                         if (gridSpeedMode && e.target === cell) {
                             e.stopPropagation();
                             handleSpeedCellClick(cell, idx);
+                        } else {
+                            // Cell selection for copy/paste
+                            const isCtrlClick = e.ctrlKey || e.metaKey;
+                            const isShiftClick = e.shiftKey;
+                            selectCell(idx, isCtrlClick || isShiftClick);
                         }
+                    };
+
+                    // Mouse events for selection highlighting
+                    cell.onmousedown = (e) => {
+                        if (!gridSpeedMode && (e.button === 0)) { // Left mouse button
+                            isSelecting = true;
+                            selectCell(idx, false);
+                        }
+                    };
+
+                    cell.onmouseover = (e) => {
+                        if (isSelecting && !gridSpeedMode) {
+                            selectCell(idx, true);
+                        }
+                    };
+
+                    document.onmouseup = () => {
+                        isSelecting = false;
                     };
                     
                     // Restore speed marks from map
@@ -849,7 +895,29 @@
                         cell.classList.add('speed-3x');
                     }
                 });
+
+                // Add keyboard event listener for copy/paste
+                document.addEventListener('keydown', handleCellKeyboard);
             }, 0);
+        }
+
+        function handleCellKeyboard(e) {
+            const isCopy = (e.ctrlKey || e.metaKey) && e.key === 'c';
+            const isPaste = (e.ctrlKey || e.metaKey) && e.key === 'v';
+            const isSelectAll = (e.ctrlKey || e.metaKey) && e.key === 'a';
+
+            if (isCopy) {
+                e.preventDefault();
+                copyCells();
+            } else if (isPaste) {
+                e.preventDefault();
+                pasteCells();
+            } else if (isSelectAll && selectedCells.length > 0) {
+                e.preventDefault();
+                const allCells = document.querySelectorAll('.swara-cell');
+                selectedCells = Array.from({length: allCells.length}, (_, i) => i);
+                allCells.forEach(c => c.classList.add('selected'));
+            }
         }
 
         function tokenizeWithPosition(line) {
@@ -1572,6 +1640,145 @@
                 
                 cellIndex++;
             });
+        }
+
+        // Apply beat indicators based on nadai
+        function updateBeatIndicators() {
+            const nadai = parseInt(document.getElementById('nadai').value) || 4;
+            let cellIndex = 0;
+
+            document.querySelectorAll('.swara-cell').forEach(cell => {
+                // Remove previous beat classes
+                cell.classList.remove('beat-start', 'beat-mid');
+
+                // Mark beat start positions (every nadai cells)
+                if (cellIndex % nadai === 0) {
+                    cell.classList.add('beat-start');
+                } else {
+                    // Optional: mark other beat positions with lighter indicator
+                    cell.classList.add('beat-mid');
+                }
+
+                cellIndex++;
+            });
+        }
+
+        // --- COPY/PASTE FUNCTIONS ---
+
+        function selectCell(cellIndex, multiSelect = false) {
+            const allCells = document.querySelectorAll('.swara-cell');
+            
+            if (!multiSelect) {
+                // Single selection
+                selectedCells = [cellIndex];
+                document.querySelectorAll('.swara-cell.selected').forEach(c => c.classList.remove('selected'));
+                allCells[cellIndex]?.classList.add('selected');
+                selectionStart = cellIndex;
+            } else {
+                // Range selection
+                if (selectionStart === null) {
+                    selectionStart = cellIndex;
+                    selectedCells = [cellIndex];
+                } else {
+                    const start = Math.min(selectionStart, cellIndex);
+                    const end = Math.max(selectionStart, cellIndex);
+                    selectedCells = [];
+                    
+                    document.querySelectorAll('.swara-cell.selected').forEach(c => c.classList.remove('selected'));
+                    
+                    for (let i = start; i <= end; i++) {
+                        selectedCells.push(i);
+                        allCells[i]?.classList.add('selected');
+                    }
+                }
+            }
+        }
+
+        function clearSelection() {
+            selectedCells = [];
+            document.querySelectorAll('.swara-cell.selected').forEach(c => c.classList.remove('selected'));
+            selectionStart = null;
+        }
+
+        function copyCells() {
+            if (selectedCells.length === 0) {
+                showToast('No cells selected to copy', 'warning');
+                return;
+            }
+
+            const allCells = document.querySelectorAll('.swara-cell');
+            const data = selectedCells.map(idx => {
+                const cell = allCells[idx];
+                return {
+                    text: cell.textContent.trim(),
+                    speed: cellSpeedMap[idx] || 1
+                };
+            });
+
+            clipboardData = JSON.stringify(data);
+            
+            // Also copy to system clipboard (tab-separated)
+            const clipboardText = data.map(d => d.text).join('\t');
+            navigator.clipboard.writeText(clipboardText).catch(err => {
+                console.warn('Could not copy to system clipboard:', err);
+            });
+
+            showToast(`Copied ${selectedCells.length} cells`, 'success');
+        }
+
+        function pasteCells() {
+            if (selectedCells.length === 0) {
+                showToast('No cells selected for paste', 'warning');
+                return;
+            }
+
+            if (!clipboardData) {
+                showToast('No data to paste (clipboard empty)', 'warning');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(clipboardData);
+                const allCells = document.querySelectorAll('.swara-cell');
+
+                // Paste into selected range
+                for (let i = 0; i < Math.min(data.length, selectedCells.length); i++) {
+                    const cellIdx = selectedCells[i];
+                    const cell = allCells[cellIdx];
+                    const swaraRow = currentSong.sections[0]?.rows[0]; // Simplified (assumes single row for now)
+
+                    if (cell && data[i]) {
+                        cell.textContent = data[i].text;
+                        
+                        // Update internal state
+                        if (swaraRow && swaraRow.atoms[cellIdx]) {
+                            swaraRow.atoms[cellIdx].text = data[i].text;
+                        }
+
+                        // Restore speed
+                        const speed = data[i].speed;
+                        if (speed === 2) {
+                            cellSpeedMap[cellIdx] = 2;
+                            cell.classList.add('speed-2x');
+                            cell.classList.remove('speed-3x');
+                        } else if (speed === 3) {
+                            cellSpeedMap[cellIdx] = 3;
+                            cell.classList.add('speed-3x');
+                            cell.classList.remove('speed-2x');
+                        } else {
+                            delete cellSpeedMap[cellIdx];
+                            cell.classList.remove('speed-2x', 'speed-3x');
+                        }
+                    }
+                }
+
+                gridIsDirty = true;
+                updateOverrideIndicators();
+                showToast(`Pasted ${Math.min(data.length, selectedCells.length)} cells`, 'success');
+            } catch (err) {
+                console.error('Paste error:', err);
+                showToast('Paste failed', 'error');
+            }
         }
 
         // Play notation using Web Audio API
