@@ -1695,6 +1695,7 @@
             const bpm = parseInt(currentSong.bpm) || 120;
             const songName = currentSong.name || 'Song';
             const sruthi = currentSong.sruthi || 'C';
+            const nadai = parseInt(currentSong.nadai) || 4;  // Nadai: subdivisions per beat
             
             // Collect all notes from atoms
             const noteEvents = [];
@@ -1709,18 +1710,20 @@
                             if (text === ',') {
                                 // Rest
                                 noteEvents.push({
+                                    text: ',',
+                                    note: null,
                                     isRest: true,
-                                    speed: speed,
-                                    text: ','
+                                    speed: speed
                                 });
                             } else {
                                 // Convert note text to MIDI number (using sruthi as key)
                                 const midiNote = noteTextToMidiNumber(text, sruthi);
                                 if (midiNote !== null) {
                                     noteEvents.push({
+                                        text: text,
                                         note: midiNote,
-                                        speed: speed,
-                                        text: text
+                                        isRest: false,
+                                        speed: speed
                                     });
                                 }
                             }
@@ -1729,7 +1732,11 @@
                 });
             });
 
-            console.log(`MIDI: ${noteEvents.length} notes/rests, BPM=${bpm}`);
+            console.log(`MIDI: ${noteEvents.length} notes/rests, BPM=${bpm}, Nadai=${nadai}, Sruthi=${sruthi}`);
+            
+            // Debug: log first 30 note events to see all notes including "G"
+            console.log('First 30 notes:');
+            console.table(noteEvents.slice(0, 30));
 
             // Build MIDI track
             const trackBytes = [];
@@ -1749,7 +1756,19 @@
             trackBytes.push(0x00); // delta time
             trackBytes.push(0xFF, 0x59, 0x02, keySharpFlats, 0); // Key signature
 
-            // 3. Sequence name
+            // 3. Time signature (from thalam beats)
+            // thalam: "8x4 (Dēśādi)" means 8 beats, nadai 4
+            // MIDI time signature: 0xFF 0x58 0x04 nn dd cc bb
+            // nn = numerator (beats), dd = denominator power of 2, cc = click, bb = 32nds
+            const beats = currentSong.settings?.thalam?.split('x')[0] || 8;
+            trackBytes.push(0x00); // delta time
+            trackBytes.push(0xFF, 0x58, 0x04); // Time signature meta
+            trackBytes.push(beats);     // numerator (8 beats)
+            trackBytes.push(2);         // denominator power of 2 (2^2 = 4, so it's X/4)
+            trackBytes.push(24);        // clock ticks per beat
+            trackBytes.push(8);         // notated 32nd notes per quarter note
+
+            // 4. Sequence name
             if (songName.length < 128) {
                 trackBytes.push(0x00); // delta time
                 trackBytes.push(0xFF, 0x03); // Sequence name
@@ -1759,10 +1778,13 @@
                 }
             }
 
-            // 4. Add notes
+            // 5. Add notes
             let accumulatedRestTicks = 0;
             noteEvents.forEach(evt => {
-                const durationTicks = Math.round(TICKS_PER_BEAT / evt.speed);
+                // Duration = beat / nadai / speed
+                // nadai = 4 means 4 notes per beat
+                // speed = 2 means double speed (half duration)
+                const durationTicks = Math.round((TICKS_PER_BEAT / nadai) / evt.speed);
 
                 if (evt.isRest) {
                     // Accumulate rest duration instead of outputting orphaned delta time
@@ -1779,7 +1801,7 @@
                 }
             });
 
-            // 5. End of track
+            // 6. End of track
             trackBytes.push(0x00, 0xFF, 0x2F, 0x00);
 
             // Build full MIDI file
@@ -1814,41 +1836,9 @@
         function noteTextToMidiNumber(text, sruthi = 'C') {
             if (!text) return null;
 
-            // Dots Above: ṡ, ṙ, ġ, ṁ, ṗ, ḋ, ṅ (lowercase) and Ṡ, Ṙ, Ġ, Ṁ, Ṗ, Ḋ, Ṅ (uppercase)
-            // Dots Below: ṣ, ṛ, g̣, ṃ, p̣, ḍ, ṇ (lowercase) and Ṣ, Ṛ, G̣, Ṃ, P̣, Ḍ, Ṇ (uppercase)
-            const dotsAboveChars = /[ṠṡṘṙĠġṀṁṖṗḊḋṄṅ]/;
-            const dotsBelowChars = /[ṢṣṚṛG̣g̣ṂṃP̣p̣ḌḍṆṇ]/;
+            // Strip combining characters first
+            let cleanText = text.replace(/[\u0300-\u036F]/g, '');
             
-            // Detect octave markers BEFORE normalizing
-            const hasDotAbove = dotsAboveChars.test(text); // Higher octave (dot above) → C5
-            const hasDotBelow = dotsBelowChars.test(text); // Lower octave (dot below) → C3
-            
-            // Character map: decorated → plain note
-            // Dots Above (higher octave)
-            const charMap = {
-                'Ṡ': 'S', 'ṡ': 'S',
-                'Ṙ': 'R', 'ṙ': 'R',
-                'Ġ': 'G', 'ġ': 'G',
-                'Ṁ': 'M', 'ṁ': 'M',
-                'Ṗ': 'P', 'ṗ': 'P',
-                'Ḋ': 'D', 'ḋ': 'D',
-                'Ṅ': 'N', 'ṅ': 'N',
-                // Dots Below (lower octave)
-                'Ṣ': 'S', 'ṣ': 'S',
-                'Ṛ': 'R', 'ṛ': 'R',
-                'G̣': 'G', 'g̣': 'G',
-                'Ṃ': 'M', 'ṃ': 'M',
-                'P̣': 'P', 'p̣': 'P',
-                'Ḍ': 'D', 'ḍ': 'D',
-                'Ṇ': 'N', 'ṇ': 'N'
-            };
-            
-            let normalized = text;
-            for (let [decor, plain] of Object.entries(charMap)) {
-                normalized = normalized.replace(new RegExp(decor, 'g'), plain);
-            }
-            normalized = normalized.toUpperCase();
-
             // Map to semitones (C = 0)
             const noteMap = {
                 'S': 0,   // Shadja = C
@@ -1859,6 +1849,68 @@
                 'D': 9,   // Dhaivata = A
                 'N': 11   // Nishada = B
             };
+
+            // Get first note character from CLEAN text (uppercase)
+            let firstChar = null;
+            for (let i = 0; i < cleanText.length; i++) {
+                const char = cleanText[i].toUpperCase();
+                if (char in noteMap) {
+                    firstChar = char;
+                    break;
+                }
+            }
+
+            if (!firstChar) return null;
+
+            // Test for dots-above using safe pre-composed characters only
+            const dotsAboveChars = /[ṠṡṘṙĠġṀṁṖṗḊḋṄṅ]/;
+            const hasDotAbove = dotsAboveChars.test(text);
+            
+            // For dots-below, use ONLY safe pre-composed characters in regex
+            // and check combining characters explicitly for unmapped notes
+            let hasDotBelow = false;
+            
+            // Safe pre-composed dot-below characters (no combining chars)
+            const preComposedDotBelow = /[ṢṣṚṛṂṃṆṇḌḍ]/;
+            if (preComposedDotBelow.test(text)) {
+                hasDotBelow = true;
+            } else {
+                // For notes without pre-composed dot-below (G, P), check if combining dot follows
+                const firstCharIndex = text.indexOf(firstChar);
+                if (firstCharIndex >= 0 && firstCharIndex + 1 < text.length) {
+                    const nextChar = text[firstCharIndex + 1];
+                    const nextCharCode = nextChar.charCodeAt(0);
+                    // Check for combining dot-below (U+0323)
+                    if (nextCharCode === 0x0323) {
+                        hasDotBelow = true;
+                    }
+                }
+            }
+            
+            // Character map: decorated → plain note
+            const charMap = {
+                'Ṡ': 'S', 'ṡ': 'S',
+                'Ṙ': 'R', 'ṙ': 'R',
+                'Ġ': 'G', 'ġ': 'G',
+                'Ṁ': 'M', 'ṁ': 'M',
+                'Ṗ': 'P', 'ṗ': 'P',
+                'Ḋ': 'D', 'ḋ': 'D',
+                'Ṅ': 'N', 'ṅ': 'N',
+                'Ṣ': 'S', 'ṣ': 'S',
+                'Ṛ': 'R', 'ṛ': 'R',
+                'G̣': 'G', 'g̣': 'G',
+                'Ṃ': 'M', 'ṃ': 'M',
+                'P̣': 'P', 'p̣': 'P',
+                'Ḍ': 'D', 'ḍ': 'D',
+                'Ṇ': 'N', 'ṇ': 'N'
+            };
+            
+            // Normalize using cleanText
+            let normalized = cleanText;
+            for (let [decor, plain] of Object.entries(charMap)) {
+                normalized = normalized.replace(new RegExp(decor, 'g'), plain);
+            }
+            normalized = normalized.toUpperCase();
 
             // Map sruthi to semitone offset from C
             const sruthiOffsets = {
@@ -1891,7 +1943,8 @@
             if (hasDotAbove) octaveShift = 12;    // Higher octave (Ṡ, ṡ, etc. → C5)
             if (hasDotBelow) octaveShift = -12;   // Lower octave (Ṣ, ṣ, etc. → C3)
 
-            return baseC + semitone + sruthiOffset + octaveShift;
+            const midiNote = baseC + semitone + sruthiOffset + octaveShift;
+            return midiNote;
         }
 
         function getKeySigFromSruthi(sruthi) {
