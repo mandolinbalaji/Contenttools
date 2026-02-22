@@ -158,6 +158,21 @@
             background: #5a6fd6;
         }
 
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-success.active {
+            background: #1e7e34;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+            border: 2px solid #155724;
+        }
+
         .btn-outline {
             background: transparent;
             border: 1px solid #ddd;
@@ -166,6 +181,14 @@
 
         .btn-outline:hover {
             background: #f9f9f9;
+        }
+
+        .btn-outline.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 700;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
         .share-toast {
@@ -257,6 +280,22 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+
+        /* Beat markers based on nadai */
+        .swara-cell.beat-start {
+            border-left: 4px solid #6c5ce7 !important;
+        }
+
+        .swara-cell.beat-mid {
+            border-left: 2px dashed #a29bfe;
+        }
+
+        /* Cell selection for copy/paste */
+        .swara-cell.selected {
+            background-color: #b3e5fc !important;
+            border: 2px solid #0288d1;
+            box-shadow: inset 0 0 4px rgba(2, 136, 209, 0.3);
         }
 
         /* Speed markers for 2x and 3x notes */
@@ -480,7 +519,7 @@
                 </div>
                 <div style="width: 60px;">
                     <label>Nadai</label>
-                    <input type="number" id="nadai" value="4" min="1">
+                    <input type="number" id="nadai" value="4" min="1" onchange="updateBeatIndicators()">
                 </div>
                 <div style="width: 80px;">
                     <label>Eduppu</label>
@@ -502,6 +541,8 @@
                     title="Format notation grid by beats and nadai">✨ Format</button>
                 <button class="btn btn-success" id="playBtn" onclick="playNotation()" 
                     title="Play notation using Web Audio">🎵 Play</button>
+                <button class="btn btn-outline" id="multiSelectBtn" onclick="toggleMultiSelect()" 
+                    title="Enable multi-cell selection - select cells then copy/paste (ESC to exit)">📋 Multi Select</button>
                 <button class="btn btn-outline" id="sourceBtn" onclick="toggleSourceView()"
                     title="Toggle Floating Source Image">📷 Source</button>
                 <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
@@ -616,6 +657,14 @@
         let gridIsDirty = false;
         let gridSpeedMode = null;  // 'normal', '2x', '3x', null
         let cellSpeedMap = {};     // cellIndex → speed value (1, 2, or 3)
+        let cellLocationMap = {};  // cellIndex → {sectionIdx, rowIdx, atomIdx} for updating data
+        
+        // Cell selection for copy/paste
+        let selectedCells = [];    // Array of cell indices
+        let clipboardData = null;  // Stores copied cell data
+        let selectionStart = null; // Start cell for range selection
+        let isSelecting = false;   // Track if user is dragging to select
+        let multiSelectActive = false; // Multi Select mode toggle state
 
         function parseAndRender() {
             if (gridIsDirty) {
@@ -754,6 +803,9 @@
                     </div>
                 </div>
             `;
+
+            cellLocationMap = {};  // Reset location map for this render
+            let globalCellIndex = 0;  // Track absolute cell position across all sections
 
             currentSong.sections.forEach((section, sIdx) => {
                 const sectionContainer = document.createElement('div');
@@ -957,9 +1009,16 @@
             // Show speed toolbar if grid has content
             document.getElementById('speedToolbar').style.display = currentSong.sections && currentSong.sections.length > 0 ? 'flex' : 'none';
 
-            // Update override indicators after rendering
+            // Update override indicators and beat markers after rendering
             setTimeout(() => {
                 updateOverrideIndicators();
+                updateBeatIndicators();
+                restoreSpeedMarksFromSections();
+                
+                // Set up global mouse up handler (only once, not per cell)
+                document.onmouseup = () => {
+                    isSelecting = false;
+                };
                 
                 // Add speed marking click listeners to swara cells
                 let cellIndex = 0;
@@ -968,6 +1027,27 @@
                         if (gridSpeedMode && e.target === cell) {
                             e.stopPropagation();
                             handleSpeedCellClick(cell, idx);
+                        } else {
+                            // Cell selection for copy/paste - only when Multi Select is active
+                            if (multiSelectActive) {
+                                const isCtrlClick = e.ctrlKey || e.metaKey;
+                                const isShiftClick = e.shiftKey;
+                                selectCell(idx, isCtrlClick || isShiftClick);
+                            }
+                        }
+                    };
+
+                    // Mouse events for selection highlighting - only when Multi Select is active
+                    cell.onmousedown = (e) => {
+                        if (!gridSpeedMode && (e.button === 0) && multiSelectActive) { // Left mouse button
+                            isSelecting = true;
+                            selectCell(idx, false);
+                        }
+                    };
+
+                    cell.onmouseover = (e) => {
+                        if (isSelecting && !gridSpeedMode && multiSelectActive) {
+                            selectCell(idx, true);
                         }
                     };
                     
@@ -978,6 +1058,9 @@
                         cell.classList.add('speed-3x');
                     }
                 });
+
+                // Add keyboard event listener for copy/paste
+                document.addEventListener('keydown', handleCellKeyboard);
             }, 0);
         }
 
@@ -1200,10 +1283,8 @@
             currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
             currentSong.ragaswara = document.getElementById('ragaswaraInput')?.value || '';
 
-            // Extract speed marks from grid and update notation
-            if (Object.keys(cellSpeedMap).length > 0) {
-                updateNotationWithSpeeds();
-            }
+            // Sync speed marks from cellSpeedMap to currentSong.sections
+            saveSpeedMarksToSections();
 
             // currentSong.sections is already updated via handleCellEdit
             await saveSongInternal();
@@ -1250,28 +1331,6 @@
             } catch (err) {
                 alert('Delete failed.');
             }
-        }
-
-        function loadSongIntoUI(song) {
-            currentSong = song;
-            document.getElementById('sruthi').value = song.sruthi || 'C';
-            document.getElementById('beats').value = song.beats || 8;
-            document.getElementById('nadai').value = song.nadai || 4;
-            document.getElementById('eduppu').value = song.eduppu || 1;
-            document.getElementById('bpm').value = song.bpm || 120;
-            document.getElementById('notationInput').value = song.rawText || '';
-            renderSong();
-
-            // Re-link image if it exists
-            if (song.imageSource) {
-                updateSourceViewer(song.imageSource);
-                document.getElementById('aiParseBtn').style.display = 'inline-flex';
-            } else {
-                updateSourceViewer(null);
-                document.getElementById('aiParseBtn').style.display = 'none';
-            }
-
-            document.getElementById('shareBtn').style.display = 'inline-flex';
         }
 
         function shareSong() {
@@ -1916,6 +1975,209 @@
             });
         }
 
+        // Apply beat indicators based on nadai
+        function updateBeatIndicators() {
+            const nadai = parseInt(document.getElementById('nadai').value) || 4;
+            let cellIndex = 0;
+
+            document.querySelectorAll('.swara-cell').forEach(cell => {
+                // Remove previous beat classes
+                cell.classList.remove('beat-start', 'beat-mid');
+
+                // Mark beat start positions (every nadai cells)
+                if (cellIndex % nadai === 0) {
+                    cell.classList.add('beat-start');
+                } else {
+                    // Optional: mark other beat positions with lighter indicator
+                    cell.classList.add('beat-mid');
+                }
+
+                cellIndex++;
+            });
+        }
+
+        // --- COPY/PASTE FUNCTIONS ---
+
+        function selectCell(cellIndex, multiSelect = false) {
+            const allCells = document.querySelectorAll('.swara-cell');
+            
+            if (!multiSelect) {
+                // Single selection
+                selectedCells = [cellIndex];
+                document.querySelectorAll('.swara-cell.selected').forEach(c => c.classList.remove('selected'));
+                allCells[cellIndex]?.classList.add('selected');
+                selectionStart = cellIndex;
+            } else {
+                // Range selection
+                if (selectionStart === null) {
+                    selectionStart = cellIndex;
+                    selectedCells = [cellIndex];
+                } else {
+                    const start = Math.min(selectionStart, cellIndex);
+                    const end = Math.max(selectionStart, cellIndex);
+                    selectedCells = [];
+                    
+                    document.querySelectorAll('.swara-cell.selected').forEach(c => c.classList.remove('selected'));
+                    
+                    for (let i = start; i <= end; i++) {
+                        selectedCells.push(i);
+                        allCells[i]?.classList.add('selected');
+                    }
+                }
+            }
+        }
+
+        function clearSelection() {
+            selectedCells = [];
+            isSelecting = false;  // Reset drag state
+            document.querySelectorAll('.swara-cell.selected').forEach(c => c.classList.remove('selected'));
+            selectionStart = null;
+        }
+
+        function toggleMultiSelect() {
+            multiSelectActive = !multiSelectActive;
+            const btn = document.getElementById('multiSelectBtn');
+            
+            if (multiSelectActive) {
+                btn.classList.add('active');
+                showToast('Multi Select enabled - Click and drag to select, Ctrl+C to copy, Ctrl+V to paste, ESC to exit', 'info');
+            } else {
+                disableMultiSelect();
+            }
+        }
+
+        function disableMultiSelect() {
+            multiSelectActive = false;
+            const btn = document.getElementById('multiSelectBtn');
+            btn.classList.remove('active');
+            clearSelection();
+            showToast('Multi Select disabled', 'info');
+        }
+
+        function copyCells() {
+            if (selectedCells.length === 0) {
+                showToast('No cells selected to copy', 'warning');
+                return;
+            }
+
+            const copyCount = selectedCells.length;
+            const allCells = document.querySelectorAll('.swara-cell');
+            const data = selectedCells.map(idx => {
+                const cell = allCells[idx];
+                return {
+                    text: cell.textContent.trim(),
+                    speed: cellSpeedMap[idx] || 1
+                };
+            });
+
+            clipboardData = JSON.stringify(data);
+            
+            // Also copy to system clipboard (tab-separated)
+            const clipboardText = data.map(d => d.text).join('\t');
+            navigator.clipboard.writeText(clipboardText).catch(err => {
+                console.warn('Could not copy to system clipboard:', err);
+            });
+
+            // Clear visual selection but keep clipboard data
+            clearSelection();
+            disableMultiSelect();  // Auto-disable multi select after copy
+
+            showToast(`Copied ${copyCount} cells. Click destination cell and press Ctrl+V to paste.`, 'success');
+        }
+
+        function pasteCells() {
+            if (selectedCells.length === 0) {
+                showToast('No cells selected for paste', 'warning');
+                return;
+            }
+
+            if (!clipboardData) {
+                showToast('No data to paste (clipboard empty)', 'warning');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(clipboardData);
+                const allCells = document.querySelectorAll('.swara-cell');
+                const startIdx = selectedCells[0];  // First selected cell
+                let pasteCount = data.length;
+
+                // If multiple cells selected, paste only up to that many
+                if (selectedCells.length > 1) {
+                    pasteCount = Math.min(data.length, selectedCells.length);
+                }
+
+                // Check if paste will exceed grid bounds
+                if (startIdx + pasteCount > allCells.length) {
+                    showToast(`Cannot paste: would exceed grid bounds (${allCells.length} cells available)`, 'warning');
+                    return;
+                }
+
+                // Paste from start position onwards
+                for (let i = 0; i < pasteCount; i++) {
+                    let cellIdx;
+                    if (selectedCells.length === 1) {
+                        cellIdx = startIdx + i;  // Paste starting from first selected cell
+                    } else {
+                        cellIdx = selectedCells[i];  // Paste into each selected cell
+                    }
+
+                    const cell = allCells[cellIdx];
+                    const loc = cellLocationMap[cellIdx];  // Get section/row/atom location
+
+                    if (cell && data[i] && loc) {
+                        cell.textContent = data[i].text;
+                        
+                        // Update internal state - use cellLocationMap to find correct section/row
+                        const section = currentSong.sections[loc.sectionIdx];
+                        const row = section?.rows[loc.rowIdx];
+                        
+                        if (row && row.atoms && row.atoms[loc.atomIdx]) {
+                            row.atoms[loc.atomIdx].text = data[i].text;
+                        }
+
+                        // Restore speed to both visual and data structure
+                        const speed = data[i].speed || 1;
+                        cellSpeedMap[cellIdx] = speed;
+                        
+                        // Update internal atom.speed property for persistence
+                        if (row && row.atoms && row.atoms[loc.atomIdx]) {
+                            row.atoms[loc.atomIdx].speed = speed;
+                        }
+                        
+                        // Apply visual speed classes
+                        if (speed === 2) {
+                            cell.classList.add('speed-2x');
+                            cell.classList.remove('speed-3x');
+                        } else if (speed === 3) {
+                            cell.classList.add('speed-3x');
+                            cell.classList.remove('speed-2x');
+                        } else {
+                            cell.classList.remove('speed-2x', 'speed-3x');
+                        }
+                    }
+                }
+
+                // Select pasted range for visibility
+                if (selectedCells.length === 1) {
+                    selectedCells = [];
+                    for (let i = 0; i < pasteCount; i++) {
+                        selectedCells.push(startIdx + i);
+                        allCells[startIdx + i]?.classList.add('selected');
+                    }
+                }
+
+                isSelecting = false;  // Reset selection mode after paste
+                disableMultiSelect();  // Auto-disable multi select after paste
+                gridIsDirty = true;
+                updateOverrideIndicators();
+                showToast(`Pasted ${pasteCount} cells`, 'success');
+            } catch (err) {
+                console.error('Paste error:', err);
+                showToast('Paste failed', 'error');
+            }
+        }
+
         // Play notation using Web Audio API
         async function playNotation() {
             if (isPlaying) {
@@ -2153,6 +2415,56 @@
             });
 
             document.getElementById('notationInput').value = updatedLines.join('\n');
+        }
+
+        function saveSpeedMarksToSections() {
+            // Sync speed marks from cellSpeedMap to currentSong.sections atoms
+            let cellIndex = 0;
+            
+            currentSong.sections.forEach(section => {
+                if (section.rows) {
+                    section.rows.forEach(row => {
+                        if (row.type === 'swara' && row.atoms) {
+                            row.atoms.forEach(atom => {
+                                if (cellSpeedMap[cellIndex] === 2) {
+                                    atom.speed = 2;
+                                } else if (cellSpeedMap[cellIndex] === 3) {
+                                    atom.speed = 3;
+                                } else {
+                                    atom.speed = 1;
+                                }
+                                cellIndex++;
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function restoreSpeedMarksFromSections() {
+            // Load speed marks from currentSong.sections atoms into cellSpeedMap and grid
+            cellSpeedMap = {};
+            let cellIndex = 0;
+            const allCells = document.querySelectorAll('.swara-cell');
+
+            currentSong.sections.forEach(section => {
+                if (section.rows) {
+                    section.rows.forEach(row => {
+                        if (row.type === 'swara' && row.atoms) {
+                            row.atoms.forEach(atom => {
+                                if (atom.speed === 2) {
+                                    cellSpeedMap[cellIndex] = 2;
+                                    allCells[cellIndex]?.classList.add('speed-2x');
+                                } else if (atom.speed === 3) {
+                                    cellSpeedMap[cellIndex] = 3;
+                                    allCells[cellIndex]?.classList.add('speed-3x');
+                                }
+                                cellIndex++;
+                            });
+                        }
+                    });
+                }
+            });
         }
 
     </script>
