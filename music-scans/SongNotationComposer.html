@@ -529,6 +529,40 @@
                     <label>BPM</label>
                     <input type="number" id="bpm" value="120" min="40">
                 </div>
+                <div style="display: flex; gap: 12px; align-items: flex-end; padding-bottom: 2px;">
+                    <label style="font-weight: 600; font-size: 11px; white-space: nowrap;">Ragaswara Variants:</label>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="r-variant" style="width: 70px; padding: 4px; font-size: 12px;">
+                            <option value="">R (Auto)</option>
+                            <option value="R1">R1</option>
+                            <option value="R2" selected>R2</option>
+                            <option value="R3">R3</option>
+                        </select>
+                        <select id="g-variant" style="width: 70px; padding: 4px; font-size: 12px;">
+                            <option value="">G (Auto)</option>
+                            <option value="G1">G1</option>
+                            <option value="G2">G2</option>
+                            <option value="G3" selected>G3</option>
+                        </select>
+                        <select id="m-variant" style="width: 70px; padding: 4px; font-size: 12px;">
+                            <option value="">M (Auto)</option>
+                            <option value="M1" selected>M1</option>
+                            <option value="M2">M2</option>
+                        </select>
+                        <select id="d-variant" style="width: 70px; padding: 4px; font-size: 12px;">
+                            <option value="">D (Auto)</option>
+                            <option value="D1">D1</option>
+                            <option value="D2" selected>D2</option>
+                            <option value="D3">D3</option>
+                        </select>
+                        <select id="n-variant" style="width: 70px; padding: 4px; font-size: 12px;">
+                            <option value="">N (Auto)</option>
+                            <option value="N1">N1</option>
+                            <option value="N2">N2</option>
+                            <option value="N3" selected>N3</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="header-actions">
                 <button class="btn btn-outline" onclick="newSong()" title="Clear and start new">📄 New</button>
@@ -1285,6 +1319,23 @@
         }
 
         async function saveRenderedGrid() {
+            // Verify enrichment is still in memory BEFORE saving
+            let checkEnriched = 0;
+            if (currentSong.sections) {
+                currentSong.sections.forEach(section => {
+                    (section.rows || []).forEach(row => {
+                        if (row.type === 'swara' && row.atoms) {
+                            row.atoms.forEach(atom => {
+                                if (atom.frequency || atom.midiNumber || atom.ragaswaraEquivalent) {
+                                    checkEnriched++;
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            console.log(`📋 PRE-SAVE CHECK: ${checkEnriched} atoms have enrichment in memory`);
+            
             // Sync current header settings
             currentSong.sruthi = document.getElementById('sruthi').value;
             currentSong.beats = document.getElementById('beats').value;
@@ -1307,7 +1358,29 @@
 
         async function saveSongInternal() {
             try {
-                // Ensure imageSource is part of the save payload
+                // Verify enrichment before saving
+                let enrichedCount = 0;
+                let totalAtoms = 0;
+                let sampleAtom = null;
+                if (currentSong.sections) {
+                    currentSong.sections.forEach(section => {
+                        (section.rows || []).forEach(row => {
+                            if (row.type === 'swara' && row.atoms) {
+                                row.atoms.forEach(atom => {
+                                    totalAtoms++;
+                                    if (atom.frequency || atom.midiNumber || atom.ragaswaraEquivalent) {
+                                        enrichedCount++;
+                                        if (!sampleAtom) sampleAtom = atom;  // Capture first enriched atom
+                                    }
+                                });
+                            }
+                        });
+                    });
+                }
+                console.log(`💾 SAVE CHECK: ${enrichedCount}/${totalAtoms} atoms have enrichment data`);
+                console.log(`💾 Sample enriched atom:`, sampleAtom);
+                
+                // Save the currentSong (already enriched by Format if clicked)
                 const response = await fetch('/api/notation-composer', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1317,6 +1390,8 @@
                 currentSong.id = saved.id;
                 await renderPlaylist();
                 document.getElementById('shareBtn').style.display = 'inline-flex';
+                console.log(`✅ Song saved with ${enrichedCount} enriched atoms to server`);
+                showToast('✅ Song saved successfully!', 'success');
             } catch (err) {
                 console.error('Save failed:', err);
                 alert('Failed to save song to server.');
@@ -2029,12 +2104,16 @@
                 formatSection(section, sIdx, totalCells, eduppuPos);
             });
 
+            // Enrich song with frequency/MIDI data after formatting
+            enrichSongWithFrequencyData(currentSong);
+
             gridIsDirty = true;
             console.log('🎨 Calling renderSong() after format...');
             renderSong();
             closeFormatModal();
-            showToast('Notation formatted successfully!');
+            showToast('✅ Notation formatted & enriched with frequency/MIDI data!');
         }
+
 
         function formatSection(section, sectionIdx, totalCells, eduppuPos) {
             if (!section.rows || section.rows.length === 0) return;
@@ -2260,6 +2339,234 @@
             'N3': 10, // Nishada3 (same as D3)
             'Ṡ': 12   // Upper Sa
         };
+
+        // Generate comprehensive sruthi-based lookup table for all notes
+        function buildSruthibaseLookupTable(sruthi) {
+            const lookup = {};
+            const sruthiOffsets = {
+                'C': 0, 'C#': 1, 'Db': 1,
+                'D': 2, 'D#': 3, 'Eb': 3,
+                'E': 4, 'E#': 5, 'Fb': 4,
+                'F': 5, 'F#': 6, 'Gb': 6,
+                'G': 7, 'G#': 8, 'Ab': 8,
+                'A': 9, 'A#': 10, 'Bb': 10,
+                'B': 11, 'B#': 0, 'Cb': 11
+            };
+
+            const baseC = 60;
+            const baseSruthi = SRUTHI_FREQUENCIES[sruthi] || SRUTHI_FREQUENCIES['C'];
+            const sruthiOffset = sruthiOffsets[sruthi] || 0;
+
+            // All Carnatic notes
+            const carnatic_notes = ['S', 'R1', 'R2', 'R3', 'G1', 'G2', 'G3', 'M1', 'M2', 'P', 'D1', 'D2', 'D3', 'N1', 'N2', 'N3', 'Ṡ', 'Ṙ', 'Ġ', 'Ṁ', 'Ṗ', 'Ḋ', 'Ṅ'];
+
+            for (const note of carnatic_notes) {
+                const semitones = NOTE_SEMITONES[note] || 0;
+                const frequency = baseSruthi * Math.pow(2, semitones / 12);
+                const midiNumber = baseC + semitones + sruthiOffset;
+
+                lookup[note] = {
+                    note: note,
+                    semitones: semitones,
+                    midiNumber: midiNumber,
+                    frequency: Math.round(frequency * 100) / 100
+                };
+            }
+
+            return lookup;
+        }
+
+        // Map semitone offset to Western note name
+        function semitoneToWesternNote(semitoneOffset) {
+            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const normalized = ((semitoneOffset % 12) + 12) % 12;
+            return notes[normalized];
+        }
+
+        // Get semitone offset for a sruthi note from C
+        function getSruthiSemitoneOffset(sruthiNote) {
+            const sruthiOffsets = {
+                'C': 0, 'C#': 1, 'Db': 1,
+                'D': 2, 'D#': 3, 'Eb': 3,
+                'E': 4,
+                'F': 5, 'F#': 6, 'Gb': 6,
+                'G': 7, 'G#': 8, 'Ab': 8,
+                'A': 9, 'A#': 10, 'Bb': 10,
+                'B': 11
+            };
+            return sruthiOffsets[sruthiNote] || 0;
+        }
+
+        // Strip diacritical marks (dots, underlines, etc.) from notes
+        // E.g., "Ṙ" → "R", "Ṡ" → "S", "Ġ" → "G"
+        function stripDiacritics(text) {
+            try {
+                return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            } catch (e) {
+                return text;
+            }
+        }
+
+        // Extract note variants used in ragaswara (e.g., "r2 g3 m1 d2 n3" -> {r:"r2", g:"g3", m:"m1", d:"d2", n:"n3"})
+        function extractRagaswaraVariants(ragaswaraStr) {
+            const variants = {};
+            const notes = (ragaswaraStr || '').split(/\s+/).filter(n => n);
+            for (const note of notes) {
+                const baseNote = note.toLowerCase().charAt(0);  // r, g, m, d, n, s, p
+                if (!variants[baseNote]) {
+                    variants[baseNote] = note.toLowerCase();  // Store first occurrence, e.g., r2, g3, etc.
+                }
+            }
+            return variants;
+        }
+
+        // Enrich song with frequency/MIDI data before saving
+        function enrichSongWithFrequencyData(song) {
+            const sruthi = document.getElementById('sruthi').value || 'C';
+            
+            // Read variant selections from UI
+            const variantMap = {
+                'r': document.getElementById('r-variant').value || 'R2',
+                'g': document.getElementById('g-variant').value || 'G3',
+                'm': document.getElementById('m-variant').value || 'M1',
+                'd': document.getElementById('d-variant').value || 'D2',
+                'n': document.getElementById('n-variant').value || 'N3',
+                'p': 'P',
+                's': 'S'
+            };
+
+            const sruthiLookup = buildSruthibaseLookupTable(sruthi);
+            const sruthiSemitoneOffset = getSruthiSemitoneOffset(sruthi);
+
+            console.log(`🎵 ===== ENRICHMENT STARTED =====`);
+            console.log(`🎵 Target: ${song.name || 'Unknown'}`);
+            console.log(`🎵 Sruthi: ${sruthi}`);
+            console.log(`🎵 Variant Map:`, variantMap);
+
+            // Add sruthi lookup table as metadata
+            if (!song._metadata) song._metadata = {};
+            song._metadata.sruthiLookupTable = {};
+            song._metadata.sruthiLookupTable[sruthi] = sruthiLookup;
+
+            let totalCells = 0;
+            let totalNotes = 0;
+            let enrichedNotes = 0;
+            let restCells = 0;
+
+            for (let sIdx = 0; sIdx < (song.sections || []).length; sIdx++) {
+                const section = song.sections[sIdx];
+                
+                // Add section name/title for reference
+                if (section.title && !section.sectionName) {
+                    section.sectionName = section.title;
+                }
+
+                for (let rIdx = 0; rIdx < (section.rows || []).length; rIdx++) {
+                    const row = section.rows[rIdx];
+                    if (row.type !== 'swara' || !row.atoms) continue;
+
+                    for (let aIdx = 0; aIdx < row.atoms.length; aIdx++) {
+                        const atom = row.atoms[aIdx];
+                        totalCells++;
+                        
+                        // Check if this is a rest (silence)
+                        const isRest = !atom.text || atom.text === ',' || atom.text === '-' || atom.text === '*';
+
+                        if (isRest) {
+                            // Rest cell: mark with isRest flag, set frequency/MIDI for playback
+                            const restFrequency = SRUTHI_FREQUENCIES[sruthi] || SRUTHI_FREQUENCIES['C'];
+                            atom.frequency = Math.round(restFrequency * 100) / 100;
+                            atom.midiNumber = 60 + sruthiSemitoneOffset;
+                            atom.isRest = true;
+                            atom.sruthi = sruthi;
+                            restCells++;
+                            
+                            // Remove ragaswaraEquivalent from rests if they exist
+                            delete atom.ragaswaraEquivalent;
+                            delete atom.sruthiNoteEquivalent;
+                            
+                            console.log(`  🔇 [${totalCells}] "${atom.text || '-'}": REST`);
+                        } else {
+                            // Actual note: determine variant and enrich
+                            totalNotes++;
+                            let noteUsed = atom.text.toLowerCase();
+                            
+                            // Determine note variant to lookup
+                            let lookupNote = null;
+
+                            // Priority 1: If atom already has ragaswaraEquivalent (user override), use it as-is
+                            if (atom.ragaswaraEquivalent) {
+                                lookupNote = atom.ragaswaraEquivalent.toUpperCase();
+                                console.log(`  📌 [${totalCells}] "${atom.text}": OVERRIDE → ${lookupNote}`);
+                            } else {
+                                // Extract note characters from atom (handles multi-char like "MD", ",M", "G,", ",Ṙ")
+                                // Strip diacritics and commas to get just the base notes
+                                let notesInAtom = [];
+                                for (let char of noteUsed) {
+                                    const stripped = stripDiacritics(char);
+                                    // Keep only note characters (not commas, dashes, spaces)
+                                    if (!/^[,\-*\s]$/.test(stripped)) {
+                                        notesInAtom.push(stripped.toUpperCase());
+                                    }
+                                }
+
+                                if (notesInAtom.length === 0) {
+                                    console.warn(`  ❌ [${totalCells}] "${atom.text}": NO NOTES EXTRACTED`);
+                                } else {
+                                    const firstNote = notesInAtom[0];  // Get first actual note from atom
+                                    
+                                    // Check if it's an explicit variant with numeric suffix (R1, R2, G3, M1, etc.)
+                                    const hasNumericSuffix = /\d/.test(firstNote);
+                                    
+                                    if (hasNumericSuffix && sruthiLookup[firstNote]) {
+                                        // Explicit variant like R2, G3, M1, etc.
+                                        lookupNote = firstNote;
+                                        console.log(`  ✍️  [${totalCells}] "${atom.text}": EXPLICIT → ${lookupNote}`);
+                                    } else {
+                                        // Use variant selector for base note (includes bare notes like R, G, M, D, N, S, P)
+                                        const baseNote = firstNote.charAt(0).toLowerCase();
+                                        const selectedVariant = variantMap[baseNote];
+                                        if (selectedVariant && sruthiLookup[selectedVariant]) {
+                                            lookupNote = selectedVariant;
+                                            console.log(`  🎚️  [${totalCells}] "${atom.text}": SELECTOR (${baseNote}→${selectedVariant}) → ${lookupNote}`);
+                                        } else {
+                                            console.warn(`  ❌ [${totalCells}] "${atom.text}": NO MATCH (baseNote=${baseNote}, selected=${selectedVariant})`);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (lookupNote && sruthiLookup[lookupNote]) {
+                                const noteData = sruthiLookup[lookupNote];
+                                const totalSemitones = sruthiSemitoneOffset + noteData.semitones;
+                                const westernNote = semitoneToWesternNote(totalSemitones);
+
+                                atom.frequency = noteData.frequency;
+                                atom.midiNumber = noteData.midiNumber;
+                                atom.ragaswaraEquivalent = lookupNote.toLowerCase();
+                                atom.sruthiNoteEquivalent = westernNote;
+                                atom.isRest = false;
+                                atom.sruthi = sruthi;
+                                enrichedNotes++;
+                                
+                                console.log(`  ✅ [${totalCells}] "${atom.text}" → ${lookupNote}: f=${noteData.frequency}Hz, m=${noteData.midiNumber}`);
+                            } else if (!atom.ragaswaraEquivalent) {
+                                console.warn(`  ⚠️  [${totalCells}] "${atom.text}": FAILED TO ENRICH`);
+                            }
+                        }
+                    }
+                }
+            }
+
+            console.log(`\n📊 ===== ENRICHMENT SUMMARY =====`);
+            console.log(`📊 Total cells: ${totalCells}`);
+            console.log(`📊 Total notes: ${totalNotes}`);
+            console.log(`📊 Enriched notes: ${enrichedNotes}/${totalNotes}`);
+            console.log(`📊 Rest cells: ${restCells}`);
+            console.log(`🎵 ===== ENRICHMENT COMPLETE =====\n`);
+
+            return song;
+        }
 
         let audioContext = null;
         let isPlaying = false;

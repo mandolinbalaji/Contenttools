@@ -148,6 +148,150 @@
     }
   },
   {
+    "_metadata": {
+      "sruthiLookupTable": {
+        "C#": {
+          "S": {
+            "note": "S",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "R1": {
+            "note": "R1",
+            "semitones": 1,
+            "midiNumber": 62,
+            "frequency": 293.66
+          },
+          "R2": {
+            "note": "R2",
+            "semitones": 2,
+            "midiNumber": 63,
+            "frequency": 311.12
+          },
+          "R3": {
+            "note": "R3",
+            "semitones": 3,
+            "midiNumber": 64,
+            "frequency": 329.62
+          },
+          "G1": {
+            "note": "G1",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "G2": {
+            "note": "G2",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "G3": {
+            "note": "G3",
+            "semitones": 4,
+            "midiNumber": 65,
+            "frequency": 349.22
+          },
+          "M1": {
+            "note": "M1",
+            "semitones": 5,
+            "midiNumber": 66,
+            "frequency": 369.99
+          },
+          "M2": {
+            "note": "M2",
+            "semitones": 6,
+            "midiNumber": 67,
+            "frequency": 391.99
+          },
+          "P": {
+            "note": "P",
+            "semitones": 7,
+            "midiNumber": 68,
+            "frequency": 415.3
+          },
+          "D1": {
+            "note": "D1",
+            "semitones": 8,
+            "midiNumber": 69,
+            "frequency": 440
+          },
+          "D2": {
+            "note": "D2",
+            "semitones": 9,
+            "midiNumber": 70,
+            "frequency": 466.16
+          },
+          "D3": {
+            "note": "D3",
+            "semitones": 10,
+            "midiNumber": 71,
+            "frequency": 493.88
+          },
+          "N1": {
+            "note": "N1",
+            "semitones": 8,
+            "midiNumber": 69,
+            "frequency": 440
+          },
+          "N2": {
+            "note": "N2",
+            "semitones": 9,
+            "midiNumber": 70,
+            "frequency": 466.16
+          },
+          "N3": {
+            "note": "N3",
+            "semitones": 10,
+            "midiNumber": 71,
+            "frequency": 493.88
+          },
+          "Ṡ": {
+            "note": "Ṡ",
+            "semitones": 12,
+            "midiNumber": 73,
+            "frequency": 554.36
+          },
+          "Ṙ": {
+            "note": "Ṙ",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "Ġ": {
+            "note": "Ġ",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "Ṁ": {
+            "note": "Ṁ",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "Ṗ": {
+            "note": "Ṗ",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "Ḋ": {
+            "note": "Ḋ",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          },
+          "Ṅ": {
+            "note": "Ṅ",
+            "semitones": 0,
+            "midiNumber": 61,
+            "frequency": 277.18
+          }
+        }
+      }
+    },
     "arohana": "S R2 G3 M1 D2 Ṡ",
     "avarohana": "Ṡ N2 D2 M1 G3 R2 S",
     "beats": "8",
@@ -164,7 +308,6 @@
     "rawText": "Composition: MakelaraVicharamu\n• Rāga: Ravicandrika (Mēḷa 28)\n• Ārōhaṇa: S R2 G3 M1 D2 Ṡ\n• Avarōhaṇa: Ṡ N2 D2 M1 G3 R2 S\n• Tāḷa: 8x4 (Dēśādi)\nComposer: Thyagaraja\nNotation:TKGovidaRao\n\n--------------------------------------------------------------------------------\nPallavi (P.1)\nLine 1:\n,, ,, ,, *M, ,, G, ,,M, |G, ,, ,, - GR |GRS, ,, R,||G, ,, ,, *\n          mā    kē    la    rā           vi      cā      ra mu\nLine 2:\n          M, ,, D, ,,M, |G, ,, ,, -RG |MG GRS, R,||G, ,, ,, *\n          mā    kē    la    rā           vi      cā      ra mu\nLine 3 (Syllabic Alignment):\n*M, ,, D, ,,N, |NDD,M,{G,}{,M}|{G,}{,M} GRS, R,||G, ,, ,, *\n mā    kē    la  rā      vi cā        ra mu\n\nM,M,D, ,,N, |NDD,, ,D, |Ṡ,Ṡ, ṠND, ||ṠNNDD,*\nma ru gan na  śrī     rā  macan    dra\nLine 4:\n*M, ,, D, ,,Ṡ, |DṠRĠṀĠ ṘṠ|NDM MGR SR||G, ,, ,, *\n mā    kē    la  rā      vi cā      ra mu\n\nMGM, D, ,, ṠN|NDD,, ,D, |Ṡ,Ṡ, ṠNND||{MDND,ṘṠṠ}N,*\nma ru gan na śrī     rā  macan    dra (mākēlarā)\n\n--------------------------------------------------------------------------------\nAnupallavi (A.1)\nLine 1:\n,, ,, ,, *M,N, NDD, D, |Ṡ,, ,, ṘĠ |ṀĠ Ṙ, ,, ĠṀ||ĠṘṠ, ,, *\n          sā  kē    ta   rā  ja      ku  mā      ra\n\nDṠ,N NDD,D, |Ṡ, MDṠ, ṘĠ |ṀĠṘ Ṙ,, ṘĠ ||ṀĠṘ Ṡ,, *\nsā  kē  ta rā    ja      ku  mā      ra\nLine 2:\n*D,Ṡ, ṠNN,D, |M,, D,, N, |,, ṠNN,D,||ṠṠNNDD,*\n sad bha kta   mandā ra     śrī  ka  ra\n\n{D,,Ṙ Ṡ,,Ṙ} ṠNN,D, |DM,D,, N, |D, ṘṠ ṠNND||ṠNND,D,*\nsad  bha ktamandā ra         śrī  ka  ra\n                                  (mākēlarā vicāramu)\n\n--------------------------------------------------------------------------------\nCharaṇam (C.1)\nLine 1:\n,, ,, ,, *M,M,M, ,,M, |MGG, ,, G, |M, D, ,, ṠN||ND,D,,*\n          ja ta gūrc ci   nā       ta  ka sū tra mu nu\nLine 2:\nD,ṠN NDD,M, |GMGRS, MG| ,M D, ,, ṠN||ND,D,, *\nja ga mel  la  me cca ga ka ra muna ni ḍi\n\n-------------------------------------------------------------------------------",
     "sections": [
       {
-        "title": "Pallavi (P.1)",
         "rows": [
           {
             "id": "section-0-row-0-swara",
@@ -175,193 +318,341 @@
                 "text": ",",
                 "index": 0,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 1,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 2,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 3,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 4,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 5,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 6,
-                "isEduppu": false,
-                "speed": 1
+                "isEduppu": true,
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 7,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 8,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 9,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 10,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 11,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 12,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 13,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 14,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 15,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 16,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 17,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 18,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 19,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 20,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 21,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 22,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 23,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 24,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 25,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "S",
                 "index": 26,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 27,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 28,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 29,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 30,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 31,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               }
             ]
           },
@@ -414,193 +705,347 @@
                 "text": "G",
                 "index": 32,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 33,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 34,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 35,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 36,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 37,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 38,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 39,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 40,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 41,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 42,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 43,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 44,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 45,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 46,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 47,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 48,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 49,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 50,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 51,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 52,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 53,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 54,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 55,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 56,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 57,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 58,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 59,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "S",
                 "index": 60,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 61,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 62,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 63,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               }
             ]
           },
@@ -653,133 +1098,237 @@
                 "text": "G",
                 "index": 64,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 65,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 66,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 67,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 68,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 69,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 70,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 71,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 72,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 73,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 74,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 75,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 76,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 77,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 78,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 79,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 80,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 81,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 82,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 83,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 84,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 85,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "G,",
@@ -787,7 +1336,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-0",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",M",
@@ -795,7 +1350,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-2",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G,",
@@ -803,7 +1364,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-4",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",M",
@@ -811,43 +1378,81 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-6",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 90,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 91,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "S",
                 "index": 92,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 93,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 94,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 95,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               }
             ]
           },
@@ -900,193 +1505,349 @@
                 "text": "G",
                 "index": 96,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 97,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 98,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 99,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 100,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 101,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 102,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 103,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 104,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 105,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 106,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 107,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 108,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 109,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 110,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 111,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 112,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 113,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 114,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 115,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 116,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 117,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 118,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 119,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 120,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 121,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 122,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 123,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 124,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 125,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 126,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 127,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               }
             ]
           },
@@ -1139,193 +1900,369 @@
                 "text": "Ṡ",
                 "index": 128,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 129,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 130,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 131,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 132,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 133,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 134,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 135,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 136,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 137,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 138,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 139,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 140,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 141,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 142,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 143,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 144,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 145,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 146,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 147,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṁ",
                 "index": 148,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 149,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 150,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 151,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 152,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 153,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 154,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 155,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 156,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 157,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "S",
                 "index": 158,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 159,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -1378,193 +2315,355 @@
                 "text": "G",
                 "index": 160,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 161,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 162,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 163,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 164,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 165,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 166,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 167,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 168,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 169,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 170,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 171,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 172,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 173,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 174,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 175,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 176,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 177,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 178,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 179,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 180,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 181,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 182,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 183,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 184,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 185,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 186,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 187,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 188,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 189,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 190,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 191,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -1619,7 +2718,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-8",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "ND",
@@ -1627,7 +2732,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-10",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",Ṙ",
@@ -1635,7 +2746,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-12",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "ṠṠ",
@@ -1643,19 +2760,35 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-14",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 196,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 197,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               }
             ]
           },
@@ -1673,10 +2806,11 @@
             ],
             "parentSwaraId": "section-0-row-6-swara"
           }
-        ]
+        ],
+        "sectionName": "Pallavi (P.1)",
+        "title": "Pallavi (P.1)"
       },
       {
-        "title": "Anupallavi (A.1)",
         "rows": [
           {
             "id": "section-1-row-0-swara",
@@ -1687,193 +2821,351 @@
                 "text": ",",
                 "index": 0,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 1,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 2,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 3,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 4,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 5,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 6,
-                "isEduppu": false,
-                "speed": 1
+                "isEduppu": true,
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 7,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 8,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 9,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 10,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 11,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 12,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 13,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 14,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 15,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 16,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 17,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 18,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 19,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 20,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 21,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 22,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṁ",
                 "index": 23,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 24,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 25,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 26,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 27,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 28,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 29,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṁ",
                 "index": 30,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 31,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -1926,193 +3218,365 @@
                 "text": "Ṙ",
                 "index": 32,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 33,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 34,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 35,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 36,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 37,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 38,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 39,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 40,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 41,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 42,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 43,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 44,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 45,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 46,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 47,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 48,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 49,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 50,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 51,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 52,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 53,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 54,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṁ",
                 "index": 55,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 56,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 57,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 58,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 59,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 60,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 61,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ġ",
                 "index": 62,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṁ",
                 "index": 63,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -2165,193 +3629,355 @@
                 "text": "Ġ",
                 "index": 64,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 65,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 66,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 67,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 68,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 69,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 70,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 71,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 72,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 73,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 74,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 75,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 76,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 77,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 78,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 79,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 80,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 81,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 82,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 83,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 84,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 85,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 86,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 87,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 88,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 89,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 90,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 91,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 92,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 93,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 94,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 95,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -2404,37 +4030,71 @@
                 "text": "Ṡ",
                 "index": 96,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 97,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 98,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 99,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 100,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 101,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D,",
@@ -2442,7 +4102,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-16",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",Ṙ",
@@ -2450,7 +4116,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-18",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ,",
@@ -2458,7 +4130,13 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-20",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",Ṙ",
@@ -2466,139 +4144,263 @@
                 "isEduppu": false,
                 "speed": 2,
                 "groupId": "brace-22",
-                "isBraceChild": true
+                "isBraceChild": true,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 106,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 107,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 108,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 109,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 110,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 111,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 112,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 113,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 114,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 115,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 116,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 117,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 118,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 119,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 120,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 121,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṙ",
                 "index": 122,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 123,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 124,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 125,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 126,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 127,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -2651,43 +4453,81 @@
                 "text": "Ṡ",
                 "index": 128,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 129,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 130,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 131,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 132,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 133,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 134,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               }
             ]
           },
@@ -2706,10 +4546,11 @@
             ],
             "parentSwaraId": "section-1-row-4-swara"
           }
-        ]
+        ],
+        "sectionName": "Anupallavi (A.1)",
+        "title": "Anupallavi (A.1)"
       },
       {
-        "title": "Charaṇam (C.1)",
         "rows": [
           {
             "id": "section-2-row-0-swara",
@@ -2720,193 +4561,345 @@
                 "text": ",",
                 "index": 0,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 1,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 2,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 3,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 4,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 5,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 6,
-                "isEduppu": false,
-                "speed": 1
+                "isEduppu": true,
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 7,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 8,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 9,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 10,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 11,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 12,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 13,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 14,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 15,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 16,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 17,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 18,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 19,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 20,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 21,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 22,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 23,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 24,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 25,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 26,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 27,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 28,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 29,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 30,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 31,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -2959,193 +4952,361 @@
                 "text": "N",
                 "index": 32,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 33,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 34,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 35,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 36,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 37,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 38,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 39,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 40,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 41,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 42,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 43,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 44,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 45,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 46,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 47,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 48,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 49,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 50,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 51,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "R",
                 "index": 52,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 311.12,
+                "midiNumber": 63,
+                "ragaswaraEquivalent": "r2",
+                "sruthiNoteEquivalent": "D#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "S",
                 "index": 53,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 54,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 55,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "G",
                 "index": 56,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 349.22,
+                "midiNumber": 65,
+                "ragaswaraEquivalent": "g3",
+                "sruthiNoteEquivalent": "F",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 57,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "M",
                 "index": 58,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 369.99,
+                "midiNumber": 66,
+                "ragaswaraEquivalent": "m1",
+                "sruthiNoteEquivalent": "F#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 59,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 60,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 61,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 62,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "Ṡ",
                 "index": 63,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "ragaswaraEquivalent": "s",
+                "sruthiNoteEquivalent": "C#",
+                "isRest": false,
+                "sruthi": "C#"
               }
             ]
           },
@@ -3198,43 +5359,79 @@
                 "text": "N",
                 "index": 64,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "N",
                 "index": 65,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 493.88,
+                "midiNumber": 71,
+                "ragaswaraEquivalent": "n3",
+                "sruthiNoteEquivalent": "B",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 66,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 67,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": "D",
                 "index": 68,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 466.16,
+                "midiNumber": 70,
+                "ragaswaraEquivalent": "d2",
+                "sruthiNoteEquivalent": "A#",
+                "isRest": false,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 69,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               },
               {
                 "text": ",",
                 "index": 70,
                 "isEduppu": false,
-                "speed": 1
+                "speed": 1,
+                "frequency": 277.18,
+                "midiNumber": 61,
+                "isRest": true,
+                "sruthi": "C#"
               }
             ]
           },
@@ -3253,7 +5450,9 @@
             ],
             "parentSwaraId": "section-2-row-2-swara"
           }
-        ]
+        ],
+        "sectionName": "Charaṇam (C.1)",
+        "title": "Charaṇam (C.1)"
       }
     ],
     "sruthi": "C#",
