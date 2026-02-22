@@ -104,7 +104,7 @@
 
 ### ② Main Phrase Editing
 - **Input Features**
-  - Textarea with auto-conversion (`;` → `,` for commas)
+  - Textarea with auto-conversion (`;` → `,,` for commas)
   - Octave modifiers (↑ for upper, ↓ for lower)
   - Pattern mode stub (numeric expansion)
   - Real-time validation
@@ -319,7 +319,7 @@ Triggered by:
 
 ```
 Lower octave (dots below):
-  Ṣ Ṙ Ġ Ṁ Ṗ Ḋ Ṅ
+  ṣ ṛ g̣ ṃ p̣ ḍ ṇ
 
 Middle octave (plain):
   s r g m p d n
@@ -394,7 +394,7 @@ Scenario 3: Multi-Cycle Wrap
 ### 3. Phrase Validation Rules
 
 ✓ **Valid Swaras:** s, r, g, m, p, d, n (all octaves)  
-✓ **Valid Separators:** Space, comma  
+✓ **Valid Separators:** Space, hyphen  
 ✗ **Invalid:** Numbers, special chars (except for pattern mode stub)
 
 ### 4. Auto-Conversion Rules
