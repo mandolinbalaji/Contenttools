@@ -155,139 +155,465 @@
             "note": "S",
             "semitones": 0,
             "midiNumber": 61,
-            "frequency": 277.18
+            "frequency": 277.18,
+            "westernNote": "C#4",
+            "octave": 4
+          },
+          "Ṡ": {
+            "note": "Ṡ",
+            "semitones": 0,
+            "midiNumber": 73,
+            "frequency": 554.36,
+            "westernNote": "C#5",
+            "octave": 5
+          },
+          "Ṣ": {
+            "note": "Ṣ",
+            "semitones": 0,
+            "midiNumber": 49,
+            "frequency": 138.59,
+            "westernNote": "C#3",
+            "octave": 3
           },
           "R1": {
             "note": "R1",
-            "semitones": 1,
+            "semitones": 0,
             "midiNumber": 62,
-            "frequency": 293.66
+            "frequency": 293.66,
+            "westernNote": "D4",
+            "octave": 4
+          },
+          "Ṙ1": {
+            "note": "Ṙ1",
+            "semitones": 0,
+            "midiNumber": 74,
+            "frequency": 587.32,
+            "westernNote": "D5",
+            "octave": 5
+          },
+          "Ṛ1": {
+            "note": "Ṛ1",
+            "semitones": 0,
+            "midiNumber": 50,
+            "frequency": 146.83,
+            "westernNote": "D3",
+            "octave": 3
           },
           "R2": {
             "note": "R2",
-            "semitones": 2,
+            "semitones": 0,
             "midiNumber": 63,
-            "frequency": 311.12
+            "frequency": 311.12,
+            "westernNote": "D#4",
+            "octave": 4
+          },
+          "Ṙ2": {
+            "note": "Ṙ2",
+            "semitones": 0,
+            "midiNumber": 75,
+            "frequency": 622.25,
+            "westernNote": "D#5",
+            "octave": 5
+          },
+          "Ṛ2": {
+            "note": "Ṛ2",
+            "semitones": 0,
+            "midiNumber": 51,
+            "frequency": 155.56,
+            "westernNote": "D#3",
+            "octave": 3
           },
           "R3": {
             "note": "R3",
-            "semitones": 3,
+            "semitones": 0,
             "midiNumber": 64,
-            "frequency": 329.62
+            "frequency": 329.62,
+            "westernNote": "E4",
+            "octave": 4
+          },
+          "Ṙ3": {
+            "note": "Ṙ3",
+            "semitones": 0,
+            "midiNumber": 76,
+            "frequency": 659.25,
+            "westernNote": "E5",
+            "octave": 5
+          },
+          "Ṛ3": {
+            "note": "Ṛ3",
+            "semitones": 0,
+            "midiNumber": 52,
+            "frequency": 164.81,
+            "westernNote": "E3",
+            "octave": 3
           },
           "G1": {
             "note": "G1",
             "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
+            "midiNumber": 63,
+            "frequency": 311.12,
+            "westernNote": "D#4",
+            "octave": 4
+          },
+          "Ġ1": {
+            "note": "Ġ1",
+            "semitones": 0,
+            "midiNumber": 75,
+            "frequency": 622.25,
+            "westernNote": "D#5",
+            "octave": 5
+          },
+          "G̣1": {
+            "note": "G̣1",
+            "semitones": 0,
+            "midiNumber": 51,
+            "frequency": 155.56,
+            "westernNote": "D#3",
+            "octave": 3
           },
           "G2": {
             "note": "G2",
             "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
+            "midiNumber": 64,
+            "frequency": 329.62,
+            "westernNote": "E4",
+            "octave": 4
+          },
+          "Ġ2": {
+            "note": "Ġ2",
+            "semitones": 0,
+            "midiNumber": 76,
+            "frequency": 659.25,
+            "westernNote": "E5",
+            "octave": 5
+          },
+          "G̣2": {
+            "note": "G̣2",
+            "semitones": 0,
+            "midiNumber": 52,
+            "frequency": 164.81,
+            "westernNote": "E3",
+            "octave": 3
           },
           "G3": {
             "note": "G3",
-            "semitones": 4,
+            "semitones": 0,
             "midiNumber": 65,
-            "frequency": 349.22
+            "frequency": 349.22,
+            "westernNote": "F4",
+            "octave": 4
+          },
+          "Ġ3": {
+            "note": "Ġ3",
+            "semitones": 0,
+            "midiNumber": 77,
+            "frequency": 698.45,
+            "westernNote": "F5",
+            "octave": 5
+          },
+          "G̣3": {
+            "note": "G̣3",
+            "semitones": 0,
+            "midiNumber": 53,
+            "frequency": 174.61,
+            "westernNote": "F3",
+            "octave": 3
           },
           "M1": {
             "note": "M1",
-            "semitones": 5,
+            "semitones": 0,
             "midiNumber": 66,
-            "frequency": 369.99
+            "frequency": 369.99,
+            "westernNote": "F#4",
+            "octave": 4
+          },
+          "Ṁ1": {
+            "note": "Ṁ1",
+            "semitones": 0,
+            "midiNumber": 78,
+            "frequency": 739.98,
+            "westernNote": "F#5",
+            "octave": 5
+          },
+          "Ṃ1": {
+            "note": "Ṃ1",
+            "semitones": 0,
+            "midiNumber": 54,
+            "frequency": 185,
+            "westernNote": "F#3",
+            "octave": 3
           },
           "M2": {
             "note": "M2",
-            "semitones": 6,
+            "semitones": 0,
             "midiNumber": 67,
-            "frequency": 391.99
+            "frequency": 391.99,
+            "westernNote": "G4",
+            "octave": 4
+          },
+          "Ṁ2": {
+            "note": "Ṁ2",
+            "semitones": 0,
+            "midiNumber": 79,
+            "frequency": 783.98,
+            "westernNote": "G5",
+            "octave": 5
+          },
+          "Ṃ2": {
+            "note": "Ṃ2",
+            "semitones": 0,
+            "midiNumber": 55,
+            "frequency": 196,
+            "westernNote": "G3",
+            "octave": 3
           },
           "P": {
             "note": "P",
-            "semitones": 7,
+            "semitones": 0,
             "midiNumber": 68,
-            "frequency": 415.3
-          },
-          "D1": {
-            "note": "D1",
-            "semitones": 8,
-            "midiNumber": 69,
-            "frequency": 440
-          },
-          "D2": {
-            "note": "D2",
-            "semitones": 9,
-            "midiNumber": 70,
-            "frequency": 466.16
-          },
-          "D3": {
-            "note": "D3",
-            "semitones": 10,
-            "midiNumber": 71,
-            "frequency": 493.88
-          },
-          "N1": {
-            "note": "N1",
-            "semitones": 8,
-            "midiNumber": 69,
-            "frequency": 440
-          },
-          "N2": {
-            "note": "N2",
-            "semitones": 9,
-            "midiNumber": 70,
-            "frequency": 466.16
-          },
-          "N3": {
-            "note": "N3",
-            "semitones": 10,
-            "midiNumber": 71,
-            "frequency": 493.88
-          },
-          "Ṡ": {
-            "note": "Ṡ",
-            "semitones": 12,
-            "midiNumber": 73,
-            "frequency": 554.36
-          },
-          "Ṙ": {
-            "note": "Ṙ",
-            "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
-          },
-          "Ġ": {
-            "note": "Ġ",
-            "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
-          },
-          "Ṁ": {
-            "note": "Ṁ",
-            "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
+            "frequency": 415.3,
+            "westernNote": "G#4",
+            "octave": 4
           },
           "Ṗ": {
             "note": "Ṗ",
             "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
+            "midiNumber": 80,
+            "frequency": 830.6,
+            "westernNote": "G#5",
+            "octave": 5
+          },
+          "P̣": {
+            "note": "P̣",
+            "semitones": 0,
+            "midiNumber": 56,
+            "frequency": 207.65,
+            "westernNote": "G#3",
+            "octave": 3
+          },
+          "D1": {
+            "note": "D1",
+            "semitones": 0,
+            "midiNumber": 69,
+            "frequency": 440,
+            "westernNote": "A4",
+            "octave": 4
+          },
+          "Ḋ1": {
+            "note": "Ḋ1",
+            "semitones": 0,
+            "midiNumber": 81,
+            "frequency": 879.99,
+            "westernNote": "A5",
+            "octave": 5
+          },
+          "Ḍ1": {
+            "note": "Ḍ1",
+            "semitones": 0,
+            "midiNumber": 57,
+            "frequency": 220,
+            "westernNote": "A3",
+            "octave": 3
+          },
+          "D2": {
+            "note": "D2",
+            "semitones": 0,
+            "midiNumber": 70,
+            "frequency": 466.16,
+            "westernNote": "A#4",
+            "octave": 4
+          },
+          "Ḋ2": {
+            "note": "Ḋ2",
+            "semitones": 0,
+            "midiNumber": 82,
+            "frequency": 932.32,
+            "westernNote": "A#5",
+            "octave": 5
+          },
+          "Ḍ2": {
+            "note": "Ḍ2",
+            "semitones": 0,
+            "midiNumber": 58,
+            "frequency": 233.08,
+            "westernNote": "A#3",
+            "octave": 3
+          },
+          "D3": {
+            "note": "D3",
+            "semitones": 0,
+            "midiNumber": 71,
+            "frequency": 493.88,
+            "westernNote": "B4",
+            "octave": 4
+          },
+          "Ḋ3": {
+            "note": "Ḋ3",
+            "semitones": 0,
+            "midiNumber": 83,
+            "frequency": 987.76,
+            "westernNote": "B5",
+            "octave": 5
+          },
+          "Ḍ3": {
+            "note": "Ḍ3",
+            "semitones": 0,
+            "midiNumber": 59,
+            "frequency": 246.94,
+            "westernNote": "B3",
+            "octave": 3
+          },
+          "N1": {
+            "note": "N1",
+            "semitones": 0,
+            "midiNumber": 69,
+            "frequency": 440,
+            "westernNote": "A4",
+            "octave": 4
+          },
+          "Ṅ1": {
+            "note": "Ṅ1",
+            "semitones": 0,
+            "midiNumber": 81,
+            "frequency": 879.99,
+            "westernNote": "A5",
+            "octave": 5
+          },
+          "Ṇ1": {
+            "note": "Ṇ1",
+            "semitones": 0,
+            "midiNumber": 57,
+            "frequency": 220,
+            "westernNote": "A3",
+            "octave": 3
+          },
+          "N2": {
+            "note": "N2",
+            "semitones": 0,
+            "midiNumber": 70,
+            "frequency": 466.16,
+            "westernNote": "A#4",
+            "octave": 4
+          },
+          "Ṅ2": {
+            "note": "Ṅ2",
+            "semitones": 0,
+            "midiNumber": 82,
+            "frequency": 932.32,
+            "westernNote": "A#5",
+            "octave": 5
+          },
+          "Ṇ2": {
+            "note": "Ṇ2",
+            "semitones": 0,
+            "midiNumber": 58,
+            "frequency": 233.08,
+            "westernNote": "A#3",
+            "octave": 3
+          },
+          "N3": {
+            "note": "N3",
+            "semitones": 0,
+            "midiNumber": 71,
+            "frequency": 493.88,
+            "westernNote": "B4",
+            "octave": 4
+          },
+          "Ṅ3": {
+            "note": "Ṅ3",
+            "semitones": 0,
+            "midiNumber": 83,
+            "frequency": 987.76,
+            "westernNote": "B5",
+            "octave": 5
+          },
+          "Ṇ3": {
+            "note": "Ṇ3",
+            "semitones": 0,
+            "midiNumber": 59,
+            "frequency": 246.94,
+            "westernNote": "B3",
+            "octave": 3
+          },
+          "Ṙ": {
+            "note": "Ṙ",
+            "semitones": 0,
+            "midiNumber": 74,
+            "frequency": 587.32,
+            "westernNote": "D5",
+            "octave": 5
+          },
+          "Ṛ": {
+            "note": "Ṛ",
+            "semitones": 0,
+            "midiNumber": 50,
+            "frequency": 146.83,
+            "westernNote": "D3",
+            "octave": 3
+          },
+          "Ġ": {
+            "note": "Ġ",
+            "semitones": 0,
+            "midiNumber": 77,
+            "frequency": 698.45,
+            "westernNote": "F5",
+            "octave": 5
+          },
+          "G̣": {
+            "note": "G̣",
+            "semitones": 0,
+            "midiNumber": 53,
+            "frequency": 174.61,
+            "westernNote": "F3",
+            "octave": 3
+          },
+          "Ṁ": {
+            "note": "Ṁ",
+            "semitones": 0,
+            "midiNumber": 78,
+            "frequency": 739.98,
+            "westernNote": "F#5",
+            "octave": 5
+          },
+          "Ṃ": {
+            "note": "Ṃ",
+            "semitones": 0,
+            "midiNumber": 54,
+            "frequency": 185,
+            "westernNote": "F#3",
+            "octave": 3
           },
           "Ḋ": {
             "note": "Ḋ",
             "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
+            "midiNumber": 82,
+            "frequency": 932.32,
+            "westernNote": "A#5",
+            "octave": 5
+          },
+          "Ḍ": {
+            "note": "Ḍ",
+            "semitones": 0,
+            "midiNumber": 58,
+            "frequency": 233.08,
+            "westernNote": "A#3",
+            "octave": 3
           },
           "Ṅ": {
             "note": "Ṅ",
             "semitones": 0,
-            "midiNumber": 61,
-            "frequency": 277.18
+            "midiNumber": 83,
+            "frequency": 987.76,
+            "westernNote": "B5",
+            "octave": 5
+          },
+          "Ṇ": {
+            "note": "Ṇ",
+            "semitones": 0,
+            "midiNumber": 59,
+            "frequency": 246.94,
+            "westernNote": "B3",
+            "octave": 3
           }
         }
       }
@@ -305,6 +631,126 @@
     "notation": "TKGovidaRao",
     "ragam": "Ravicandrika (Mēḷa 28)",
     "ragaswara": "r2 g3 m1 d2 n3",
+    "ragaswaraVariantMapping": {
+      "baseVariantAssignments": {
+        "D": "d2",
+        "G": "g3",
+        "M": "m1",
+        "N": "n3",
+        "P": "p",
+        "R": "r2",
+        "S": "s"
+      },
+      "description": "Complete mapping of all note forms to their ragaswaraEquivalent values. Base variants (r2, g3, m1, d2, n3) apply to all note forms UNLESS explicitly overridden by variant suffix.",
+      "instructions": "For any cell in the spreadsheet: (1) If it contains an explicit variant (e.g., R1, Ṙ1, G2), use the variant-specific ragaswaraEquivalent from noteMapping (e.g., R1→r1, Ṙ1→ṙ1). (2) If it contains a base note (R, Ġ, M), use the mapped ragaswaraEquivalent (e.g., R→r2, Ġ→ġ3, M→m1). (3) The Format button automatically applies this mapping when you click it.",
+      "noteMapping": {
+        "D": {
+          "dotsAbove": "ḋ2",
+          "dotsBelow": "ḍ2",
+          "plain": "d2"
+        },
+        "D1": {
+          "dotsAbove": "ḋ1",
+          "dotsBelow": "ḍ1",
+          "plain": "d1"
+        },
+        "D2": {
+          "dotsAbove": "ḋ2",
+          "dotsBelow": "ḍ2",
+          "plain": "d2"
+        },
+        "D3": {
+          "dotsAbove": "ḋ3",
+          "dotsBelow": "ḍ3",
+          "plain": "d3"
+        },
+        "G": {
+          "dotsAbove": "ġ3",
+          "dotsBelow": "g̣3",
+          "plain": "g3"
+        },
+        "G1": {
+          "dotsAbove": "ġ1",
+          "dotsBelow": "g̣1",
+          "plain": "g1"
+        },
+        "G2": {
+          "dotsAbove": "ġ2",
+          "dotsBelow": "g̣2",
+          "plain": "g2"
+        },
+        "G3": {
+          "dotsAbove": "ġ3",
+          "dotsBelow": "g̣3",
+          "plain": "g3"
+        },
+        "M": {
+          "dotsAbove": "ṁ1",
+          "dotsBelow": "ṃ1",
+          "plain": "m1"
+        },
+        "M1": {
+          "dotsAbove": "ṁ1",
+          "dotsBelow": "ṃ1",
+          "plain": "m1"
+        },
+        "M2": {
+          "dotsAbove": "ṁ2",
+          "dotsBelow": "ṃ2",
+          "plain": "m2"
+        },
+        "N": {
+          "dotsAbove": "ṅ3",
+          "dotsBelow": "ṇ3",
+          "plain": "n3"
+        },
+        "N1": {
+          "dotsAbove": "ṅ1",
+          "dotsBelow": "ṇ1",
+          "plain": "n1"
+        },
+        "N2": {
+          "dotsAbove": "ṅ2",
+          "dotsBelow": "ṇ2",
+          "plain": "n2"
+        },
+        "N3": {
+          "dotsAbove": "ṅ3",
+          "dotsBelow": "ṇ3",
+          "plain": "n3"
+        },
+        "P": {
+          "dotsAbove": "ṗ",
+          "dotsBelow": "p̣",
+          "plain": "p"
+        },
+        "R": {
+          "dotsAbove": "ṙ2",
+          "dotsBelow": "ṛ2",
+          "plain": "r2"
+        },
+        "R1": {
+          "dotsAbove": "ṙ1",
+          "dotsBelow": "ṛ1",
+          "plain": "r1"
+        },
+        "R2": {
+          "dotsAbove": "ṙ2",
+          "dotsBelow": "ṛ2",
+          "plain": "r2"
+        },
+        "R3": {
+          "dotsAbove": "ṙ3",
+          "dotsBelow": "ṛ3",
+          "plain": "r3"
+        },
+        "S": {
+          "dotsAbove": "ṡ",
+          "dotsBelow": "ṣ",
+          "plain": "s"
+        }
+      }
+    },
     "rawText": "Composition: MakelaraVicharamu\n• Rāga: Ravicandrika (Mēḷa 28)\n• Ārōhaṇa: S R2 G3 M1 D2 Ṡ\n• Avarōhaṇa: Ṡ N2 D2 M1 G3 R2 S\n• Tāḷa: 8x4 (Dēśādi)\nComposer: Thyagaraja\nNotation:TKGovidaRao\n\n--------------------------------------------------------------------------------\nPallavi (P.1)\nLine 1:\n,, ,, ,, *M, ,, G, ,,M, |G, ,, ,, - GR |GRS, ,, R,||G, ,, ,, *\n          mā    kē    la    rā           vi      cā      ra mu\nLine 2:\n          M, ,, D, ,,M, |G, ,, ,, -RG |MG GRS, R,||G, ,, ,, *\n          mā    kē    la    rā           vi      cā      ra mu\nLine 3 (Syllabic Alignment):\n*M, ,, D, ,,N, |NDD,M,{G,}{,M}|{G,}{,M} GRS, R,||G, ,, ,, *\n mā    kē    la  rā      vi cā        ra mu\n\nM,M,D, ,,N, |NDD,, ,D, |Ṡ,Ṡ, ṠND, ||ṠNNDD,*\nma ru gan na  śrī     rā  macan    dra\nLine 4:\n*M, ,, D, ,,Ṡ, |DṠRĠṀĠ ṘṠ|NDM MGR SR||G, ,, ,, *\n mā    kē    la  rā      vi cā      ra mu\n\nMGM, D, ,, ṠN|NDD,, ,D, |Ṡ,Ṡ, ṠNND||{MDND,ṘṠṠ}N,*\nma ru gan na śrī     rā  macan    dra (mākēlarā)\n\n--------------------------------------------------------------------------------\nAnupallavi (A.1)\nLine 1:\n,, ,, ,, *M,N, NDD, D, |Ṡ,, ,, ṘĠ |ṀĠ Ṙ, ,, ĠṀ||ĠṘṠ, ,, *\n          sā  kē    ta   rā  ja      ku  mā      ra\n\nDṠ,N NDD,D, |Ṡ, MDṠ, ṘĠ |ṀĠṘ Ṙ,, ṘĠ ||ṀĠṘ Ṡ,, *\nsā  kē  ta rā    ja      ku  mā      ra\nLine 2:\n*D,Ṡ, ṠNN,D, |M,, D,, N, |,, ṠNN,D,||ṠṠNNDD,*\n sad bha kta   mandā ra     śrī  ka  ra\n\n{D,,Ṙ Ṡ,,Ṙ} ṠNN,D, |DM,D,, N, |D, ṘṠ ṠNND||ṠNND,D,*\nsad  bha ktamandā ra         śrī  ka  ra\n                                  (mākēlarā vicāramu)\n\n--------------------------------------------------------------------------------\nCharaṇam (C.1)\nLine 1:\n,, ,, ,, *M,M,M, ,,M, |MGG, ,, G, |M, D, ,, ṠN||ND,D,,*\n          ja ta gūrc ci   nā       ta  ka sū tra mu nu\nLine 2:\nD,ṠN NDD,M, |GMGRS, MG| ,M D, ,, ṠN||ND,D,, *\nja ga mel  la  me cca ga ka ra muna ni ḍi\n\n-------------------------------------------------------------------------------",
     "sections": [
       {
@@ -382,7 +828,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -424,7 +870,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -466,7 +912,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -488,7 +934,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -550,7 +996,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -562,7 +1008,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -574,7 +1020,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -586,7 +1032,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -598,7 +1044,7 @@
                 "frequency": 277.18,
                 "midiNumber": 61,
                 "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "sruthiNoteEquivalent": "C#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -640,7 +1086,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -709,7 +1155,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -771,7 +1217,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -813,7 +1259,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -855,7 +1301,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -877,7 +1323,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -939,7 +1385,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -951,7 +1397,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -963,7 +1409,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -975,7 +1421,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -987,7 +1433,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -999,7 +1445,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1011,7 +1457,7 @@
                 "frequency": 277.18,
                 "midiNumber": 61,
                 "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "sruthiNoteEquivalent": "C#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1033,7 +1479,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1102,7 +1548,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1164,7 +1610,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1206,7 +1652,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1248,7 +1694,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1270,7 +1716,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1282,7 +1728,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1294,7 +1740,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1316,7 +1762,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1340,7 +1786,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1354,7 +1800,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1368,7 +1814,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1382,7 +1828,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1394,7 +1840,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1406,7 +1852,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1418,7 +1864,7 @@
                 "frequency": 277.18,
                 "midiNumber": 61,
                 "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "sruthiNoteEquivalent": "C#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1440,7 +1886,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1509,7 +1955,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1571,7 +2017,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1593,7 +2039,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1615,7 +2061,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1657,7 +2103,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1679,7 +2125,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1691,7 +2137,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1703,7 +2149,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1745,7 +2191,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1764,10 +2210,10 @@
                 "index": 120,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1786,10 +2232,10 @@
                 "index": 122,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1808,10 +2254,10 @@
                 "index": 124,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1823,7 +2269,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1835,7 +2281,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1901,10 +2347,10 @@
                 "index": 128,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1916,7 +2362,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1928,7 +2374,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1940,7 +2386,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1952,7 +2398,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -1974,7 +2420,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2016,7 +2462,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2055,10 +2501,10 @@
                 "index": 142,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2080,7 +2526,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2089,10 +2535,10 @@
                 "index": 145,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2104,7 +2550,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2113,10 +2559,10 @@
                 "index": 147,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2125,10 +2571,10 @@
                 "index": 148,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 369.99,
-                "midiNumber": 66,
-                "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "frequency": 739.98,
+                "midiNumber": 78,
+                "ragaswaraEquivalent": "ṁ1",
+                "sruthiNoteEquivalent": "F#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2137,10 +2583,10 @@
                 "index": 149,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2149,10 +2595,10 @@
                 "index": 150,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2161,10 +2607,10 @@
                 "index": 151,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2176,7 +2622,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2188,7 +2634,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2200,7 +2646,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2212,7 +2658,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2224,7 +2670,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2236,7 +2682,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2248,7 +2694,7 @@
                 "frequency": 277.18,
                 "midiNumber": 61,
                 "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "sruthiNoteEquivalent": "C#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2260,7 +2706,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -2319,7 +2765,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2381,7 +2827,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2393,7 +2839,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2405,7 +2851,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2427,7 +2873,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2466,10 +2912,10 @@
                 "index": 174,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2481,7 +2927,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2493,7 +2939,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2505,7 +2951,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2517,7 +2963,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2559,7 +3005,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2578,10 +3024,10 @@
                 "index": 184,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2600,10 +3046,10 @@
                 "index": 186,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2622,10 +3068,10 @@
                 "index": 188,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2637,7 +3083,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2649,7 +3095,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2661,7 +3107,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -2722,7 +3168,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2736,7 +3182,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2747,10 +3193,10 @@
                 "speed": 2,
                 "groupId": "brace-12",
                 "isBraceChild": true,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2761,10 +3207,10 @@
                 "speed": 2,
                 "groupId": "brace-14",
                 "isBraceChild": true,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2776,7 +3222,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2885,7 +3331,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2907,7 +3353,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2929,7 +3375,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2941,7 +3387,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2953,7 +3399,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2975,7 +3421,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -2994,10 +3440,10 @@
                 "index": 16,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3046,10 +3492,10 @@
                 "index": 21,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3058,10 +3504,10 @@
                 "index": 22,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3070,10 +3516,10 @@
                 "index": 23,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 369.99,
-                "midiNumber": 66,
-                "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "frequency": 739.98,
+                "midiNumber": 78,
+                "ragaswaraEquivalent": "ṁ1",
+                "sruthiNoteEquivalent": "F#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3082,10 +3528,10 @@
                 "index": 24,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3094,10 +3540,10 @@
                 "index": 25,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3136,10 +3582,10 @@
                 "index": 29,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3148,10 +3594,10 @@
                 "index": 30,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 369.99,
-                "midiNumber": 66,
-                "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "frequency": 739.98,
+                "midiNumber": 78,
+                "ragaswaraEquivalent": "ṁ1",
+                "sruthiNoteEquivalent": "F#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3160,10 +3606,10 @@
                 "index": 31,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -3219,10 +3665,10 @@
                 "index": 32,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3231,10 +3677,10 @@
                 "index": 33,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3276,7 +3722,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3285,10 +3731,10 @@
                 "index": 38,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3310,7 +3756,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3322,7 +3768,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3334,7 +3780,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3346,7 +3792,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3368,7 +3814,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3387,10 +3833,10 @@
                 "index": 47,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3412,7 +3858,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3424,7 +3870,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3433,10 +3879,10 @@
                 "index": 51,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3455,10 +3901,10 @@
                 "index": 53,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3467,10 +3913,10 @@
                 "index": 54,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3479,10 +3925,10 @@
                 "index": 55,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 369.99,
-                "midiNumber": 66,
-                "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "frequency": 739.98,
+                "midiNumber": 78,
+                "ragaswaraEquivalent": "ṁ1",
+                "sruthiNoteEquivalent": "F#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3491,10 +3937,10 @@
                 "index": 56,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3503,10 +3949,10 @@
                 "index": 57,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3515,10 +3961,10 @@
                 "index": 58,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3547,10 +3993,10 @@
                 "index": 61,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3559,10 +4005,10 @@
                 "index": 62,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3571,10 +4017,10 @@
                 "index": 63,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 369.99,
-                "midiNumber": 66,
-                "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "frequency": 739.98,
+                "midiNumber": 78,
+                "ragaswaraEquivalent": "ṁ1",
+                "sruthiNoteEquivalent": "F#5",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -3630,10 +4076,10 @@
                 "index": 64,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 349.22,
-                "midiNumber": 65,
-                "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "frequency": 698.45,
+                "midiNumber": 77,
+                "ragaswaraEquivalent": "ġ3",
+                "sruthiNoteEquivalent": "F5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3642,10 +4088,10 @@
                 "index": 65,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3654,10 +4100,10 @@
                 "index": 66,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3689,7 +4135,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3708,10 +4154,10 @@
                 "index": 71,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3730,10 +4176,10 @@
                 "index": 73,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3745,7 +4191,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3757,7 +4203,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3779,7 +4225,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3801,7 +4247,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3833,7 +4279,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3865,7 +4311,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3904,10 +4350,10 @@
                 "index": 89,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3919,7 +4365,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3931,7 +4377,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3953,7 +4399,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -3972,10 +4418,10 @@
                 "index": 95,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -4031,10 +4477,10 @@
                 "index": 96,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4046,7 +4492,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4058,7 +4504,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4070,7 +4516,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4082,7 +4528,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4106,7 +4552,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4117,10 +4563,10 @@
                 "speed": 2,
                 "groupId": "brace-18",
                 "isBraceChild": true,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4131,10 +4577,10 @@
                 "speed": 2,
                 "groupId": "brace-20",
                 "isBraceChild": true,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4145,10 +4591,10 @@
                 "speed": 2,
                 "groupId": "brace-22",
                 "isBraceChild": true,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4157,10 +4603,10 @@
                 "index": 106,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4172,7 +4618,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4184,7 +4630,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4206,7 +4652,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4228,7 +4674,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4240,7 +4686,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4262,7 +4708,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4294,7 +4740,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4316,7 +4762,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4335,10 +4781,10 @@
                 "index": 122,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 311.12,
-                "midiNumber": 63,
-                "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "frequency": 622.25,
+                "midiNumber": 75,
+                "ragaswaraEquivalent": "ṙ2",
+                "sruthiNoteEquivalent": "D#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4347,10 +4793,10 @@
                 "index": 123,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4359,10 +4805,10 @@
                 "index": 124,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4374,7 +4820,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4386,7 +4832,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4398,7 +4844,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -4454,10 +4900,10 @@
                 "index": 128,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4469,7 +4915,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4481,7 +4927,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4493,7 +4939,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4515,7 +4961,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4625,7 +5071,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4647,7 +5093,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4669,7 +5115,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4711,7 +5157,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4733,7 +5179,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4745,7 +5191,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4757,7 +5203,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4799,7 +5245,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4821,7 +5267,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4843,7 +5289,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4882,10 +5328,10 @@
                 "index": 30,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4897,7 +5343,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -4956,7 +5402,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4968,7 +5414,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -4980,7 +5426,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5032,7 +5478,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5051,10 +5497,10 @@
                 "index": 41,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5066,7 +5512,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5078,7 +5524,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5090,7 +5536,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5102,7 +5548,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5124,7 +5570,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5146,7 +5592,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5158,7 +5604,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5170,7 +5616,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5182,7 +5628,7 @@
                 "frequency": 311.12,
                 "midiNumber": 63,
                 "ragaswaraEquivalent": "r2",
-                "sruthiNoteEquivalent": "D#",
+                "sruthiNoteEquivalent": "D#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5194,7 +5640,7 @@
                 "frequency": 277.18,
                 "midiNumber": 61,
                 "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "sruthiNoteEquivalent": "C#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5216,7 +5662,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5228,7 +5674,7 @@
                 "frequency": 349.22,
                 "midiNumber": 65,
                 "ragaswaraEquivalent": "g3",
-                "sruthiNoteEquivalent": "F",
+                "sruthiNoteEquivalent": "F4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5250,7 +5696,7 @@
                 "frequency": 369.99,
                 "midiNumber": 66,
                 "ragaswaraEquivalent": "m1",
-                "sruthiNoteEquivalent": "F#",
+                "sruthiNoteEquivalent": "F#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5262,7 +5708,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5301,10 +5747,10 @@
                 "index": 63,
                 "isEduppu": false,
                 "speed": 1,
-                "frequency": 277.18,
-                "midiNumber": 61,
-                "ragaswaraEquivalent": "s",
-                "sruthiNoteEquivalent": "C#",
+                "frequency": 554.36,
+                "midiNumber": 73,
+                "ragaswaraEquivalent": "ṡ",
+                "sruthiNoteEquivalent": "C#5",
                 "isRest": false,
                 "sruthi": "C#"
               }
@@ -5363,7 +5809,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5375,7 +5821,7 @@
                 "frequency": 493.88,
                 "midiNumber": 71,
                 "ragaswaraEquivalent": "n3",
-                "sruthiNoteEquivalent": "B",
+                "sruthiNoteEquivalent": "B4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5387,7 +5833,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },
@@ -5409,7 +5855,7 @@
                 "frequency": 466.16,
                 "midiNumber": 70,
                 "ragaswaraEquivalent": "d2",
-                "sruthiNoteEquivalent": "A#",
+                "sruthiNoteEquivalent": "A#4",
                 "isRest": false,
                 "sruthi": "C#"
               },

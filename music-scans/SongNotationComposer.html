@@ -2081,7 +2081,7 @@
             return parseInt(document.getElementById('beats').value || 8) * parseInt(document.getElementById('nadai').value || 4);
         }
 
-        function applyFormatting() {
+        async function applyFormatting() {
             // Reset counter before re-tokenizing during format
             globalBraceGroupCounter = 0;
             
@@ -2104,14 +2104,14 @@
                 formatSection(section, sIdx, totalCells, eduppuPos);
             });
 
-            // Enrich song with frequency/MIDI data after formatting
-            enrichSongWithFrequencyData(currentSong);
+            // Enrich song with frequency/MIDI data after formatting (now async)
+            await enrichSongWithFrequencyData(currentSong);
 
             gridIsDirty = true;
             console.log('🎨 Calling renderSong() after format...');
             renderSong();
             closeFormatModal();
-            showToast('✅ Notation formatted & enriched with frequency/MIDI data!');
+            showToast('✅ Notation formatted & enriched with frequency/MIDI data (from sruthi_midi_mapping.json)!');
         }
 
 
@@ -2304,7 +2304,50 @@
 
         // --- AUDIO PLAYBACK FUNCTIONS ---
 
-        // Sruthi to base frequency mapping (in Hz)
+        // Cache for sruthi_midi_mapping.json
+        let sruthiMidiMappingCache = null;
+
+        // Load sruthi_midi_mapping.json and cache it
+        async function loadSruthiMidiMapping() {
+            if (sruthiMidiMappingCache) {
+                return sruthiMidiMappingCache;
+            }
+            try {
+                const response = await fetch('sruthi_midi_mapping.json');
+                if (!response.ok) throw new Error(`Failed to load mapping: ${response.status}`);
+                const data = await response.json();
+                sruthiMidiMappingCache = data;
+                console.log(`📊 Loaded sruthi_midi_mapping.json (${data.length} entries)`);
+                return data;
+            } catch (error) {
+                console.error('❌ Error loading sruthi_midi_mapping.json:', error);
+                return null;
+            }
+        }
+
+        // Build lookup table from sruthi_midi_mapping.json data
+        function buildLookupFromMapping(mappingData, sruthi) {
+            const lookup = {};
+            if (!mappingData) return lookup;
+
+            for (const entry of mappingData) {
+                if (entry.Sruthi === sruthi) {
+                    // Normalize the note key (uppercase) and normalize Unicode
+                    const noteKey = entry.Note.toUpperCase().normalize('NFC');
+                    lookup[noteKey] = {
+                        note: entry.Note,
+                        semitones: 0,  // Not used when using external mapping
+                        midiNumber: entry.MIDI,
+                        frequency: entry['Frequency (Hz)'],
+                        westernNote: entry['Western Note'],
+                        octave: entry.Octave
+                    };
+                }
+            }
+            return lookup;
+        }
+
+        // Sruthi to base frequency mapping (in Hz) - kept for fallback
         const SRUTHI_FREQUENCIES = {
             'C': 261.63,    // C4
             'C#': 277.18,   // C#4
@@ -2322,7 +2365,16 @@
 
         // Note offsets from Sa (in semitones)
         const NOTE_SEMITONES = {
+            // Lower octave (dots below - C3)
             'Ṣ': -12, // Lower Sa
+            'Ṛ': -11, // Lower Ri3
+            'G̣': -8,  // Lower Ga3
+            'Ṃ': -7,  // Lower Ma1
+            'P̣': -5,  // Lower Pa
+            'Ḍ': -3,  // Lower Dha2
+            'Ṇ': -2,  // Lower Nishada3
+            
+            // Plain notes (C4)
             'S': 0,   // Sa
             'R1': 1,  // Ri1
             'R2': 2,  // Ri2 / G1
@@ -2337,7 +2389,15 @@
             'N1': 8,  // Nishada1 (same as D1)
             'N2': 9,  // Nishada2 (same as D2)
             'N3': 10, // Nishada3 (same as D3)
-            'Ṡ': 12   // Upper Sa
+            
+            // Upper octave (dots above - C5)
+            'Ṡ': 12,  // Upper Sa
+            'Ṙ': 13,  // Upper Ri3
+            'Ġ': 16,  // Upper Ga3
+            'Ṁ': 17,  // Upper Ma1
+            'Ṗ': 19,  // Upper Pa
+            'Ḋ': 21,  // Upper Dha2
+            'Ṅ': 22   // Upper Nishada3
         };
 
         // Generate comprehensive sruthi-based lookup table for all notes
@@ -2357,8 +2417,15 @@
             const baseSruthi = SRUTHI_FREQUENCIES[sruthi] || SRUTHI_FREQUENCIES['C'];
             const sruthiOffset = sruthiOffsets[sruthi] || 0;
 
-            // All Carnatic notes
-            const carnatic_notes = ['S', 'R1', 'R2', 'R3', 'G1', 'G2', 'G3', 'M1', 'M2', 'P', 'D1', 'D2', 'D3', 'N1', 'N2', 'N3', 'Ṡ', 'Ṙ', 'Ġ', 'Ṁ', 'Ṗ', 'Ḋ', 'Ṅ'];
+            // All Carnatic notes including dotted variants
+            const carnatic_notes = [
+                // Plain notes
+                'S', 'R1', 'R2', 'R3', 'G1', 'G2', 'G3', 'M1', 'M2', 'P', 'D1', 'D2', 'D3', 'N1', 'N2', 'N3',
+                // Dotted below (lower octave C3)
+                'Ṣ', 'Ṛ', 'G̣', 'Ṃ', 'P̣', 'Ḍ', 'Ṇ',
+                // Dotted above (upper octave C5)
+                'Ṡ', 'Ṙ', 'Ġ', 'Ṁ', 'Ṗ', 'Ḋ', 'Ṅ'
+            ];
 
             for (const note of carnatic_notes) {
                 const semitones = NOTE_SEMITONES[note] || 0;
@@ -2407,6 +2474,41 @@
             }
         }
 
+        // Check if a character has diacritical marks (dots, underlines, etc.)
+        // Returns the dotted variant if it exists in NOTE_SEMITONES, otherwise null
+        function getDottedVariant(char) {
+            // Get the base character
+            const stripped = stripDiacritics(char);
+            
+            // Try the original character first (might be a dotted variant)
+            // Check both uppercase and lowercase versions
+            const charUpper = char.toUpperCase();
+            const charLower = char.toLowerCase();
+            
+            if (char !== stripped && (NOTE_SEMITONES[charUpper] || NOTE_SEMITONES[charLower])) {
+                return charUpper;  // Return uppercase (canonical form)
+            }
+            
+            return null;
+        }
+
+        // Convert a base note character to its dotted (upper) variant
+        // E.g., 'R' -> 'Ṙ', 'G' -> 'Ġ', 'M' -> 'Ṁ', etc.
+        const DOTTED_MAPPING = {
+            'S': 'Ṡ',
+            'R': 'Ṙ',
+            'G': 'Ġ',
+            'M': 'Ṁ',
+            'P': 'Ṗ',
+            'D': 'Ḋ',
+            'N': 'Ṅ'
+        };
+
+        function getUpperDottedVariant(baseNote) {
+            const upper = baseNote.toUpperCase();
+            return DOTTED_MAPPING[upper] || null;
+        }
+
         // Extract note variants used in ragaswara (e.g., "r2 g3 m1 d2 n3" -> {r:"r2", g:"g3", m:"m1", d:"d2", n:"n3"})
         function extractRagaswaraVariants(ragaswaraStr) {
             const variants = {};
@@ -2420,9 +2522,13 @@
             return variants;
         }
 
-        // Enrich song with frequency/MIDI data before saving
-        function enrichSongWithFrequencyData(song) {
+        // Enrich song with frequency/MIDI data from sruthi_midi_mapping.json
+        async function enrichSongWithFrequencyData(song) {
             const sruthi = document.getElementById('sruthi').value || 'C';
+            
+            // Load external mapping
+            const mappingData = await loadSruthiMidiMapping();
+            const sruthiLookup = mappingData ? buildLookupFromMapping(mappingData, sruthi) : buildSruthibaseLookupTable(sruthi);
             
             // Read variant selections from UI
             const variantMap = {
@@ -2435,12 +2541,12 @@
                 's': 'S'
             };
 
-            const sruthiLookup = buildSruthibaseLookupTable(sruthi);
             const sruthiSemitoneOffset = getSruthiSemitoneOffset(sruthi);
 
             console.log(`🎵 ===== ENRICHMENT STARTED =====`);
             console.log(`🎵 Target: ${song.name || 'Unknown'}`);
             console.log(`🎵 Sruthi: ${sruthi}`);
+            console.log(`🎵 Using mapping: ${mappingData ? 'sruthi_midi_mapping.json' : 'fallback calculations'}`);
             console.log(`🎵 Variant Map:`, variantMap);
 
             // Add sruthi lookup table as metadata
@@ -2500,13 +2606,22 @@
                                 console.log(`  📌 [${totalCells}] "${atom.text}": OVERRIDE → ${lookupNote}`);
                             } else {
                                 // Extract note characters from atom (handles multi-char like "MD", ",M", "G,", ",Ṙ")
-                                // Strip diacritics and commas to get just the base notes
+                                // First check for dotted variants, then fall back to plain notes
                                 let notesInAtom = [];
                                 for (let char of noteUsed) {
                                     const stripped = stripDiacritics(char);
+                                    
                                     // Keep only note characters (not commas, dashes, spaces)
                                     if (!/^[,\-*\s]$/.test(stripped)) {
-                                        notesInAtom.push(stripped.toUpperCase());
+                                        // Priority: Check if original char is a dotted variant first
+                                        const dottedVariant = getDottedVariant(char);
+                                        if (dottedVariant) {
+                                            // It's a dotted variant like Ṡ, Ṛ, G̣, etc.
+                                            notesInAtom.push(dottedVariant.toUpperCase());
+                                        } else {
+                                            // Plain note - add with uppercase
+                                            notesInAtom.push(stripped.toUpperCase());
+                                        }
                                     }
                                 }
 
@@ -2516,12 +2631,37 @@
                                     const firstNote = notesInAtom[0];  // Get first actual note from atom
                                     
                                     // Check if it's an explicit variant with numeric suffix (R1, R2, G3, M1, etc.)
+                                    // or a dotted variant (Ṡ, Ṛ, G̣, etc.)
                                     const hasNumericSuffix = /\d/.test(firstNote);
+                                    const isDottedVariant = firstNote !== stripDiacritics(firstNote);
                                     
-                                    if (hasNumericSuffix && sruthiLookup[firstNote]) {
-                                        // Explicit variant like R2, G3, M1, etc.
+                                    if ((!isDottedVariant || hasNumericSuffix) && sruthiLookup[firstNote]) {
+                                        // Explicit variant like R2, G3, M1, or dotted variant WITH suffix like Ṙ2, Ġ3
+                                        // (but NOT standalone dotted like Ṙ or Ġ without suffix)
                                         lookupNote = firstNote;
-                                        console.log(`  ✍️  [${totalCells}] "${atom.text}": EXPLICIT → ${lookupNote}`);
+                                        const variantType = isDottedVariant ? 'DOTTED_SUFFIXED' : 'EXPLICIT';
+                                        console.log(`  ✍️  [${totalCells}] "${atom.text}": ${variantType} → ${lookupNote}`);
+                                    } else if (isDottedVariant && !hasNumericSuffix) {
+                                        // Dotted variant WITHOUT numeric suffix (e.g., just "Ṙ", not "Ṙ2")
+                                        // Get the base character and find its dotted equivalent with the selected variant suffix
+                                        const baseCharStripped = stripDiacritics(firstNote);
+                                        const baseNoteLower = baseCharStripped.toLowerCase();
+                                        const selectedVariant = variantMap[baseNoteLower];  // e.g., "r2" -> variantMap['r'] = "R2"
+                                        
+                                        if (selectedVariant) {
+                                            // Create the dotted version with variant suffix
+                                            // E.g., if selectedVariant is "R2", create "Ṙ2"
+                                            const variantNum = selectedVariant.match(/\d/)?.[0] || '';  // Extract number like "2" from "R2"
+                                            const dotted = getUpperDottedVariant(baseCharStripped);  // Convert 'R' -> 'Ṙ'
+                                            if (dotted) {
+                                                lookupNote = (dotted + variantNum).toUpperCase().normalize('NFC');
+                                                console.log(`  ✍️  [${totalCells}] "${atom.text}": DOTTED+VARIANT → ${lookupNote} (base=${baseCharStripped}, variant=${selectedVariant})`);
+                                            }
+                                        }
+                                        
+                                        if (!lookupNote) {
+                                            console.warn(`  ❌ [${totalCells}] "${atom.text}": DOTTED WITHOUT VARIANT (${firstNote})`);
+                                        }
                                     } else {
                                         // Use variant selector for base note (includes bare notes like R, G, M, D, N, S, P)
                                         const baseNote = firstNote.charAt(0).toLowerCase();
@@ -2536,20 +2676,25 @@
                                 }
                             }
 
-                            if (lookupNote && sruthiLookup[lookupNote]) {
-                                const noteData = sruthiLookup[lookupNote];
-                                const totalSemitones = sruthiSemitoneOffset + noteData.semitones;
-                                const westernNote = semitoneToWesternNote(totalSemitones);
+                            if (lookupNote) {
+                                // Normalize the lookup key to match how it was stored
+                                const normalizedLookupNote = lookupNote.toUpperCase().normalize('NFC');
+                                if (sruthiLookup[normalizedLookupNote]) {
+                                    const noteData = sruthiLookup[normalizedLookupNote];
+                                    const westernNote = noteData.westernNote || semitoneToWesternNote(sruthiSemitoneOffset + noteData.semitones);
 
-                                atom.frequency = noteData.frequency;
-                                atom.midiNumber = noteData.midiNumber;
-                                atom.ragaswaraEquivalent = lookupNote.toLowerCase();
-                                atom.sruthiNoteEquivalent = westernNote;
-                                atom.isRest = false;
-                                atom.sruthi = sruthi;
-                                enrichedNotes++;
-                                
-                                console.log(`  ✅ [${totalCells}] "${atom.text}" → ${lookupNote}: f=${noteData.frequency}Hz, m=${noteData.midiNumber}`);
+                                    atom.frequency = noteData.frequency;
+                                    atom.midiNumber = noteData.midiNumber;
+                                    atom.ragaswaraEquivalent = normalizedLookupNote.toLowerCase();
+                                    atom.sruthiNoteEquivalent = westernNote;
+                                    atom.isRest = false;
+                                    atom.sruthi = sruthi;
+                                    enrichedNotes++;
+                                    
+                                    console.log(`  ✅ [${totalCells}] "${atom.text}" → ${normalizedLookupNote}: f=${noteData.frequency}Hz, m=${noteData.midiNumber}`);
+                                } else if (!atom.ragaswaraEquivalent) {
+                                    console.warn(`  ⚠️  [${totalCells}] "${atom.text}": FAILED TO ENRICH (lookupNote=${lookupNote}, normalized=${normalizedLookupNote})`);
+                                }
                             } else if (!atom.ragaswaraEquivalent) {
                                 console.warn(`  ⚠️  [${totalCells}] "${atom.text}": FAILED TO ENRICH`);
                             }
@@ -2862,7 +3007,6 @@
 
             try {
                 let cellCounter = 0;
-                const ragaswaraArray = getRagaswaraArray();
 
                 for (const section of currentSong.sections) {
                     if (!section.rows || !isPlaying) break;
@@ -2873,35 +3017,31 @@
                         for (const atom of row.atoms) {
                             if (!isPlaying) break;
 
-                            let cellNote = (atom.text || '').trim().toLowerCase();
                             let speedMultiplier = atom.speed || 1;  // Use atom speed property (1 for normal, 2 for 2x, etc)
-
-                            // Extract speed multiplier if present in text (e.g., "2*s", "3*p") - overrides atom.speed
-                            if (cellNote.startsWith('2*')) {
-                                speedMultiplier = 2;
-                                cellNote = cellNote.substring(2);
-                            } else if (cellNote.startsWith('3*')) {
-                                speedMultiplier = 3;
-                                cellNote = cellNote.substring(2);
-                            }
-
-                            const ragaswaraIndex = cellCounter % ragaswaraArray.length;
-                            const ragaswaraNote = ragaswaraArray[ragaswaraIndex];
 
                             // Highlight playing cell
                             highlightPlayingCell(cellCounter, true);
 
                             // Determine frequency to play
                             let frequency = null;
-                            if (cellNote === ',' || cellNote === '-' || cellNote === '*') {
-                                // Rest - no sound
+                            
+                            // Priority 1: Use enriched frequency data if available
+                            if (atom.frequency && !atom.isRest) {
+                                frequency = atom.frequency;
+                                console.log(`🎵 [${cellCounter}] "${atom.text}": Using enriched frequency ${frequency}Hz`);
+                            } else if (atom.isRest) {
+                                // Rest cell - no sound
                                 frequency = null;
-                            } else if (cellNote) {
-                                // Override note
-                                frequency = noteToFrequency(cellNote, sruthi);
+                                console.log(`🔇 [${cellCounter}] "${atom.text}": REST (silence)`);
                             } else {
-                                // Use ragaswara note
-                                frequency = noteToFrequency(ragaswaraNote, sruthi);
+                                // Fallback: Calculate from note text if enrichment not available
+                                let cellNote = (atom.text || '').trim().toLowerCase();
+                                if (cellNote === ',' || cellNote === '-' || cellNote === '*') {
+                                    frequency = null;
+                                } else if (cellNote) {
+                                    frequency = noteToFrequency(cellNote, sruthi);
+                                    console.log(`⚠️  [${cellCounter}] "${atom.text}": Fallback calculation ${frequency}Hz`);
+                                }
                             }
 
                             // Calculate adjusted duration based on speed

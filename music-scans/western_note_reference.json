@@ -1,0 +1,194 @@
+{
+  "C3": {
+    "MIDI": 48,
+    "Frequency": 130.81
+  },
+  "C#3": {
+    "MIDI": 49,
+    "Frequency": 138.59
+  },
+  "D3": {
+    "MIDI": 50,
+    "Frequency": 146.83
+  },
+  "D#3": {
+    "MIDI": 51,
+    "Frequency": 155.56
+  },
+  "E3": {
+    "MIDI": 52,
+    "Frequency": 164.81
+  },
+  "F3": {
+    "MIDI": 53,
+    "Frequency": 174.61
+  },
+  "F#3": {
+    "MIDI": 54,
+    "Frequency": 185.0
+  },
+  "G3": {
+    "MIDI": 55,
+    "Frequency": 196.0
+  },
+  "G#3": {
+    "MIDI": 56,
+    "Frequency": 207.65
+  },
+  "A3": {
+    "MIDI": 57,
+    "Frequency": 220.0
+  },
+  "A#3": {
+    "MIDI": 58,
+    "Frequency": 233.08
+  },
+  "B3": {
+    "MIDI": 59,
+    "Frequency": 246.94
+  },
+  "C4": {
+    "MIDI": 60,
+    "Frequency": 261.63
+  },
+  "C#4": {
+    "MIDI": 61,
+    "Frequency": 277.18
+  },
+  "D4": {
+    "MIDI": 62,
+    "Frequency": 293.66
+  },
+  "D#4": {
+    "MIDI": 63,
+    "Frequency": 311.13
+  },
+  "E4": {
+    "MIDI": 64,
+    "Frequency": 329.63
+  },
+  "F4": {
+    "MIDI": 65,
+    "Frequency": 349.23
+  },
+  "F#4": {
+    "MIDI": 66,
+    "Frequency": 369.99
+  },
+  "G4": {
+    "MIDI": 67,
+    "Frequency": 392.0
+  },
+  "G#4": {
+    "MIDI": 68,
+    "Frequency": 415.3
+  },
+  "A4": {
+    "MIDI": 69,
+    "Frequency": 440.0
+  },
+  "A#4": {
+    "MIDI": 70,
+    "Frequency": 466.16
+  },
+  "B4": {
+    "MIDI": 71,
+    "Frequency": 493.88
+  },
+  "C5": {
+    "MIDI": 72,
+    "Frequency": 523.25
+  },
+  "C#5": {
+    "MIDI": 73,
+    "Frequency": 554.37
+  },
+  "D5": {
+    "MIDI": 74,
+    "Frequency": 587.33
+  },
+  "D#5": {
+    "MIDI": 75,
+    "Frequency": 622.25
+  },
+  "E5": {
+    "MIDI": 76,
+    "Frequency": 659.26
+  },
+  "F5": {
+    "MIDI": 77,
+    "Frequency": 698.46
+  },
+  "F#5": {
+    "MIDI": 78,
+    "Frequency": 739.99
+  },
+  "G5": {
+    "MIDI": 79,
+    "Frequency": 783.99
+  },
+  "G#5": {
+    "MIDI": 80,
+    "Frequency": 830.61
+  },
+  "A5": {
+    "MIDI": 81,
+    "Frequency": 880.0
+  },
+  "A#5": {
+    "MIDI": 82,
+    "Frequency": 932.33
+  },
+  "B5": {
+    "MIDI": 83,
+    "Frequency": 987.77
+  },
+  "C6": {
+    "MIDI": 84,
+    "Frequency": 1046.5
+  },
+  "C#6": {
+    "MIDI": 85,
+    "Frequency": 1108.73
+  },
+  "D6": {
+    "MIDI": 86,
+    "Frequency": 1174.66
+  },
+  "D#6": {
+    "MIDI": 87,
+    "Frequency": 1244.51
+  },
+  "E6": {
+    "MIDI": 88,
+    "Frequency": 1318.51
+  },
+  "F6": {
+    "MIDI": 89,
+    "Frequency": 1396.91
+  },
+  "F#6": {
+    "MIDI": 90,
+    "Frequency": 1479.98
+  },
+  "G6": {
+    "MIDI": 91,
+    "Frequency": 1567.98
+  },
+  "G#6": {
+    "MIDI": 92,
+    "Frequency": 1661.22
+  },
+  "A6": {
+    "MIDI": 93,
+    "Frequency": 1760.0
+  },
+  "A#6": {
+    "MIDI": 94,
+    "Frequency": 1864.66
+  },
+  "B6": {
+    "MIDI": 95,
+    "Frequency": 1975.53
+  }
+}

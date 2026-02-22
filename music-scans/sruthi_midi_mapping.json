@@ -1,0 +1,6698 @@
+[
+  {
+    "Sruthi": "C",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.26,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 48,
+    "Frequency (Hz)": 130.81,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.19,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 49,
+    "Frequency (Hz)": 138.59,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.34,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 50,
+    "Frequency (Hz)": 146.83,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.57,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.34,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 50,
+    "Frequency (Hz)": 146.83,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.57,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.27,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.82,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.47,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 370.0,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 740.0,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.31,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.66,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.01,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.17,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.34,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.09,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.31,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.66,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.01,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.17,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.34,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.09,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 49,
+    "Frequency (Hz)": 138.59,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.27,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.82,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.47,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.34,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.09,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.26,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 48,
+    "Frequency (Hz)": 130.81,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 49,
+    "Frequency (Hz)": 138.59,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 50,
+    "Frequency (Hz)": 146.83,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.56,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.81,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.56,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.81,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.22,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.61,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 50,
+    "Frequency (Hz)": 146.83,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.61,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 49,
+    "Frequency (Hz)": 138.59,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "C#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 50,
+    "Frequency (Hz)": 146.83,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.24,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.56,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.24,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.81,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.22,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.61,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.24,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.81,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.22,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.61,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 184.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 195.99,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 439.99,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.31,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.75,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.24,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.31,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.75,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.24,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.24,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.56,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 184.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 195.99,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.75,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 50,
+    "Frequency (Hz)": 146.83,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.56,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.26,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.82,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 370.0,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 740.0,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 370.0,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 740.0,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.31,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.17,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.34,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.89,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.78,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.26,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.19,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.89,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.78,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.26,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.19,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.26,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.82,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.19,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 51,
+    "Frequency (Hz)": 155.56,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.34,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "D#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.26,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.81,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 370.0,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.99,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 370.0,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.99,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.31,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.17,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.33,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.89,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.77,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.26,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.33,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.26,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.33,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.26,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 52,
+    "Frequency (Hz)": 164.81,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "E",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.77,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "E",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 370.0,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.99,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.99,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.31,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.61,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.99,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.31,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.61,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.0,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.17,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.33,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.89,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.77,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.25,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.33,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.51,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.33,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.51,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.99,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.0,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.33,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.51,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 53,
+    "Frequency (Hz)": 174.62,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 439.99,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 439.99,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.75,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.24,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.65,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.49,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.49,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.65,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.49,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.49,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.75,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.49,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.49,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 54,
+    "Frequency (Hz)": 185.0,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "F#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.31,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.01,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.17,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.34,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.01,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.01,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.17,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.34,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.89,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.78,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.26,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.74,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.19,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.34,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.52,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.26,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.53,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.93,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.26,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.52,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.26,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.53,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.93,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.62,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.78,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.51,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.53,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.93,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 79,
+    "Frequency (Hz)": 784.0,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 55,
+    "Frequency (Hz)": 196.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.67,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.67,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.25,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.65,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.49,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.5,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.9,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.22,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.96,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.5,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.9,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.22,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.96,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.9,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.22,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.96,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 56,
+    "Frequency (Hz)": 207.65,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.49,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "G#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.0,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.33,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.77,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.25,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.5,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.77,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.25,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.5,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.63,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.37,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.73,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.33,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.66,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.51,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.13,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.26,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.51,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.91,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.99,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.99,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.46,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.91,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.99,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.99,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.33,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.73,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.66,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.98,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.98,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 392.0,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 81,
+    "Frequency (Hz)": 880.0,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 57,
+    "Frequency (Hz)": 220.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.51,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 70,
+    "Frequency (Hz)": 466.16,
+    "Western Note": "A#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.25,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.25,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.49,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.32,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.65,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.5,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.5,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.62,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.9,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.97,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.98,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.97,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 92,
+    "Frequency (Hz)": 1661.21,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.97,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.98,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.97,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 92,
+    "Frequency (Hz)": 1661.21,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.65,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.5,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.97,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 92,
+    "Frequency (Hz)": 1661.21,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 82,
+    "Frequency (Hz)": 932.32,
+    "Western Note": "A#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 58,
+    "Frequency (Hz)": 233.08,
+    "Western Note": "A#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.9,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "A#",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "S",
+    "Variant": "Plain (C4)",
+    "MIDI": 71,
+    "Frequency (Hz)": 493.88,
+    "Western Note": "B4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "R1",
+    "Variant": "Plain (C4)",
+    "MIDI": 72,
+    "Frequency (Hz)": 523.25,
+    "Western Note": "C4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṙ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.5,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṛ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "R2",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṙ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṛ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "R3",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.33,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṙ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.65,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṛ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "G1",
+    "Variant": "Plain (C4)",
+    "MIDI": 73,
+    "Frequency (Hz)": 554.36,
+    "Western Note": "C#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ġ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 85,
+    "Frequency (Hz)": 1108.72,
+    "Western Note": "C#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "G̣1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 61,
+    "Frequency (Hz)": 277.18,
+    "Western Note": "C#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "G2",
+    "Variant": "Plain (C4)",
+    "MIDI": 74,
+    "Frequency (Hz)": 587.33,
+    "Western Note": "D4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ġ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 86,
+    "Frequency (Hz)": 1174.65,
+    "Western Note": "D5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "G̣2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 62,
+    "Frequency (Hz)": 293.66,
+    "Western Note": "D3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "G3",
+    "Variant": "Plain (C4)",
+    "MIDI": 75,
+    "Frequency (Hz)": 622.25,
+    "Western Note": "D#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ġ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.5,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "G̣3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "M1",
+    "Variant": "Plain (C4)",
+    "MIDI": 76,
+    "Frequency (Hz)": 659.25,
+    "Western Note": "E4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṁ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.5,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṃ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "M2",
+    "Variant": "Plain (C4)",
+    "MIDI": 77,
+    "Frequency (Hz)": 698.45,
+    "Western Note": "F4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṁ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 89,
+    "Frequency (Hz)": 1396.9,
+    "Western Note": "F5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṃ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 65,
+    "Frequency (Hz)": 349.23,
+    "Western Note": "F3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "P",
+    "Variant": "Plain (C4)",
+    "MIDI": 78,
+    "Frequency (Hz)": 739.98,
+    "Western Note": "F#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.97,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "D1",
+    "Variant": "Plain (C4)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.99,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḋ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.97,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḍ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "D2",
+    "Variant": "Plain (C4)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḋ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 92,
+    "Frequency (Hz)": 1661.21,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḍ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "D3",
+    "Variant": "Plain (C4)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḋ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 93,
+    "Frequency (Hz)": 1759.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḍ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "N1",
+    "Variant": "Plain (C4)",
+    "MIDI": 79,
+    "Frequency (Hz)": 783.99,
+    "Western Note": "G4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṅ1",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 91,
+    "Frequency (Hz)": 1567.97,
+    "Western Note": "G5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṇ1",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 67,
+    "Frequency (Hz)": 391.99,
+    "Western Note": "G3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "N2",
+    "Variant": "Plain (C4)",
+    "MIDI": 80,
+    "Frequency (Hz)": 830.6,
+    "Western Note": "G#4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṅ2",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 92,
+    "Frequency (Hz)": 1661.21,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṇ2",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "N3",
+    "Variant": "Plain (C4)",
+    "MIDI": 81,
+    "Frequency (Hz)": 879.99,
+    "Western Note": "A4",
+    "Octave": 4
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṅ3",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 93,
+    "Frequency (Hz)": 1759.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṇ3",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṙ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 84,
+    "Frequency (Hz)": 1046.5,
+    "Western Note": "C5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṛ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 60,
+    "Frequency (Hz)": 261.62,
+    "Western Note": "C3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ġ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 87,
+    "Frequency (Hz)": 1244.5,
+    "Western Note": "D#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "G̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 63,
+    "Frequency (Hz)": 311.12,
+    "Western Note": "D#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṁ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 88,
+    "Frequency (Hz)": 1318.5,
+    "Western Note": "E5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṃ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 64,
+    "Frequency (Hz)": 329.63,
+    "Western Note": "E3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḋ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 92,
+    "Frequency (Hz)": 1661.21,
+    "Western Note": "G#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ḍ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 68,
+    "Frequency (Hz)": 415.3,
+    "Western Note": "G#3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṅ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 93,
+    "Frequency (Hz)": 1759.99,
+    "Western Note": "A5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṇ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 69,
+    "Frequency (Hz)": 440.0,
+    "Western Note": "A3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṡ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 83,
+    "Frequency (Hz)": 987.76,
+    "Western Note": "B5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṣ",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 59,
+    "Frequency (Hz)": 246.94,
+    "Western Note": "B3",
+    "Octave": 3
+  },
+  {
+    "Sruthi": "B",
+    "Note": "Ṗ",
+    "Variant": "Dotted Above (C5)",
+    "MIDI": 90,
+    "Frequency (Hz)": 1479.97,
+    "Western Note": "F#5",
+    "Octave": 5
+  },
+  {
+    "Sruthi": "B",
+    "Note": "P̣",
+    "Variant": "Dotted Below (C3)",
+    "MIDI": 66,
+    "Frequency (Hz)": 369.99,
+    "Western Note": "F#3",
+    "Octave": 3
+  }
+]

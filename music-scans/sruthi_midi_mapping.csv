@@ -1,0 +1,745 @@
+Sruthi,Note,Variant,MIDI,Frequency (Hz),Western Note,Octave
+C,S,Plain (C4),60,261.63,C4,4
+C,Ṡ,Dotted Above (C5),72,523.26,C5,5
+C,Ṣ,Dotted Below (C3),48,130.81,C3,3
+C,R1,Plain (C4),61,277.19,C#4,4
+C,Ṙ1,Dotted Above (C5),73,554.37,C#5,5
+C,Ṛ1,Dotted Below (C3),49,138.59,C#3,3
+C,R2,Plain (C4),62,293.67,D4,4
+C,Ṙ2,Dotted Above (C5),74,587.34,D5,5
+C,Ṛ2,Dotted Below (C3),50,146.83,D3,3
+C,R3,Plain (C4),63,311.13,D#4,4
+C,Ṙ3,Dotted Above (C5),75,622.26,D#5,5
+C,Ṛ3,Dotted Below (C3),51,155.57,D#3,3
+C,G1,Plain (C4),62,293.67,D4,4
+C,Ġ1,Dotted Above (C5),74,587.34,D5,5
+C,G̣1,Dotted Below (C3),50,146.83,D3,3
+C,G2,Plain (C4),63,311.13,D#4,4
+C,Ġ2,Dotted Above (C5),75,622.26,D#5,5
+C,G̣2,Dotted Below (C3),51,155.57,D#3,3
+C,G3,Plain (C4),64,329.63,E4,4
+C,Ġ3,Dotted Above (C5),76,659.27,E5,5
+C,G̣3,Dotted Below (C3),52,164.82,E3,3
+C,M1,Plain (C4),65,349.23,F4,4
+C,Ṁ1,Dotted Above (C5),77,698.47,F5,5
+C,Ṃ1,Dotted Below (C3),53,174.62,F3,3
+C,M2,Plain (C4),66,370.0,F#4,4
+C,Ṁ2,Dotted Above (C5),78,740.0,F#5,5
+C,Ṃ2,Dotted Below (C3),54,185.0,F#3,3
+C,P,Plain (C4),67,392.0,G4,4
+C,Ṗ,Dotted Above (C5),79,784.0,G5,5
+C,P̣,Dotted Below (C3),55,196.0,G3,3
+C,D1,Plain (C4),68,415.31,G#4,4
+C,Ḋ1,Dotted Above (C5),80,830.62,G#5,5
+C,Ḍ1,Dotted Below (C3),56,207.66,G#3,3
+C,D2,Plain (C4),69,440.01,A4,4
+C,Ḋ2,Dotted Above (C5),81,880.01,A5,5
+C,Ḍ2,Dotted Below (C3),57,220.0,A3,3
+C,D3,Plain (C4),70,466.17,A#4,4
+C,Ḋ3,Dotted Above (C5),82,932.34,A#5,5
+C,Ḍ3,Dotted Below (C3),58,233.09,A#3,3
+C,N1,Plain (C4),68,415.31,G#4,4
+C,Ṅ1,Dotted Above (C5),80,830.62,G#5,5
+C,Ṇ1,Dotted Below (C3),56,207.66,G#3,3
+C,N2,Plain (C4),69,440.01,A4,4
+C,Ṅ2,Dotted Above (C5),81,880.01,A5,5
+C,Ṇ2,Dotted Below (C3),57,220.0,A3,3
+C,N3,Plain (C4),70,466.17,A#4,4
+C,Ṅ3,Dotted Above (C5),82,932.34,A#5,5
+C,Ṇ3,Dotted Below (C3),58,233.09,A#3,3
+C,Ṙ,Dotted Above (C5),73,554.37,C#5,5
+C,Ṛ,Dotted Below (C3),49,138.59,C#3,3
+C,Ġ,Dotted Above (C5),76,659.27,E5,5
+C,G̣,Dotted Below (C3),52,164.82,E3,3
+C,Ṁ,Dotted Above (C5),77,698.47,F5,5
+C,Ṃ,Dotted Below (C3),53,174.62,F3,3
+C,Ḋ,Dotted Above (C5),81,880.01,A5,5
+C,Ḍ,Dotted Below (C3),57,220.0,A3,3
+C,Ṅ,Dotted Above (C5),82,932.34,A#5,5
+C,Ṇ,Dotted Below (C3),58,233.09,A#3,3
+C,Ṡ,Dotted Above (C5),72,523.26,C5,5
+C,Ṣ,Dotted Below (C3),48,130.81,C3,3
+C,Ṗ,Dotted Above (C5),79,784.0,G5,5
+C,P̣,Dotted Below (C3),55,196.0,G3,3
+C#,S,Plain (C4),61,277.18,C#4,4
+C#,Ṡ,Dotted Above (C5),73,554.36,C#5,5
+C#,Ṣ,Dotted Below (C3),49,138.59,C#3,3
+C#,R1,Plain (C4),62,293.66,D4,4
+C#,Ṙ1,Dotted Above (C5),74,587.32,D5,5
+C#,Ṛ1,Dotted Below (C3),50,146.83,D3,3
+C#,R2,Plain (C4),63,311.12,D#4,4
+C#,Ṙ2,Dotted Above (C5),75,622.25,D#5,5
+C#,Ṛ2,Dotted Below (C3),51,155.56,D#3,3
+C#,R3,Plain (C4),64,329.62,E4,4
+C#,Ṙ3,Dotted Above (C5),76,659.25,E5,5
+C#,Ṛ3,Dotted Below (C3),52,164.81,E3,3
+C#,G1,Plain (C4),63,311.12,D#4,4
+C#,Ġ1,Dotted Above (C5),75,622.25,D#5,5
+C#,G̣1,Dotted Below (C3),51,155.56,D#3,3
+C#,G2,Plain (C4),64,329.62,E4,4
+C#,Ġ2,Dotted Above (C5),76,659.25,E5,5
+C#,G̣2,Dotted Below (C3),52,164.81,E3,3
+C#,G3,Plain (C4),65,349.22,F4,4
+C#,Ġ3,Dotted Above (C5),77,698.45,F5,5
+C#,G̣3,Dotted Below (C3),53,174.61,F3,3
+C#,M1,Plain (C4),66,369.99,F#4,4
+C#,Ṁ1,Dotted Above (C5),78,739.98,F#5,5
+C#,Ṃ1,Dotted Below (C3),54,185.0,F#3,3
+C#,M2,Plain (C4),67,391.99,G4,4
+C#,Ṁ2,Dotted Above (C5),79,783.98,G5,5
+C#,Ṃ2,Dotted Below (C3),55,196.0,G3,3
+C#,P,Plain (C4),68,415.3,G#4,4
+C#,Ṗ,Dotted Above (C5),80,830.6,G#5,5
+C#,P̣,Dotted Below (C3),56,207.65,G#3,3
+C#,D1,Plain (C4),69,440.0,A4,4
+C#,Ḋ1,Dotted Above (C5),81,879.99,A5,5
+C#,Ḍ1,Dotted Below (C3),57,220.0,A3,3
+C#,D2,Plain (C4),70,466.16,A#4,4
+C#,Ḋ2,Dotted Above (C5),82,932.32,A#5,5
+C#,Ḍ2,Dotted Below (C3),58,233.08,A#3,3
+C#,D3,Plain (C4),71,493.88,B4,4
+C#,Ḋ3,Dotted Above (C5),83,987.76,B5,5
+C#,Ḍ3,Dotted Below (C3),59,246.94,B3,3
+C#,N1,Plain (C4),69,440.0,A4,4
+C#,Ṅ1,Dotted Above (C5),81,879.99,A5,5
+C#,Ṇ1,Dotted Below (C3),57,220.0,A3,3
+C#,N2,Plain (C4),70,466.16,A#4,4
+C#,Ṅ2,Dotted Above (C5),82,932.32,A#5,5
+C#,Ṇ2,Dotted Below (C3),58,233.08,A#3,3
+C#,N3,Plain (C4),71,493.88,B4,4
+C#,Ṅ3,Dotted Above (C5),83,987.76,B5,5
+C#,Ṇ3,Dotted Below (C3),59,246.94,B3,3
+C#,Ṙ,Dotted Above (C5),74,587.32,D5,5
+C#,Ṛ,Dotted Below (C3),50,146.83,D3,3
+C#,Ġ,Dotted Above (C5),77,698.45,F5,5
+C#,G̣,Dotted Below (C3),53,174.61,F3,3
+C#,Ṁ,Dotted Above (C5),78,739.98,F#5,5
+C#,Ṃ,Dotted Below (C3),54,185.0,F#3,3
+C#,Ḋ,Dotted Above (C5),82,932.32,A#5,5
+C#,Ḍ,Dotted Below (C3),58,233.08,A#3,3
+C#,Ṅ,Dotted Above (C5),83,987.76,B5,5
+C#,Ṇ,Dotted Below (C3),59,246.94,B3,3
+C#,Ṡ,Dotted Above (C5),73,554.36,C#5,5
+C#,Ṣ,Dotted Below (C3),49,138.59,C#3,3
+C#,Ṗ,Dotted Above (C5),80,830.6,G#5,5
+C#,P̣,Dotted Below (C3),56,207.65,G#3,3
+D,S,Plain (C4),62,293.66,D4,4
+D,Ṡ,Dotted Above (C5),74,587.32,D5,5
+D,Ṣ,Dotted Below (C3),50,146.83,D3,3
+D,R1,Plain (C4),63,311.12,D#4,4
+D,Ṙ1,Dotted Above (C5),75,622.24,D#5,5
+D,Ṛ1,Dotted Below (C3),51,155.56,D#3,3
+D,R2,Plain (C4),64,329.62,E4,4
+D,Ṙ2,Dotted Above (C5),76,659.24,E5,5
+D,Ṛ2,Dotted Below (C3),52,164.81,E3,3
+D,R3,Plain (C4),65,349.22,F4,4
+D,Ṙ3,Dotted Above (C5),77,698.45,F5,5
+D,Ṛ3,Dotted Below (C3),53,174.61,F3,3
+D,G1,Plain (C4),64,329.62,E4,4
+D,Ġ1,Dotted Above (C5),76,659.24,E5,5
+D,G̣1,Dotted Below (C3),52,164.81,E3,3
+D,G2,Plain (C4),65,349.22,F4,4
+D,Ġ2,Dotted Above (C5),77,698.45,F5,5
+D,G̣2,Dotted Below (C3),53,174.61,F3,3
+D,G3,Plain (C4),66,369.99,F#4,4
+D,Ġ3,Dotted Above (C5),78,739.98,F#5,5
+D,G̣3,Dotted Below (C3),54,184.99,F#3,3
+D,M1,Plain (C4),67,391.99,G4,4
+D,Ṁ1,Dotted Above (C5),79,783.98,G5,5
+D,Ṃ1,Dotted Below (C3),55,195.99,G3,3
+D,M2,Plain (C4),68,415.3,G#4,4
+D,Ṁ2,Dotted Above (C5),80,830.6,G#5,5
+D,Ṃ2,Dotted Below (C3),56,207.65,G#3,3
+D,P,Plain (C4),69,439.99,A4,4
+D,Ṗ,Dotted Above (C5),81,879.99,A5,5
+D,P̣,Dotted Below (C3),57,220.0,A3,3
+D,D1,Plain (C4),70,466.16,A#4,4
+D,Ḋ1,Dotted Above (C5),82,932.31,A#5,5
+D,Ḍ1,Dotted Below (C3),58,233.08,A#3,3
+D,D2,Plain (C4),71,493.88,B4,4
+D,Ḋ2,Dotted Above (C5),83,987.75,B5,5
+D,Ḍ2,Dotted Below (C3),59,246.94,B3,3
+D,D3,Plain (C4),72,523.24,C4,4
+D,Ḋ3,Dotted Above (C5),84,1046.49,C5,5
+D,Ḍ3,Dotted Below (C3),60,261.62,C3,3
+D,N1,Plain (C4),70,466.16,A#4,4
+D,Ṅ1,Dotted Above (C5),82,932.31,A#5,5
+D,Ṇ1,Dotted Below (C3),58,233.08,A#3,3
+D,N2,Plain (C4),71,493.88,B4,4
+D,Ṅ2,Dotted Above (C5),83,987.75,B5,5
+D,Ṇ2,Dotted Below (C3),59,246.94,B3,3
+D,N3,Plain (C4),72,523.24,C4,4
+D,Ṅ3,Dotted Above (C5),84,1046.49,C5,5
+D,Ṇ3,Dotted Below (C3),60,261.62,C3,3
+D,Ṙ,Dotted Above (C5),75,622.24,D#5,5
+D,Ṛ,Dotted Below (C3),51,155.56,D#3,3
+D,Ġ,Dotted Above (C5),78,739.98,F#5,5
+D,G̣,Dotted Below (C3),54,184.99,F#3,3
+D,Ṁ,Dotted Above (C5),79,783.98,G5,5
+D,Ṃ,Dotted Below (C3),55,195.99,G3,3
+D,Ḋ,Dotted Above (C5),83,987.75,B5,5
+D,Ḍ,Dotted Below (C3),59,246.94,B3,3
+D,Ṅ,Dotted Above (C5),84,1046.49,C5,5
+D,Ṇ,Dotted Below (C3),60,261.62,C3,3
+D,Ṡ,Dotted Above (C5),74,587.32,D5,5
+D,Ṣ,Dotted Below (C3),50,146.83,D3,3
+D,Ṗ,Dotted Above (C5),81,879.99,A5,5
+D,P̣,Dotted Below (C3),57,220.0,A3,3
+D#,S,Plain (C4),63,311.13,D#4,4
+D#,Ṡ,Dotted Above (C5),75,622.26,D#5,5
+D#,Ṣ,Dotted Below (C3),51,155.56,D#3,3
+D#,R1,Plain (C4),64,329.63,E4,4
+D#,Ṙ1,Dotted Above (C5),76,659.26,E5,5
+D#,Ṛ1,Dotted Below (C3),52,164.82,E3,3
+D#,R2,Plain (C4),65,349.23,F4,4
+D#,Ṙ2,Dotted Above (C5),77,698.46,F5,5
+D#,Ṛ2,Dotted Below (C3),53,174.62,F3,3
+D#,R3,Plain (C4),66,370.0,F#4,4
+D#,Ṙ3,Dotted Above (C5),78,740.0,F#5,5
+D#,Ṛ3,Dotted Below (C3),54,185.0,F#3,3
+D#,G1,Plain (C4),65,349.23,F4,4
+D#,Ġ1,Dotted Above (C5),77,698.46,F5,5
+D#,G̣1,Dotted Below (C3),53,174.62,F3,3
+D#,G2,Plain (C4),66,370.0,F#4,4
+D#,Ġ2,Dotted Above (C5),78,740.0,F#5,5
+D#,G̣2,Dotted Below (C3),54,185.0,F#3,3
+D#,G3,Plain (C4),67,392.0,G4,4
+D#,Ġ3,Dotted Above (C5),79,784.0,G5,5
+D#,G̣3,Dotted Below (C3),55,196.0,G3,3
+D#,M1,Plain (C4),68,415.31,G#4,4
+D#,Ṁ1,Dotted Above (C5),80,830.62,G#5,5
+D#,Ṃ1,Dotted Below (C3),56,207.65,G#3,3
+D#,M2,Plain (C4),69,440.0,A4,4
+D#,Ṁ2,Dotted Above (C5),81,880.01,A5,5
+D#,Ṃ2,Dotted Below (C3),57,220.0,A3,3
+D#,P,Plain (C4),70,466.17,A#4,4
+D#,Ṗ,Dotted Above (C5),82,932.34,A#5,5
+D#,P̣,Dotted Below (C3),58,233.08,A#3,3
+D#,D1,Plain (C4),71,493.89,B4,4
+D#,Ḋ1,Dotted Above (C5),83,987.78,B5,5
+D#,Ḍ1,Dotted Below (C3),59,246.94,B3,3
+D#,D2,Plain (C4),72,523.26,C4,4
+D#,Ḋ2,Dotted Above (C5),84,1046.51,C5,5
+D#,Ḍ2,Dotted Below (C3),60,261.63,C3,3
+D#,D3,Plain (C4),73,554.37,C#4,4
+D#,Ḋ3,Dotted Above (C5),85,1108.74,C#5,5
+D#,Ḍ3,Dotted Below (C3),61,277.19,C#3,3
+D#,N1,Plain (C4),71,493.89,B4,4
+D#,Ṅ1,Dotted Above (C5),83,987.78,B5,5
+D#,Ṇ1,Dotted Below (C3),59,246.94,B3,3
+D#,N2,Plain (C4),72,523.26,C4,4
+D#,Ṅ2,Dotted Above (C5),84,1046.51,C5,5
+D#,Ṇ2,Dotted Below (C3),60,261.63,C3,3
+D#,N3,Plain (C4),73,554.37,C#4,4
+D#,Ṅ3,Dotted Above (C5),85,1108.74,C#5,5
+D#,Ṇ3,Dotted Below (C3),61,277.19,C#3,3
+D#,Ṙ,Dotted Above (C5),76,659.26,E5,5
+D#,Ṛ,Dotted Below (C3),52,164.82,E3,3
+D#,Ġ,Dotted Above (C5),79,784.0,G5,5
+D#,G̣,Dotted Below (C3),55,196.0,G3,3
+D#,Ṁ,Dotted Above (C5),80,830.62,G#5,5
+D#,Ṃ,Dotted Below (C3),56,207.65,G#3,3
+D#,Ḋ,Dotted Above (C5),84,1046.51,C5,5
+D#,Ḍ,Dotted Below (C3),60,261.63,C3,3
+D#,Ṅ,Dotted Above (C5),85,1108.74,C#5,5
+D#,Ṇ,Dotted Below (C3),61,277.19,C#3,3
+D#,Ṡ,Dotted Above (C5),75,622.26,D#5,5
+D#,Ṣ,Dotted Below (C3),51,155.56,D#3,3
+D#,Ṗ,Dotted Above (C5),82,932.34,A#5,5
+D#,P̣,Dotted Below (C3),58,233.08,A#3,3
+E,S,Plain (C4),64,329.63,E4,4
+E,Ṡ,Dotted Above (C5),76,659.26,E5,5
+E,Ṣ,Dotted Below (C3),52,164.81,E3,3
+E,R1,Plain (C4),65,349.23,F4,4
+E,Ṙ1,Dotted Above (C5),77,698.46,F5,5
+E,Ṛ1,Dotted Below (C3),53,174.62,F3,3
+E,R2,Plain (C4),66,370.0,F#4,4
+E,Ṙ2,Dotted Above (C5),78,739.99,F#5,5
+E,Ṛ2,Dotted Below (C3),54,185.0,F#3,3
+E,R3,Plain (C4),67,392.0,G4,4
+E,Ṙ3,Dotted Above (C5),79,784.0,G5,5
+E,Ṛ3,Dotted Below (C3),55,196.0,G3,3
+E,G1,Plain (C4),66,370.0,F#4,4
+E,Ġ1,Dotted Above (C5),78,739.99,F#5,5
+E,G̣1,Dotted Below (C3),54,185.0,F#3,3
+E,G2,Plain (C4),67,392.0,G4,4
+E,Ġ2,Dotted Above (C5),79,784.0,G5,5
+E,G̣2,Dotted Below (C3),55,196.0,G3,3
+E,G3,Plain (C4),68,415.31,G#4,4
+E,Ġ3,Dotted Above (C5),80,830.62,G#5,5
+E,G̣3,Dotted Below (C3),56,207.65,G#3,3
+E,M1,Plain (C4),69,440.0,A4,4
+E,Ṁ1,Dotted Above (C5),81,880.01,A5,5
+E,Ṃ1,Dotted Below (C3),57,220.0,A3,3
+E,M2,Plain (C4),70,466.17,A#4,4
+E,Ṁ2,Dotted Above (C5),82,932.33,A#5,5
+E,Ṃ2,Dotted Below (C3),58,233.08,A#3,3
+E,P,Plain (C4),71,493.89,B4,4
+E,Ṗ,Dotted Above (C5),83,987.77,B5,5
+E,P̣,Dotted Below (C3),59,246.94,B3,3
+E,D1,Plain (C4),72,523.26,C4,4
+E,Ḋ1,Dotted Above (C5),84,1046.51,C5,5
+E,Ḍ1,Dotted Below (C3),60,261.63,C3,3
+E,D2,Plain (C4),73,554.37,C#4,4
+E,Ḋ2,Dotted Above (C5),85,1108.74,C#5,5
+E,Ḍ2,Dotted Below (C3),61,277.18,C#3,3
+E,D3,Plain (C4),74,587.33,D4,4
+E,Ḋ3,Dotted Above (C5),86,1174.67,D5,5
+E,Ḍ3,Dotted Below (C3),62,293.67,D3,3
+E,N1,Plain (C4),72,523.26,C4,4
+E,Ṅ1,Dotted Above (C5),84,1046.51,C5,5
+E,Ṇ1,Dotted Below (C3),60,261.63,C3,3
+E,N2,Plain (C4),73,554.37,C#4,4
+E,Ṅ2,Dotted Above (C5),85,1108.74,C#5,5
+E,Ṇ2,Dotted Below (C3),61,277.18,C#3,3
+E,N3,Plain (C4),74,587.33,D4,4
+E,Ṅ3,Dotted Above (C5),86,1174.67,D5,5
+E,Ṇ3,Dotted Below (C3),62,293.67,D3,3
+E,Ṙ,Dotted Above (C5),77,698.46,F5,5
+E,Ṛ,Dotted Below (C3),53,174.62,F3,3
+E,Ġ,Dotted Above (C5),80,830.62,G#5,5
+E,G̣,Dotted Below (C3),56,207.65,G#3,3
+E,Ṁ,Dotted Above (C5),81,880.01,A5,5
+E,Ṃ,Dotted Below (C3),57,220.0,A3,3
+E,Ḋ,Dotted Above (C5),85,1108.74,C#5,5
+E,Ḍ,Dotted Below (C3),61,277.18,C#3,3
+E,Ṅ,Dotted Above (C5),86,1174.67,D5,5
+E,Ṇ,Dotted Below (C3),62,293.67,D3,3
+E,Ṡ,Dotted Above (C5),76,659.26,E5,5
+E,Ṣ,Dotted Below (C3),52,164.81,E3,3
+E,Ṗ,Dotted Above (C5),83,987.77,B5,5
+E,P̣,Dotted Below (C3),59,246.94,B3,3
+F,S,Plain (C4),65,349.23,F4,4
+F,Ṡ,Dotted Above (C5),77,698.46,F5,5
+F,Ṣ,Dotted Below (C3),53,174.62,F3,3
+F,R1,Plain (C4),66,370.0,F#4,4
+F,Ṙ1,Dotted Above (C5),78,739.99,F#5,5
+F,Ṛ1,Dotted Below (C3),54,185.0,F#3,3
+F,R2,Plain (C4),67,392.0,G4,4
+F,Ṙ2,Dotted Above (C5),79,783.99,G5,5
+F,Ṛ2,Dotted Below (C3),55,196.0,G3,3
+F,R3,Plain (C4),68,415.31,G#4,4
+F,Ṙ3,Dotted Above (C5),80,830.61,G#5,5
+F,Ṛ3,Dotted Below (C3),56,207.65,G#3,3
+F,G1,Plain (C4),67,392.0,G4,4
+F,Ġ1,Dotted Above (C5),79,783.99,G5,5
+F,G̣1,Dotted Below (C3),55,196.0,G3,3
+F,G2,Plain (C4),68,415.31,G#4,4
+F,Ġ2,Dotted Above (C5),80,830.61,G#5,5
+F,G̣2,Dotted Below (C3),56,207.65,G#3,3
+F,G3,Plain (C4),69,440.0,A4,4
+F,Ġ3,Dotted Above (C5),81,880.0,A5,5
+F,G̣3,Dotted Below (C3),57,220.0,A3,3
+F,M1,Plain (C4),70,466.17,A#4,4
+F,Ṁ1,Dotted Above (C5),82,932.33,A#5,5
+F,Ṃ1,Dotted Below (C3),58,233.08,A#3,3
+F,M2,Plain (C4),71,493.89,B4,4
+F,Ṁ2,Dotted Above (C5),83,987.77,B5,5
+F,Ṃ2,Dotted Below (C3),59,246.94,B3,3
+F,P,Plain (C4),72,523.25,C4,4
+F,Ṗ,Dotted Above (C5),84,1046.51,C5,5
+F,P̣,Dotted Below (C3),60,261.63,C3,3
+F,D1,Plain (C4),73,554.37,C#4,4
+F,Ḋ1,Dotted Above (C5),85,1108.74,C#5,5
+F,Ḍ1,Dotted Below (C3),61,277.18,C#3,3
+F,D2,Plain (C4),74,587.33,D4,4
+F,Ḋ2,Dotted Above (C5),86,1174.67,D5,5
+F,Ḍ2,Dotted Below (C3),62,293.67,D3,3
+F,D3,Plain (C4),75,622.26,D#4,4
+F,Ḋ3,Dotted Above (C5),87,1244.51,D#5,5
+F,Ḍ3,Dotted Below (C3),63,311.13,D#3,3
+F,N1,Plain (C4),73,554.37,C#4,4
+F,Ṅ1,Dotted Above (C5),85,1108.74,C#5,5
+F,Ṇ1,Dotted Below (C3),61,277.18,C#3,3
+F,N2,Plain (C4),74,587.33,D4,4
+F,Ṅ2,Dotted Above (C5),86,1174.67,D5,5
+F,Ṇ2,Dotted Below (C3),62,293.67,D3,3
+F,N3,Plain (C4),75,622.26,D#4,4
+F,Ṅ3,Dotted Above (C5),87,1244.51,D#5,5
+F,Ṇ3,Dotted Below (C3),63,311.13,D#3,3
+F,Ṙ,Dotted Above (C5),78,739.99,F#5,5
+F,Ṛ,Dotted Below (C3),54,185.0,F#3,3
+F,Ġ,Dotted Above (C5),81,880.0,A5,5
+F,G̣,Dotted Below (C3),57,220.0,A3,3
+F,Ṁ,Dotted Above (C5),82,932.33,A#5,5
+F,Ṃ,Dotted Below (C3),58,233.08,A#3,3
+F,Ḋ,Dotted Above (C5),86,1174.67,D5,5
+F,Ḍ,Dotted Below (C3),62,293.67,D3,3
+F,Ṅ,Dotted Above (C5),87,1244.51,D#5,5
+F,Ṇ,Dotted Below (C3),63,311.13,D#3,3
+F,Ṡ,Dotted Above (C5),77,698.46,F5,5
+F,Ṣ,Dotted Below (C3),53,174.62,F3,3
+F,Ṗ,Dotted Above (C5),84,1046.51,C5,5
+F,P̣,Dotted Below (C3),60,261.63,C3,3
+F#,S,Plain (C4),66,369.99,F#4,4
+F#,Ṡ,Dotted Above (C5),78,739.98,F#5,5
+F#,Ṣ,Dotted Below (C3),54,185.0,F#3,3
+F#,R1,Plain (C4),67,391.99,G4,4
+F#,Ṙ1,Dotted Above (C5),79,783.98,G5,5
+F#,Ṛ1,Dotted Below (C3),55,196.0,G3,3
+F#,R2,Plain (C4),68,415.3,G#4,4
+F#,Ṙ2,Dotted Above (C5),80,830.6,G#5,5
+F#,Ṛ2,Dotted Below (C3),56,207.65,G#3,3
+F#,R3,Plain (C4),69,439.99,A4,4
+F#,Ṙ3,Dotted Above (C5),81,879.99,A5,5
+F#,Ṛ3,Dotted Below (C3),57,220.0,A3,3
+F#,G1,Plain (C4),68,415.3,G#4,4
+F#,Ġ1,Dotted Above (C5),80,830.6,G#5,5
+F#,G̣1,Dotted Below (C3),56,207.65,G#3,3
+F#,G2,Plain (C4),69,439.99,A4,4
+F#,Ġ2,Dotted Above (C5),81,879.99,A5,5
+F#,G̣2,Dotted Below (C3),57,220.0,A3,3
+F#,G3,Plain (C4),70,466.16,A#4,4
+F#,Ġ3,Dotted Above (C5),82,932.32,A#5,5
+F#,G̣3,Dotted Below (C3),58,233.08,A#3,3
+F#,M1,Plain (C4),71,493.88,B4,4
+F#,Ṁ1,Dotted Above (C5),83,987.75,B5,5
+F#,Ṃ1,Dotted Below (C3),59,246.94,B3,3
+F#,M2,Plain (C4),72,523.24,C4,4
+F#,Ṁ2,Dotted Above (C5),84,1046.49,C5,5
+F#,Ṃ2,Dotted Below (C3),60,261.62,C3,3
+F#,P,Plain (C4),73,554.36,C#4,4
+F#,Ṗ,Dotted Above (C5),85,1108.72,C#5,5
+F#,P̣,Dotted Below (C3),61,277.18,C#3,3
+F#,D1,Plain (C4),74,587.32,D4,4
+F#,Ḋ1,Dotted Above (C5),86,1174.65,D5,5
+F#,Ḍ1,Dotted Below (C3),62,293.66,D3,3
+F#,D2,Plain (C4),75,622.25,D#4,4
+F#,Ḋ2,Dotted Above (C5),87,1244.49,D#5,5
+F#,Ḍ2,Dotted Below (C3),63,311.12,D#3,3
+F#,D3,Plain (C4),76,659.25,E4,4
+F#,Ḋ3,Dotted Above (C5),88,1318.49,E5,5
+F#,Ḍ3,Dotted Below (C3),64,329.62,E3,3
+F#,N1,Plain (C4),74,587.32,D4,4
+F#,Ṅ1,Dotted Above (C5),86,1174.65,D5,5
+F#,Ṇ1,Dotted Below (C3),62,293.66,D3,3
+F#,N2,Plain (C4),75,622.25,D#4,4
+F#,Ṅ2,Dotted Above (C5),87,1244.49,D#5,5
+F#,Ṇ2,Dotted Below (C3),63,311.12,D#3,3
+F#,N3,Plain (C4),76,659.25,E4,4
+F#,Ṅ3,Dotted Above (C5),88,1318.49,E5,5
+F#,Ṇ3,Dotted Below (C3),64,329.62,E3,3
+F#,Ṙ,Dotted Above (C5),79,783.98,G5,5
+F#,Ṛ,Dotted Below (C3),55,196.0,G3,3
+F#,Ġ,Dotted Above (C5),82,932.32,A#5,5
+F#,G̣,Dotted Below (C3),58,233.08,A#3,3
+F#,Ṁ,Dotted Above (C5),83,987.75,B5,5
+F#,Ṃ,Dotted Below (C3),59,246.94,B3,3
+F#,Ḋ,Dotted Above (C5),87,1244.49,D#5,5
+F#,Ḍ,Dotted Below (C3),63,311.12,D#3,3
+F#,Ṅ,Dotted Above (C5),88,1318.49,E5,5
+F#,Ṇ,Dotted Below (C3),64,329.62,E3,3
+F#,Ṡ,Dotted Above (C5),78,739.98,F#5,5
+F#,Ṣ,Dotted Below (C3),54,185.0,F#3,3
+F#,Ṗ,Dotted Above (C5),85,1108.72,C#5,5
+F#,P̣,Dotted Below (C3),61,277.18,C#3,3
+G,S,Plain (C4),67,392.0,G4,4
+G,Ṡ,Dotted Above (C5),79,784.0,G5,5
+G,Ṣ,Dotted Below (C3),55,196.0,G3,3
+G,R1,Plain (C4),68,415.31,G#4,4
+G,Ṙ1,Dotted Above (C5),80,830.62,G#5,5
+G,Ṛ1,Dotted Below (C3),56,207.65,G#3,3
+G,R2,Plain (C4),69,440.01,A4,4
+G,Ṙ2,Dotted Above (C5),81,880.01,A5,5
+G,Ṛ2,Dotted Below (C3),57,220.0,A3,3
+G,R3,Plain (C4),70,466.17,A#4,4
+G,Ṙ3,Dotted Above (C5),82,932.34,A#5,5
+G,Ṛ3,Dotted Below (C3),58,233.08,A#3,3
+G,G1,Plain (C4),69,440.01,A4,4
+G,Ġ1,Dotted Above (C5),81,880.01,A5,5
+G,G̣1,Dotted Below (C3),57,220.0,A3,3
+G,G2,Plain (C4),70,466.17,A#4,4
+G,Ġ2,Dotted Above (C5),82,932.34,A#5,5
+G,G̣2,Dotted Below (C3),58,233.08,A#3,3
+G,G3,Plain (C4),71,493.89,B4,4
+G,Ġ3,Dotted Above (C5),83,987.78,B5,5
+G,G̣3,Dotted Below (C3),59,246.94,B3,3
+G,M1,Plain (C4),72,523.26,C4,4
+G,Ṁ1,Dotted Above (C5),84,1046.51,C5,5
+G,Ṃ1,Dotted Below (C3),60,261.63,C3,3
+G,M2,Plain (C4),73,554.37,C#4,4
+G,Ṁ2,Dotted Above (C5),85,1108.74,C#5,5
+G,Ṃ2,Dotted Below (C3),61,277.19,C#3,3
+G,P,Plain (C4),74,587.34,D4,4
+G,Ṗ,Dotted Above (C5),86,1174.67,D5,5
+G,P̣,Dotted Below (C3),62,293.67,D3,3
+G,D1,Plain (C4),75,622.26,D#4,4
+G,Ḋ1,Dotted Above (C5),87,1244.52,D#5,5
+G,Ḍ1,Dotted Below (C3),63,311.13,D#3,3
+G,D2,Plain (C4),76,659.26,E4,4
+G,Ḋ2,Dotted Above (C5),88,1318.53,E5,5
+G,Ḍ2,Dotted Below (C3),64,329.63,E3,3
+G,D3,Plain (C4),77,698.46,F4,4
+G,Ḋ3,Dotted Above (C5),89,1396.93,F5,5
+G,Ḍ3,Dotted Below (C3),65,349.23,F3,3
+G,N1,Plain (C4),75,622.26,D#4,4
+G,Ṅ1,Dotted Above (C5),87,1244.52,D#5,5
+G,Ṇ1,Dotted Below (C3),63,311.13,D#3,3
+G,N2,Plain (C4),76,659.26,E4,4
+G,Ṅ2,Dotted Above (C5),88,1318.53,E5,5
+G,Ṇ2,Dotted Below (C3),64,329.63,E3,3
+G,N3,Plain (C4),77,698.46,F4,4
+G,Ṅ3,Dotted Above (C5),89,1396.93,F5,5
+G,Ṇ3,Dotted Below (C3),65,349.23,F3,3
+G,Ṙ,Dotted Above (C5),80,830.62,G#5,5
+G,Ṛ,Dotted Below (C3),56,207.65,G#3,3
+G,Ġ,Dotted Above (C5),83,987.78,B5,5
+G,G̣,Dotted Below (C3),59,246.94,B3,3
+G,Ṁ,Dotted Above (C5),84,1046.51,C5,5
+G,Ṃ,Dotted Below (C3),60,261.63,C3,3
+G,Ḋ,Dotted Above (C5),88,1318.53,E5,5
+G,Ḍ,Dotted Below (C3),64,329.63,E3,3
+G,Ṅ,Dotted Above (C5),89,1396.93,F5,5
+G,Ṇ,Dotted Below (C3),65,349.23,F3,3
+G,Ṡ,Dotted Above (C5),79,784.0,G5,5
+G,Ṣ,Dotted Below (C3),55,196.0,G3,3
+G,Ṗ,Dotted Above (C5),86,1174.67,D5,5
+G,P̣,Dotted Below (C3),62,293.67,D3,3
+G#,S,Plain (C4),68,415.3,G#4,4
+G#,Ṡ,Dotted Above (C5),80,830.6,G#5,5
+G#,Ṣ,Dotted Below (C3),56,207.65,G#3,3
+G#,R1,Plain (C4),69,440.0,A4,4
+G#,Ṙ1,Dotted Above (C5),81,879.99,A5,5
+G#,Ṛ1,Dotted Below (C3),57,220.0,A3,3
+G#,R2,Plain (C4),70,466.16,A#4,4
+G#,Ṙ2,Dotted Above (C5),82,932.32,A#5,5
+G#,Ṛ2,Dotted Below (C3),58,233.08,A#3,3
+G#,R3,Plain (C4),71,493.88,B4,4
+G#,Ṙ3,Dotted Above (C5),83,987.76,B5,5
+G#,Ṛ3,Dotted Below (C3),59,246.94,B3,3
+G#,G1,Plain (C4),70,466.16,A#4,4
+G#,Ġ1,Dotted Above (C5),82,932.32,A#5,5
+G#,G̣1,Dotted Below (C3),58,233.08,A#3,3
+G#,G2,Plain (C4),71,493.88,B4,4
+G#,Ġ2,Dotted Above (C5),83,987.76,B5,5
+G#,G̣2,Dotted Below (C3),59,246.94,B3,3
+G#,G3,Plain (C4),72,523.25,C4,4
+G#,Ġ3,Dotted Above (C5),84,1046.49,C5,5
+G#,G̣3,Dotted Below (C3),60,261.62,C3,3
+G#,M1,Plain (C4),73,554.36,C#4,4
+G#,Ṁ1,Dotted Above (C5),85,1108.72,C#5,5
+G#,Ṃ1,Dotted Below (C3),61,277.18,C#3,3
+G#,M2,Plain (C4),74,587.32,D4,4
+G#,Ṁ2,Dotted Above (C5),86,1174.65,D5,5
+G#,Ṃ2,Dotted Below (C3),62,293.66,D3,3
+G#,P,Plain (C4),75,622.25,D#4,4
+G#,Ṗ,Dotted Above (C5),87,1244.49,D#5,5
+G#,P̣,Dotted Below (C3),63,311.12,D#3,3
+G#,D1,Plain (C4),76,659.25,E4,4
+G#,Ḋ1,Dotted Above (C5),88,1318.5,E5,5
+G#,Ḍ1,Dotted Below (C3),64,329.62,E3,3
+G#,D2,Plain (C4),77,698.45,F4,4
+G#,Ḋ2,Dotted Above (C5),89,1396.9,F5,5
+G#,Ḍ2,Dotted Below (C3),65,349.22,F3,3
+G#,D3,Plain (C4),78,739.98,F#4,4
+G#,Ḋ3,Dotted Above (C5),90,1479.96,F#5,5
+G#,Ḍ3,Dotted Below (C3),66,369.99,F#3,3
+G#,N1,Plain (C4),76,659.25,E4,4
+G#,Ṅ1,Dotted Above (C5),88,1318.5,E5,5
+G#,Ṇ1,Dotted Below (C3),64,329.62,E3,3
+G#,N2,Plain (C4),77,698.45,F4,4
+G#,Ṅ2,Dotted Above (C5),89,1396.9,F5,5
+G#,Ṇ2,Dotted Below (C3),65,349.22,F3,3
+G#,N3,Plain (C4),78,739.98,F#4,4
+G#,Ṅ3,Dotted Above (C5),90,1479.96,F#5,5
+G#,Ṇ3,Dotted Below (C3),66,369.99,F#3,3
+G#,Ṙ,Dotted Above (C5),81,879.99,A5,5
+G#,Ṛ,Dotted Below (C3),57,220.0,A3,3
+G#,Ġ,Dotted Above (C5),84,1046.49,C5,5
+G#,G̣,Dotted Below (C3),60,261.62,C3,3
+G#,Ṁ,Dotted Above (C5),85,1108.72,C#5,5
+G#,Ṃ,Dotted Below (C3),61,277.18,C#3,3
+G#,Ḋ,Dotted Above (C5),89,1396.9,F5,5
+G#,Ḍ,Dotted Below (C3),65,349.22,F3,3
+G#,Ṅ,Dotted Above (C5),90,1479.96,F#5,5
+G#,Ṇ,Dotted Below (C3),66,369.99,F#3,3
+G#,Ṡ,Dotted Above (C5),80,830.6,G#5,5
+G#,Ṣ,Dotted Below (C3),56,207.65,G#3,3
+G#,Ṗ,Dotted Above (C5),87,1244.49,D#5,5
+G#,P̣,Dotted Below (C3),63,311.12,D#3,3
+A,S,Plain (C4),69,440.0,A4,4
+A,Ṡ,Dotted Above (C5),81,880.0,A5,5
+A,Ṣ,Dotted Below (C3),57,220.0,A3,3
+A,R1,Plain (C4),70,466.16,A#4,4
+A,Ṙ1,Dotted Above (C5),82,932.33,A#5,5
+A,Ṛ1,Dotted Below (C3),58,233.08,A#3,3
+A,R2,Plain (C4),71,493.88,B4,4
+A,Ṙ2,Dotted Above (C5),83,987.77,B5,5
+A,Ṛ2,Dotted Below (C3),59,246.94,B3,3
+A,R3,Plain (C4),72,523.25,C4,4
+A,Ṙ3,Dotted Above (C5),84,1046.5,C5,5
+A,Ṛ3,Dotted Below (C3),60,261.63,C3,3
+A,G1,Plain (C4),71,493.88,B4,4
+A,Ġ1,Dotted Above (C5),83,987.77,B5,5
+A,G̣1,Dotted Below (C3),59,246.94,B3,3
+A,G2,Plain (C4),72,523.25,C4,4
+A,Ġ2,Dotted Above (C5),84,1046.5,C5,5
+A,G̣2,Dotted Below (C3),60,261.63,C3,3
+A,G3,Plain (C4),73,554.37,C#4,4
+A,Ġ3,Dotted Above (C5),85,1108.73,C#5,5
+A,G̣3,Dotted Below (C3),61,277.18,C#3,3
+A,M1,Plain (C4),74,587.33,D4,4
+A,Ṁ1,Dotted Above (C5),86,1174.66,D5,5
+A,Ṃ1,Dotted Below (C3),62,293.66,D3,3
+A,M2,Plain (C4),75,622.25,D#4,4
+A,Ṁ2,Dotted Above (C5),87,1244.51,D#5,5
+A,Ṃ2,Dotted Below (C3),63,311.13,D#3,3
+A,P,Plain (C4),76,659.26,E4,4
+A,Ṗ,Dotted Above (C5),88,1318.51,E5,5
+A,P̣,Dotted Below (C3),64,329.63,E3,3
+A,D1,Plain (C4),77,698.46,F4,4
+A,Ḋ1,Dotted Above (C5),89,1396.91,F5,5
+A,Ḍ1,Dotted Below (C3),65,349.23,F3,3
+A,D2,Plain (C4),78,739.99,F#4,4
+A,Ḋ2,Dotted Above (C5),90,1479.98,F#5,5
+A,Ḍ2,Dotted Below (C3),66,369.99,F#3,3
+A,D3,Plain (C4),79,783.99,G4,4
+A,Ḋ3,Dotted Above (C5),91,1567.98,G5,5
+A,Ḍ3,Dotted Below (C3),67,392.0,G3,3
+A,N1,Plain (C4),77,698.46,F4,4
+A,Ṅ1,Dotted Above (C5),89,1396.91,F5,5
+A,Ṇ1,Dotted Below (C3),65,349.23,F3,3
+A,N2,Plain (C4),78,739.99,F#4,4
+A,Ṅ2,Dotted Above (C5),90,1479.98,F#5,5
+A,Ṇ2,Dotted Below (C3),66,369.99,F#3,3
+A,N3,Plain (C4),79,783.99,G4,4
+A,Ṅ3,Dotted Above (C5),91,1567.98,G5,5
+A,Ṇ3,Dotted Below (C3),67,392.0,G3,3
+A,Ṙ,Dotted Above (C5),82,932.33,A#5,5
+A,Ṛ,Dotted Below (C3),58,233.08,A#3,3
+A,Ġ,Dotted Above (C5),85,1108.73,C#5,5
+A,G̣,Dotted Below (C3),61,277.18,C#3,3
+A,Ṁ,Dotted Above (C5),86,1174.66,D5,5
+A,Ṃ,Dotted Below (C3),62,293.66,D3,3
+A,Ḋ,Dotted Above (C5),90,1479.98,F#5,5
+A,Ḍ,Dotted Below (C3),66,369.99,F#3,3
+A,Ṅ,Dotted Above (C5),91,1567.98,G5,5
+A,Ṇ,Dotted Below (C3),67,392.0,G3,3
+A,Ṡ,Dotted Above (C5),81,880.0,A5,5
+A,Ṣ,Dotted Below (C3),57,220.0,A3,3
+A,Ṗ,Dotted Above (C5),88,1318.51,E5,5
+A,P̣,Dotted Below (C3),64,329.63,E3,3
+A#,S,Plain (C4),70,466.16,A#4,4
+A#,Ṡ,Dotted Above (C5),82,932.32,A#5,5
+A#,Ṣ,Dotted Below (C3),58,233.08,A#3,3
+A#,R1,Plain (C4),71,493.88,B4,4
+A#,Ṙ1,Dotted Above (C5),83,987.76,B5,5
+A#,Ṛ1,Dotted Below (C3),59,246.94,B3,3
+A#,R2,Plain (C4),72,523.25,C4,4
+A#,Ṙ2,Dotted Above (C5),84,1046.49,C5,5
+A#,Ṛ2,Dotted Below (C3),60,261.62,C3,3
+A#,R3,Plain (C4),73,554.36,C#4,4
+A#,Ṙ3,Dotted Above (C5),85,1108.72,C#5,5
+A#,Ṛ3,Dotted Below (C3),61,277.18,C#3,3
+A#,G1,Plain (C4),72,523.25,C4,4
+A#,Ġ1,Dotted Above (C5),84,1046.49,C5,5
+A#,G̣1,Dotted Below (C3),60,261.62,C3,3
+A#,G2,Plain (C4),73,554.36,C#4,4
+A#,Ġ2,Dotted Above (C5),85,1108.72,C#5,5
+A#,G̣2,Dotted Below (C3),61,277.18,C#3,3
+A#,G3,Plain (C4),74,587.32,D4,4
+A#,Ġ3,Dotted Above (C5),86,1174.65,D5,5
+A#,G̣3,Dotted Below (C3),62,293.66,D3,3
+A#,M1,Plain (C4),75,622.25,D#4,4
+A#,Ṁ1,Dotted Above (C5),87,1244.5,D#5,5
+A#,Ṃ1,Dotted Below (C3),63,311.12,D#3,3
+A#,M2,Plain (C4),76,659.25,E4,4
+A#,Ṁ2,Dotted Above (C5),88,1318.5,E5,5
+A#,Ṃ2,Dotted Below (C3),64,329.62,E3,3
+A#,P,Plain (C4),77,698.45,F4,4
+A#,Ṗ,Dotted Above (C5),89,1396.9,F5,5
+A#,P̣,Dotted Below (C3),65,349.23,F3,3
+A#,D1,Plain (C4),78,739.98,F#4,4
+A#,Ḋ1,Dotted Above (C5),90,1479.97,F#5,5
+A#,Ḍ1,Dotted Below (C3),66,369.99,F#3,3
+A#,D2,Plain (C4),79,783.98,G4,4
+A#,Ḋ2,Dotted Above (C5),91,1567.97,G5,5
+A#,Ḍ2,Dotted Below (C3),67,391.99,G3,3
+A#,D3,Plain (C4),80,830.6,G#4,4
+A#,Ḋ3,Dotted Above (C5),92,1661.21,G#5,5
+A#,Ḍ3,Dotted Below (C3),68,415.3,G#3,3
+A#,N1,Plain (C4),78,739.98,F#4,4
+A#,Ṅ1,Dotted Above (C5),90,1479.97,F#5,5
+A#,Ṇ1,Dotted Below (C3),66,369.99,F#3,3
+A#,N2,Plain (C4),79,783.98,G4,4
+A#,Ṅ2,Dotted Above (C5),91,1567.97,G5,5
+A#,Ṇ2,Dotted Below (C3),67,391.99,G3,3
+A#,N3,Plain (C4),80,830.6,G#4,4
+A#,Ṅ3,Dotted Above (C5),92,1661.21,G#5,5
+A#,Ṇ3,Dotted Below (C3),68,415.3,G#3,3
+A#,Ṙ,Dotted Above (C5),83,987.76,B5,5
+A#,Ṛ,Dotted Below (C3),59,246.94,B3,3
+A#,Ġ,Dotted Above (C5),86,1174.65,D5,5
+A#,G̣,Dotted Below (C3),62,293.66,D3,3
+A#,Ṁ,Dotted Above (C5),87,1244.5,D#5,5
+A#,Ṃ,Dotted Below (C3),63,311.12,D#3,3
+A#,Ḋ,Dotted Above (C5),91,1567.97,G5,5
+A#,Ḍ,Dotted Below (C3),67,391.99,G3,3
+A#,Ṅ,Dotted Above (C5),92,1661.21,G#5,5
+A#,Ṇ,Dotted Below (C3),68,415.3,G#3,3
+A#,Ṡ,Dotted Above (C5),82,932.32,A#5,5
+A#,Ṣ,Dotted Below (C3),58,233.08,A#3,3
+A#,Ṗ,Dotted Above (C5),89,1396.9,F5,5
+A#,P̣,Dotted Below (C3),65,349.23,F3,3
+B,S,Plain (C4),71,493.88,B4,4
+B,Ṡ,Dotted Above (C5),83,987.76,B5,5
+B,Ṣ,Dotted Below (C3),59,246.94,B3,3
+B,R1,Plain (C4),72,523.25,C4,4
+B,Ṙ1,Dotted Above (C5),84,1046.5,C5,5
+B,Ṛ1,Dotted Below (C3),60,261.62,C3,3
+B,R2,Plain (C4),73,554.36,C#4,4
+B,Ṙ2,Dotted Above (C5),85,1108.72,C#5,5
+B,Ṛ2,Dotted Below (C3),61,277.18,C#3,3
+B,R3,Plain (C4),74,587.33,D4,4
+B,Ṙ3,Dotted Above (C5),86,1174.65,D5,5
+B,Ṛ3,Dotted Below (C3),62,293.66,D3,3
+B,G1,Plain (C4),73,554.36,C#4,4
+B,Ġ1,Dotted Above (C5),85,1108.72,C#5,5
+B,G̣1,Dotted Below (C3),61,277.18,C#3,3
+B,G2,Plain (C4),74,587.33,D4,4
+B,Ġ2,Dotted Above (C5),86,1174.65,D5,5
+B,G̣2,Dotted Below (C3),62,293.66,D3,3
+B,G3,Plain (C4),75,622.25,D#4,4
+B,Ġ3,Dotted Above (C5),87,1244.5,D#5,5
+B,G̣3,Dotted Below (C3),63,311.12,D#3,3
+B,M1,Plain (C4),76,659.25,E4,4
+B,Ṁ1,Dotted Above (C5),88,1318.5,E5,5
+B,Ṃ1,Dotted Below (C3),64,329.63,E3,3
+B,M2,Plain (C4),77,698.45,F4,4
+B,Ṁ2,Dotted Above (C5),89,1396.9,F5,5
+B,Ṃ2,Dotted Below (C3),65,349.23,F3,3
+B,P,Plain (C4),78,739.98,F#4,4
+B,Ṗ,Dotted Above (C5),90,1479.97,F#5,5
+B,P̣,Dotted Below (C3),66,369.99,F#3,3
+B,D1,Plain (C4),79,783.99,G4,4
+B,Ḋ1,Dotted Above (C5),91,1567.97,G5,5
+B,Ḍ1,Dotted Below (C3),67,391.99,G3,3
+B,D2,Plain (C4),80,830.6,G#4,4
+B,Ḋ2,Dotted Above (C5),92,1661.21,G#5,5
+B,Ḍ2,Dotted Below (C3),68,415.3,G#3,3
+B,D3,Plain (C4),81,879.99,A4,4
+B,Ḋ3,Dotted Above (C5),93,1759.99,A5,5
+B,Ḍ3,Dotted Below (C3),69,440.0,A3,3
+B,N1,Plain (C4),79,783.99,G4,4
+B,Ṅ1,Dotted Above (C5),91,1567.97,G5,5
+B,Ṇ1,Dotted Below (C3),67,391.99,G3,3
+B,N2,Plain (C4),80,830.6,G#4,4
+B,Ṅ2,Dotted Above (C5),92,1661.21,G#5,5
+B,Ṇ2,Dotted Below (C3),68,415.3,G#3,3
+B,N3,Plain (C4),81,879.99,A4,4
+B,Ṅ3,Dotted Above (C5),93,1759.99,A5,5
+B,Ṇ3,Dotted Below (C3),69,440.0,A3,3
+B,Ṙ,Dotted Above (C5),84,1046.5,C5,5
+B,Ṛ,Dotted Below (C3),60,261.62,C3,3
+B,Ġ,Dotted Above (C5),87,1244.5,D#5,5
+B,G̣,Dotted Below (C3),63,311.12,D#3,3
+B,Ṁ,Dotted Above (C5),88,1318.5,E5,5
+B,Ṃ,Dotted Below (C3),64,329.63,E3,3
+B,Ḋ,Dotted Above (C5),92,1661.21,G#5,5
+B,Ḍ,Dotted Below (C3),68,415.3,G#3,3
+B,Ṅ,Dotted Above (C5),93,1759.99,A5,5
+B,Ṇ,Dotted Below (C3),69,440.0,A3,3
+B,Ṡ,Dotted Above (C5),83,987.76,B5,5
+B,Ṣ,Dotted Below (C3),59,246.94,B3,3
+B,Ṗ,Dotted Above (C5),90,1479.97,F#5,5
+B,P̣,Dotted Below (C3),66,369.99,F#3,3
