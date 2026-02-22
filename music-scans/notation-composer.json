@@ -1,5 +1,67 @@
 [
   {
+    "_metadata": {
+      "version": "1.0",
+      "description": "MIDI Note Octave and Sruthi Mapping Reference",
+      "octaveMarkers": {
+        "plain": {
+          "description": "Plain notes → Middle octave C4",
+          "capitals": ["S", "R", "G", "M", "P", "D", "N"],
+          "lowercase": ["s", "r", "g", "m", "p", "d", "n"],
+          "midiOctave": "C4 (60-71)",
+          "example": "S R G M P D N"
+        },
+        "dotsAbove": {
+          "description": "Dots above → Higher octave C5 (typically used for higher registral notes)",
+          "capitals": ["Ṡ", "Ṙ", "Ġ", "Ṁ", "Ṗ", "Ḋ", "Ṅ"],
+          "lowercase": ["ṡ", "ṙ", "ġ", "ṁ", "ṗ", "ḋ", "ṅ"],
+          "midiOctave": "C5 (72-83)",
+          "example": "Ṡ Ṙ Ġ Ṁ Ṗ Ḋ Ṅ"
+        },
+        "dotsBelow": {
+          "description": "Dots below → Lower octave C3 (typically used for lower registral notes)",
+          "capitals": ["Ṣ", "Ṛ", "G̣", "Ṃ", "P̣", "Ḍ", "Ṇ"],
+          "lowercase": ["ṣ", "ṛ", "g̣", "ṃ", "p̣", "ḍ", "ṇ"],
+          "midiOctave": "C3 (48-59)",
+          "example": "Ṣ Ṛ G̣ Ṃ P̣ Ḍ Ṇ"
+        }
+      },
+      "sruthiMappings": {
+        "description": "For each sruthi, the base note (S/Shadja) maps to the specified semitone. This determines the key signature and transposition of all notes.",
+        "baseNoteDefinition": "S (Shadja) is the fundamental note that defines the sruthi. Other notes are calculated relative to S.",
+        "semitoneOffsets": {
+          "C": 0, "C#": 1, "Db": 1,
+          "D": 2, "D#": 3, "Eb": 3,
+          "E": 4, "E#": 5, "Fb": 4,
+          "F": 5, "F#": 6, "Gb": 6,
+          "G": 7, "G#": 8, "Ab": 8,
+          "A": 9, "A#": 10, "Bb": 10,
+          "B": 11, "B#": 0, "Cb": 11
+        },
+        "examples": {
+          "C": {
+            "sruthi": "C",
+            "S_plain": "C4", "S_dotsAbove": "C5", "S_dotsBelow": "C3",
+            "R_plain": "D4", "R_dotsAbove": "D5", "R_dotsBelow": "D3",
+            "G_plain": "E4", "M_plain": "F4", "P_plain": "G4", "D_plain": "A4", "N_plain": "B4"
+          },
+          "C#": {
+            "sruthi": "C#",
+            "S_plain": "C#4", "S_dotsAbove": "C#5", "S_dotsBelow": "C#3",
+            "R_plain": "D#4", "R_dotsAbove": "D#5", "R_dotsBelow": "D#3",
+            "G_plain": "F4", "M_plain": "F#4", "P_plain": "G#4", "D_plain": "A#4", "N_plain": "B#4"
+          },
+          "D": {
+            "sruthi": "D",
+            "S_plain": "D4", "S_dotsAbove": "D5", "S_dotsBelow": "D3",
+            "R_plain": "E4", "R_dotsAbove": "E5", "R_dotsBelow": "E3",
+            "G_plain": "F#4", "M_plain": "G4", "P_plain": "A4", "D_plain": "B4", "N_plain": "C#5"
+          }
+        }
+      }
+    }
+  },
+  {
     "arohana": "S R2 G3 M1 D2 Ṡ",
     "avarohana": "Ṡ N2 D2 M1 G3 R2 S",
     "beats": "8",

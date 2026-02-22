@@ -1,6 +1,20 @@
+
 # Commit Hash Log
 
-## Latest Commit
+## Merge Commit (Current)
+**Hash:** `6b81cd9`
+**Date:** 2026-02-22
+**Status:** ✅ Merged successfully
+
+### Merge Details
+- **Action:** Resolved merge conflict by accepting local version
+- **Conflict:** notation-composer.json (braced note data)
+- **Result:** Local code integrated with remote updates
+- **Branch Status:** 3 commits ahead of origin/master (ready for push)
+
+---
+
+## Previous Commit
 **Hash:** `1807fcf`
 **Date:** 2026-02-22
 
@@ -30,14 +44,10 @@
 - **Line ~873:** Beat marker logic for extra brace group cells
 - **Line ~918:** Beat marker logic for regular atom cells
 
-### Push Status
-- ⚠️ Local commit successful
-- ❌ Remote push attempted but failed (possible network or permission issue)
-- To retry push: `git push origin master`
-
-### Next Steps
-- Verify styling in browser (refresh SongNotationComposer.html)
-- Retry remote push when network available
-- Test beat markers with different nadai values
-
 ---
+
+## Notes
+- Local changes successfully merged with remote
+- All conflicts resolved using local version (braced note features preserved)
+- Ready for next push to remote repository
+

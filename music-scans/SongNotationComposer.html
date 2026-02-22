@@ -539,6 +539,8 @@
                     title="Save manual corrections in the grid">📊 Save Spreadsheet</button>
                 <button class="btn btn-outline" onclick="openFormatModal()"
                     title="Format notation grid by beats and nadai">✨ Format</button>
+                <button class="btn btn-outline" onclick="exportMidi()" 
+                    title="Export notation as MIDI file with speed information">🎹 Export MIDI</button>
                 <button class="btn btn-success" id="playBtn" onclick="playNotation()" 
                     title="Play notation using Web Audio">🎵 Play</button>
                 <button class="btn btn-outline" id="multiSelectBtn" onclick="toggleMultiSelect()" 
@@ -975,7 +977,6 @@
                                     }
 
                                     tr.appendChild(cell);
-                                    console.log(`   ✅ Appended regular atom cell "${atom.text}" to table row`);
                                 }
                             });
                             table.appendChild(tr);
@@ -1062,6 +1063,18 @@
                 // Add keyboard event listener for copy/paste
                 document.addEventListener('keydown', handleCellKeyboard);
             }, 0);
+        }
+
+        function handleCellKeyboard(event) {
+            // Handle keyboard shortcuts for cell editing
+            // Ctrl+C / Cmd+C - copy (handled by browser default)
+            // Ctrl+V / Cmd+V - paste (handled by browser default)
+            // Escape - deselect
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.swara-cell, .lyrics-cell').forEach(cell => {
+                    cell.blur();
+                });
+            }
         }
 
         // Global counter for unique brace group IDs across all tokenizations
@@ -1645,6 +1658,285 @@
             a.href = url;
             a.download = `${currentSong.name || 'song'}.txt`;
             a.click();
+        }
+
+        function exportMidi() {
+            if (!currentSong.sections || currentSong.sections.length === 0) {
+                alert('No notation to export as MIDI.');
+                return;
+            }
+
+            try {
+                const midiData = generateCleanMidi();
+                if (!midiData || midiData.length < 50) {
+                    alert('Failed to generate MIDI - no note data');
+                    return;
+                }
+
+                const blob = new Blob([midiData], { type: 'audio/midi' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${currentSong.name || 'song'}.mid`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                showToast('🎹 MIDI exported!');
+            } catch (e) {
+                alert('Error exporting MIDI: ' + e.message);
+                console.error(e);
+            }
+        }
+
+        function generateCleanMidi() {
+            const TICKS_PER_BEAT = 480;
+            
+            // Get song parameters
+            const bpm = parseInt(currentSong.bpm) || 120;
+            const songName = currentSong.name || 'Song';
+            const sruthi = currentSong.sruthi || 'C';
+            
+            // Collect all notes from atoms
+            const noteEvents = [];
+            
+            currentSong.sections.forEach(section => {
+                section.rows.forEach(row => {
+                    if (row.type === 'swara' && row.atoms) {
+                        row.atoms.forEach(atom => {
+                            const text = atom.text;
+                            const speed = atom.speed || 1;
+                            
+                            if (text === ',') {
+                                // Rest
+                                noteEvents.push({
+                                    isRest: true,
+                                    speed: speed,
+                                    text: ','
+                                });
+                            } else {
+                                // Convert note text to MIDI number (using sruthi as key)
+                                const midiNote = noteTextToMidiNumber(text, sruthi);
+                                if (midiNote !== null) {
+                                    noteEvents.push({
+                                        note: midiNote,
+                                        speed: speed,
+                                        text: text
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            console.log(`MIDI: ${noteEvents.length} notes/rests, BPM=${bpm}`);
+
+            // Build MIDI track
+            const trackBytes = [];
+            
+            // 1. Tempo
+            const tempoMicroseconds = Math.round(60000000 / bpm);
+            trackBytes.push(0x00); // delta time
+            trackBytes.push(0xFF, 0x51, 0x03); // Tempo meta
+            trackBytes.push(
+                (tempoMicroseconds >> 16) & 0xFF,
+                (tempoMicroseconds >> 8) & 0xFF,
+                tempoMicroseconds & 0xFF
+            );
+
+            // 2. Key signature
+            const keySharpFlats = getKeySigFromSruthi(sruthi);
+            trackBytes.push(0x00); // delta time
+            trackBytes.push(0xFF, 0x59, 0x02, keySharpFlats, 0); // Key signature
+
+            // 3. Sequence name
+            if (songName.length < 128) {
+                trackBytes.push(0x00); // delta time
+                trackBytes.push(0xFF, 0x03); // Sequence name
+                trackBytes.push(songName.length);
+                for (let c of songName) {
+                    trackBytes.push(c.charCodeAt(0));
+                }
+            }
+
+            // 4. Add notes
+            let accumulatedRestTicks = 0;
+            noteEvents.forEach(evt => {
+                const durationTicks = Math.round(TICKS_PER_BEAT / evt.speed);
+
+                if (evt.isRest) {
+                    // Accumulate rest duration instead of outputting orphaned delta time
+                    accumulatedRestTicks += durationTicks;
+                } else {
+                    // Note On - use accumulated rest time as delta
+                    appendVariableLength(trackBytes, accumulatedRestTicks);
+                    trackBytes.push(0x90, evt.note, 100); // channel 0, velocity 100
+                    accumulatedRestTicks = 0;
+
+                    // Note Off - delta time = note duration
+                    appendVariableLength(trackBytes, durationTicks);
+                    trackBytes.push(0x80, evt.note, 64); // channel 0, velocity 64
+                }
+            });
+
+            // 5. End of track
+            trackBytes.push(0x00, 0xFF, 0x2F, 0x00);
+
+            // Build full MIDI file
+            const midiBytes = [];
+
+            // Header: MThd [6 bytes] format(2) tracks(2) division(2)
+            midiBytes.push(0x4D, 0x54, 0x68, 0x64); // "MThd"
+            midiBytes.push(0x00, 0x00, 0x00, 0x06); // header size = 6
+            midiBytes.push(0x00, 0x00); // format 0
+            midiBytes.push(0x00, 0x01); // 1 track
+            midiBytes.push((TICKS_PER_BEAT >> 8) & 0xFF, TICKS_PER_BEAT & 0xFF);
+
+            // Track: MTrk [size] [events]
+            midiBytes.push(0x4D, 0x54, 0x72, 0x6B); // "MTrk"
+            
+            // Track length (big-endian)
+            const trackLen = trackBytes.length;
+            midiBytes.push(
+                (trackLen >> 24) & 0xFF,
+                (trackLen >> 16) & 0xFF,
+                (trackLen >> 8) & 0xFF,
+                trackLen & 0xFF
+            );
+
+            // Track data
+            midiBytes.push(...trackBytes);
+
+            console.log(`MIDI file: ${midiBytes.length} bytes`);
+            return new Uint8Array(midiBytes);
+        }
+
+        function noteTextToMidiNumber(text, sruthi = 'C') {
+            if (!text) return null;
+
+            // Dots Above: ṡ, ṙ, ġ, ṁ, ṗ, ḋ, ṅ (lowercase) and Ṡ, Ṙ, Ġ, Ṁ, Ṗ, Ḋ, Ṅ (uppercase)
+            // Dots Below: ṣ, ṛ, g̣, ṃ, p̣, ḍ, ṇ (lowercase) and Ṣ, Ṛ, G̣, Ṃ, P̣, Ḍ, Ṇ (uppercase)
+            const dotsAboveChars = /[ṠṡṘṙĠġṀṁṖṗḊḋṄṅ]/;
+            const dotsBelowChars = /[ṢṣṚṛG̣g̣ṂṃP̣p̣ḌḍṆṇ]/;
+            
+            // Detect octave markers BEFORE normalizing
+            const hasDotAbove = dotsAboveChars.test(text); // Higher octave (dot above) → C5
+            const hasDotBelow = dotsBelowChars.test(text); // Lower octave (dot below) → C3
+            
+            // Character map: decorated → plain note
+            // Dots Above (higher octave)
+            const charMap = {
+                'Ṡ': 'S', 'ṡ': 'S',
+                'Ṙ': 'R', 'ṙ': 'R',
+                'Ġ': 'G', 'ġ': 'G',
+                'Ṁ': 'M', 'ṁ': 'M',
+                'Ṗ': 'P', 'ṗ': 'P',
+                'Ḋ': 'D', 'ḋ': 'D',
+                'Ṅ': 'N', 'ṅ': 'N',
+                // Dots Below (lower octave)
+                'Ṣ': 'S', 'ṣ': 'S',
+                'Ṛ': 'R', 'ṛ': 'R',
+                'G̣': 'G', 'g̣': 'G',
+                'Ṃ': 'M', 'ṃ': 'M',
+                'P̣': 'P', 'p̣': 'P',
+                'Ḍ': 'D', 'ḍ': 'D',
+                'Ṇ': 'N', 'ṇ': 'N'
+            };
+            
+            let normalized = text;
+            for (let [decor, plain] of Object.entries(charMap)) {
+                normalized = normalized.replace(new RegExp(decor, 'g'), plain);
+            }
+            normalized = normalized.toUpperCase();
+
+            // Map to semitones (C = 0)
+            const noteMap = {
+                'S': 0,   // Shadja = C
+                'R': 2,   // Rishabha = D
+                'G': 4,   // Gandhara = E
+                'M': 5,   // Madhyama = F
+                'P': 7,   // Panchama = G
+                'D': 9,   // Dhaivata = A
+                'N': 11   // Nishada = B
+            };
+
+            // Map sruthi to semitone offset from C
+            const sruthiOffsets = {
+                'C': 0, 'C#': 1, 'Db': 1,
+                'D': 2, 'D#': 3, 'Eb': 3,
+                'E': 4, 'E#': 5, 'Fb': 4,
+                'F': 5, 'F#': 6, 'Gb': 6,
+                'G': 7, 'G#': 8, 'Ab': 8,
+                'A': 9, 'A#': 10, 'Bb': 10,
+                'B': 11, 'B#': 0, 'Cb': 11
+            };
+
+            // Extract first character (base note)
+            let baseChar = null;
+            for (let i = 0; i < normalized.length; i++) {
+                if (normalized[i] in noteMap) {
+                    baseChar = normalized[i];
+                    break;
+                }
+            }
+
+            if (!baseChar) return null;
+
+            const baseC = 60; // C4 MIDI note (middle octave)
+            const semitone = noteMap[baseChar];
+            const sruthiOffset = sruthiOffsets[sruthi] || 0;
+            
+            // Octave adjustments
+            let octaveShift = 0;
+            if (hasDotAbove) octaveShift = 12;    // Higher octave (Ṡ, ṡ, etc. → C5)
+            if (hasDotBelow) octaveShift = -12;   // Lower octave (Ṣ, ṣ, etc. → C3)
+
+            return baseC + semitone + sruthiOffset + octaveShift;
+        }
+
+        function getKeySigFromSruthi(sruthi) {
+            // Map sruthi to key signature (number of sharps/flats)
+            const keyMap = {
+                'C': 0,
+                'C#': 7,
+                'Db': -5,
+                'D': 2,
+                'D#': 9,
+                'Eb': -3,
+                'E': 4,
+                'F': -1,
+                'F#': 6,
+                'Gb': -6,
+                'G': 1,
+                'G#': 8,
+                'Ab': -4,
+                'A': 3,
+                'A#': 10,
+                'Bb': -2,
+                'B': 5
+            };
+            return keyMap[sruthi] || 0;
+        }
+
+        function appendVariableLength(bytes, value) {
+            if (value < 128) {
+                bytes.push(value);
+            } else if (value < 16384) {
+                bytes.push(((value >> 7) & 0x7F) | 0x80, value & 0x7F);
+            } else if (value < 2097152) {
+                bytes.push(
+                    ((value >> 14) & 0x7F) | 0x80,
+                    ((value >> 7) & 0x7F) | 0x80,
+                    value & 0x7F
+                );
+            } else {
+                bytes.push(
+                    ((value >> 21) & 0x7F) | 0x80,
+                    ((value >> 14) & 0x7F) | 0x80,
+                    ((value >> 7) & 0x7F) | 0x80,
+                    value & 0x7F
+                );
+            }
         }
 
         // --- FORMAT FUNCTIONS ---
