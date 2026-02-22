@@ -298,6 +298,10 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
+        /* Beat marker - thick left border to mark beat boundaries */
+        .notation-table td.beat-marker {
+            border-left: 4px solid #333;
+        }
         /* Speed marking toolbar */
         .speed-toolbar {
             margin-top: 15px;
@@ -623,6 +627,9 @@
             const text = document.getElementById('notationInput').value;
             if (!text) return;
 
+            // Reset brace group counter for new notation
+            globalBraceGroupCounter = 0;
+
             const lines = text.split('\n');
             let songMetadata = { name: 'Untitled Song', ragam: '', thalam: '', composer: '', arohana: '', avarohana: '' };
             let sections = [];
@@ -656,7 +663,12 @@
                     const isNotation = /[SRGMPDNsrgmpdn,;]/.test(trimmed) && trimmed.includes(',');
                     if (isNotation) {
                         const swaraRowId = 'row-' + Math.random().toString(36).substr(2, 9);
-                        const swaraAtoms = tokenizeWithPosition(rawLine);
+                        // CLEAN: Strip spaces, |, /, \, :, - before tokenizing (display only, original input untouched)
+                        const cleanedLine = rawLine.replace(/[\s|/\\:\-]/g, '');
+                        console.log(`📝 Original: ${rawLine}`);
+                        console.log(`🧹 Cleaned:  ${cleanedLine}`);
+                        const swaraAtoms = tokenizeWithPosition(cleanedLine);
+                        
                         currentSection.rows.push({
                             id: swaraRowId,
                             type: 'swara',
@@ -694,6 +706,7 @@
         }
 
         function renderSong() {
+            if (!currentSong.sections) return;
             const viewer = document.getElementById('renderedNotation');
             const metadataDiv = document.getElementById('metadataDisplay');
             viewer.innerHTML = '';
@@ -764,38 +777,154 @@
                             const lyricRow = section.rows.find(lr => lr.type === 'lyric' && lr.parentSwaraId === row.id);
 
                             row.atoms.forEach((atom, aIdx) => {
+                                // SKIP: Don't render atoms that are part of a brace group (except as part of their first cell)
+                                if (atom.isBraceChild && atom.groupId) {
+                                    // Check if this is NOT the first atom in the group
+                                    const firstAtomInGroup = row.atoms.find((a, idx) => 
+                                        a.groupId === atom.groupId && idx < aIdx
+                                    ) === undefined;
+                                    
+                                    if (!firstAtomInGroup) {
+                                        console.log(`⊘ Skipping atom "${atom.text}" - already rendered as part of group ${atom.groupId}`);
+                                        return; // Already rendered as part of first pair
+                                    }
+                                }
+
                                 const cell = document.createElement('td');
                                 cell.style.position = 'relative';
 
-                                // Eduppu marker (if this cell is the eduppu position)
-                                if (atom.isEduppu) {
-                                    const eduppuMarker = document.createElement('div');
-                                    eduppuMarker.style.cssText = 'position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 20px; color: #ff7675; font-weight: bold;';
-                                    eduppuMarker.textContent = '*';
-                                    cell.appendChild(eduppuMarker);
+                                // Check if this atom is part of a brace group
+                                if (atom.isBraceChild && atom.groupId) {
+                                    // Find ALL atoms in this group
+                                    const groupAtoms = row.atoms.filter(a => a.groupId === atom.groupId);
+                                    console.log(`\n📦 Rendering brace group ${atom.groupId}:`);
+                                    console.log(`   Atoms: ${groupAtoms.map(a => a.text).join(', ')} (${groupAtoms.length} total)`);
+                                    
+                                    // Split into cells of 2 atoms each
+                                    const cellsToRender = [];
+                                    for (let i = 0; i < groupAtoms.length; i += 2) {
+                                        cellsToRender.push(groupAtoms.slice(i, i + 2));
+                                    }
+                                    console.log(`   Creating ${cellsToRender.length} cells: ${cellsToRender.map((c, i) => `[${c.map(a => a.text).join('')}]`).join(' ')}`);
+                                    
+                                    // Render first cell here, queue remaining cells
+                                    const firstCellAtoms = cellsToRender[0];
+                                    const groupContainer = document.createElement('div');
+                                    groupContainer.style.cssText = 'display: flex; gap: 2px; align-items: center;';
+                                    
+                                    // Add atoms to first cell
+                                    firstCellAtoms.forEach((groupAtom) => {
+                                        const swaraDiv = document.createElement('div');
+                                        swaraDiv.className = 'swara-cell';
+                                        swaraDiv.contentEditable = "true";
+                                        swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
+                                        swaraDiv.textContent = formatSwaraForDisplay(groupAtom.text);
+                                        swaraDiv.oninput = (e) => {
+                                            groupAtom.text = e.target.textContent;
+                                            handleCellEdit(sIdx, r, row.atoms.indexOf(groupAtom), 'swara', e.target.textContent);
+                                        };
+                                        groupContainer.appendChild(swaraDiv);
+                                    });
+                                    
+                                    cell.appendChild(groupContainer);
+                                    
+                                    // Add 2x speed indicator
+                                    const speedIndicator = document.createElement('div');
+                                    speedIndicator.textContent = '2×';
+                                    speedIndicator.style.cssText = 'position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #27ae60; font-weight: bold; background: #ecf0f1; padding: 2px 5px; border-radius: 3px;';
+                                    cell.appendChild(speedIndicator);
+                                    
+                                    // Apply beat marker if this column starts a beat
+                                    const nadai = parseInt(currentSong.nadai) || 4;
+                                    if (aIdx % nadai === 0) {
+                                        cell.classList.add('beat-marker');
+                                    }
+                                    
+                                    // APPEND FIRST CELL TO ROW
+                                    console.log(`   ✅ Appended brace group cell 1/${cellsToRender.length} to table row`);
+                                    tr.appendChild(cell);
+                                    
+                                    // APPEND REMAINING CELLS (atoms 3-4, 5-6, 7-8, etc.)
+                                    for (let cellIdx = 1; cellIdx < cellsToRender.length; cellIdx++) {
+                                        const extraCell = document.createElement('td');
+                                        extraCell.style.position = 'relative';
+                                        
+                                        const extraContainer = document.createElement('div');
+                                        extraContainer.style.cssText = 'display: flex; gap: 2px; align-items: center;';
+                                        
+                                        cellsToRender[cellIdx].forEach((groupAtom) => {
+                                            const swaraDiv = document.createElement('div');
+                                            swaraDiv.className = 'swara-cell';
+                                            swaraDiv.classList.add('speed-2x');
+                                            swaraDiv.contentEditable = "true";
+                                            swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
+                                            swaraDiv.textContent = formatSwaraForDisplay(groupAtom.text);
+                                            swaraDiv.oninput = (e) => {
+                                                groupAtom.text = e.target.textContent;
+                                                handleCellEdit(sIdx, r, row.atoms.indexOf(groupAtom), 'swara', e.target.textContent);
+                                            };
+                                            extraContainer.appendChild(swaraDiv);
+                                        });
+                                        
+                                        extraCell.appendChild(extraContainer);
+                                        
+                                        // Add 2x speed indicator
+                                        const extraSpeedIndicator = document.createElement('div');
+                                        extraSpeedIndicator.textContent = '2×';
+                                        extraSpeedIndicator.style.cssText = 'position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #27ae60; font-weight: bold; background: #ecf0f1; padding: 2px 5px; border-radius: 3px;';
+                                        extraCell.appendChild(extraSpeedIndicator);
+                                        
+                                        // Apply beat marker if this column starts a beat
+                                        if (aIdx % nadai === 0) {
+                                            extraCell.classList.add('beat-marker');
+                                        }
+                                        
+                                        console.log(`   ✅ Appended brace group cell ${cellIdx + 1}/${cellsToRender.length} to table row`);
+                                        tr.appendChild(extraCell);
+                                    }
+                                } else {
+                                    // Regular atom (not part of brace group)
+                                    // Eduppu marker (if this cell is the eduppu position)
+                                    if (atom.isEduppu) {
+                                        const eduppuMarker = document.createElement('div');
+                                        eduppuMarker.style.cssText = 'position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 20px; color: #ff7675; font-weight: bold;';
+                                        eduppuMarker.textContent = '*';
+                                        cell.appendChild(eduppuMarker);
+                                    }
+
+                                    // Swara Cell
+                                    const swaraDiv = document.createElement('div');
+                                    swaraDiv.className = 'swara-cell';
+                                    // Apply speed-2x styling only if atom has speed=2 (braced notes)
+                                    if (atom.speed === 2) {
+                                        swaraDiv.classList.add('speed-2x');
+                                    }
+                                    swaraDiv.contentEditable = "true";
+                                    swaraDiv.textContent = formatSwaraForDisplay(atom.text);
+                                    swaraDiv.oninput = (e) => handleCellEdit(sIdx, r, aIdx, 'swara', e.target.textContent);
+
+                                    cell.appendChild(swaraDiv);
+
+                                    // Lyric Cell (if exists) - only for non-brace-child atoms
+                                    if (lyricRow) {
+                                        const lyricDiv = document.createElement('div');
+                                        lyricDiv.className = 'lyrics-cell';
+                                        lyricDiv.contentEditable = "true";
+                                        const lyricRowIdx = section.rows.indexOf(lyricRow);
+                                        lyricDiv.textContent = lyricRow.atoms[aIdx] || '';
+                                        lyricDiv.oninput = (e) => handleCellEdit(sIdx, lyricRowIdx, aIdx, 'lyric', e.target.textContent);
+                                        cell.appendChild(lyricDiv);
+                                    }
+
+                                    // Apply beat marker if this column starts a beat
+                                    const nadaiValue = parseInt(currentSong.nadai) || 4;
+                                    if (aIdx % nadaiValue === 0) {
+                                        cell.classList.add('beat-marker');
+                                    }
+
+                                    tr.appendChild(cell);
+                                    console.log(`   ✅ Appended regular atom cell "${atom.text}" to table row`);
                                 }
-
-                                // Swara Cell
-                                const swaraDiv = document.createElement('div');
-                                swaraDiv.className = 'swara-cell';
-                                swaraDiv.contentEditable = "true";
-                                swaraDiv.textContent = formatSwaraForDisplay(atom.text);
-                                swaraDiv.oninput = (e) => handleCellEdit(sIdx, r, aIdx, 'swara', e.target.textContent);
-
-                                cell.appendChild(swaraDiv);
-
-                                // Lyric Cell (if exists)
-                                if (lyricRow) {
-                                    const lyricDiv = document.createElement('div');
-                                    lyricDiv.className = 'lyrics-cell';
-                                    lyricDiv.contentEditable = "true";
-                                    const lyricRowIdx = section.rows.indexOf(lyricRow);
-                                    lyricDiv.textContent = lyricRow.atoms[aIdx] || '';
-                                    lyricDiv.oninput = (e) => handleCellEdit(sIdx, lyricRowIdx, aIdx, 'lyric', e.target.textContent);
-                                    cell.appendChild(lyricDiv);
-                                }
-
-                                tr.appendChild(cell);
                             });
                             table.appendChild(tr);
                         }
@@ -852,17 +981,135 @@
             }, 0);
         }
 
+        // Global counter for unique brace group IDs across all tokenizations
+        let globalBraceGroupCounter = 0;
+
         function tokenizeWithPosition(line) {
-            // Updated regex:
-            // 1. Matches swaras including precomposed variants (Latin Extended A and Additional)
-            //    followed by optional numbers/superscripts and combining marks.
-            // 2. Matches delimiters and special notation characters.
-            // 3. Matches any other non-whitespace character as a fallback token.
-            const regex = /([SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?)|([,;|*\-.[\]/])|(\S)/g;
-            let tokens = []; let match;
-            while ((match = regex.exec(line)) !== null) {
-                tokens.push({ text: match[0], index: match.index });
+            // FRESH BRACE LOGIC
+            // 1. Detect {notes} groups
+            // 2. Create atoms: notes/commas inside braces get speed=2 + groupId
+            // 3. Atoms outside braces get speed=1
+            // 4. Don't include braces themselves
+            
+            let tokens = [];
+            let i = 0;
+            let atomIndex = 0; // Global position for atoms
+            
+            // Note regex: swara note with optional superscript & combining marks
+            const noteRegex = /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?/;
+            
+            console.log(`🧹 Tokenizing cleaned line: ${line}`);
+            
+            while (i < line.length) {
+                // Check for brace start
+                if (line[i] === '{') {
+                    // Find matching close brace
+                    let closeIdx = line.indexOf('}', i);
+                    if (closeIdx === -1) closeIdx = line.length;
+                    
+                    let braceContent = line.substring(i + 1, closeIdx);
+                    console.log(`📦 Found brace group: {${braceContent}}`);
+                    
+                    // STEP 1: Collect all valid atoms (notes + commas), ignoring |, \, /, ., spaces
+                    let braceAtoms = [];
+                    let j = 0;
+                    while (j < braceContent.length) {
+                        if (braceContent[j] === ',') {
+                            braceAtoms.push(',');
+                            j++;
+                        } else if (['|', '\\', '/', '.', ' '].includes(braceContent[j])) {
+                            // Skip these characters
+                            console.log(`   ⊘ Skipped separator: "${braceContent[j]}"`);
+                            j++;
+                        } else {
+                            // Try to match a note
+                            const substr = braceContent.substring(j);
+                            const noteMatch = substr.match(noteRegex);
+                            if (noteMatch) {
+                                braceAtoms.push(noteMatch[0]);
+                                j += noteMatch[0].length;
+                            } else {
+                                // Skip unknown character
+                                console.log(`   ⊘ Skipped: "${braceContent[j]}"`);
+                                j++;
+                            }
+                        }
+                    }
+                    
+                    // STEP 2: Split atoms into pairs and assign groupIds
+                    for (let pairIdx = 0; pairIdx < braceAtoms.length; pairIdx += 2) {
+                        const pairGroupId = `brace-${globalBraceGroupCounter}`;
+                        globalBraceGroupCounter += 2;
+                        
+                        // Push first atom of pair
+                        tokens.push({
+                            text: braceAtoms[pairIdx],
+                            index: atomIndex,
+                            speed: 2,
+                            groupId: pairGroupId,
+                            isBraceChild: true
+                        });
+                        console.log(`   ✓ Atom: "${braceAtoms[pairIdx]}" (index ${atomIndex}, groupId ${pairGroupId})`);
+                        atomIndex++;
+                        
+                        // Push second atom of pair if it exists
+                        if (pairIdx + 1 < braceAtoms.length) {
+                            tokens.push({
+                                text: braceAtoms[pairIdx + 1],
+                                index: atomIndex,
+                                speed: 2,
+                                groupId: pairGroupId,
+                                isBraceChild: true
+                            });
+                            console.log(`   ✓ Atom: "${braceAtoms[pairIdx + 1]}" (index ${atomIndex}, groupId ${pairGroupId})`);
+                            atomIndex++;
+                        }
+                    }
+                    
+                    i = closeIdx + 1; // Move past closing brace
+                } else if (line[i] === ',') {
+                    // Regular comma (outside braces)
+                    tokens.push({
+                        text: ',',
+                        index: atomIndex,
+                        speed: 1
+                    });
+                    console.log(`✓ Atom: "," (index ${atomIndex})`);
+                    atomIndex++;
+                    i++;
+                } else if (line[i] === '*') {
+                    // Marker atom (eduppu, etc)
+                    tokens.push({
+                        text: '*',
+                        index: atomIndex,
+                        speed: 1
+                    });
+                    console.log(`✓ Atom: "*" (index ${atomIndex})`);
+                    atomIndex++;
+                    i++;
+                } else {
+                    // Try to match a note (regular)
+                    const substr = line.substring(i);
+                    const noteMatch = substr.match(noteRegex);
+                    if (noteMatch) {
+                        const noteText = noteMatch[0];
+                        tokens.push({
+                            text: noteText,
+                            index: atomIndex,
+                            speed: 1
+                        });
+                        console.log(`✓ Atom: "${noteText}" (index ${atomIndex})`);
+                        atomIndex++;
+                        i += noteText.length;
+                    } else {
+                        // Skip unknown character
+                        console.log(`⊘ Skipped: "${line[i]}"`);
+                        i++;
+                    }
+                }
             }
+            
+            console.log(`📊 Total atoms created: ${tokens.length}`);
             return tokens;
         }
 
@@ -908,6 +1155,11 @@
         }
 
         function formatSwaraForDisplay(atom) {
+            // Skip brace group child markers - they're displayed as part of groups
+            if (typeof atom === 'object' && atom.isBraceChild) {
+                return '';
+            }
+            
             if (/[SRGMPDNsrgmpdn]/.test(atom)) {
                 const isUppercase = atom[0] === atom[0].toUpperCase();
                 const hasNumber = /[0-9]/.test(atom);
@@ -1338,6 +1590,7 @@
 
         // --- FORMAT FUNCTIONS ---
         function openFormatModal() {
+            console.log('🎯 ===== FORMAT BUTTON CLICKED =====');
             applyFormatting();
         }
 
@@ -1350,8 +1603,14 @@
         }
 
         function applyFormatting() {
+            // Reset counter before re-tokenizing during format
+            globalBraceGroupCounter = 0;
+            
+            console.log('🔧 applyFormatting() started');
             const eduppuPos = parseInt(document.getElementById('eduppu').value);
             const totalCells = calculateTotalCells();
+            
+            console.log(`   Eduppu: ${eduppuPos}, Total cells: ${totalCells}`);
 
             if (isNaN(eduppuPos) || eduppuPos < 1 || eduppuPos > totalCells) {
                 alert(`Eduppu must be between 1 and ${totalCells} (beats × nadai)`);
@@ -1362,10 +1621,12 @@
 
             // Format each section
             currentSong.sections.forEach((section, sIdx) => {
+                console.log(`   📍 Formatting section ${sIdx}: "${section.title}"`);
                 formatSection(section, sIdx, totalCells, eduppuPos);
             });
 
             gridIsDirty = true;
+            console.log('🎨 Calling renderSong() after format...');
             renderSong();
             closeFormatModal();
             showToast('Notation formatted successfully!');
@@ -1374,7 +1635,6 @@
         function formatSection(section, sectionIdx, totalCells, eduppuPos) {
             if (!section.rows || section.rows.length === 0) return;
 
-            // Separate swara and lyric rows
             const swaraLyricPairs = [];
             for (let i = 0; i < section.rows.length; i++) {
                 if (section.rows[i].type === 'swara') {
@@ -1384,8 +1644,8 @@
                 }
             }
 
-            // Flatten all swaras and lyrics together (removing special characters from swaras)
-            // This maintains alignment between swaras and lyrics
+            // Flatten all swaras and lyrics together
+            // Preserves brace grouping and all musical notation (commas, etc.)
             let allSwaras = [];
             let allLyrics = [];
             let eduppuMarkPos = -1; // Position of eduppu in the flattened array
@@ -1398,11 +1658,16 @@
                         if (atom.text === '*') {
                             eduppuMarkPos = allSwaras.length; // Track eduppu position
                         } else if (!['*', '-', '|', '/', '\\'].includes(atom.text)) {
-                            // Add swara
-                            allSwaras.push({
+                            // Add swara - PRESERVE ALL PROPERTIES including brace grouping
+                            const swaraObj = {
                                 text: atom.text,
                                 index: atom.index || 0
-                            });
+                            };
+                            // Preserve brace group properties
+                            if (atom.speed !== undefined) swaraObj.speed = atom.speed;
+                            if (atom.groupId !== undefined) swaraObj.groupId = atom.groupId;
+                            if (atom.isBraceChild !== undefined) swaraObj.isBraceChild = atom.isBraceChild;
+                            allSwaras.push(swaraObj);
                             
                             // Add corresponding lyric if it exists
                             let lyricAtom = '';
@@ -1420,6 +1685,67 @@
                 eduppuMarkPos = eduppuPos - 1; // Convert to 0-indexed
             }
 
+            // COMBINE ATOMS WITH SAME groupId INTO SINGLE ATOM
+            const combinedSwaras = [];
+            const combinedLyrics = [];
+            let adjustedEduppuPos = eduppuMarkPos;
+            
+            for (let i = 0; i < allSwaras.length; i++) {
+                const currentAtom = allSwaras[i];
+                
+                // Check if this atom has a groupId and if the next atom has the same groupId
+                if (currentAtom.groupId && i + 1 < allSwaras.length && allSwaras[i + 1].groupId === currentAtom.groupId) {
+                    // Start combining with same groupId
+                    let combinedText = currentAtom.text;
+                    let combinedLyric = allLyrics[i] || '';
+                    let j = i + 1;
+                    let hasEduppu = false;
+                    
+                    // Check if eduppu mark is in this group
+                    for (let k = i; k < allSwaras.length && allSwaras[k].groupId === currentAtom.groupId; k++) {
+                        if (k === eduppuMarkPos) {
+                            hasEduppu = true;
+                            adjustedEduppuPos = combinedSwaras.length;
+                        }
+                    }
+                    
+                    while (j < allSwaras.length && allSwaras[j].groupId === currentAtom.groupId) {
+                        combinedText += allSwaras[j].text;
+                        combinedLyric += (allLyrics[j] || '');
+                        j++;
+                    }
+                    
+                    // Create combined atom
+                    const combinedAtom = {
+                        text: combinedText,
+                        index: currentAtom.index,
+                        speed: currentAtom.speed,
+                        groupId: currentAtom.groupId,
+                        isBraceChild: currentAtom.isBraceChild
+                    };
+                    combinedSwaras.push(combinedAtom);
+                    combinedLyrics.push(combinedLyric);
+                    
+                    console.log(`✅ Combined brace group ${currentAtom.groupId}: "${combinedText}"`);
+                    
+                    // Skip the atoms we just combined
+                    i = j - 1;
+                } else {
+                    // Regular atom, just add it
+                    combinedSwaras.push(currentAtom);
+                    combinedLyrics.push(allLyrics[i] || '');
+                    
+                    // Adjust eduppu position for atoms not in a combined group
+                    if (i === eduppuMarkPos) {
+                        adjustedEduppuPos = combinedSwaras.length - 1;
+                    }
+                }
+            }
+            
+            // Use combined arrays
+            const finalSwaras = combinedSwaras;
+            const finalLyrics = combinedLyrics;
+
             // Redistribute into rows with totalCells per row
             const newRows = [];
             const newRowId = 'section-' + sectionIdx + '-row-';
@@ -1428,7 +1754,7 @@
             let currentSwaraRow = null;
             let currentLyricRow = null;
 
-            for (let i = 0; i < allSwaras.length; i++) {
+            for (let i = 0; i < finalSwaras.length; i++) {
                 if (cellsInCurrentRow === 0) {
                     // Start new swara row
                     currentSwaraRow = {
@@ -1450,16 +1776,21 @@
                     newRows.push(currentLyricRow);
                 }
 
-                // Add swara to cell
-                currentSwaraRow.atoms.push({
-                    text: allSwaras[i].text,
+                // Add swara to cell - PRESERVE BRACE GROUP PROPERTIES
+                const newAtom = {
+                    text: finalSwaras[i].text,
                     index: i,
-                    isEduppu: (i === eduppuMarkPos)
-                });
+                    isEduppu: (i === adjustedEduppuPos)
+                };
+                // Only add brace properties if they exist on the source atom
+                if (finalSwaras[i].speed !== undefined) newAtom.speed = finalSwaras[i].speed;
+                if (finalSwaras[i].groupId !== undefined) newAtom.groupId = finalSwaras[i].groupId;
+                if (finalSwaras[i].isBraceChild !== undefined) newAtom.isBraceChild = finalSwaras[i].isBraceChild;
+                currentSwaraRow.atoms.push(newAtom);
 
                 // Add corresponding lyric if available
-                if (i < allLyrics.length) {
-                    currentLyricRow.atoms.push(allLyrics[i]);
+                if (i < finalLyrics.length) {
+                    currentLyricRow.atoms.push(finalLyrics[i]);
                 } else {
                     currentLyricRow.atoms.push('');
                 }
@@ -1475,6 +1806,17 @@
 
             // Update section with new formatted rows
             section.rows = newRows;
+            
+            // Log if brace groups exist after format
+            let braceGroupCount = 0;
+            newRows.forEach(row => {
+                if (row.type === 'swara' && row.atoms) {
+                    braceGroupCount += row.atoms.filter(a => a.isBraceChild).length;
+                }
+            });
+            if (braceGroupCount > 0) {
+                console.log(`✅ Format complete - preserved ${braceGroupCount} brace group atoms`);
+            }
         }
 
         // --- AUDIO PLAYBACK FUNCTIONS ---
@@ -1618,9 +1960,9 @@
                             if (!isPlaying) break;
 
                             let cellNote = (atom.text || '').trim().toLowerCase();
-                            let speedMultiplier = 1;  // Default normal speed
+                            let speedMultiplier = atom.speed || 1;  // Use atom speed property (1 for normal, 2 for 2x, etc)
 
-                            // Extract speed multiplier if present (e.g., "2*s", "3*p")
+                            // Extract speed multiplier if present in text (e.g., "2*s", "3*p") - overrides atom.speed
                             if (cellNote.startsWith('2*')) {
                                 speedMultiplier = 2;
                                 cellNote = cellNote.substring(2);
