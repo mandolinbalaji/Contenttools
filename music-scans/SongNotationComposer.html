@@ -101,6 +101,7 @@
             display: flex;
             gap: 15px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .content-area {
@@ -147,6 +148,20 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
         }
 
         .btn-primary {
@@ -476,6 +491,101 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             width: 100%;
+        }
+
+        /* Responsive button layout */
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        .header-actions .btn {
+            padding: 8px 14px;
+            font-size: 13px;
+            flex: 0 1 auto;
+            min-width: 100px;
+        }
+
+        /* Make header controls responsive */
+        .header-controls {
+            flex-wrap: wrap;
+            flex-basis: 100%;
+        }
+
+        .header-controls > div {
+            flex: 1 1 auto;
+            min-width: 60px;
+        }
+
+        /* Small screens - responsive adjustments */
+        @media (max-width: 1400px) {
+            .header-actions .btn {
+                padding: 7px 12px;
+                font-size: 12px;
+                min-width: 90px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .header-controls {
+                flex-wrap: wrap;
+            }
+
+            .header-controls > div {
+                flex: 0 1 calc(50% - 7px);
+                min-width: 50px;
+            }
+
+            .header-actions {
+                gap: 8px;
+            }
+
+            .header-actions .btn {
+                padding: 6px 10px;
+                font-size: 11px;
+                min-width: auto;
+                flex: 1 1 calc(25% - 6px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-controls > div {
+                flex: 0 1 calc(50% - 7px);
+            }
+
+            .header-actions {
+                gap: 6px;
+            }
+
+            .header-actions .btn {
+                padding: 6px 8px;
+                font-size: 10px;
+                flex: 1 1 calc(33.33% - 4px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-controls > div {
+                flex: 0 1 100%;
+                margin-bottom: 5px;
+            }
+
+            .header-controls > div:last-child {
+                flex: 0 1 100%;
+            }
+
+            .header-actions {
+                gap: 5px;
+            }
+
+            .header-actions .btn {
+                padding: 5px 6px;
+                font-size: 9px;
+                flex: 1 1 calc(50% - 2.5px);
+            }
         }
     </style>
 </head>
