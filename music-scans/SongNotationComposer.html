@@ -966,6 +966,32 @@
                 const table = document.createElement('table');
                 table.className = 'notation-table';
 
+                // Add cell number header row for first section
+                if (sIdx === 0 && section.rows && section.rows.length > 0) {
+                    const headerRow = document.createElement('tr');
+                    headerRow.style.cssText = 'background: #f0f0f0; font-weight: bold; text-align: center;';
+                    
+                    const beats = parseInt(currentSong.beats) || 8;
+                    const nadai = parseInt(currentSong.nadai) || 4;
+                    const totalCells = beats * nadai;
+                    
+                    for (let i = 1; i <= totalCells; i++) {
+                        const th = document.createElement('td');
+                        th.style.cssText = 'padding: 8px 4px; font-size: 11px; color: #666; border-bottom: 2px solid #999;';
+                        
+                        // Show beat number on new beat
+                        if ((i - 1) % nadai === 0) {
+                            th.style.cssText += 'border-left: 3px solid #333;';
+                            th.innerHTML = `<strong>B${Math.floor((i - 1) / nadai) + 1}</strong><br>${i}`;
+                        } else {
+                            th.innerHTML = i;
+                        }
+                        
+                        headerRow.appendChild(th);
+                    }
+                    table.appendChild(headerRow);
+                }
+
                 // Interleave rendering logic (Safe check for rows)
                 if (section.rows && section.rows.length > 0) {
                     for (let r = 0; r < section.rows.length; r++) {
