@@ -1,0 +1,25 @@
+Migration Report
+Date: 2026-02-23T09:36:42.477434
+==================================================
+
+✅ Loaded notation-composer.json
+   Objects in file: 3
+✅ Backup created: backups\notation-composer.json.backup.20260223-093642
+✅ Metadata extracted
+✅ Extracted 2 songs with 0 total atoms
+✅ Directories created: metadata/, songs/
+✅ Reference data saved: metadata\reference-data.json
+   ✅ Saved: MakelaraVicharamu → songs\MakelaraVicharamu.json
+   ✅ Saved: Sujana Jeevana → songs\SujanaJeevana.json
+✅ Index file created: notation-composer.json (2 entries)
+✅ All JSON files valid
+
+✅ Migration completed successfully!
+
+Summary:
+  - Original file: notation-composer.json
+  - Backup: backups/notation-composer.json.backup.*
+  - New index: notation-composer.json (thin references)
+  - Metadata: metadata\reference-data.json
+  - Song files: songs/ (2 files)
+  - Total atoms preserved: 0

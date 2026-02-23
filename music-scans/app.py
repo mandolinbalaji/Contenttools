@@ -1636,21 +1636,106 @@ S, R, G, M, | P, D, N, S, ||
         return jsonify({"error": f"Internal server error during parsing: {str(e)}"}), 500
 
 def _load_notations():
+    """Load index of songs (thin references for playlist)"""
     if not NOTATION_FILE.exists():
         return []
     try:
         with open(NOTATION_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
-        logger.error(f"Error loading notations: {e}")
+        logger.error(f"Error loading notations index: {e}")
         return []
 
-def _save_notations(notations):
+def _save_index(index):
+    """Save index file with song references"""
     try:
         with open(NOTATION_FILE, 'w', encoding='utf-8') as f:
-            json.dump(notations, f, indent=2, ensure_ascii=False)
+            json.dump(index, f, indent=2, ensure_ascii=False)
     except Exception as e:
-        logger.error(f"Error saving notations: {e}")
+        logger.error(f"Error saving notations index: {e}")
+
+def _get_song_filepath(song_name):
+    """Get the filepath for a song based on its name"""
+    safe_name = "".join(c for c in song_name if c.isalnum() or c in ['-', '_']).rstrip()
+    return NOTATION_DIR / "songs" / f"{safe_name}.json"
+
+def _get_song(song_id):
+    """Load individual song from songs/{name}.json"""
+    index = _load_notations()
+    song_ref = next((s for s in index if s.get('id') == song_id), None)
+    
+    if not song_ref:
+        logger.warning(f"Song {song_id} not found in index")
+        return None
+    
+    song_file = NOTATION_DIR / song_ref.get('file', f"songs/{song_ref.get('name')}.json")
+    
+    if not song_file.exists():
+        logger.error(f"Song file not found: {song_file}")
+        return None
+    
+    try:
+        with open(song_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading song {song_id}: {e}")
+        return None
+
+def _save_song(song_data):
+    """Save individual song to songs/{name}.json and update index"""
+    try:
+        song_name = song_data.get('name', 'UnknownSong')
+        song_id = song_data.get('id', str(uuid.uuid4()))
+        
+        # Save to per-song file
+        song_file = _get_song_filepath(song_name)
+        song_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(song_file, 'w', encoding='utf-8') as f:
+            json.dump(song_data, f, indent=2, ensure_ascii=False)
+        
+        # Update index
+        index = _load_notations()
+        safe_name = "".join(c for c in song_name if c.isalnum() or c in ['-', '_']).rstrip()
+        song_ref = {
+            'id': song_id,
+            'name': song_name,
+            'ragam': song_data.get('ragam', ''),
+            'thalam': song_data.get('thalam', ''),
+            'composer': song_data.get('composer', ''),
+            'sruthi': song_data.get('sruthi', ''),
+            'file': f'songs/{safe_name}.json'
+        }
+        
+        # Find and update or add
+        existing_idx = next((i for i, s in enumerate(index) if s.get('id') == song_id), None)
+        if existing_idx is not None:
+            index[existing_idx] = song_ref
+        else:
+            index.insert(0, song_ref)
+        
+        _save_index(index)
+        logger.info(f"Saved song: {song_name}")
+        return True
+    except Exception as e:
+        logger.error(f"Error saving song: {e}")
+        return False
+
+def _delete_song_file(song_name):
+    """Delete songs/{name}.json file"""
+    try:
+        song_file = _get_song_filepath(song_name)
+        if song_file.exists():
+            song_file.unlink()
+            logger.info(f"Deleted song file: {song_file}")
+        return True
+    except Exception as e:
+        logger.error(f"Error deleting song file: {e}")
+        return False
+
+def _save_notations(notations):
+    """Deprecated: use _save_index() instead. Kept for backward compatibility."""
+    _save_index(notations)
 
 @app.route('/api/notation-composer', methods=['GET'])
 def get_notations():
@@ -1688,42 +1773,44 @@ def save_notation():
             except Exception as e:
                 logger.warning(f"Failed to rename image source (maybe file in use or permission?): {e}")
 
-    notations = _load_notations()
-    # Find existing by ID or Name
-    idx = next((i for i, n in enumerate(notations) if n.get('id') == data['id'] or n.get('name') == data['name']), None)
-    
-    if idx is not None:
-        notations[idx] = data
+    # Use new per-song save function
+    success = _save_song(data)
+    if success:
+        return jsonify(data), 200
     else:
-        notations.insert(0, data)
-        
-    _save_notations(notations)
-    return jsonify(data), 200
+        return jsonify({"error": "Failed to save song"}), 500
 
 @app.route('/api/notation-composer/<notation_id>', methods=['DELETE'])
 def delete_notation(notation_id):
-    notations = _load_notations()
-    target = next((n for n in notations if n.get('id') == notation_id), None)
+    index = _load_notations()
+    target = next((n for n in index if n.get('id') == notation_id), None)
     
     if not target:
         return jsonify({"error": "Not found"}), 404
-        
+    
+    song_name = target.get('name', 'UnknownSong')
+    
     # Cleanup image source file if no other song uses it
     image_source = target.get('imageSource')
     if image_source and image_source.startswith('/media/'):
         rel_path = image_source.replace('/media/', '')
         file_path = MEDIA_ROOT / rel_path
         
-        other_songs_with_image = [n for n in notations if n.get('id') != notation_id and n.get('imageSource') == image_source]
+        other_songs_with_image = [n for n in index if n.get('id') != notation_id and n.get('imageSource') == image_source]
         if not other_songs_with_image and file_path.exists():
             try:
                 os.remove(file_path)
                 logger.info(f"Deleted orphan image source: {file_path}")
             except Exception as e:
                 logger.error(f"Failed to delete image source {file_path}: {e}")
-
-    new_notations = [n for n in notations if n.get('id') != notation_id]
-    _save_notations(new_notations)
+    
+    # Delete song file from songs/{name}.json
+    _delete_song_file(song_name)
+    
+    # Update index
+    new_index = [n for n in index if n.get('id') != notation_id]
+    _save_index(new_index)
+    
     return jsonify({"status": "ok"})
 
 # ============================================================================

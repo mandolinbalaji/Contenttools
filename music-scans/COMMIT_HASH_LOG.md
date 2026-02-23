@@ -1,4 +1,11 @@
 
+
+66c69e9
+
+Commit: 66c69e9 - "fix: add getUpperDottedVariant() to convert base notes to dotted forms"
+Tag: v1.2.2 - "Fix: Standalone dotted note enrichment with variant conversion"
+Pushed to: origin/master
+Status: Branch is now up to date with remote
 # Commit Hash Log
 Commit: 5877b7e
 

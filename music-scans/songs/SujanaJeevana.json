@@ -1,0 +1,2679 @@
+{
+  "beats": "8",
+  "bpm": "120",
+  "composer": "",
+  "id": "init-sujana",
+  "nadai": "4",
+  "name": "Sujana Jeevana",
+  "ragam": "Khamas (Mēḷa 28)",
+  "rawText": "Composition: Sujana Jeevana\n• Rāga: Khamas (Mēḷa 28)\n• Ārōhaṇa: S M¹ G³ M¹ P D² N² Ṡ\n• Avarōhaṇa: Ṡ N² D² P M¹ G³ R² S\n• Tāḷa: Rupakam\n\n--------------------------------------------------------------------------------\nPallavi (P.1)\nLine 1:\nM,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||\nsu ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma\nLine 2:\nM,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, DNŚ, ND     | P,,, ,, P,ŚN NDP||\nsu ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā  ma\nVariation 3:\nM,G,GS S,M,G,     | PPMM ,, ,, PGM,     | P, D,DP PDN,ṘŚND   | M,P, ,, PŚN³ DP,,D ||\nsu ja na jī  va     na        rā ma       sugu na bhū  sha     na    rā  ma (sujanajīvana)\n\n--------------------------------------------------------------------------------\nAnupallavi (A.1)\nLine 1:\n* M  N,D DNṠ,ṠN   | S Ṡ, ,, ,, Ṡ, Ṡ, | ,, - ND, N Ṡ, ,, Ṡ,   | ṠṘN, N, ,, NDD, || ,*\n  bhu ja ga bhū sha   ṇā    rccita           budha janā va        na\nLine 1 (Variation):\n* M  N,D DNṠ, ṠN  | ṘṘṠṠ,, ,, Ṡ, Ṡ, | ,, - Ṡ Ṁ, Ġ Ṡ, ,, ṠN  | DNṠ,ṘṠN,NDD, ||\n  bhu ja ga bhū sha   ṇā    rccita           budha ja nā  va        nā-\nLine 2:\nṠ, Ṙ, Ṡ, ,, N,D,  | N, Ṡ, ṠDṠN N, ND   | P,D,DP PDN,D,      | M P, ,, ,, D,N DP,, ||\ntmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma vā-\nLine 2 (Variation):\nṠ, Ṙ, Ṡ, ,, N,D,  | DNṘṠ ṠDṠN N, ND    | P,D,DP PDN,ṘŚND    | M P, ,, ,, Ṡ,N³ DP,, ||\ntmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma va (sujanajīvana)\n\n--------------------------------------------------------------------------------\nCharaṇam (C.)\nLine 1:\n,, * MG,M P , ,, D, | ṠNṘṠ ṠN NDDP M, | ,, - PND, PMM, MGRG | G M, ,, ,, ,, ,, ||\n     cā  ru nē tra    śrī  ka  ḷa    tra      śrī ra mya  gā      tra\nLine 2:\n,, * PG,MP, DNṘṠ   | ṠN ND DP PNDP M, | ,, - PN,D PMM, ,, R,G, | MP,M G M, ,, ,, ,, ||\n     tā  ra ka nā    ma su ca ri    tra      daśara tha   pu       tra\nRemaining Charaṇam Lines (Follow music same as Anupallavi):\ntārakādhi           pā nana             dharmapāla           ka\ntāraya raghu        varanirmala         tyāgarāja           sannuta    (sujanajīvana)\n\n-------------------------------------------------------------------------------",
+  "rawText_oldName": "Sujana Jīvana",
+  "sections": [
+    {
+      "title": "Pallavi (P.1)",
+      "rows": [
+        {
+          "id": "row-u925agv22",
+          "type": "swara",
+          "content": "M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||",
+          "atoms": [
+            {
+              "text": "M",
+              "index": 0
+            },
+            {
+              "text": ",",
+              "index": 1
+            },
+            {
+              "text": "G",
+              "index": 2
+            },
+            {
+              "text": ",",
+              "index": 3
+            },
+            {
+              "text": "G",
+              "index": 5
+            },
+            {
+              "text": "S",
+              "index": 6
+            },
+            {
+              "text": "S",
+              "index": 8
+            },
+            {
+              "text": ",",
+              "index": 9
+            },
+            {
+              "text": "M",
+              "index": 10
+            },
+            {
+              "text": ",",
+              "index": 11
+            },
+            {
+              "text": "G",
+              "index": 12
+            },
+            {
+              "text": ",",
+              "index": 13
+            },
+            {
+              "text": "|",
+              "index": 18
+            },
+            {
+              "text": "G",
+              "index": 20
+            },
+            {
+              "text": "M",
+              "index": 22
+            },
+            {
+              "text": ",",
+              "index": 23
+            },
+            {
+              "text": ",",
+              "index": 25
+            },
+            {
+              "text": ",",
+              "index": 26
+            },
+            {
+              "text": ",",
+              "index": 28
+            },
+            {
+              "text": ",",
+              "index": 29
+            },
+            {
+              "text": ",",
+              "index": 31
+            },
+            {
+              "text": ",",
+              "index": 32
+            },
+            {
+              "text": "M",
+              "index": 34
+            },
+            {
+              "text": "G",
+              "index": 35
+            },
+            {
+              "text": "M",
+              "index": 36
+            },
+            {
+              "text": ",",
+              "index": 37
+            },
+            {
+              "text": "|",
+              "index": 40
+            },
+            {
+              "text": "P",
+              "index": 42
+            },
+            {
+              "text": ",",
+              "index": 43
+            },
+            {
+              "text": "D",
+              "index": 44
+            },
+            {
+              "text": ",",
+              "index": 45
+            },
+            {
+              "text": "P",
+              "index": 46
+            },
+            {
+              "text": ",",
+              "index": 47
+            },
+            {
+              "text": "P",
+              "index": 49
+            },
+            {
+              "text": "D",
+              "index": 50
+            },
+            {
+              "text": "N",
+              "index": 51
+            },
+            {
+              "text": ",",
+              "index": 52
+            },
+            {
+              "text": "D",
+              "index": 53
+            },
+            {
+              "text": ",",
+              "index": 54
+            },
+            {
+              "text": "|",
+              "index": 61
+            },
+            {
+              "text": "P",
+              "index": 63
+            },
+            {
+              "text": ",",
+              "index": 64
+            },
+            {
+              "text": ",",
+              "index": 65
+            },
+            {
+              "text": ",",
+              "index": 66
+            },
+            {
+              "text": ",",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 69
+            },
+            {
+              "text": "P",
+              "index": 71
+            },
+            {
+              "text": ",",
+              "index": 72
+            },
+            {
+              "text": ",",
+              "index": 73
+            },
+            {
+              "text": "D",
+              "index": 74
+            },
+            {
+              "text": "N",
+              "index": 75
+            },
+            {
+              "text": "D",
+              "index": 76
+            },
+            {
+              "text": "P",
+              "index": 77
+            },
+            {
+              "text": "|",
+              "index": 79
+            },
+            {
+              "text": "|",
+              "index": 80
+            }
+          ]
+        },
+        {
+          "id": "row-paueozwgh",
+          "type": "lyric",
+          "content": "su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma",
+          "atoms": [
+            "su",
+            "",
+            "ja",
+            "",
+            "",
+            "na",
+            "jī",
+            "",
+            "",
+            "",
+            "va",
+            "",
+            "",
+            "n",
+            "a",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "r",
+            "a",
+            "ma",
+            "",
+            "",
+            "su",
+            "",
+            "gu",
+            "",
+            "na",
+            "",
+            "bhū",
+            "",
+            "",
+            "",
+            "sha",
+            "",
+            "",
+            "na",
+            "",
+            "",
+            "",
+            "",
+            "rā",
+            "",
+            "",
+            "",
+            "ma",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-u925agv22"
+        },
+        {
+          "id": "row-jpgl3nqyu",
+          "type": "swara",
+          "content": "M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, DNŚ, ND     | P,,, ,, P,ŚN NDP||",
+          "atoms": [
+            {
+              "text": "M",
+              "index": 0
+            },
+            {
+              "text": ",",
+              "index": 1
+            },
+            {
+              "text": "G",
+              "index": 2
+            },
+            {
+              "text": ",",
+              "index": 3
+            },
+            {
+              "text": "G",
+              "index": 5
+            },
+            {
+              "text": "S",
+              "index": 6
+            },
+            {
+              "text": "S",
+              "index": 8
+            },
+            {
+              "text": ",",
+              "index": 9
+            },
+            {
+              "text": "M",
+              "index": 10
+            },
+            {
+              "text": ",",
+              "index": 11
+            },
+            {
+              "text": "G",
+              "index": 12
+            },
+            {
+              "text": ",",
+              "index": 13
+            },
+            {
+              "text": "|",
+              "index": 18
+            },
+            {
+              "text": "G",
+              "index": 20
+            },
+            {
+              "text": "M",
+              "index": 22
+            },
+            {
+              "text": ",",
+              "index": 23
+            },
+            {
+              "text": ",",
+              "index": 25
+            },
+            {
+              "text": ",",
+              "index": 26
+            },
+            {
+              "text": ",",
+              "index": 28
+            },
+            {
+              "text": ",",
+              "index": 29
+            },
+            {
+              "text": ",",
+              "index": 31
+            },
+            {
+              "text": ",",
+              "index": 32
+            },
+            {
+              "text": "M",
+              "index": 34
+            },
+            {
+              "text": "G",
+              "index": 35
+            },
+            {
+              "text": "M",
+              "index": 36
+            },
+            {
+              "text": ",",
+              "index": 37
+            },
+            {
+              "text": "|",
+              "index": 40
+            },
+            {
+              "text": "P",
+              "index": 42
+            },
+            {
+              "text": ",",
+              "index": 43
+            },
+            {
+              "text": "D",
+              "index": 44
+            },
+            {
+              "text": ",",
+              "index": 45
+            },
+            {
+              "text": "P",
+              "index": 46
+            },
+            {
+              "text": ",",
+              "index": 47
+            },
+            {
+              "text": "D",
+              "index": 49
+            },
+            {
+              "text": "N",
+              "index": 50
+            },
+            {
+              "text": "Ś",
+              "index": 51
+            },
+            {
+              "text": ",",
+              "index": 52
+            },
+            {
+              "text": "N",
+              "index": 54
+            },
+            {
+              "text": "D",
+              "index": 55
+            },
+            {
+              "text": "|",
+              "index": 61
+            },
+            {
+              "text": "P",
+              "index": 63
+            },
+            {
+              "text": ",",
+              "index": 64
+            },
+            {
+              "text": ",",
+              "index": 65
+            },
+            {
+              "text": ",",
+              "index": 66
+            },
+            {
+              "text": ",",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 69
+            },
+            {
+              "text": "P",
+              "index": 71
+            },
+            {
+              "text": ",",
+              "index": 72
+            },
+            {
+              "text": "Ś",
+              "index": 73
+            },
+            {
+              "text": "N",
+              "index": 74
+            },
+            {
+              "text": "N",
+              "index": 76
+            },
+            {
+              "text": "D",
+              "index": 77
+            },
+            {
+              "text": "P",
+              "index": 78
+            },
+            {
+              "text": "|",
+              "index": 79
+            },
+            {
+              "text": "|",
+              "index": 80
+            }
+          ]
+        },
+        {
+          "id": "row-9a6l6d2gz",
+          "type": "lyric",
+          "content": "su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā  ma",
+          "atoms": [
+            "su",
+            "",
+            "ja",
+            "",
+            "",
+            "na",
+            "jī",
+            "",
+            "",
+            "",
+            "va",
+            "",
+            "",
+            "na",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "rā",
+            "",
+            "ma",
+            "",
+            "",
+            "su",
+            "",
+            "gu",
+            "",
+            "na",
+            "",
+            "bhū",
+            "",
+            "",
+            "",
+            "sha",
+            "",
+            "",
+            "na",
+            "",
+            "",
+            "",
+            "",
+            "rā",
+            "",
+            "",
+            "ma",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-jpgl3nqyu"
+        },
+        {
+          "id": "row-ki6d1ihdy",
+          "type": "swara",
+          "content": "M,G,GS S,M,G,     | PPMM ,, ,, PGM,     | P, D,DP PDN,ṘŚND   | M,P, ,, PŚN³ DP,,D ||",
+          "atoms": [
+            {
+              "text": "M",
+              "index": 0
+            },
+            {
+              "text": ",",
+              "index": 1
+            },
+            {
+              "text": "G",
+              "index": 2
+            },
+            {
+              "text": ",",
+              "index": 3
+            },
+            {
+              "text": "G",
+              "index": 4
+            },
+            {
+              "text": "S",
+              "index": 5
+            },
+            {
+              "text": "S",
+              "index": 7
+            },
+            {
+              "text": ",",
+              "index": 8
+            },
+            {
+              "text": "M",
+              "index": 9
+            },
+            {
+              "text": ",",
+              "index": 10
+            },
+            {
+              "text": "G",
+              "index": 11
+            },
+            {
+              "text": ",",
+              "index": 12
+            },
+            {
+              "text": "|",
+              "index": 18
+            },
+            {
+              "text": "P",
+              "index": 20
+            },
+            {
+              "text": "P",
+              "index": 21
+            },
+            {
+              "text": "M",
+              "index": 22
+            },
+            {
+              "text": "M",
+              "index": 23
+            },
+            {
+              "text": ",",
+              "index": 25
+            },
+            {
+              "text": ",",
+              "index": 26
+            },
+            {
+              "text": ",",
+              "index": 28
+            },
+            {
+              "text": ",",
+              "index": 29
+            },
+            {
+              "text": "P",
+              "index": 31
+            },
+            {
+              "text": "G",
+              "index": 32
+            },
+            {
+              "text": "M",
+              "index": 33
+            },
+            {
+              "text": ",",
+              "index": 34
+            },
+            {
+              "text": "|",
+              "index": 40
+            },
+            {
+              "text": "P",
+              "index": 42
+            },
+            {
+              "text": ",",
+              "index": 43
+            },
+            {
+              "text": "D",
+              "index": 45
+            },
+            {
+              "text": ",",
+              "index": 46
+            },
+            {
+              "text": "D",
+              "index": 47
+            },
+            {
+              "text": "P",
+              "index": 48
+            },
+            {
+              "text": "P",
+              "index": 50
+            },
+            {
+              "text": "D",
+              "index": 51
+            },
+            {
+              "text": "N",
+              "index": 52
+            },
+            {
+              "text": ",",
+              "index": 53
+            },
+            {
+              "text": "",
+              "index": 54
+            },
+            {
+              "text": "ṘŚ",
+              "index": 55
+            },
+            {
+              "text": "ND",
+              "index": 56
+            },
+            {
+              "text": "|",
+              "index": 57
+            },
+            {
+              "text": "",
+              "index": 61
+            },
+            {
+              "text": "M",
+              "index": 63
+            },
+            {
+              "text": ",",
+              "index": 64
+            },
+            {
+              "text": "P",
+              "index": 65
+            },
+            {
+              "text": ",",
+              "index": 66
+            },
+            {
+              "text": ",",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 69
+            },
+            {
+              "text": "P",
+              "index": 71
+            },
+            {
+              "text": "Ś",
+              "index": 72
+            },
+            {
+              "text": "N³",
+              "index": 73
+            },
+            {
+              "text": "D",
+              "index": 76
+            },
+            {
+              "text": "P",
+              "index": 77
+            },
+            {
+              "text": ",",
+              "index": 78
+            },
+            {
+              "text": ",",
+              "index": 79
+            },
+            {
+              "text": "D",
+              "index": 80
+            },
+            {
+              "text": "|",
+              "index": 82
+            },
+            {
+              "text": "|",
+              "index": 83
+            }
+          ]
+        },
+        {
+          "id": "row-uil7qh2ze",
+          "type": "lyric",
+          "content": "su ja na jī  va     na        rā ma       sugu na bhū  sha     na    rā  ma (sujanajīvana)",
+          "atoms": [
+            "su",
+            "",
+            "ja",
+            "",
+            "",
+            "na",
+            "",
+            "",
+            "jī",
+            "",
+            "va",
+            "",
+            "",
+            "na",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "rā",
+            "",
+            "ma",
+            "",
+            "",
+            "su",
+            "",
+            "gu",
+            "",
+            "na",
+            "",
+            "bhū",
+            "",
+            "",
+            "",
+            "",
+            "sha",
+            "",
+            "",
+            "",
+            "na",
+            "",
+            "",
+            "",
+            "",
+            "rā",
+            "",
+            "",
+            "ma",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-ki6d1ihdy"
+        }
+      ]
+    },
+    {
+      "title": "Anupallavi (A.1)",
+      "rows": [
+        {
+          "id": "row-5hn0vc4xx",
+          "type": "swara",
+          "content": "* M  N,D DNṠ,ṠN   | S Ṡ, ,, ,, Ṡ, Ṡ, | ,, - ND, N Ṡ, ,, Ṡ,   | ṠṘN, N, ,, NDD, || ,*",
+          "atoms": [
+            {
+              "text": "*",
+              "index": 0
+            },
+            {
+              "text": "M",
+              "index": 2
+            },
+            {
+              "text": "N",
+              "index": 5
+            },
+            {
+              "text": ",",
+              "index": 6
+            },
+            {
+              "text": "D",
+              "index": 7
+            },
+            {
+              "text": "D",
+              "index": 9
+            },
+            {
+              "text": "N",
+              "index": 10
+            },
+            {
+              "text": "Ṡ",
+              "index": 11
+            },
+            {
+              "text": ",",
+              "index": 12
+            },
+            {
+              "text": "Ṡ",
+              "index": 13
+            },
+            {
+              "text": "N",
+              "index": 14
+            },
+            {
+              "text": "|",
+              "index": 18
+            },
+            {
+              "text": "S",
+              "index": 20
+            },
+            {
+              "text": "Ṡ",
+              "index": 22
+            },
+            {
+              "text": ",",
+              "index": 23
+            },
+            {
+              "text": ",",
+              "index": 25
+            },
+            {
+              "text": ",",
+              "index": 26
+            },
+            {
+              "text": ",",
+              "index": 28
+            },
+            {
+              "text": ",",
+              "index": 29
+            },
+            {
+              "text": "Ṡ",
+              "index": 31
+            },
+            {
+              "text": ",",
+              "index": 32
+            },
+            {
+              "text": "Ṡ",
+              "index": 34
+            },
+            {
+              "text": ",",
+              "index": 35
+            },
+            {
+              "text": "|",
+              "index": 37
+            },
+            {
+              "text": ",",
+              "index": 39
+            },
+            {
+              "text": ",",
+              "index": 40
+            },
+            {
+              "text": "-",
+              "index": 42
+            },
+            {
+              "text": "N",
+              "index": 44
+            },
+            {
+              "text": "D",
+              "index": 45
+            },
+            {
+              "text": ",",
+              "index": 46
+            },
+            {
+              "text": "N",
+              "index": 48
+            },
+            {
+              "text": "Ṡ",
+              "index": 50
+            },
+            {
+              "text": ",",
+              "index": 51
+            },
+            {
+              "text": ",",
+              "index": 53
+            },
+            {
+              "text": ",",
+              "index": 54
+            },
+            {
+              "text": "Ṡ",
+              "index": 56
+            },
+            {
+              "text": ",",
+              "index": 57
+            },
+            {
+              "text": "|",
+              "index": 61
+            },
+            {
+              "text": "Ṡ",
+              "index": 63
+            },
+            {
+              "text": "Ṙ",
+              "index": 64
+            },
+            {
+              "text": "N",
+              "index": 65
+            },
+            {
+              "text": ",",
+              "index": 66
+            },
+            {
+              "text": "N",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 69
+            },
+            {
+              "text": ",",
+              "index": 71
+            },
+            {
+              "text": ",",
+              "index": 72
+            },
+            {
+              "text": "N",
+              "index": 74
+            },
+            {
+              "text": "D",
+              "index": 75
+            },
+            {
+              "text": "D",
+              "index": 76
+            },
+            {
+              "text": ",",
+              "index": 77
+            },
+            {
+              "text": "|",
+              "index": 79
+            },
+            {
+              "text": "|",
+              "index": 80
+            },
+            {
+              "text": ",",
+              "index": 82
+            },
+            {
+              "text": "*",
+              "index": 83
+            }
+          ]
+        },
+        {
+          "id": "row-pdvdwvlt0",
+          "type": "lyric",
+          "content": "  bhu ja ga bhū sha   ṇā    rccita           budha janā va        na",
+          "atoms": [
+            "",
+            "bhu",
+            "ja",
+            "",
+            "",
+            "ga",
+            "",
+            "bhū",
+            "",
+            "",
+            "sha",
+            "",
+            "",
+            "ṇā",
+            "",
+            "",
+            "",
+            "rccita",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "budha",
+            "",
+            "",
+            "janā",
+            "",
+            "",
+            "",
+            "va",
+            "",
+            "",
+            "",
+            "",
+            "na",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-5hn0vc4xx"
+        },
+        {
+          "id": "row-mzvtcobbf",
+          "type": "swara",
+          "content": "* M  N,D DNṠ, ṠN  | ṘṘṠṠ,, ,, Ṡ, Ṡ, | ,, - Ṡ Ṁ, Ġ Ṡ, ,, ṠN  | DNṠ,ṘṠN,NDD, ||",
+          "atoms": [
+            {
+              "text": "*",
+              "index": 0
+            },
+            {
+              "text": "M",
+              "index": 2
+            },
+            {
+              "text": "N",
+              "index": 5
+            },
+            {
+              "text": ",",
+              "index": 6
+            },
+            {
+              "text": "D",
+              "index": 7
+            },
+            {
+              "text": "D",
+              "index": 9
+            },
+            {
+              "text": "N",
+              "index": 10
+            },
+            {
+              "text": "Ṡ",
+              "index": 11
+            },
+            {
+              "text": ",",
+              "index": 12
+            },
+            {
+              "text": "Ṡ",
+              "index": 14
+            },
+            {
+              "text": "N",
+              "index": 15
+            },
+            {
+              "text": "|",
+              "index": 18
+            },
+            {
+              "text": "Ṙ",
+              "index": 20
+            },
+            {
+              "text": "Ṙ",
+              "index": 21
+            },
+            {
+              "text": "Ṡ",
+              "index": 22
+            },
+            {
+              "text": "Ṡ",
+              "index": 23
+            },
+            {
+              "text": ",",
+              "index": 24
+            },
+            {
+              "text": ",",
+              "index": 25
+            },
+            {
+              "text": ",",
+              "index": 27
+            },
+            {
+              "text": ",",
+              "index": 28
+            },
+            {
+              "text": "Ṡ",
+              "index": 30
+            },
+            {
+              "text": ",",
+              "index": 31
+            },
+            {
+              "text": "Ṡ",
+              "index": 33
+            },
+            {
+              "text": ",",
+              "index": 34
+            },
+            {
+              "text": "|",
+              "index": 36
+            },
+            {
+              "text": ",",
+              "index": 38
+            },
+            {
+              "text": ",",
+              "index": 39
+            },
+            {
+              "text": "-",
+              "index": 41
+            },
+            {
+              "text": "Ṡ",
+              "index": 43
+            },
+            {
+              "text": "Ṁ",
+              "index": 45
+            },
+            {
+              "text": ",",
+              "index": 46
+            },
+            {
+              "text": "Ġ",
+              "index": 48
+            },
+            {
+              "text": "Ṡ",
+              "index": 50
+            },
+            {
+              "text": ",",
+              "index": 51
+            },
+            {
+              "text": ",",
+              "index": 53
+            },
+            {
+              "text": ",",
+              "index": 54
+            },
+            {
+              "text": "Ṡ",
+              "index": 56
+            },
+            {
+              "text": "N",
+              "index": 57
+            },
+            {
+              "text": "|",
+              "index": 60
+            },
+            {
+              "text": "D",
+              "index": 62
+            },
+            {
+              "text": "N",
+              "index": 63
+            },
+            {
+              "text": "Ṡ",
+              "index": 64
+            },
+            {
+              "text": ",",
+              "index": 65
+            },
+            {
+              "text": "Ṙ",
+              "index": 66
+            },
+            {
+              "text": "Ṡ",
+              "index": 67
+            },
+            {
+              "text": "N",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 69
+            },
+            {
+              "text": "N",
+              "index": 70
+            },
+            {
+              "text": "D",
+              "index": 71
+            },
+            {
+              "text": "D",
+              "index": 72
+            },
+            {
+              "text": ",",
+              "index": 73
+            },
+            {
+              "text": "|",
+              "index": 75
+            },
+            {
+              "text": "|",
+              "index": 76
+            }
+          ]
+        },
+        {
+          "id": "row-e2w9lpykq",
+          "type": "lyric",
+          "content": "  bhu ja ga bhū sha   ṇā    rccita           budha ja nā  va        nā-",
+          "atoms": [
+            "",
+            "bhu",
+            "ja",
+            "",
+            "",
+            "ga",
+            "",
+            "bhū",
+            "",
+            "",
+            "sha",
+            "",
+            "",
+            "",
+            "ṇā",
+            "",
+            "",
+            "",
+            "",
+            "rccita",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "budha",
+            "",
+            "",
+            "ja",
+            "",
+            "",
+            "nā",
+            "",
+            "va",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "nā-",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-mzvtcobbf"
+        },
+        {
+          "id": "row-os9umhbaa",
+          "type": "swara",
+          "content": "Ṡ, Ṙ, Ṡ, ,, N,D,  | N, Ṡ, ṠDṠN N, ND   | P,D,DP PDN,D,      | M P, ,, ,, D,N DP,, ||",
+          "atoms": [
+            {
+              "text": "Ṡ",
+              "index": 0
+            },
+            {
+              "text": ",",
+              "index": 1
+            },
+            {
+              "text": "Ṙ",
+              "index": 3
+            },
+            {
+              "text": ",",
+              "index": 4
+            },
+            {
+              "text": "Ṡ",
+              "index": 6
+            },
+            {
+              "text": ",",
+              "index": 7
+            },
+            {
+              "text": ",",
+              "index": 9
+            },
+            {
+              "text": ",",
+              "index": 10
+            },
+            {
+              "text": "N",
+              "index": 12
+            },
+            {
+              "text": ",",
+              "index": 13
+            },
+            {
+              "text": "D",
+              "index": 14
+            },
+            {
+              "text": ",",
+              "index": 15
+            },
+            {
+              "text": "|",
+              "index": 18
+            },
+            {
+              "text": "N",
+              "index": 20
+            },
+            {
+              "text": ",",
+              "index": 21
+            },
+            {
+              "text": "Ṡ",
+              "index": 23
+            },
+            {
+              "text": ",",
+              "index": 24
+            },
+            {
+              "text": "Ṡ",
+              "index": 26
+            },
+            {
+              "text": "D",
+              "index": 27
+            },
+            {
+              "text": "Ṡ",
+              "index": 28
+            },
+            {
+              "text": "N",
+              "index": 29
+            },
+            {
+              "text": "N",
+              "index": 31
+            },
+            {
+              "text": ",",
+              "index": 32
+            },
+            {
+              "text": "N",
+              "index": 34
+            },
+            {
+              "text": "D",
+              "index": 35
+            },
+            {
+              "text": "|",
+              "index": 39
+            },
+            {
+              "text": "P",
+              "index": 41
+            },
+            {
+              "text": ",",
+              "index": 42
+            },
+            {
+              "text": "D",
+              "index": 43
+            },
+            {
+              "text": ",",
+              "index": 44
+            },
+            {
+              "text": "D",
+              "index": 45
+            },
+            {
+              "text": "P",
+              "index": 46
+            },
+            {
+              "text": "P",
+              "index": 48
+            },
+            {
+              "text": "D",
+              "index": 49
+            },
+            {
+              "text": "N",
+              "index": 50
+            },
+            {
+              "text": ",",
+              "index": 51
+            },
+            {
+              "text": "D",
+              "index": 52
+            },
+            {
+              "text": ",",
+              "index": 53
+            },
+            {
+              "text": "|",
+              "index": 60
+            },
+            {
+              "text": "M",
+              "index": 62
+            },
+            {
+              "text": "P",
+              "index": 64
+            },
+            {
+              "text": ",",
+              "index": 65
+            },
+            {
+              "text": ",",
+              "index": 67
+            },
+            {
+              "text": ",",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 70
+            },
+            {
+              "text": ",",
+              "index": 71
+            },
+            {
+              "text": "D",
+              "index": 73
+            },
+            {
+              "text": ",",
+              "index": 74
+            },
+            {
+              "text": "N",
+              "index": 75
+            },
+            {
+              "text": "D",
+              "index": 77
+            },
+            {
+              "text": "P",
+              "index": 78
+            },
+            {
+              "text": ",",
+              "index": 79
+            },
+            {
+              "text": ",",
+              "index": 80
+            },
+            {
+              "text": "|",
+              "index": 82
+            },
+            {
+              "text": "|",
+              "index": 83
+            }
+          ]
+        },
+        {
+          "id": "row-vus26q4nv",
+          "type": "lyric",
+          "content": "tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma vā-",
+          "atoms": [
+            "tmaja",
+            "",
+            "",
+            "",
+            "van",
+            "",
+            "",
+            "di",
+            "ta",
+            "",
+            "",
+            "",
+            "",
+            "śri",
+            "",
+            "ta",
+            "",
+            "",
+            "can",
+            "",
+            "",
+            "da",
+            "",
+            "",
+            "na",
+            "",
+            "daśa",
+            "",
+            "",
+            "",
+            "",
+            "tu",
+            "",
+            "",
+            "ran",
+            "",
+            "ga",
+            "",
+            "",
+            "mā",
+            "",
+            "",
+            "",
+            "ma",
+            "",
+            "",
+            "vā-",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-os9umhbaa"
+        },
+        {
+          "id": "row-jfp13fzrx",
+          "type": "swara",
+          "content": "Ṡ, Ṙ, Ṡ, ,, N,D,  | DNṘṠ ṠDṠN N, ND    | P,D,DP PDN,ṘŚND    | M P, ,, ,, Ṡ,N³ DP,, ||",
+          "atoms": [
+            {
+              "text": "Ṡ",
+              "index": 0
+            },
+            {
+              "text": ",",
+              "index": 1
+            },
+            {
+              "text": "Ṙ",
+              "index": 3
+            },
+            {
+              "text": ",",
+              "index": 4
+            },
+            {
+              "text": "Ṡ",
+              "index": 6
+            },
+            {
+              "text": ",",
+              "index": 7
+            },
+            {
+              "text": ",",
+              "index": 9
+            },
+            {
+              "text": ",",
+              "index": 10
+            },
+            {
+              "text": "N",
+              "index": 12
+            },
+            {
+              "text": ",",
+              "index": 13
+            },
+            {
+              "text": "D",
+              "index": 14
+            },
+            {
+              "text": ",",
+              "index": 15
+            },
+            {
+              "text": "|",
+              "index": 18
+            },
+            {
+              "text": "D",
+              "index": 20
+            },
+            {
+              "text": "N",
+              "index": 21
+            },
+            {
+              "text": "Ṙ",
+              "index": 22
+            },
+            {
+              "text": "Ṡ",
+              "index": 23
+            },
+            {
+              "text": "Ṡ",
+              "index": 25
+            },
+            {
+              "text": "D",
+              "index": 26
+            },
+            {
+              "text": "Ṡ",
+              "index": 27
+            },
+            {
+              "text": "N",
+              "index": 28
+            },
+            {
+              "text": "N",
+              "index": 30
+            },
+            {
+              "text": ",",
+              "index": 31
+            },
+            {
+              "text": "N",
+              "index": 33
+            },
+            {
+              "text": "D",
+              "index": 34
+            },
+            {
+              "text": "|",
+              "index": 39
+            },
+            {
+              "text": "P",
+              "index": 41
+            },
+            {
+              "text": ",",
+              "index": 42
+            },
+            {
+              "text": "D",
+              "index": 43
+            },
+            {
+              "text": ",",
+              "index": 44
+            },
+            {
+              "text": "D",
+              "index": 45
+            },
+            {
+              "text": "P",
+              "index": 46
+            },
+            {
+              "text": "P",
+              "index": 48
+            },
+            {
+              "text": "D",
+              "index": 49
+            },
+            {
+              "text": "N",
+              "index": 50
+            },
+            {
+              "text": ",",
+              "index": 51
+            },
+            {
+              "text": "Ṙ",
+              "index": 52
+            },
+            {
+              "text": "Ś",
+              "index": 53
+            },
+            {
+              "text": "N",
+              "index": 54
+            },
+            {
+              "text": "D",
+              "index": 55
+            },
+            {
+              "text": "|",
+              "index": 60
+            },
+            {
+              "text": "M",
+              "index": 62
+            },
+            {
+              "text": "P",
+              "index": 64
+            },
+            {
+              "text": ",",
+              "index": 65
+            },
+            {
+              "text": ",",
+              "index": 67
+            },
+            {
+              "text": ",",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 70
+            },
+            {
+              "text": ",",
+              "index": 71
+            },
+            {
+              "text": "Ṡ",
+              "index": 73
+            },
+            {
+              "text": ",",
+              "index": 74
+            },
+            {
+              "text": "N³",
+              "index": 75
+            },
+            {
+              "text": "D",
+              "index": 78
+            },
+            {
+              "text": "P",
+              "index": 79
+            },
+            {
+              "text": ",",
+              "index": 80
+            },
+            {
+              "text": ",",
+              "index": 81
+            },
+            {
+              "text": "|",
+              "index": 83
+            },
+            {
+              "text": "|",
+              "index": 84
+            }
+          ]
+        },
+        {
+          "id": "row-t63zxlfgm",
+          "type": "lyric",
+          "content": "tmaja van di ta     śri ta can  da na     daśa tu ran  ga      mā    ma va (sujanajīvana)",
+          "atoms": [
+            "tmaja",
+            "",
+            "",
+            "",
+            "van",
+            "",
+            "",
+            "di",
+            "ta",
+            "",
+            "",
+            "",
+            "",
+            "śri",
+            "",
+            "",
+            "ta",
+            "",
+            "",
+            "can",
+            "",
+            "",
+            "",
+            "da",
+            "na",
+            "",
+            "daśa",
+            "",
+            "",
+            "",
+            "",
+            "tu",
+            "",
+            "",
+            "ran",
+            "",
+            "",
+            "",
+            "",
+            "ga",
+            "",
+            "mā",
+            "",
+            "",
+            "",
+            "ma",
+            "",
+            "",
+            "va",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-jfp13fzrx"
+        }
+      ]
+    },
+    {
+      "title": "Charaṇam (C.)",
+      "rows": [
+        {
+          "id": "row-nodkgqck1",
+          "type": "swara",
+          "content": ",, * MG,M P , ,, D, | ṠNṘṠ ṠN NDDP M, | ,, - PND, PMM, MGRG | G M, ,, ,, ,, ,, ||",
+          "atoms": [
+            {
+              "text": ",",
+              "index": 0
+            },
+            {
+              "text": ",",
+              "index": 1
+            },
+            {
+              "text": "*",
+              "index": 3
+            },
+            {
+              "text": "M",
+              "index": 5
+            },
+            {
+              "text": "G",
+              "index": 6
+            },
+            {
+              "text": ",",
+              "index": 7
+            },
+            {
+              "text": "M",
+              "index": 8
+            },
+            {
+              "text": "P",
+              "index": 10
+            },
+            {
+              "text": ",",
+              "index": 12
+            },
+            {
+              "text": ",",
+              "index": 14
+            },
+            {
+              "text": ",",
+              "index": 15
+            },
+            {
+              "text": "D",
+              "index": 17
+            },
+            {
+              "text": ",",
+              "index": 18
+            },
+            {
+              "text": "|",
+              "index": 20
+            },
+            {
+              "text": "Ṡ",
+              "index": 22
+            },
+            {
+              "text": "N",
+              "index": 23
+            },
+            {
+              "text": "Ṙ",
+              "index": 24
+            },
+            {
+              "text": "Ṡ",
+              "index": 25
+            },
+            {
+              "text": "Ṡ",
+              "index": 27
+            },
+            {
+              "text": "N",
+              "index": 28
+            },
+            {
+              "text": "N",
+              "index": 30
+            },
+            {
+              "text": "D",
+              "index": 31
+            },
+            {
+              "text": "D",
+              "index": 32
+            },
+            {
+              "text": "P",
+              "index": 33
+            },
+            {
+              "text": "M",
+              "index": 35
+            },
+            {
+              "text": ",",
+              "index": 36
+            },
+            {
+              "text": "|",
+              "index": 38
+            },
+            {
+              "text": ",",
+              "index": 40
+            },
+            {
+              "text": ",",
+              "index": 41
+            },
+            {
+              "text": "-",
+              "index": 43
+            },
+            {
+              "text": "P",
+              "index": 45
+            },
+            {
+              "text": "N",
+              "index": 46
+            },
+            {
+              "text": "D",
+              "index": 47
+            },
+            {
+              "text": ",",
+              "index": 48
+            },
+            {
+              "text": "P",
+              "index": 50
+            },
+            {
+              "text": "M",
+              "index": 51
+            },
+            {
+              "text": "M",
+              "index": 52
+            },
+            {
+              "text": ",",
+              "index": 53
+            },
+            {
+              "text": "M",
+              "index": 55
+            },
+            {
+              "text": "G",
+              "index": 56
+            },
+            {
+              "text": "R",
+              "index": 57
+            },
+            {
+              "text": "G",
+              "index": 58
+            },
+            {
+              "text": "|",
+              "index": 60
+            },
+            {
+              "text": "G",
+              "index": 62
+            },
+            {
+              "text": "M",
+              "index": 64
+            },
+            {
+              "text": ",",
+              "index": 65
+            },
+            {
+              "text": ",",
+              "index": 67
+            },
+            {
+              "text": ",",
+              "index": 68
+            },
+            {
+              "text": ",",
+              "index": 70
+            },
+            {
+              "text": ",",
+              "index": 71
+            },
+            {
+              "text": ",",
+              "index": 73
+            },
+            {
+              "text": ",",
+              "index": 74
+            },
+            {
+              "text": ",",
+              "index": 76
+            },
+            {
+              "text": ",",
+              "index": 77
+            },
+            {
+              "text": "|",
+              "index": 79
+            },
+            {
+              "text": "|",
+              "index": 80
+            }
+          ]
+        },
+        {
+          "id": "row-h3oihewob",
+          "type": "lyric",
+          "content": "     cā  ru nē tra    śrī  ka  ḷa    tra      śrī ra mya  gā      tra",
+          "atoms": [
+            "",
+            "",
+            "",
+            "cā",
+            "",
+            "",
+            "ru",
+            "",
+            "nē",
+            "",
+            "tra",
+            "",
+            "",
+            "",
+            "śrī",
+            "",
+            "",
+            "",
+            "ka",
+            "",
+            "",
+            "ḷa",
+            "",
+            "",
+            "tra",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "śrī",
+            "",
+            "",
+            "ra",
+            "",
+            "mya",
+            "",
+            "",
+            "",
+            "",
+            "gā",
+            "",
+            "",
+            "tra",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-nodkgqck1"
+        },
+        {
+          "id": "row-37wsrcsui",
+          "type": "swara",
+          "content": ",, * PG,MP, DNṘṠ   | ṠN ND DP PNDP M, | ,, - PN,D PMM, ,, R,G, | MP,M G M, ,, ,, ,, ||",
+          "atoms": [
+            {
+              "text": ",",
+              "index": 0
+            },
+            {
+              "text": ",",
+              "index": 1
+            },
+            {
+              "text": "*",
+              "index": 3
+            },
+            {
+              "text": "P",
+              "index": 5
+            },
+            {
+              "text": "G",
+              "index": 6
+            },
+            {
+              "text": ",",
+              "index": 7
+            },
+            {
+              "text": "M",
+              "index": 8
+            },
+            {
+              "text": "P",
+              "index": 9
+            },
+            {
+              "text": ",",
+              "index": 10
+            },
+            {
+              "text": "D",
+              "index": 12
+            },
+            {
+              "text": "N",
+              "index": 13
+            },
+            {
+              "text": "Ṙ",
+              "index": 14
+            },
+            {
+              "text": "Ṡ",
+              "index": 15
+            },
+            {
+              "text": "|",
+              "index": 19
+            },
+            {
+              "text": "Ṡ",
+              "index": 21
+            },
+            {
+              "text": "N",
+              "index": 22
+            },
+            {
+              "text": "N",
+              "index": 24
+            },
+            {
+              "text": "D",
+              "index": 25
+            },
+            {
+              "text": "D",
+              "index": 27
+            },
+            {
+              "text": "P",
+              "index": 28
+            },
+            {
+              "text": "P",
+              "index": 30
+            },
+            {
+              "text": "N",
+              "index": 31
+            },
+            {
+              "text": "D",
+              "index": 32
+            },
+            {
+              "text": "P",
+              "index": 33
+            },
+            {
+              "text": "M",
+              "index": 35
+            },
+            {
+              "text": ",",
+              "index": 36
+            },
+            {
+              "text": "|",
+              "index": 38
+            },
+            {
+              "text": ",",
+              "index": 40
+            },
+            {
+              "text": ",",
+              "index": 41
+            },
+            {
+              "text": "-",
+              "index": 43
+            },
+            {
+              "text": "P",
+              "index": 45
+            },
+            {
+              "text": "N",
+              "index": 46
+            },
+            {
+              "text": ",",
+              "index": 47
+            },
+            {
+              "text": "D",
+              "index": 48
+            },
+            {
+              "text": "P",
+              "index": 50
+            },
+            {
+              "text": "M",
+              "index": 51
+            },
+            {
+              "text": "M",
+              "index": 52
+            },
+            {
+              "text": ",",
+              "index": 53
+            },
+            {
+              "text": ",",
+              "index": 55
+            },
+            {
+              "text": ",",
+              "index": 56
+            },
+            {
+              "text": "R",
+              "index": 58
+            },
+            {
+              "text": ",",
+              "index": 59
+            },
+            {
+              "text": "G",
+              "index": 60
+            },
+            {
+              "text": ",",
+              "index": 61
+            },
+            {
+              "text": "|",
+              "index": 63
+            },
+            {
+              "text": "M",
+              "index": 65
+            },
+            {
+              "text": "P",
+              "index": 66
+            },
+            {
+              "text": ",",
+              "index": 67
+            },
+            {
+              "text": "M",
+              "index": 68
+            },
+            {
+              "text": "G",
+              "index": 70
+            },
+            {
+              "text": "M",
+              "index": 72
+            },
+            {
+              "text": ",",
+              "index": 73
+            },
+            {
+              "text": ",",
+              "index": 75
+            },
+            {
+              "text": ",",
+              "index": 76
+            },
+            {
+              "text": ",",
+              "index": 78
+            },
+            {
+              "text": ",",
+              "index": 79
+            },
+            {
+              "text": ",",
+              "index": 81
+            },
+            {
+              "text": ",",
+              "index": 82
+            },
+            {
+              "text": "|",
+              "index": 84
+            },
+            {
+              "text": "|",
+              "index": 85
+            }
+          ]
+        },
+        {
+          "id": "row-dbfouljz4",
+          "type": "lyric",
+          "content": "     tā  ra ka nā    ma su ca ri    tra      daśara tha   pu       tra",
+          "atoms": [
+            "",
+            "",
+            "",
+            "tā",
+            "",
+            "",
+            "",
+            "ra",
+            "",
+            "ka",
+            "",
+            "",
+            "nā",
+            "",
+            "ma",
+            "",
+            "su",
+            "",
+            "ca",
+            "",
+            "ri",
+            "",
+            "",
+            "",
+            "tra",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "daśara",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "tha",
+            "",
+            "",
+            "",
+            "pu",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "tra",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "parentSwaraId": "row-37wsrcsui"
+        }
+      ]
+    },
+    {
+      "title": "Remaining Charaṇam Lines (Follow music same as Anupallavi):",
+      "rows": []
+    }
+  ],
+  "sruthi": "C",
+  "thalam": "Rupakam"
+}
