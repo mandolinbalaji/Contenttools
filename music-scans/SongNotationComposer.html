@@ -1638,8 +1638,22 @@
                             <button onclick="deleteSong('${song.id}', event)" style="background:none; border:none; color:#ff7675; cursor:pointer; font-size:16px;">&times;</button>
                         </div>
                     `;
-                    item.onclick = () => {
-                        loadSongIntoUI(song);
+                    item.onclick = async () => {
+                        // Load full song data from backend
+                        try {
+                            const fullResponse = await fetch(`/api/notation-composer/${song.id}/full`);
+                            if (fullResponse.ok) {
+                                const fullSong = await fullResponse.json();
+                                loadSongIntoUI(fullSong);
+                            } else {
+                                // Fallback to thin reference if full load fails
+                                loadSongIntoUI(song);
+                            }
+                        } catch (err) {
+                            console.error('Failed to load full song:', err);
+                            // Fallback to thin reference
+                            loadSongIntoUI(song);
+                        }
                         renderPlaylist(); // Update active class
                     };
                     container.appendChild(item);

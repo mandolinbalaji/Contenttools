@@ -1657,7 +1657,7 @@ def _save_index(index):
 def _get_song_filepath(song_name):
     """Get the filepath for a song based on its name"""
     safe_name = "".join(c for c in song_name if c.isalnum() or c in ['-', '_']).rstrip()
-    return NOTATION_DIR / "songs" / f"{safe_name}.json"
+    return BASE_DIR / "songs" / f"{safe_name}.json"
 
 def _get_song(song_id):
     """Load individual song from songs/{name}.json"""
@@ -1668,7 +1668,7 @@ def _get_song(song_id):
         logger.warning(f"Song {song_id} not found in index")
         return None
     
-    song_file = NOTATION_DIR / song_ref.get('file', f"songs/{song_ref.get('name')}.json")
+    song_file = BASE_DIR / song_ref.get('file', f"songs/{song_ref.get('name')}.json")
     
     if not song_file.exists():
         logger.error(f"Song file not found: {song_file}")
@@ -1740,6 +1740,14 @@ def _save_notations(notations):
 @app.route('/api/notation-composer', methods=['GET'])
 def get_notations():
     return jsonify(_load_notations())
+
+@app.route('/api/notation-composer/<notation_id>/full', methods=['GET'])
+def get_full_notation(notation_id):
+    """Load full song data (for editing/display)"""
+    song = _get_song(notation_id)
+    if not song:
+        return jsonify({"error": "Song not found"}), 404
+    return jsonify(song)
 
 @app.route('/api/notation-composer', methods=['POST'])
 def save_notation():
