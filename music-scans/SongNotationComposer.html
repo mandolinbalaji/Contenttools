@@ -270,6 +270,18 @@
             cursor: grab;
         }
         
+        .lyrics-cell:not([contenteditable]) {
+            background: rgba(76, 175, 80, 0.05);
+            border: 1px solid #c8e6c9;
+            cursor: grab;
+            font-weight: 500;
+        }
+        
+        .lyrics-cell:not([contenteditable]):hover {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid #81c784;
+        }
+        
         .lyrics-cell.dragging {
             opacity: 0.5;
             background: #fffacd;
@@ -737,6 +749,8 @@
                     title="Play notation using Web Audio">🎵 Play</button>
                 <button class="btn btn-outline" id="multiSelectBtn" onclick="toggleMultiSelect()" 
                     title="Enable multi-cell selection - select cells then copy/paste (ESC to exit)">📋 Multi Select</button>
+                <button class="btn btn-outline" id="dragModeBtn" onclick="toggleLyricDragMode()" 
+                    title="🎯 Drag Mode: Click to enable/disable lyric dragging (disables editing when ON)">✋ Drag Lyrics</button>
                 <button class="btn btn-outline" id="sourceBtn" onclick="toggleSourceView()"
                     title="Toggle Floating Source Image">📷 Source</button>
                 <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
@@ -1222,7 +1236,10 @@
                                     if (lyricRow) {
                                         const lyricDiv = document.createElement('div');
                                         lyricDiv.className = 'lyrics-cell';
-                                        lyricDiv.contentEditable = "true";
+                                        // Only editable if NOT in drag mode
+                                        if (!lyricDragMode) {
+                                            lyricDiv.contentEditable = "true";
+                                        }
                                         lyricDiv.draggable = true;
                                         const lyricRowIdx = section.rows.indexOf(lyricRow);
                                         lyricDiv.textContent = lyricRow.atoms[aIdx] || '';
@@ -1761,6 +1778,29 @@
 
         // Drag-Drop Variables & Handlers for Lyric Cells
         let draggedLyricCell = null;
+        let lyricDragMode = false;
+        
+        function toggleLyricDragMode() {
+            lyricDragMode = !lyricDragMode;
+            const btn = document.getElementById('dragModeBtn');
+            
+            if (lyricDragMode) {
+                btn.style.background = '#4CAF50';
+                btn.style.borderColor = '#4CAF50';
+                btn.style.color = 'white';
+                btn.title = '✋ Drag Mode ON - Lyrics locked for dragging only';
+                showToast('🎯 Drag Mode ON - Click lyrics to drag, cannot edit', 'success');
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = '#ddd';
+                btn.style.color = 'var(--secondary)';
+                btn.title = '✋ Drag Mode: Click to enable lyric dragging';
+                showToast('✏️ Edit Mode ON - Click lyrics to edit', 'info');
+            }
+            
+            // Re-render to apply the new mode to all lyric cells
+            renderSong();
+        }
         
         function handleLyricDragStart(e) {
             draggedLyricCell = e.target;
