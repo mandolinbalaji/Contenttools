@@ -1,5 +1,14 @@
 [
   {
+    "id": "10f369ee-400e-45cf-ae50-1224e9272f3f",
+    "name": "Yochana",
+    "ragam": "Darbar",
+    "thalam": "Adhi",
+    "composer": "Thyagaraja",
+    "sruthi": "C#",
+    "file": "songs/Yochana.json"
+  },
+  {
     "id": "d7263d81-1b27-4974-82c1-3de3e1a1efb9",
     "name": "MakelaraVicharamu",
     "ragam": "Ravicandrika (Mēḷa 28)",
@@ -13,8 +22,8 @@
     "name": "Sujana Jeevana",
     "ragam": "Khamas (Mēḷa 28)",
     "thalam": "Rupakam",
-    "composer": "",
-    "sruthi": "C",
+    "composer": "Thyagaraja",
+    "sruthi": "C#",
     "file": "songs/SujanaJeevana.json"
   }
 ]
