@@ -431,6 +431,7 @@
             top: 100px;
             right: 40px;
             width: 450px;
+            height: 500px;
             background: white;
             padding: 0;
             border-radius: 12px;
@@ -439,6 +440,7 @@
             z-index: 1000;
             overflow: hidden;
             border: 1px solid #ddd;
+            resize: both;
         }
 
         .source-image-header {
@@ -449,10 +451,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            user-select: none;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .source-image-filename {
+            font-size: 12px;
+            color: #666;
+            flex: 1;
+            min-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .source-image-resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            cursor: nwse-resize;
+            background: linear-gradient(135deg, transparent 50%, #999 50%);
+            border-radius: 0 0 12px 0;
         }
 
         .source-image-panel img {
             width: 100%;
+            height: calc(100% - 50px);
+            object-fit: contain;
             display: block;
             cursor: zoom-in;
         }
@@ -740,12 +768,14 @@
                     <div class="source-image-header" id="sourceImageHeader">
                         <span style="font-weight: 600; color: var(--secondary); font-size: 14px;"><i
                                 class="fas fa-image"></i> Source Image</span>
+                        <span id="sourceImageFilename" class="source-image-filename" title=""></span>
                         <button class="btn btn-sm" onclick="toggleSourceView()"
                             style="padding: 2px 8px; background: transparent; border: none; cursor: pointer;">✖</button>
                     </div>
-                    <div style="max-height: 70vh; overflow-y: auto;">
+                    <div style="width: 100%; height: calc(100% - 50px); overflow: auto; position: relative;">
                         <img id="sourceImage" src="" alt="Notation Source">
                     </div>
+                    <div class="source-image-resize-handle" id="resizeHandle"></div>
                 </div>
 
                 <div class="notation-viewer-panel">
@@ -944,31 +974,6 @@
                                 onblur="this.style.borderColor='#ddd'"
                                 onfocus="this.style.borderColor='var(--primary)'"
                                 placeholder="Composer name">
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Nadai</label>
-                            <select id="nadaiDisplay" 
-                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
-                                onchange="this.style.borderColor='#ddd'"
-                                onfocus="this.style.borderColor='var(--primary)'"
-                                onchange="document.getElementById('nadai').value = this.value; currentSong.nadai = this.value;">
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4" selected>4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="8">8</option>
-                            </select>
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Eduppu</label>
-                            <input type="number" id="eduppuDisplay" 
-                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
-                                value="${currentSong.eduppu || 1}"
-                                min="1"
-                                onblur="this.style.borderColor='#ddd'; document.getElementById('eduppu').value = this.value; currentSong.eduppu = this.value;"
-                                onfocus="this.style.borderColor='var(--primary)'"
-                                placeholder="1">
                         </div>
                         <div style="flex: 1;">
                             <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Notation Reference</label>
@@ -1725,6 +1730,7 @@
             const panel = document.getElementById('sourceImagePanel');
             const img = document.getElementById('sourceImage');
             const btn = document.getElementById('sourceBtn');
+            const filenameDisplay = document.getElementById('sourceImageFilename');
 
             if (path) {
                 img.src = path;
@@ -1732,6 +1738,13 @@
                 btn.style.background = '#edf2ff';
                 btn.style.borderColor = 'var(--primary)';
                 btn.style.display = 'inline-flex';
+                
+                // Extract and display filename
+                const filename = path.split('/').pop();
+                if (filenameDisplay) {
+                    filenameDisplay.textContent = filename;
+                    filenameDisplay.title = path;
+                }
 
                 // Initialize draggable if not already done
                 if (!panel.dataset.draggable) {
@@ -1743,14 +1756,26 @@
                 btn.style.display = 'none';
                 btn.style.background = 'transparent';
                 btn.style.borderColor = '#ddd';
+                if (filenameDisplay) {
+                    filenameDisplay.textContent = '';
+                }
             }
         }
 
         function makeDraggable(elmnt, handle) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             handle.onmousedown = dragMouseDown;
+            
+            // Add resize functionality
+            const resizeHandle = document.getElementById('resizeHandle');
+            if (resizeHandle) {
+                resizeHandle.onmousedown = resizeMouseDown;
+            }
 
             function dragMouseDown(e) {
+                // Ignore if clicking on resize handle
+                if (e.target.id === 'resizeHandle') return;
+                
                 e = e || window.event;
                 e.preventDefault();
                 pos3 = e.clientX;
@@ -1774,6 +1799,30 @@
             function closeDragElement() {
                 document.onmouseup = null;
                 document.onmousemove = null;
+            }
+            
+            function resizeMouseDown(e) {
+                e.preventDefault();
+                const startX = e.clientX;
+                const startY = e.clientY;
+                const startWidth = elmnt.offsetWidth;
+                const startHeight = elmnt.offsetHeight;
+                
+                document.onmouseup = closeResizeElement;
+                document.onmousemove = elementResize;
+                
+                function elementResize(e) {
+                    e.preventDefault();
+                    const newWidth = Math.max(300, startWidth + (e.clientX - startX));
+                    const newHeight = Math.max(250, startHeight + (e.clientY - startY));
+                    elmnt.style.width = newWidth + 'px';
+                    elmnt.style.height = newHeight + 'px';
+                }
+                
+                function closeResizeElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
             }
         }
 
