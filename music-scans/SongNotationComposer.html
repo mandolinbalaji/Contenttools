@@ -1546,11 +1546,8 @@
             }
             
             if (/[SRGMPDNsrgmpdn]/.test(atom)) {
-                const isUppercase = atom[0] === atom[0].toUpperCase();
-                const hasNumber = /[0-9]/.test(atom);
-                if (isUppercase && hasNumber) {
-                    return atom.replace(/[0-9]/g, '').toUpperCase();
-                }
+                // PRESERVE numeric suffixes - they are user overrides with musical meaning
+                // e.g., "N3" should display as "N3", not "N"
                 return atom.toUpperCase();
             }
             return atom;
@@ -1666,6 +1663,11 @@
             const targetRow = currentSong.sections[sIdx].rows[rIdx];
             if (type === 'swara') {
                 targetRow.atoms[aIdx].text = newValue;
+                // Clear enrichment fields so they get recalculated on next save
+                delete targetRow.atoms[aIdx].ragaswaraEquivalent;
+                delete targetRow.atoms[aIdx].frequency;
+                delete targetRow.atoms[aIdx].midiNumber;
+                delete targetRow.atoms[aIdx].sruthiNoteEquivalent;
             } else if (type === 'lyric') {
                 targetRow.atoms[aIdx] = newValue;
             }
@@ -3010,10 +3012,25 @@
                             // Determine note variant to lookup
                             let lookupNote = null;
 
-                            // Priority 1: If atom already has ragaswaraEquivalent (user override), use it as-is
+                            // Priority 1: If atom already has ragaswaraEquivalent AND atom.text hasn't changed,
+                            // use it as-is. But if atom.text has a numeric suffix that differs from the enrichment,
+                            // it means the user manually edited the cell - recalculate.
                             if (atom.ragaswaraEquivalent) {
-                                lookupNote = atom.ragaswaraEquivalent.toUpperCase();
-                                console.log(`  📌 [${totalCells}] "${atom.text}": OVERRIDE → ${lookupNote}`);
+                                // Check if the current text exactly matches the enrichment (case-insensitive)
+                                // If they match, reuse the enrichment. If they differ, recalculate.
+                                const textLower = atom.text.toLowerCase();
+                                const enrichLower = atom.ragaswaraEquivalent.toLowerCase();
+                                
+                                if (textLower === enrichLower) {
+                                    // Text hasn't changed from the enrichment, reuse it
+                                    lookupNote = atom.ragaswaraEquivalent.toUpperCase();
+                                    console.log(`  📌 [${totalCells}] "${atom.text}": UNCHANGED OVERRIDE → ${lookupNote}`);
+                                } else {
+                                    // Text has changed from enrichment - user edited (e.g., N2→N3)
+                                    // Force recalculation
+                                    lookupNote = null;
+                                    console.log(`  ✏️  [${totalCells}] "${atom.text}": EDITED (was ${atom.ragaswaraEquivalent}) - recalculating`);
+                                }
                             } else {
                                 // Extract note characters from atom (handles multi-char like "MD", ",M", "G,", ",Ṙ")
                                 // First check for dotted variants, then fall back to plain notes
@@ -3021,8 +3038,9 @@
                                 for (let char of noteUsed) {
                                     const stripped = stripDiacritics(char);
                                     
-                                    // Keep only note characters (not commas, dashes, spaces)
-                                    if (!/^[,\-*\s]$/.test(stripped)) {
+                                    // Keep only note characters (not commas, dashes, spaces, or numbers)
+                                    // Numbers are handled separately as part of numeric suffixes (e.g., N3)
+                                    if (!/^[,\-*\s0-9]$/.test(stripped)) {
                                         // Priority: Check if original char is a dotted variant first
                                         const dottedVariant = getDottedVariant(char);
                                         if (dottedVariant) {
@@ -3042,7 +3060,9 @@
                                     
                                     // Check if it's an explicit variant with numeric suffix (R1, R2, G3, M1, etc.)
                                     // or a dotted variant (Ṡ, Ṛ, G̣, etc.)
-                                    const hasNumericSuffix = /\d/.test(firstNote);
+                                    // IMPORTANT: Check BOTH firstNote and atom.text for numeric suffix
+                                    // because if numbers are excluded from parsing, they won't be in firstNote
+                                    const hasNumericSuffix = /\d/.test(firstNote) || /\d/.test(atom.text);
                                     const isDottedVariant = firstNote !== stripDiacritics(firstNote);
                                     
                                     if ((!isDottedVariant || hasNumericSuffix) && sruthiLookup[firstNote]) {
@@ -3051,6 +3071,11 @@
                                         lookupNote = firstNote;
                                         const variantType = isDottedVariant ? 'DOTTED_SUFFIXED' : 'EXPLICIT';
                                         console.log(`  ✍️  [${totalCells}] "${atom.text}": ${variantType} → ${lookupNote}`);
+                                    } else if (hasNumericSuffix && atom.text !== firstNote && sruthiLookup[atom.text.toUpperCase()]) {
+                                        // User provided explicit numeric suffix in atom.text (e.g., "N3", "R2", "G3")
+                                        // Try to use the full text as lookup
+                                        lookupNote = atom.text.toUpperCase();
+                                        console.log(`  ✍️  [${totalCells}] "${atom.text}": EXPLICIT OVERRIDE → ${lookupNote}`);
                                     } else if (isDottedVariant && !hasNumericSuffix) {
                                         // Dotted variant WITHOUT numeric suffix (e.g., just "Ṙ", not "Ṙ2")
                                         // Get the base character and find its dotted equivalent with the selected variant suffix
