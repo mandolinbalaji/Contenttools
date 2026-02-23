@@ -850,7 +850,7 @@
                 else if (trimmed.includes('Composer:')) songMetadata.composer = trimmed.split('Composer:')[1].trim();
                 else if (trimmed.includes('Ārōhaṇa:')) songMetadata.arohana = trimmed.split('Ārōhaṇa:')[1].trim();
                 else if (trimmed.includes('Avarōhaṇa:')) songMetadata.avarohana = trimmed.split('Avarōhaṇa:')[1].trim();
-                else if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charaṇam')) {
+                else if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charaṇam') || /^[PAC]\.\d*/.test(trimmed)) {
                     currentSection = { title: trimmed, rows: [] };
                     sections.push(currentSection);
                 }
@@ -858,8 +858,10 @@
                     const isNotation = /[SRGMPDNsrgmpdn,;]/.test(trimmed) && trimmed.includes(',');
                     if (isNotation) {
                         const swaraRowId = 'row-' + Math.random().toString(36).substr(2, 9);
-                        // CLEAN: Strip spaces, |, /, \, :, - before tokenizing (display only, original input untouched)
-                        const cleanedLine = rawLine.replace(/[\s|/\\:\-]/g, '');
+                        // CLEAN: Strip spaces, |, /, \, :, - and convert dots to commas before tokenizing
+                        let cleanedLine = rawLine.replace(/[\s|/\\:\-]/g, '');
+                        // Convert dots and dashes to commas (rest markers)
+                        cleanedLine = cleanedLine.replace(/\.+/g, ',');
                         console.log(`📝 Original: ${rawLine}`);
                         console.log(`🧹 Cleaned:  ${cleanedLine}`);
                         const swaraAtoms = tokenizeWithPosition(cleanedLine);
@@ -876,7 +878,7 @@
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
                             const nextIsNotation = /[SRGMPDNsrgmpdn,;]/.test(nextTrimmed) && nextTrimmed.includes(',');
-                            const nextIsSection = nextTrimmed.includes('Pallavi') || nextTrimmed.includes('Anupallavi') || nextTrimmed.includes('Charaṇam');
+                            const nextIsSection = nextTrimmed.includes('Pallavi') || nextTrimmed.includes('Anupallavi') || nextTrimmed.includes('Charaṇam') || /^[PAC]\.\d*/.test(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
                                 const lyricAtoms = alignLyrics(nextLine, swaraAtoms);
