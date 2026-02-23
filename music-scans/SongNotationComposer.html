@@ -910,16 +910,32 @@
             metadataDiv.innerHTML = `
                 <div style="margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
                     <input type="text" id="songNameInput" 
-                        style="font-size: 24px; font-weight: bold; color: var(--secondary); border: none; background: transparent; padding: 4px 0; margin-bottom: 5px; width: 100%; border-bottom: 1px solid transparent; outline: none; transition: 0.2s;" 
+                        style="font-size: 24px; font-weight: bold; color: var(--secondary); border: none; background: transparent; padding: 4px 0; margin-bottom: 15px; width: 100%; border-bottom: 1px solid transparent; outline: none; transition: 0.2s;" 
                         value="${currentSong.name || 'Unnamed Song'}" 
                         onfocus="this.style.borderBottom='1px solid var(--primary)'"
                         onblur="this.style.borderBottom='1px solid transparent'"
                         oninput="updateCurrentSongName(this.value)"
                         placeholder="Unnamed Song">
-                    <p style="color: #666; font-size: 14px;">
-                        <strong>Ragam:</strong> ${currentSong.ragam} | <strong>Thalam:</strong> ${currentSong.thalam}
-                    </p>
-                    <div style="margin-top: 12px; display: flex; gap: 15px;">
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Raga</label>
+                            <input type="text" id="ragaInput" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
+                                value="${currentSong.ragam || ''}"
+                                onblur="this.style.borderColor='#ddd'; currentSong.ragam = this.value;"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="e.g., Khamas">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Thala</label>
+                            <input type="text" id="thalaInput" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
+                                value="${currentSong.thalam || ''}"
+                                onblur="this.style.borderColor='#ddd'; currentSong.thalam = this.value;"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="e.g., Rupakam">
+                        </div>
                         <div style="flex: 1;">
                             <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Composer</label>
                             <input type="text" id="composerInput" 
@@ -930,13 +946,59 @@
                                 placeholder="Composer name">
                         </div>
                         <div style="flex: 1;">
-                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Notation</label>
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Nadai</label>
+                            <select id="nadaiDisplay" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
+                                onchange="this.style.borderColor='#ddd'"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                onchange="document.getElementById('nadai').value = this.value; currentSong.nadai = this.value;">
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="8">8</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Eduppu</label>
+                            <input type="number" id="eduppuDisplay" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
+                                value="${currentSong.eduppu || 1}"
+                                min="1"
+                                onblur="this.style.borderColor='#ddd'; document.getElementById('eduppu').value = this.value; currentSong.eduppu = this.value;"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="1">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Notation Reference</label>
                             <input type="text" id="notationFieldInput" 
                                 style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: 0.2s;"
                                 value="${currentSong.notation || ''}"
                                 onblur="this.style.borderColor='#ddd'"
                                 onfocus="this.style.borderColor='var(--primary)'"
-                                placeholder="Notation reference">
+                                placeholder="Source reference">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Arohanam</label>
+                            <input type="text" id="arohanaInput" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; outline: none; transition: 0.2s; font-family: monospace;"
+                                value="${currentSong.arohana || ''}"
+                                onblur="this.style.borderColor='#ddd'; currentSong.arohana = this.value;"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="e.g., S R² M¹ P D² N² Ṡ">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Avarohanam</label>
+                            <input type="text" id="avarohanaInput" 
+                                style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; outline: none; transition: 0.2s; font-family: monospace;"
+                                value="${currentSong.avarohana || ''}"
+                                onblur="this.style.borderColor='#ddd'; currentSong.avarohana = this.value;"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                placeholder="e.g., Ṡ N² D² P M¹ G³ R² S">
                         </div>
                         <div style="flex: 1;">
                             <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Raga Swara</label>
@@ -946,7 +1008,7 @@
                                 onblur="this.style.borderColor='#ddd'"
                                 onfocus="this.style.borderColor='var(--primary)'"
                                 oninput="updateOverrideIndicators()"
-                                placeholder="e.g., r3 m1 d2 n3">
+                                placeholder="e.g., r2 g3 m1 d2 n3">
                         </div>
                     </div>
                 </div>
@@ -1447,10 +1509,14 @@
             currentSong.nadai = document.getElementById('nadai').value;
             currentSong.bpm = document.getElementById('bpm').value;
             currentSong.eduppu = document.getElementById('eduppu').value;
-            // Sync composer, notation, and ragaswara fields
+            // Sync metadata fields from display
+            currentSong.ragam = document.getElementById('ragaInput')?.value || '';
+            currentSong.thalam = document.getElementById('thalaInput')?.value || '';
             currentSong.composer = document.getElementById('composerInput')?.value || '';
             currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
             currentSong.ragaswara = document.getElementById('ragaswaraInput')?.value || '';
+            currentSong.arohana = document.getElementById('arohanaInput')?.value || '';
+            currentSong.avarohana = document.getElementById('avarohanaInput')?.value || '';
 
             await saveSongInternal();
             showToast('Notation source saved.');
@@ -1480,10 +1546,14 @@
             currentSong.nadai = document.getElementById('nadai').value;
             currentSong.bpm = document.getElementById('bpm').value;
             currentSong.eduppu = document.getElementById('eduppu').value;
-            // Sync composer, notation, and ragaswara fields
+            // Sync metadata fields from display
+            currentSong.ragam = document.getElementById('ragaInput')?.value || '';
+            currentSong.thalam = document.getElementById('thalaInput')?.value || '';
             currentSong.composer = document.getElementById('composerInput')?.value || '';
             currentSong.notation = document.getElementById('notationFieldInput')?.value || '';
             currentSong.ragaswara = document.getElementById('ragaswaraInput')?.value || '';
+            currentSong.arohana = document.getElementById('arohanaInput')?.value || '';
+            currentSong.avarohana = document.getElementById('avarohanaInput')?.value || '';
 
             // Sync speed marks from cellSpeedMap to currentSong.sections
             saveSpeedMarksToSections();
@@ -1823,7 +1893,7 @@
             document.getElementById('notationInput').value = '';
             document.getElementById('metadataDisplay').innerHTML = '';
             document.getElementById('renderedNotation').innerHTML = '<p style="color: #888; text-align: center; padding: 40px;">Ready for new notation.</p>';
-            currentSong = { name: '', ragam: '', thalam: '', composer: '', notation: '', ragaswara: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '', eduppu: 1 };
+            currentSong = { name: '', ragam: '', thalam: '', composer: '', notation: '', ragaswara: '', arohana: '', avarohana: '', sruthi: 'C', beats: 8, nadai: 4, bpm: 120, sections: [], rawText: '', eduppu: 1 };
             gridIsDirty = false;
             renderPlaylist();
         }
