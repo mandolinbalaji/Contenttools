@@ -267,6 +267,26 @@
             border: 1px solid transparent;
             white-space: nowrap;
             overflow: visible;
+            cursor: grab;
+        }
+        
+        .lyrics-cell.dragging {
+            opacity: 0.5;
+            background: #fffacd;
+            border: 1px dashed #ff9800;
+            cursor: grabbing;
+        }
+        
+        .lyrics-cell.drag-target {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            box-shadow: inset 0 0 8px rgba(33, 150, 243, 0.3);
+            cursor: copy;
+        }
+        
+        .lyrics-cell.drag-target:hover {
+            background: #bbdefb;
+            box-shadow: inset 0 0 12px rgba(33, 150, 243, 0.5);
         }
 
         .swara-cell[contenteditable="true"]:focus,
@@ -1203,9 +1223,22 @@
                                         const lyricDiv = document.createElement('div');
                                         lyricDiv.className = 'lyrics-cell';
                                         lyricDiv.contentEditable = "true";
+                                        lyricDiv.draggable = true;
                                         const lyricRowIdx = section.rows.indexOf(lyricRow);
                                         lyricDiv.textContent = lyricRow.atoms[aIdx] || '';
+                                        
+                                        // Set data attributes for drag-drop
+                                        lyricDiv.dataset.sectionIdx = sIdx;
+                                        lyricDiv.dataset.lyricRowIdx = lyricRowIdx;
+                                        lyricDiv.dataset.atomIdx = aIdx;
+                                        
                                         lyricDiv.oninput = (e) => handleCellEdit(sIdx, lyricRowIdx, aIdx, 'lyric', e.target.textContent);
+                                        lyricDiv.ondragstart = (e) => handleLyricDragStart(e);
+                                        lyricDiv.ondragend = (e) => handleLyricDragEnd(e);
+                                        lyricDiv.ondragover = (e) => handleLyricDragOver(e);
+                                        lyricDiv.ondragleave = (e) => handleLyricDragLeave(e);
+                                        lyricDiv.ondrop = (e) => handleLyricDrop(e);
+                                        
                                         cell.appendChild(lyricDiv);
                                     }
 
@@ -1724,6 +1757,72 @@
             } catch (err) {
                 showToast('Upload failed: ' + err, 'error');
             }
+        }
+
+        // Drag-Drop Variables & Handlers for Lyric Cells
+        let draggedLyricCell = null;
+        
+        function handleLyricDragStart(e) {
+            draggedLyricCell = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'copy';
+            e.dataTransfer.setData('text/plain', e.target.textContent);
+        }
+        
+        function handleLyricDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.lyrics-cell').forEach(cell => {
+                cell.classList.remove('drag-target');
+            });
+            draggedLyricCell = null;
+        }
+        
+        function handleLyricDragOver(e) {
+            if (!draggedLyricCell || e.target === draggedLyricCell || !e.target.classList.contains('lyrics-cell')) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            e.target.classList.add('drag-target');
+        }
+        
+        function handleLyricDragLeave(e) {
+            if (e.target.classList.contains('lyrics-cell')) {
+                e.target.classList.remove('drag-target');
+            }
+        }
+        
+        function handleLyricDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (!draggedLyricCell || e.target === draggedLyricCell || !e.target.classList.contains('lyrics-cell')) return;
+            
+            const sourceText = draggedLyricCell.textContent;
+            
+            // Get target cell indices
+            const targetSectionIdx = parseInt(e.target.dataset.sectionIdx);
+            const targetLyricRowIdx = parseInt(e.target.dataset.lyricRowIdx);
+            const targetAtomIdx = parseInt(e.target.dataset.atomIdx);
+            
+            // Get source cell indices
+            const sourceSectionIdx = parseInt(draggedLyricCell.dataset.sectionIdx);
+            const sourceLyricRowIdx = parseInt(draggedLyricCell.dataset.lyricRowIdx);
+            const sourceAtomIdx = parseInt(draggedLyricCell.dataset.atomIdx);
+            
+            // Overwrite: source content goes to target, source becomes blank
+            e.target.textContent = sourceText;
+            draggedLyricCell.textContent = '';
+            
+            // Update in currentSong data structure
+            currentSong.sections[targetSectionIdx].rows[targetLyricRowIdx].atoms[targetAtomIdx] = sourceText;
+            currentSong.sections[sourceSectionIdx].rows[sourceLyricRowIdx].atoms[sourceAtomIdx] = '';
+            
+            // Trigger cell edit handlers to mark as dirty
+            handleCellEdit(targetSectionIdx, targetLyricRowIdx, targetAtomIdx, 'lyric', sourceText);
+            handleCellEdit(sourceSectionIdx, sourceLyricRowIdx, sourceAtomIdx, 'lyric', '');
+            
+            e.target.classList.remove('drag-target');
+            gridIsDirty = true;
+            showToast('Lyric moved ✓');
         }
 
         function updateSourceViewer(path) {
