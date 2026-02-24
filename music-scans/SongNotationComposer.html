@@ -1076,8 +1076,10 @@
                     currentSection = { title: trimmed, rows: [] };
                     sections.push(currentSection);
                 }
-                // Check for notation (with or without commas - just needs swaras/symbols)
-                else if (/[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]/.test(trimmed)) {
+                // Check for notation (ASCII + Unicode combining marks + symbols)
+                // Includes: S-G-M-P-D-N (plain, with dots above/below using combining marks, with numbers 0-3)
+                // Plus separators: , ; { } [ ] | / \ : -
+                else if (/[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-\u1E00-\u1EFF\u0100-\u017F]/.test(trimmed)) {
                     hasFoundNotation = true;
                     
                     // Create default section if none exists
@@ -1108,7 +1110,7 @@
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
-                            const nextIsNotation = /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]/.test(nextTrimmed);
+                            const nextIsNotation = /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-\u1E00-\u1EFF\u0100-\u017F]/.test(nextTrimmed);
                             const nextIsSection = isSectionHeader(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
