@@ -1,74 +1,43 @@
 {
+  "/*": "==========================================================================",
+  "/*_IMPORTANT": "CARNATIC NOTATION REFERENCE DATA - SINGLE SOURCE OF TRUTH",
+  "/*_PURPOSE": [
+    "This file defines ALL valid characters in Carnatic music notation.",
+    "VALIDATORS should check against 'validCharacters' section BEFORE parsing.",
+    "UPDATE THIS FILE when adding new symbols - validators auto-update from here.",
+    "Each song's notation is validated against validCharacters before display.",
+    "All note variations (R1, R2, R3 with/without dots) from sruthi_midi_mapping.json",
+    "See 'validCharacters.noteVariations' section below for complete symbol reference."
+  ],
   "_metadata": {
-    "version": "1.0",
-    "description": "MIDI Note Octave and Sruthi Mapping Reference",
+    "version": "3.0",
+    "description": "MIDI Note Octave, Sruthi Mapping, Valid Characters, and All Note Variations Reference",
+    "lastUpdated": "2026-02-24",
+    "maintainer": "Carnatic Music Notation System",
+    "usage": "Load this file once at page startup. Validators and parsers reference it.",
+    "sources": [
+      "sruthi_midi_mapping.json - MIDI and frequency data",
+      "reference-data.json - metadata and structure"
+    ],
     "octaveMarkers": {
       "plain": {
-        "description": "Plain notes → Middle octave C4",
-        "capitals": [
-          "S",
-          "R",
-          "G",
-          "M",
-          "P",
-          "D",
-          "N"
-        ],
-        "lowercase": [
-          "s",
-          "r",
-          "g",
-          "m",
-          "p",
-          "d",
-          "n"
-        ],
+        "description": "Plain notes → Middle octave C4 (Octave 4)",
+        "capitals": ["S", "R", "G", "M", "P", "D", "N"],
+        "lowercase": ["s", "r", "g", "m", "p", "d", "n"],
         "midiOctave": "C4 (60-71)",
         "example": "S R G M P D N"
       },
       "dotsAbove": {
-        "description": "Dots above → Higher octave C5 (typically used for higher registral notes)",
-        "capitals": [
-          "Ṡ",
-          "Ṙ",
-          "Ġ",
-          "Ṁ",
-          "Ṗ",
-          "Ḋ",
-          "Ṅ"
-        ],
-        "lowercase": [
-          "ṡ",
-          "ṙ",
-          "ġ",
-          "ṁ",
-          "ṗ",
-          "ḋ",
-          "ṅ"
-        ],
+        "description": "Dots above note → Higher octave C5 (Octave 5) - upper register",
+        "capitals": ["Ṡ", "Ṙ", "Ġ", "Ṁ", "Ṗ", "Ḋ", "Ṅ"],
+        "lowercase": ["ṡ", "ṙ", "ġ", "ṁ", "ṗ", "ḋ", "ṅ"],
         "midiOctave": "C5 (72-83)",
         "example": "Ṡ Ṙ Ġ Ṁ Ṗ Ḋ Ṅ"
       },
       "dotsBelow": {
-        "description": "Dots below → Lower octave C3 (typically used for lower registral notes)",
-        "capitals": [
-          "Ṣ",
-          "Ṛ",
-          "G̣",
-          "Ṃ",
-          "P̣",
-          "Ḍ",
-          "Ṇ"
-        ],
-        "lowercase": [
-          "ṣ",
-          "ṛ",
-          "g̣",
-          "ṃ",
-          "p̣",
-          "ḍ",
-          "ṇ"
-        ],
+        "description": "Dots below note → Lower octave C3 (Octave 3) - lower register",
+        "capitals": ["Ṣ", "Ṛ", "G̣", "Ṃ", "P̣", "Ḍ", "Ṇ"],
+        "lowercase": ["ṣ", "ṛ", "g̣", "ṃ", "p̣", "ḍ", "ṇ"],
         "midiOctave": "C3 (48-59)",
         "example": "Ṣ Ṛ G̣ Ṃ P̣ Ḍ Ṇ"
       }
@@ -77,74 +46,216 @@
       "description": "For each sruthi, the base note (S/Shadja) maps to the specified semitone. This determines the key signature and transposition of all notes.",
       "baseNoteDefinition": "S (Shadja) is the fundamental note that defines the sruthi. Other notes are calculated relative to S.",
       "semitoneOffsets": {
-        "C": 0,
-        "C#": 1,
-        "Db": 1,
-        "D": 2,
-        "D#": 3,
-        "Eb": 3,
-        "E": 4,
-        "E#": 5,
-        "Fb": 4,
-        "F": 5,
-        "F#": 6,
-        "Gb": 6,
-        "G": 7,
-        "G#": 8,
-        "Ab": 8,
-        "A": 9,
-        "A#": 10,
-        "Bb": 10,
-        "B": 11,
-        "B#": 0,
-        "Cb": 11
-      },
-      "examples": {
-        "C": {
-          "sruthi": "C",
-          "S_plain": "C4",
-          "S_dotsAbove": "C5",
-          "S_dotsBelow": "C3",
-          "R_plain": "D4",
-          "R_dotsAbove": "D5",
-          "R_dotsBelow": "D3",
-          "G_plain": "E4",
-          "M_plain": "F4",
-          "P_plain": "G4",
-          "D_plain": "A4",
-          "N_plain": "B4"
-        },
-        "C#": {
-          "sruthi": "C#",
-          "S_plain": "C#4",
-          "S_dotsAbove": "C#5",
-          "S_dotsBelow": "C#3",
-          "R_plain": "D#4",
-          "R_dotsAbove": "D#5",
-          "R_dotsBelow": "D#3",
-          "G_plain": "F4",
-          "M_plain": "F#4",
-          "P_plain": "G#4",
-          "D_plain": "A#4",
-          "N_plain": "B#4"
-        },
-        "D": {
-          "sruthi": "D",
-          "S_plain": "D4",
-          "S_dotsAbove": "D5",
-          "S_dotsBelow": "D3",
-          "R_plain": "E4",
-          "R_dotsAbove": "E5",
-          "R_dotsBelow": "E3",
-          "G_plain": "F#4",
-          "M_plain": "G4",
-          "P_plain": "A4",
-          "D_plain": "B4",
-          "N_plain": "C#5"
-        }
+        "C": 0, "C#": 1, "Db": 1, "D": 2, "D#": 3, "Eb": 3,
+        "E": 4, "E#": 5, "Fb": 4, "F": 5, "F#": 6, "Gb": 6,
+        "G": 7, "G#": 8, "Ab": 8, "A": 9, "A#": 10, "Bb": 10,
+        "B": 11, "B#": 0, "Cb": 11
       }
     }
   },
-  "version": "1.0",
-  "description": "MIDI Note Octave and Sruthi Mapping Reference"
+  "validCharacters": {
+    "/*": "VALIDATOR REFERENCE - All characters MUST pass validation before Parse & Display",
+    "description": "Complete catalog of valid Carnatic music notation symbols and note variations. Validators fetch this data at page load.",
+    "validationRule": "Before parse and display, check each character in input against these allowed categories. Highlight anything not found in red.",
+    "baseSwaras": {
+      "description": "The 7 fundamental notes of Carnatic music",
+      "notes": {
+        "S": { "name": "Sa", "meaning": "Shadja (root note)", "unicode": "U+0053", "hasVariants": false },
+        "P": { "name": "Pa", "meaning": "Pancham (5th note)", "unicode": "U+0050", "hasVariants": false }
+      },
+      "caseInsensitive": true
+    },
+    "noteVariationsComplete": {
+      "/*": "COMPREHENSIVE LIST - All valid note combinations with all variants and octave markers",
+      "description": "Each note mapped with all variants (1, 2, 3) and octave markers (plain, dots above, dots below)",
+      "sourceFile": "sruthi_midi_mapping.json",
+      "Rishabha": {
+        "symbol": "R",
+        "meaning": "Rishabha (2nd note)",
+        "totalVariants": 3,
+        "variants": {
+          "R1": {
+            "plain": { "character": "R1", "midiOctave": "C4", "midiRange": "61" },
+            "dotsAbove": { "character": "Ṙ1", "midiOctave": "C5", "midiRange": "73", "unicode": "U+1E58+1" },
+            "dotsBelow": { "character": "Ṛ1", "midiOctave": "C3", "midiRange": "49", "unicode": "U+1E5A+1" }
+          },
+          "R2": {
+            "plain": { "character": "R2", "midiOctave": "C4", "midiRange": "62" },
+            "dotsAbove": { "character": "Ṙ2", "midiOctave": "C5", "midiRange": "74", "unicode": "U+1E58+2" },
+            "dotsBelow": { "character": "Ṛ2", "midiOctave": "C3", "midiRange": "50", "unicode": "U+1E5A+2" }
+          },
+          "R3": {
+            "plain": { "character": "R3", "midiOctave": "C4", "midiRange": "63" },
+            "dotsAbove": { "character": "Ṙ3", "midiOctave": "C5", "midiRange": "75", "unicode": "U+1E58+3" },
+            "dotsBelow": { "character": "Ṛ3", "midiOctave": "C3", "midiRange": "51", "unicode": "U+1E5A+3" }
+          }
+        }
+      },
+      "Gandhara": {
+        "symbol": "G",
+        "meaning": "Gandhara (3rd note)",
+        "totalVariants": 3,
+        "variants": {
+          "G1": {
+            "plain": { "character": "G1", "midiOctave": "C4", "midiRange": "62" },
+            "dotsAbove": { "character": "Ġ1", "midiOctave": "C5", "midiRange": "74", "unicode": "U+0120+1" },
+            "dotsBelow": { "character": "G̣1", "midiOctave": "C3", "midiRange": "50", "unicode": "U+0047+U+0323+1" }
+          },
+          "G2": {
+            "plain": { "character": "G2", "midiOctave": "C4", "midiRange": "63" },
+            "dotsAbove": { "character": "Ġ2", "midiOctave": "C5", "midiRange": "75", "unicode": "U+0120+2" },
+            "dotsBelow": { "character": "G̣2", "midiOctave": "C3", "midiRange": "51", "unicode": "U+0047+U+0323+2" }
+          },
+          "G3": {
+            "plain": { "character": "G3", "midiOctave": "C4", "midiRange": "64" },
+            "dotsAbove": { "character": "Ġ3", "midiOctave": "C5", "midiRange": "76", "unicode": "U+0120+3" },
+            "dotsBelow": { "character": "G̣3", "midiOctave": "C3", "midiRange": "52", "unicode": "U+0047+U+0323+3" }
+          }
+        }
+      },
+      "Madhyama": {
+        "symbol": "M",
+        "meaning": "Madhyama (4th note)",
+        "totalVariants": 2,
+        "variants": {
+          "M1": {
+            "plain": { "character": "M1", "midiOctave": "C4", "midiRange": "65" },
+            "dotsAbove": { "character": "Ṁ1", "midiOctave": "C5", "midiRange": "77", "unicode": "U+1E40+1" },
+            "dotsBelow": { "character": "Ṃ1", "midiOctave": "C3", "midiRange": "53", "unicode": "U+1E42+1" }
+          },
+          "M2": {
+            "plain": { "character": "M2", "midiOctave": "C4", "midiRange": "66" },
+            "dotsAbove": { "character": "Ṁ2", "midiOctave": "C5", "midiRange": "78", "unicode": "U+1E40+2" },
+            "dotsBelow": { "character": "Ṃ2", "midiOctave": "C3", "midiRange": "54", "unicode": "U+1E42+2" }
+          }
+        }
+      },
+      "Dhaivata": {
+        "symbol": "D",
+        "meaning": "Dhaivata (6th note)",
+        "totalVariants": 3,
+        "variants": {
+          "D1": {
+            "plain": { "character": "D1", "midiOctave": "C4", "midiRange": "68" },
+            "dotsAbove": { "character": "Ḋ1", "midiOctave": "C5", "midiRange": "80", "unicode": "U+1E0E+1" },
+            "dotsBelow": { "character": "Ḍ1", "midiOctave": "C3", "midiRange": "56", "unicode": "U+1E0C+1" }
+          },
+          "D2": {
+            "plain": { "character": "D2", "midiOctave": "C4", "midiRange": "69" },
+            "dotsAbove": { "character": "Ḋ2", "midiOctave": "C5", "midiRange": "81", "unicode": "U+1E0E+2" },
+            "dotsBelow": { "character": "Ḍ2", "midiOctave": "C3", "midiRange": "57", "unicode": "U+1E0C+2" }
+          },
+          "D3": {
+            "plain": { "character": "D3", "midiOctave": "C4", "midiRange": "70" },
+            "dotsAbove": { "character": "Ḋ3", "midiOctave": "C5", "midiRange": "82", "unicode": "U+1E0E+3" },
+            "dotsBelow": { "character": "Ḍ3", "midiOctave": "C3", "midiRange": "58", "unicode": "U+1E0C+3" }
+          }
+        }
+      },
+      "Nishada": {
+        "symbol": "N",
+        "meaning": "Nishada (7th note)",
+        "totalVariants": 3,
+        "note": "Only N1, N2, N3 (not N0)",
+        "variants": {
+          "N1": {
+            "plain": { "character": "N1", "midiOctave": "C4", "midiRange": "68" },
+            "dotsAbove": { "character": "Ṅ1", "midiOctave": "C5", "midiRange": "80", "unicode": "U+1E44+1" },
+            "dotsBelow": { "character": "Ṇ1", "midiOctave": "C3", "midiRange": "56", "unicode": "U+1E46+1" }
+          },
+          "N2": {
+            "plain": { "character": "N2", "midiOctave": "C4", "midiRange": "69" },
+            "dotsAbove": { "character": "Ṅ2", "midiOctave": "C5", "midiRange": "81", "unicode": "U+1E44+2" },
+            "dotsBelow": { "character": "Ṇ2", "midiOctave": "C3", "midiRange": "57", "unicode": "U+1E46+2" }
+          },
+          "N3": {
+            "plain": { "character": "N3", "midiOctave": "C4", "midiRange": "70" },
+            "dotsAbove": { "character": "Ṅ3", "midiOctave": "C5", "midiRange": "82", "unicode": "U+1E44+3" },
+            "dotsBelow": { "character": "Ṇ3", "midiOctave": "C3", "midiRange": "58", "unicode": "U+1E46+3" }
+          }
+        }
+      },
+      "Sa_variants": {
+        "symbol": "S",
+        "meaning": "Shadja (root/unison note)",
+        "totalVariants": 0,
+        "note": "S has NO numeric variants. Use dots for octaves only: S, Ṡ (upper), Ṣ (lower)",
+        "plain": { "character": "S", "midiOctave": "C4", "midiRange": "60" },
+        "dotsAbove": { "character": "Ṡ", "midiOctave": "C5", "midiRange": "72", "unicode": "U+1E60" },
+        "dotsBelow": { "character": "Ṣ", "midiOctave": "C3", "midiRange": "48", "unicode": "U+1E62" }
+      },
+      "Pa_variants": {
+        "symbol": "P",
+        "meaning": "Pancham (perfect 5th, fixed pitch)",
+        "totalVariants": 0,
+        "note": "P has NO numeric variants. Use dots for octaves only: P, Ṗ (upper), P̣ (lower)",
+        "plain": { "character": "P", "midiOctave": "C4", "midiRange": "67" },
+        "dotsAbove": { "character": "Ṗ", "midiOctave": "C5", "midiRange": "79", "unicode": "U+1E56" },
+        "dotsBelow": { "character": "P̣", "midiOctave": "C3", "midiRange": "55", "unicode": "U+0050+U+0323" }
+      }
+    },
+    "rests": {
+      "description": "Silence and empty cells",
+      "characters": {
+        ",": { "name": "Comma (Rest)", "meaning": "One beat of silence/rest", "unicode": "U+002C", "usage": "Represents a rest for one cell" }
+      }
+    },
+    "groupingSymbols": {
+      "description": "Symbols for grouping related notes",
+      "characters": {
+        "{": { "name": "Left Brace", "meaning": "Start grouping/slur", "unicode": "U+007B" },
+        "}": { "name": "Right Brace", "meaning": "End grouping/slur", "unicode": "U+007D" },
+        "[": { "name": "Left Bracket", "meaning": "Start variant", "unicode": "U+005B" },
+        "]": { "name": "Right Bracket", "meaning": "End variant", "unicode": "U+005D" }
+      }
+    },
+    "separators": {
+      "description": "Visual separators (ignored during parsing)",
+      "characters": {
+        "|": { "name": "Pipe", "meaning": "Bar line", "unicode": "U+007C" },
+        "/": { "name": "Slash", "meaning": "Separator", "unicode": "U+002F" },
+        "\\": { "name": "Backslash", "meaning": "Separator", "unicode": "U+005C" },
+        ":": { "name": "Colon", "meaning": "Time signature", "unicode": "U+003A" },
+        "-": { "name": "Hyphen", "meaning": "Rest/separator", "unicode": "U+002D" },
+        ".": { "name": "Period", "meaning": "Rest/phrase end", "unicode": "U+002E" }
+      }
+    },
+    "metadataKeywords": {
+      "description": "Keywords marking song metadata",
+      "keywords": {
+        "Composition:": "Song title",
+        "Rāga:": "Raga name (Unicode)",
+        "Ragam:": "Raga name (ASCII)",
+        "Tāḷa:": "Tala name (Unicode)",
+        "Talam:": "Tala name (ASCII)",
+        "Composer:": "Composer name",
+        "Ārōhaṇa:": "Ascending scale (Unicode)",
+        "Arohana:": "Ascending scale (ASCII)",
+        "Avarōhaṇa:": "Descending scale (Unicode)",
+        "Avarohana:": "Descending scale (ASCII)",
+        "Pallavi": "First section",
+        "Anupallavi": "Second section",
+        "Charaṇam": "Third section (Unicode)",
+        "Charanam": "Third section (ASCII)"
+      }
+    },
+    "validCharactersList": {
+      "/*": "QUICK REFERENCE - All valid characters as separate lists",
+      "allPlainNotes": "S R1 R2 R3 G1 G2 G3 M1 M2 P D1 D2 D3 N1 N2 N3",
+      "allVariants": "0 1 2 3",
+      "allDotsAboveNotes": "Ṡ Ṙ Ġ Ṁ Ṗ Ḋ Ṅ",
+      "allDotsBelowNotes": "Ṣ Ṛ G̣ Ṃ P̣ Ḍ Ṇ",
+      "allStructuralSymbols": "{ } [ ] | / \\ : - .",
+      "rest": ",",
+      "notes": "All lowercase variants also valid"
+    },
+    "validationRegex": {
+      "description": "Patterns for programmatic validation",
+      "note": "Use these in SongNotationComposer.html validator",
+      "allValidCharacters": "/[SRGMPDNsrgmpdn0-3,{}\\[\\]|/\\\\:\\-.\\.\\sṠṘĠṀṖḊṄṡṙġṁṗḋṅṢṛG̣ṃP̣ḍṇṣ]/g",
+      "invalidCharacters": "/[^SRGMPDNsrgmpdn0-3,{}\\[\\]|/\\\\:\\-.\\.\\sṠṘĠṀṖḊṄṡṙġṁṗḋṅṢṛG̣ṃP̣ḍṇṣ]/g"
+    }
+  },
+  "version": "3.0",
+  "description": "MIDI Note Octave, Sruthi Mapping, Valid Characters, and Complete Note Variations Reference"
 }

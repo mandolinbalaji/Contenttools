@@ -647,6 +647,14 @@
                 flex: 1 1 calc(50% - 2.5px);
             }
         }
+
+        /* Character Validation Styles - Spell Check Style */
+        #notationInput.has-invalid-chars {
+            border: 2px solid #ff7675 !important;
+            border-bottom: 3px wavy #ff7675 !important;
+            background-color: rgba(255, 118, 117, 0.04) !important;
+            box-shadow: 0 0 0 1px #ff7675, inset 0 -3px 0 rgba(255, 118, 117, 0.1) !important;
+        }
     </style>
 </head>
 
@@ -776,6 +784,16 @@
                 </div>
                 <textarea id="notationInput" spellcheck="false"
                     placeholder="Composition: Sujana Jīvana&#10;• Rāga: Khamas (Mēḷa 28)&#10;• Ārōhaṇa: S M¹ G³ M¹ P D² N² Ṡ&#10;• Avarōhaṇa: Ṡ N² D² P M¹ G³ R² S&#10;• Tāḷa: 3x4 (Rūpaka structure as shown in the source)&#10;&#10;--------------------------------------------------------------------------------&#10;Pallavi (P.1)&#10;Line 1:&#10;M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||&#10;su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma"></textarea>
+                <div style="margin-top: 8px; min-height: 20px;">
+                    <span id="invalidCharIndicator" style="display: none; font-size: 12px; color: #ff7675; font-weight: 600; align-items: center; gap: 6px;">
+                        <span>⚠️ Invalid characters detected</span>
+                    </span>
+                </div>
+                <div style="margin-top: 8px; min-height: 20px;">
+                    <span id="invalidCharIndicator" style="display: none; font-size: 12px; color: #ff7675; font-weight: 600; align-items: center; gap: 6px;">
+                        <span>⚠️ Invalid characters detected</span>
+                    </span>
+                </div>
                 <button class="btn btn-primary" onclick="parseAndRender()">⚡ Parse & Display</button>
                 
                 <div id="speedToolbar" class="speed-toolbar" style="display: none;">
@@ -876,12 +894,90 @@
         let isSelecting = false;   // Track if user is dragging to select
         let multiSelectActive = false; // Multi Select mode toggle state
 
+        // --- 3. VALIDATION & REFERENCE DATA ---
+        let referenceData = null;  // Loaded from /metadata/reference-data.json
+        let invalidCharRegex = null; // Regex pattern for detecting invalid characters
+
+        // Load reference data and set up validators
+        async function loadReferenceData() {
+            try {
+                const response = await fetch('/metadata/reference-data.json');
+                if (!response.ok) throw new Error('Failed to load reference-data.json');
+                referenceData = await response.json();
+                
+                // Extract the invalidCharacters regex pattern
+                if (referenceData.validCharacters && referenceData.validCharacters.validationRegex) {
+                    const patternString = referenceData.validCharacters.validationRegex.invalidCharacters;
+                    // Parse the regex pattern: "/[^...]/g" → extract the character class
+                    // Remove leading "/" and trailing "/g"
+                    const cleaned = patternString.replace(/^\/|\/$|\/g$/g, '');
+                    try {
+                        invalidCharRegex = new RegExp(cleaned, 'g');
+                    } catch (e) {
+                        console.warn('Failed to create regex from pattern, using fallback:', e);
+                        // Fallback pattern if parsing fails
+                        invalidCharRegex = /[^SRGMPDNsrgmpdn0-3,{}[\]|/\\:\-.\s]/g;
+                    }
+                }
+                
+                console.log('✅ Reference data loaded successfully');
+                console.log('📋 Invalid character regex:', invalidCharRegex);
+                return true;
+            } catch (err) {
+                console.error('❌ Failed to load reference data:', err);
+                // Fallback regex
+                invalidCharRegex = /[^SRGMPDNsrgmpdn0-3,{}[\]|/\\:\-.\s]/g;
+                return false;
+            }
+        }
+
+        // Validate notation text and highlight invalid characters
+        function validateNotationText() {
+            const textarea = document.getElementById('notationInput');
+            const indicator = document.getElementById('invalidCharIndicator');
+            
+            if (!textarea || !invalidCharRegex) return;
+            
+            const text = textarea.value;
+            if (!text || text.trim() === '') {
+                textarea.classList.remove('has-invalid-chars');
+                indicator.style.display = 'none';
+                return;
+            }
+            
+            // Find all invalid characters
+            const invalidMatches = text.match(invalidCharRegex);
+            
+            if (!invalidMatches || invalidMatches.length === 0) {
+                // All characters are valid - remove red styling and hide indicator
+                textarea.classList.remove('has-invalid-chars');
+                indicator.style.display = 'none';
+            } else {
+                // Found invalid characters - add red styling and show indicator
+                textarea.classList.add('has-invalid-chars');
+                indicator.style.display = 'block';
+            }
+        }
+
+        // Hook validation to textarea input event
+        function setupValidationListener() {
+            const textarea = document.getElementById('notationInput');
+            if (textarea) {
+                textarea.addEventListener('input', validateNotationText);
+                // Run validation immediately on load in case there's initial content
+                validateNotationText();
+            }
+        }
+
         function parseAndRender() {
             if (gridIsDirty) {
                 if (!confirm("You have manual edits in the grid. Clicking 'Parse' will overwrite them. Continue?")) {
                     return;
                 }
             }
+
+            // Save current manual edits from grid before re-parsing
+            const savedEdits = saveGridEdits();
 
             const text = document.getElementById('notationInput').value;
             if (!text) return;
@@ -890,46 +986,69 @@
             globalBraceGroupCounter = 0;
 
             const lines = text.split('\n');
-            let songMetadata = { name: 'Untitled Song', ragam: '', thalam: '', composer: '', arohana: '', avarohana: '' };
+            let songMetadata = {};  // Start empty - only add what we find
             let sections = [];
             let currentSection = null;
+            let hasFoundNotation = false;
 
             for (let i = 0; i < lines.length; i++) {
                 const rawLine = lines[i];
                 const trimmed = rawLine.trim();
                 if (!trimmed) continue;
 
-                if (trimmed.startsWith('Composition:')) songMetadata.name = trimmed.replace('Composition:', '').trim();
-                else if (trimmed.includes('Rāga:')) songMetadata.ragam = trimmed.split('Rāga:')[1].trim();
-                else if (trimmed.includes('Tāḷa:')) {
+                // Parse metadata headers if present in notation (but don't require them)
+                if (trimmed.startsWith('Composition:')) { 
+                    songMetadata.name = trimmed.replace('Composition:', '').trim();
+                    continue;
+                }
+                else if (trimmed.includes('Rāga:')) { 
+                    songMetadata.ragam = trimmed.split('Rāga:')[1].trim();
+                    continue;
+                }
+                else if (trimmed.includes('Tāḷa:')) { 
                     const thalam = trimmed.split('Tāḷa:')[1].trim();
                     songMetadata.thalam = thalam;
-                    // Smart detection of Beats/Nadai if like "3x4"
-                    const talaMatch = thalam.match(/(\d+)\s*x\s*(\d+)/);
-                    if (talaMatch) {
-                        document.getElementById('beats').value = talaMatch[1];
-                        document.getElementById('nadai').value = talaMatch[2];
-                    }
+                    continue;
                 }
-                else if (trimmed.includes('Composer:')) songMetadata.composer = trimmed.split('Composer:')[1].trim();
-                else if (trimmed.includes('Ārōhaṇa:')) songMetadata.arohana = trimmed.split('Ārōhaṇa:')[1].trim();
-                else if (trimmed.includes('Avarōhaṇa:')) songMetadata.avarohana = trimmed.split('Avarōhaṇa:')[1].trim();
-                else if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charaṇam') || /^[PAC]\.\d*/.test(trimmed)) {
+                else if (trimmed.includes('Composer:')) { 
+                    songMetadata.composer = trimmed.split('Composer:')[1].trim();
+                    continue;
+                }
+                else if (trimmed.includes('Ārōhaṇa:')) { 
+                    songMetadata.arohana = trimmed.split('Ārōhaṇa:')[1].trim();
+                    continue;
+                }
+                else if (trimmed.includes('Avarōhaṇa:')) { 
+                    songMetadata.avarohana = trimmed.split('Avarōhaṇa:')[1].trim();
+                    continue;
+                }
+                
+                // Check for section headers
+                if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charaṇam') || /^[PAC]\.\d*/.test(trimmed)) {
                     currentSection = { title: trimmed, rows: [] };
                     sections.push(currentSection);
                 }
-                else if (currentSection) {
-                    const isNotation = /[SRGMPDNsrgmpdn,;]/.test(trimmed) && trimmed.includes(',');
-                    if (isNotation) {
-                        const swaraRowId = 'row-' + Math.random().toString(36).substr(2, 9);
-                        // CLEAN: Strip spaces, |, /, \, :, - and convert dots to commas before tokenizing
-                        let cleanedLine = rawLine.replace(/[\s|/\\:\-]/g, '');
-                        // Convert dots and dashes to commas (rest markers)
-                        cleanedLine = cleanedLine.replace(/\.+/g, ',');
-                        console.log(`📝 Original: ${rawLine}`);
-                        console.log(`🧹 Cleaned:  ${cleanedLine}`);
-                        const swaraAtoms = tokenizeWithPosition(cleanedLine);
-                        
+                // Check for notation (with or without commas - just needs swaras/symbols)
+                else if (/[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]/.test(trimmed)) {
+                    hasFoundNotation = true;
+                    
+                    // Create default section if none exists
+                    if (!currentSection) {
+                        currentSection = { title: 'Notation', rows: [] };
+                        sections.push(currentSection);
+                    }
+                    
+                    // Parse notation line
+                    const swaraRowId = 'row-' + Math.random().toString(36).substr(2, 9);
+                    // CLEAN: Strip spaces, |, /, \, :, - 
+                    let cleanedLine = rawLine.replace(/[\s|/\\:\-]/g, '');
+                    // Convert dots to commas (rest markers)
+                    cleanedLine = cleanedLine.replace(/\.+/g, ',');
+                    console.log(`📝 Original: ${rawLine}`);
+                    console.log(`🧹 Cleaned:  ${cleanedLine}`);
+                    const swaraAtoms = tokenizeWithPosition(cleanedLine);
+                    
+                    if (swaraAtoms.length > 0) {  // Only add if atoms found
                         currentSection.rows.push({
                             id: swaraRowId,
                             type: 'swara',
@@ -941,7 +1060,7 @@
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
-                            const nextIsNotation = /[SRGMPDNsrgmpdn,;]/.test(nextTrimmed) && nextTrimmed.includes(',');
+                            const nextIsNotation = /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]/.test(nextTrimmed);
                             const nextIsSection = nextTrimmed.includes('Pallavi') || nextTrimmed.includes('Anupallavi') || nextTrimmed.includes('Charaṇam') || /^[PAC]\.\d*/.test(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
@@ -960,10 +1079,60 @@
                 }
             }
 
-            // Persistence Awareness logic removed to favor explicit control (dirty flag + confirmation)
-            currentSong = { ...currentSong, ...songMetadata, sections: sections };
+            // Merge saved edits back into new sections
+            mergeGridEdits(sections, savedEdits);
+
+            // Only update fields that were explicitly set in the notation text
+            // Don't clear fields with empty metadata if notation was found
+            if (hasFoundNotation) {
+                // Merge: keep existing metadata, update only what was in notation
+                currentSong = { 
+                    ...currentSong,  // Keep existing values
+                    sections: sections
+                };
+                // Only apply new metadata if it was explicitly set
+                if (songMetadata.name) currentSong.name = songMetadata.name;
+                if (songMetadata.ragam) currentSong.ragam = songMetadata.ragam;
+                if (songMetadata.thalam) currentSong.thalam = songMetadata.thalam;
+                if (songMetadata.composer) currentSong.composer = songMetadata.composer;
+                if (songMetadata.arohana) currentSong.arohana = songMetadata.arohana;
+                if (songMetadata.avarohana) currentSong.avarohana = songMetadata.avarohana;
+            }
             gridIsDirty = false;
             renderSong();
+        }
+
+        // Save manual edits from current grid before re-rendering
+        function saveGridEdits() {
+            const edits = {};  // Map of cellIndex → edited text
+            const cells = document.querySelectorAll('[data-cell-index]');
+            cells.forEach(cell => {
+                const index = cell.getAttribute('data-cell-index');
+                const text = cell.textContent.trim();
+                if (text) {
+                    edits[index] = text;
+                }
+            });
+            console.log('💾 Saved grid edits:', edits);
+            return edits;
+        }
+
+        // Restore manual edits into newly parsed sections
+        function mergeGridEdits(sections, savedEdits) {
+            let cellIndex = 0;
+            sections.forEach((section) => {
+                section.rows.forEach((row) => {
+                    if (row.atoms) {
+                        row.atoms.forEach((atom) => {
+                            if (savedEdits[cellIndex]) {
+                                atom.text = savedEdits[cellIndex];
+                                console.log(`🔄 Restored edit at cell ${cellIndex}: ${atom.text}`);
+                            }
+                            cellIndex++;
+                        });
+                    }
+                });
+            });
         }
 
         function renderSong() {
@@ -1143,6 +1312,7 @@
                                     firstCellAtoms.forEach((groupAtom) => {
                                         const swaraDiv = document.createElement('div');
                                         swaraDiv.className = 'swara-cell';
+                                        swaraDiv.setAttribute('data-cell-index', globalCellIndex);
                                         swaraDiv.contentEditable = "true";
                                         swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
                                         swaraDiv.textContent = formatSwaraForDisplay(groupAtom.text);
@@ -1151,6 +1321,7 @@
                                             handleCellEdit(sIdx, r, row.atoms.indexOf(groupAtom), 'swara', e.target.textContent);
                                         };
                                         groupContainer.appendChild(swaraDiv);
+                                        globalCellIndex++;
                                     });
                                     
                                     cell.appendChild(groupContainer);
@@ -1182,6 +1353,7 @@
                                         cellsToRender[cellIdx].forEach((groupAtom) => {
                                             const swaraDiv = document.createElement('div');
                                             swaraDiv.className = 'swara-cell';
+                                            swaraDiv.setAttribute('data-cell-index', globalCellIndex);
                                             swaraDiv.classList.add('speed-2x');
                                             swaraDiv.contentEditable = "true";
                                             swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
@@ -1191,6 +1363,7 @@
                                                 handleCellEdit(sIdx, r, row.atoms.indexOf(groupAtom), 'swara', e.target.textContent);
                                             };
                                             extraContainer.appendChild(swaraDiv);
+                                            globalCellIndex++;
                                         });
                                         
                                         extraCell.appendChild(extraContainer);
@@ -1222,15 +1395,21 @@
                                     // Swara Cell
                                     const swaraDiv = document.createElement('div');
                                     swaraDiv.className = 'swara-cell';
+                                    // Add cell index attribute for tracking edits
+                                    swaraDiv.setAttribute('data-cell-index', globalCellIndex);
                                     // Apply speed-2x styling only if atom has speed=2 (braced notes)
                                     if (atom.speed === 2) {
                                         swaraDiv.classList.add('speed-2x');
                                     }
                                     swaraDiv.contentEditable = "true";
                                     swaraDiv.textContent = formatSwaraForDisplay(atom.text);
-                                    swaraDiv.oninput = (e) => handleCellEdit(sIdx, r, aIdx, 'swara', e.target.textContent);
+                                    swaraDiv.oninput = (e) => {
+                                        atom.text = e.target.textContent;
+                                        handleCellEdit(sIdx, r, aIdx, 'swara', e.target.textContent);
+                                    };
 
                                     cell.appendChild(swaraDiv);
+                                    globalCellIndex++;  // Increment for next cell
 
                                     // Lyric Cell (if exists) - only for non-brace-child atoms
                                     if (lyricRow) {
@@ -2105,6 +2284,10 @@
         window.onload = async () => {
             await renderPlaylist();
 
+            // Load reference data for validation
+            await loadReferenceData();
+            setupValidationListener();
+
             // Search functionality
             document.getElementById('playlistSearch').addEventListener('input', function (e) {
                 const term = e.target.value.toLowerCase();
@@ -2124,8 +2307,24 @@
                     const stored = await response.json();
                     const song = stored.find(s => s.name === songName);
                     if (song) {
-                        loadSongIntoUI(song);
+                        // Load full song data (not just thin reference)
+                        try {
+                            const fullResponse = await fetch(`/api/notation-composer/${song.id}/full`);
+                            if (fullResponse.ok) {
+                                const fullSong = await fullResponse.json();
+                                loadSongIntoUI(fullSong);
+                            } else {
+                                // Fallback to thin reference if full load fails
+                                loadSongIntoUI(song);
+                            }
+                        } catch (err) {
+                            console.error('Failed to load full song:', err);
+                            // Fallback to thin reference
+                            loadSongIntoUI(song);
+                        }
                         renderPlaylist();
+                    } else {
+                        console.warn(`Song "${songName}" not found in library`);
                     }
                 } catch (err) {
                     console.error('URL load failed:', err);

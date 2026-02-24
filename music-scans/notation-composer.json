@@ -1,5 +1,14 @@
 [
   {
+    "id": "f50dfca1-dba7-4f2d-a3eb-88a426886379",
+    "name": "Swaratest",
+    "ragam": "Swarastest",
+    "thalam": "Adhi",
+    "composer": "Balaji",
+    "sruthi": "C#",
+    "file": "songs/Swaratest.json"
+  },
+  {
     "id": "10f369ee-400e-45cf-ae50-1224e9272f3f",
     "name": "Yochana",
     "ragam": "Darbar",

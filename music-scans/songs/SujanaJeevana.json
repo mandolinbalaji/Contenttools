@@ -469,8 +469,8 @@
       }
     }
   },
-  "arohana": "S M¹ G³ M¹ P D² N² Ṡ",
-  "avarohana": "Ṡ N² D² P M¹ G³ R² S",
+  "arohana": "S M1 G3 M1 P D2 N2 Ṡ",
+  "avarohana": "Ṡ N2 D2 P M1 G3 R2 S",
   "beats": "3",
   "bpm": "80",
   "composer": "",
@@ -634,13 +634,13 @@
             "",
             "ja",
             "",
-            "",
-            "",
             "na",
+            "",
+            "",
             "",
             "jī",
             "",
-            "",
+            "va",
             ""
           ],
           "content": "",
@@ -788,16 +788,16 @@
         {
           "atoms": [
             "va",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "na",
             "",
             "",
+            "",
+            "",
+            "",
+            "",
+            "rā",
+            "",
+            "ma",
             ""
           ],
           "content": "",
@@ -898,15 +898,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 32,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -948,17 +948,17 @@
         },
         {
           "atoms": [
+            "suguṇa",
             "",
             "",
             "",
             "",
             "",
+            "bhū sha na rā ma",
             "",
             "",
             "",
-            "rā",
             "",
-            "ma",
             ""
           ],
           "content": "",
@@ -1113,12 +1113,12 @@
             "",
             "",
             "",
-            "suguṇa",
             "",
             "",
             "",
             "",
-            "bhū sha na rā ma"
+            "",
+            ""
           ],
           "content": "",
           "id": "section-0-row-3-lyric",
@@ -1426,15 +1426,15 @@
         {
           "atoms": [
             "va",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "na",
             "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "rā",
+            "ma",
             "",
             ""
           ],
@@ -1524,15 +1524,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 79,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -1558,15 +1558,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 82,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -1588,18 +1588,18 @@
         },
         {
           "atoms": [
+            "suguṇa",
             "",
             "",
             "",
             "",
             "",
+            "bhū sha na rā ma",
             "",
             "",
             "",
-            "rā",
             "",
-            "",
-            "ma"
+            ""
           ],
           "content": "",
           "id": "section-0-row-6-lyric",
@@ -1707,15 +1707,15 @@
               "text": "ŚN"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 93,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -1755,12 +1755,12 @@
             "",
             "",
             "",
-            "suguṇa",
             "",
             "",
             "",
             "",
-            "bhū sha na rā ma"
+            "",
+            ""
           ],
           "content": "",
           "id": "section-0-row-7-lyric",
@@ -1920,7 +1920,7 @@
             "",
             "jī",
             "",
-            "",
+            "va",
             ""
           ],
           "content": "",
@@ -2071,15 +2071,15 @@
         },
         {
           "atoms": [
-            "",
-            "va",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "na",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "rā",
             "",
             "",
             ""
@@ -2184,17 +2184,17 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "groupId": "brace-8",
               "index": 128,
               "isBraceChild": true,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 2,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N,"
             },
             {
@@ -2212,15 +2212,15 @@
               "text": "ṘŚ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 130,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2242,13 +2242,13 @@
         },
         {
           "atoms": [
+            "sugu",
             "",
             "",
             "",
+            "na",
             "",
             "",
-            "",
-            "rā",
             "",
             "ma",
             "",
@@ -2351,11 +2351,15 @@
               "text": "Ś"
             },
             {
+              "frequency": 493.88,
               "index": 140,
               "isEduppu": false,
               "isRest": false,
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
+              "sruthiNoteEquivalent": "B4",
               "text": "N3"
             },
             {
@@ -2409,12 +2413,12 @@
             "",
             "",
             "",
-            "sugu",
             "",
             "",
             "",
             "",
-            "na",
+            "",
+            "",
             "",
             "bhū sha na rā ma (sujanajīvana)"
           ],
@@ -2454,15 +2458,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 2,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2500,15 +2504,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 6,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2546,15 +2550,15 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 10,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2750,15 +2754,15 @@
         {
           "atoms": [
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 24,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2784,15 +2788,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 27,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2921,15 +2925,15 @@
               "text": "Ṙ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 37,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2943,15 +2947,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 39,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -2985,15 +2989,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 43,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3090,15 +3094,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 50,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3146,15 +3150,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 55,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3192,15 +3196,15 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 59,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             }
           ],
@@ -3510,15 +3514,15 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 83,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             }
           ],
@@ -3561,15 +3565,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 85,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3619,15 +3623,15 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 90,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3641,15 +3645,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 92,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3800,15 +3804,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 104,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3871,15 +3875,15 @@
         {
           "atoms": [
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 108,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3951,27 +3955,27 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 115,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 116,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -3985,15 +3989,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 118,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4128,15 +4132,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 128,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4295,15 +4299,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 141,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4464,15 +4468,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 154,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4547,15 +4551,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 159,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4619,27 +4623,27 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 165,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 166,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4680,15 +4684,15 @@
         {
           "atoms": [
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 168,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4796,15 +4800,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 178,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -4869,15 +4873,15 @@
               "text": "Ś"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 182,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -5016,15 +5020,15 @@
               "text": ","
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 193,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N³"
             },
             {
@@ -5268,15 +5272,15 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 13,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -5316,27 +5320,27 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 17,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 18,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -5457,15 +5461,15 @@
               "text": "P"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 27,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -5853,15 +5857,15 @@
               "text": "D"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 58,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -5928,27 +5932,27 @@
               "text": "Ṡ"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 62,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 63,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -6000,15 +6004,15 @@
               "text": "P"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 68,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {
@@ -6117,15 +6121,15 @@
               "text": "P"
             },
             {
-              "frequency": 466.16,
+              "frequency": 493.88,
               "index": 76,
               "isEduppu": false,
               "isRest": false,
-              "midiNumber": 70,
-              "ragaswaraEquivalent": "n2",
+              "midiNumber": 71,
+              "ragaswaraEquivalent": "n3",
               "speed": 1,
               "sruthi": "C#",
-              "sruthiNoteEquivalent": "A#4",
+              "sruthiNoteEquivalent": "B4",
               "text": "N"
             },
             {

@@ -1,4 +1,12 @@
+Commit f26b868 has been uploaded with both JSON files:
 
+notation-composer.json
+SujanaJeevana.json
+Commit chain now:
+
+f26b868 (HEAD) - Update JSON with enrichment recalculation fix
+04bc8af - Fix numeric suffix preservation in Format (code fixes)
+Both the code fix and the JSON data updates are now live on GitHub!
 
 66c69e9
 
