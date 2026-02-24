@@ -975,8 +975,11 @@
 
         // Get note regex from reference data (for parsing notes with variants and octave markers)
         function getNoteRegex() {
-            // This regex matches: letter (S,R,G,M,P,D,N) + optional variant (1,2,3) + optional combining marks
-            return /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?/;
+            // Match only valid Carnatic note characters: S,R,G,M,P,D,N (with/without combining marks)
+            // Pattern: [note letter] + [optional numbers 1-3 or superscripts] + [optional combining diacritical mark]
+            // Valid notes with dots: Ṡ, Ṙ, Ġ, Ṁ, Ṗ, Ḋ, Ṅ (and lowercase variants)
+            // These use: base letter (S/R/G/M/P/D/N) + combining dot above/below/macron
+            return /[SRGMPDNsrgmpdn](?:[0-9¹²³])?(?:[\u0300-\u036F])?/;
         }
 
         // Validate notation text and highlight invalid characters
@@ -1076,10 +1079,10 @@
                     currentSection = { title: trimmed, rows: [] };
                     sections.push(currentSection);
                 }
-                // Check for notation (ASCII + Unicode combining marks + symbols)
-                // Includes: S-G-M-P-D-N (plain, with dots above/below using combining marks, with numbers 0-3)
-                // Plus separators: , ; { } [ ] | / \ : -
-                else if (/[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-\u1E00-\u1EFF\u0100-\u017F]/.test(trimmed)) {
+                // Check for notation (swara notes, rests, and symbols)
+                // Valid notes: S,R,G,M,P,D,N (plain or with combining marks for dotted variants)
+                // Separators and rests: , ; { } [ ] | / \ : - (spaces already trimmed)
+                else if (/[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(trimmed)) {
                     hasFoundNotation = true;
                     
                     // Create default section if none exists
@@ -1110,7 +1113,7 @@
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
-                            const nextIsNotation = /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-\u1E00-\u1EFF\u0100-\u017F]/.test(nextTrimmed);
+                            const nextIsNotation = /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(nextTrimmed);
                             const nextIsSection = isSectionHeader(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
