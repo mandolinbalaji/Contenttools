@@ -949,6 +949,24 @@
             return false;
         }
 
+        // Check if a line contains notation content (actual notes, rests, or structural symbols)
+        // This is more precise than regex - we look for ACTUAL notes, not just any character 's'
+        function hasNotationContent(line) {
+            if (!line || line.length === 0) return false;
+            
+            // Check for structural symbols or rests that definitely indicate notation
+            if (/[,;{}[\]|/\\\:\-]/.test(line)) return true;
+            
+            // Check for actual note characters with proper context
+            // Don't just match any 's' - must be a valid note character
+            for (let i = 0; i < line.length; i++) {
+                if (isValidNoteCharacter(line[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // Check if a character is a rest (silence)
         function isRestCharacter(char) {
             if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.rests) {
@@ -1108,9 +1126,8 @@
                     sections.push(currentSection);
                 }
                 // Check for notation (swara notes, rests, and symbols)
-                // Valid notes: S,R,G,M,P,D,N and precomposed variants (Ṡ,Ṙ,Ġ,Ṁ,Ṗ,Ḋ,Ṅ)
-                // Separators and rests: , ; { } [ ] | / \ : - (spaces already trimmed)
-                else if (/[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(trimmed)) {
+                // Uses isValidNoteCharacter() to check if line contains actual notes
+                else if (hasNotationContent(trimmed)) {
                     hasFoundNotation = true;
                     
                     // Create default section if none exists
@@ -1141,7 +1158,7 @@
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
-                            const nextIsNotation = /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(nextTrimmed);
+                            const nextIsNotation = hasNotationContent(nextTrimmed);
                             const nextIsSection = isSectionHeader(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
