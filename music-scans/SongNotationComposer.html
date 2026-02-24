@@ -2535,17 +2535,17 @@
             trackBytes.push(0x00); // delta time
             trackBytes.push(0xFF, 0x59, 0x02, keySharpFlats, 0); // Key signature
 
-            // 3. Time signature (from thalam beats)
-            // thalam: "8x4 (Dēśādi)" means 8 beats, nadai 4
-            // MIDI time signature: 0xFF 0x58 0x04 nn dd cc bb
-            // nn = numerator (beats), dd = denominator power of 2, cc = click, bb = 32nds
-            const beats = currentSong.settings?.thalam?.split('x')[0] || 8;
+            // 3. Time signature (from beats and nadai)
+            // Time signature: 0xFF 0x58 0x04 nn dd cc bb
+            // nn = numerator (beats per measure), dd = denominator power of 2, cc = clicks, bb = 32nds
+            const beatsPerMeasure = parseInt(currentSong.beats) || 8;
+            const denomPower = nadai === 3 ? 3 : 2;  // 3 = eighth notes for triplets, 2 = quarter notes for standard
             trackBytes.push(0x00); // delta time
             trackBytes.push(0xFF, 0x58, 0x04); // Time signature meta
-            trackBytes.push(beats);     // numerator (8 beats)
-            trackBytes.push(2);         // denominator power of 2 (2^2 = 4, so it's X/4)
-            trackBytes.push(24);        // clock ticks per beat
-            trackBytes.push(8);         // notated 32nd notes per quarter note
+            trackBytes.push(beatsPerMeasure); // numerator (beats per measure)
+            trackBytes.push(denomPower);      // denominator power of 2 (3 = triplet eighths, 2 = quarter notes)
+            trackBytes.push(24);              // clock ticks per beat (24 is standard MIDI)
+            trackBytes.push(8);               // notated 32nd notes per quarter note (8 is standard)
 
             // 4. Sequence name
             if (songName.length < 128) {
