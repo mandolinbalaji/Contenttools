@@ -931,6 +931,23 @@
             }
         }
 
+        // Check if a line is a section header (Pallavi, Anupallavi, Charanam, etc.)
+        function isSectionHeader(trimmedLine) {
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.keywords) {
+                // Fallback if reference data not loaded
+                return /Pallavi|Anupallavi|Charanam|Charaṇam/.test(trimmedLine);
+            }
+            
+            const keywords = referenceData.validCharacters.keywords;
+            for (const keyword in keywords) {
+                // Check section headers: Pallavi, Anupallavi, Charaṇam, Charanam
+                if (keyword.match(/Pallavi|Anupallavi|Charanam|Charaṇam/) && trimmedLine.includes(keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // Validate notation text and highlight invalid characters
         function validateNotationText() {
             const textarea = document.getElementById('notationInput');
@@ -1023,8 +1040,8 @@
                     continue;
                 }
                 
-                // Check for section headers
-                if (trimmed.includes('Pallavi') || trimmed.includes('Anupallavi') || trimmed.includes('Charanam') || trimmed.includes('Charaṇam') || /^[PAC]\.\d*/.test(trimmed)) {
+                // Check for section headers using reference-data.json
+                if (isSectionHeader(trimmed)) {
                     currentSection = { title: trimmed, rows: [] };
                     sections.push(currentSection);
                 }
@@ -1061,7 +1078,7 @@
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
                             const nextIsNotation = /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]/.test(nextTrimmed);
-                            const nextIsSection = nextTrimmed.includes('Pallavi') || nextTrimmed.includes('Anupallavi') || nextTrimmed.includes('Charanam') || nextTrimmed.includes('Charaṇam') || /^[PAC]\.\d*/.test(nextTrimmed);
+                            const nextIsSection = isSectionHeader(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
                                 const lyricAtoms = alignLyrics(nextLine, swaraAtoms);
