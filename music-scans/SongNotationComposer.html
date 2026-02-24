@@ -933,12 +933,12 @@
 
         // Check if a line is a section header (Pallavi, Anupallavi, Charanam, etc.)
         function isSectionHeader(trimmedLine) {
-            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.keywords) {
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.metadataKeywords) {
                 // Fallback if reference data not loaded
                 return /Pallavi|Anupallavi|Charanam|Charaṇam/.test(trimmedLine);
             }
             
-            const keywords = referenceData.validCharacters.keywords;
+            const keywords = referenceData.validCharacters.metadataKeywords.keywords;
             for (const keyword in keywords) {
                 // Check section headers: Pallavi, Anupallavi, Charaṇam, Charanam
                 if (keyword.match(/Pallavi|Anupallavi|Charanam|Charaṇam/) && trimmedLine.includes(keyword)) {
@@ -946,6 +946,36 @@
                 }
             }
             return false;
+        }
+
+        // Check if a character is a rest (silence)
+        function isRestCharacter(char) {
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.rests) {
+                return char === ',';  // Fallback
+            }
+            return char in referenceData.validCharacters.rests.characters;
+        }
+
+        // Check if a character is a separator/visual-only symbol (ignored in parsing)
+        function isSeparatorCharacter(char) {
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.separators) {
+                return ['|', '\\', '/', '.', ':', '-', ' '].includes(char);  // Fallback
+            }
+            return char in referenceData.validCharacters.separators.characters;
+        }
+
+        // Check if a character is a grouping symbol (braces, brackets)
+        function isGroupingSymbol(char) {
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.groupingSymbols) {
+                return ['{', '}', '[', ']'].includes(char);  // Fallback
+            }
+            return char in referenceData.validCharacters.groupingSymbols.characters;
+        }
+
+        // Get note regex from reference data (for parsing notes with variants and octave markers)
+        function getNoteRegex() {
+            // This regex matches: letter (S,R,G,M,P,D,N) + optional variant (1,2,3) + optional combining marks
+            return /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?/;
         }
 
         // Validate notation text and highlight invalid characters
@@ -1577,7 +1607,7 @@
             let atomIndex = 0; // Global position for atoms
             
             // Note regex: swara note with optional superscript & combining marks
-            const noteRegex = /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?/;
+            const noteRegex = getNoteRegex();
             
             console.log(`🧹 Tokenizing cleaned line: ${line}`);
             
@@ -1591,15 +1621,15 @@
                     let braceContent = line.substring(i + 1, closeIdx);
                     console.log(`📦 Found brace group: {${braceContent}}`);
                     
-                    // STEP 1: Collect all valid atoms (notes + commas), ignoring |, \, /, ., spaces
+                    // STEP 1: Collect all valid atoms (rests + notes), ignoring separators
                     let braceAtoms = [];
                     let j = 0;
                     while (j < braceContent.length) {
-                        if (braceContent[j] === ',') {
-                            braceAtoms.push(',');
+                        if (isRestCharacter(braceContent[j])) {
+                            braceAtoms.push(braceContent[j]);
                             j++;
-                        } else if (['|', '\\', '/', '.', ' '].includes(braceContent[j])) {
-                            // Skip these characters
+                        } else if (isSeparatorCharacter(braceContent[j])) {
+                            // Skip separator characters
                             console.log(`   ⊘ Skipped separator: "${braceContent[j]}"`);
                             j++;
                         } else {
@@ -1648,14 +1678,14 @@
                     }
                     
                     i = closeIdx + 1; // Move past closing brace
-                } else if (line[i] === ',') {
-                    // Regular comma (outside braces)
+                } else if (isRestCharacter(line[i])) {
+                    // Rest character (outside braces)
                     tokens.push({
-                        text: ',',
+                        text: line[i],
                         index: atomIndex,
                         speed: 1
                     });
-                    console.log(`✓ Atom: "," (index ${atomIndex})`);
+                    console.log(`✓ Atom: "${line[i]}" (index ${atomIndex})`);
                     atomIndex++;
                     i++;
                 } else if (line[i] === '*') {
@@ -1668,10 +1698,14 @@
                     console.log(`✓ Atom: "*" (index ${atomIndex})`);
                     atomIndex++;
                     i++;
+                } else if (isSeparatorCharacter(line[i])) {
+                    // Skip separator characters (|, /, \, :, -, ., spaces)
+                    console.log(`⊘ Skipped separator: "${line[i]}"`);
+                    i++;
                 } else {
                     // Try to match a note (regular)
                     const substr = line.substring(i);
-                    const noteMatch = substr.match(noteRegex);
+                    const noteMatch = substr.match(getNoteRegex());
                     if (noteMatch) {
                         const noteText = noteMatch[0];
                         tokens.push({
@@ -1741,7 +1775,9 @@
                 return '';
             }
             
-            if (/[SRGMPDNsrgmpdn]/.test(atom)) {
+            // Check if it's a valid note character (using reference-data validation)
+            const noteRegex = getNoteRegex();
+            if (noteRegex.test(atom)) {
                 // PRESERVE numeric suffixes - they are user overrides with musical meaning
                 // e.g., "N3" should display as "N3", not "N"
                 return atom.toUpperCase();
@@ -2804,7 +2840,7 @@
                         
                         if (atom.text === '*') {
                             eduppuMarkPos = allSwaras.length; // Track eduppu position
-                        } else if (!['*', '-', '|', '/', '\\'].includes(atom.text)) {
+                        } else if (!isSeparatorCharacter(atom.text) && atom.text !== '*' && !isGroupingSymbol(atom.text)) {
                             // Add swara - PRESERVE ALL PROPERTIES including brace grouping
                             const swaraObj = {
                                 text: atom.text,
