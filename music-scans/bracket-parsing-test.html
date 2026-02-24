@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bracket Parsing Test</title>
+    <style>
+        body { font-family: monospace; margin: 20px; }
+        .test { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        .pass { background: #d4edda; border-color: #c3e6cb; }
+        .fail { background: #f8d7da; border-color: #f5c6cb; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+<h1>Bracket & Section Parsing Tests</h1>
+
+<div class="test" id="test1">
+    <h3>Test 1: Basic Section Headers (with & without diacritics)</h3>
+    <pre id="input1">Pallavi
+srgmpdns
+Anupallavi
+srgmpdns
+Charanam
+srgmpdns</pre>
+    <button onclick="runTest('test1', parseTest1)">Run Test</button>
+    <div id="result1"></div>
+</div>
+
+<div class="test" id="test2">
+    <h3>Test 2: Braced Groups</h3>
+    <pre id="input2">Pallavi
+sr{gmpd}ns
+{srgmpdns}
+Anupallavi
+{s}{r}{g}</pre>
+    <button onclick="runTest('test2', parseTest2)">Run Test</button>
+    <div id="result2"></div>
+</div>
+
+<div class="test" id="test3">
+    <h3>Test 3: Mixed Braces & Section Boundaries</h3>
+    <pre id="input3">Pallavi
+srgmpdns{nsrsnrsn}pdmp
+Anupallavi
+{Ṙ1Ṛ1Ṙ2Ṛ2} {Ṙ1Ṛ1Ṙ2Ṛ2,,|,,RRRS}
+Charanam
+sr3g2mpdns</pre>
+    <button onclick="runTest('test3', parseTest3)">Run Test</button>
+    <div id="result3"></div>
+</div>
+
+<div class="test" id="test4">
+    <h3>Test 4: Removed Content (Empty Pallavi)</h3>
+    <pre id="input4">Pallavi
+Anupallavi
+srgmpdns
+Charanam
+sr3g2mpdns</pre>
+    <button onclick="runTest('test4', parseTest4)">Run Test</button>
+    <div id="result4"></div>
+</div>
+
+<script>
+function parseTest1() {
+    const input = `Pallavi
+srgmpdns
+Anupallavi
+srgmpdns
+Charanam
+srgmpdns`;
+    
+    const sections = parseNotation(input);
+    const expected = 3; // Should have 3 sections
+    const pass = sections.length === expected && 
+                 sections[0].title === 'Pallavi' &&
+                 sections[1].title === 'Anupallavi' &&
+                 sections[2].title === 'Charanam';
+    
+    return {
+        pass,
+        actual: `${sections.length} sections: ${sections.map(s => s.title).join(', ')}`,
+        expected: `3 sections (Pallavi, Anupallavi, Charanam)`
+    };
+}
+
+function parseTest2() {
+    const input = `Pallavi
+sr{gmpd}ns
+{srgmpdns}
+Anupallavi
+{s}{r}{g}`;
+    
+    const sections = parseNotation(input);
+    const pallavi = sections.find(s => s.title === 'Pallavi');
+    const anupallavi = sections.find(s => s.title === 'Anupallavi');
+    
+    const pass = pallavi && pallavi.rows.length === 2 &&
+                 anupallavi && anupallavi.rows.length === 1;
+    
+    return {
+        pass,
+        actual: `Pallavi: ${pallavi.rows.length} rows, Anupallavi: ${anupallavi.rows.length} rows`,
+        expected: `Pallavi: 2 rows, Anupallavi: 1 row`
+    };
+}
+
+function parseTest3() {
+    const input = `Pallavi
+srgmpdns{nsrsnrsn}pdmp
+Anupallavi
+{Ṙ1Ṛ1Ṙ2Ṛ2} {Ṙ1Ṛ1Ṙ2Ṛ2,,|,,RRRS}
+Charanam
+sr3g2mpdns`;
+    
+    const sections = parseNotation(input);
+    const pass = sections.length === 3 && 
+                 sections[1].title === 'Anupallavi' &&
+                 sections[1].rows.length === 1;
+    
+    return {
+        pass,
+        actual: `${sections.length} sections, Anupallavi content not bleeding from Charanam`,
+        expected: `3 sections with proper boundaries`
+    };
+}
+
+function parseTest4() {
+    const input = `Pallavi
+Anupallavi
+srgmpdns
+Charanam
+sr3g2mpdns`;
+    
+    const sections = parseNotation(input);
+    const pallavi = sections.find(s => s.title === 'Pallavi');
+    const anupallavi = sections.find(s => s.title === 'Anupallavi');
+    const charanam = sections.find(s => s.title === 'Charanam');
+    
+    const pass = pallavi && pallavi.rows.length === 0 &&
+                 anupallavi && anupallavi.rows.length === 1 &&
+                 charanam && charanam.rows.length === 1;
+    
+    return {
+        pass,
+        actual: `Pallavi: ${pallavi.rows.length}, Anupallavi: ${anupallavi.rows.length}, Charanam: ${charanam.rows.length}`,
+        expected: `Pallavi: 0, Anupallavi: 1, Charanam: 1 rows`
+    };
+}
+
+function parseNotation(text) {
+    const lines = text.split('\n');
+    const sections = [];
+    let currentSection = null;
+    
+    const isSection = (trimmed) => {
+        return trimmed.includes('Pallavi') || 
+               trimmed.includes('Anupallavi') || 
+               trimmed.includes('Charanam') || 
+               trimmed.includes('Charaṇam') || 
+               /^[PAC]\.\d*/.test(trimmed);
+    };
+    
+    const hasNotation = (trimmed) => {
+        return /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]/.test(trimmed);
+    };
+    
+    for (let i = 0; i < lines.length; i++) {
+        const trimmed = lines[i].trim();
+        
+        if (!trimmed) continue;
+        
+        if (isSection(trimmed)) {
+            currentSection = { title: trimmed, rows: [] };
+            sections.push(currentSection);
+        } else if (hasNotation(trimmed)) {
+            if (!currentSection) {
+                currentSection = { title: 'Notation', rows: [] };
+                sections.push(currentSection);
+            }
+            currentSection.rows.push({ content: trimmed });
+        }
+    }
+    
+    return sections;
+}
+
+function runTest(testId, testFunc) {
+    const result = testFunc();
+    const resultDiv = document.getElementById('result' + testId.slice(-1));
+    const testDiv = document.getElementById(testId);
+    
+    testDiv.classList.remove('pass', 'fail');
+    testDiv.classList.add(result.pass ? 'pass' : 'fail');
+    
+    resultDiv.innerHTML = `
+        <strong>${result.pass ? '✓ PASS' : '✗ FAIL'}</strong><br>
+        Actual: ${result.actual}<br>
+        Expected: ${result.expected}
+    `;
+}
+</script>
+</body>
+</html>
