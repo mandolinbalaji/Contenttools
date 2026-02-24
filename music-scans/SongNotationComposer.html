@@ -783,6 +783,7 @@
                     </div>
                 </div>
                 <textarea id="notationInput" spellcheck="false"
+                    oninput="currentSong.rawText = document.getElementById('notationInput').value;"
                     placeholder="Composition: Sujana Jīvana&#10;• Rāga: Khamas (Mēḷa 28)&#10;• Ārōhaṇa: S M¹ G³ M¹ P D² N² Ṡ&#10;• Avarōhaṇa: Ṡ N² D² P M¹ G³ R² S&#10;• Tāḷa: 3x4 (Rūpaka structure as shown in the source)&#10;&#10;--------------------------------------------------------------------------------&#10;Pallavi (P.1)&#10;Line 1:&#10;M,G, GS S,M,G,    | G M, ,, ,, ,, MGM,  | P,D,P, PDN,D,      | P,,, ,, P,,DNDP ||&#10;su ja na jī  va     na           rā ma    suguṇa bhū  sha      na    rā ma"></textarea>
                 <div style="margin-top: 8px; min-height: 20px;">
                     <span id="invalidCharIndicator" style="display: none; font-size: 12px; color: #ff7675; font-weight: 600; align-items: center; gap: 6px;">
@@ -1023,11 +1024,11 @@
                 }
             }
 
-            // Save current manual edits from grid before re-parsing
-            const savedEdits = saveGridEdits();
-
             const text = document.getElementById('notationInput').value;
             if (!text) return;
+
+            // UPDATE rawText immediately to stay in sync with textarea
+            currentSong.rawText = text;
 
             // Reset brace group counter for new notation
             globalBraceGroupCounter = 0;
@@ -1126,8 +1127,8 @@
                 }
             }
 
-            // Merge saved edits back into new sections
-            mergeGridEdits(sections, savedEdits);
+            // REBUILD FRESH: Do NOT merge grid edits to avoid corruption from removed lines
+            // When lines are cut/removed, merging by cell index causes atoms to misalign
 
             // Only update fields that were explicitly set in the notation text
             // Don't clear fields with empty metadata if notation was found
@@ -1135,7 +1136,8 @@
                 // Merge: keep existing metadata, update only what was in notation
                 currentSong = { 
                     ...currentSong,  // Keep existing values
-                    sections: sections
+                    sections: sections,
+                    rawText: text  // Keep rawText in sync
                 };
                 // Only apply new metadata if it was explicitly set
                 if (songMetadata.name) currentSong.name = songMetadata.name;
