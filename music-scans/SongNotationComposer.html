@@ -2383,7 +2383,7 @@
             const sruthi = currentSong.sruthi || 'C';
             const nadai = parseInt(currentSong.nadai) || 4;  // Nadai: subdivisions per beat
             
-            // Collect all notes from atoms
+            // Collect all notes from atoms - handle both array (enriched) and scalar (legacy) formats
             const noteEvents = [];
             
             currentSong.sections.forEach(section => {
@@ -2393,16 +2393,51 @@
                             const text = atom.text;
                             const speed = atom.speed || 1;
                             
-                            if (text === ',') {
+                            if (!text || text === ',' || text === '-' || text === '*') {
                                 // Rest
                                 noteEvents.push({
-                                    text: ',',
+                                    text: text || ',',
                                     note: null,
                                     isRest: true,
                                     speed: speed
                                 });
+                            } else if (atom.midiNumber !== undefined && atom.midiNumber !== null) {
+                                // Check if midiNumber is enriched (array) or scalar (legacy)
+                                if (Array.isArray(atom.midiNumber)) {
+                                    // Array-based enriched format - one event per MIDI number
+                                    const midiNumbers = atom.midiNumber || [];\n                                    for (let midi of midiNumbers) {
+                                        if (midi > 0) {
+                                            noteEvents.push({
+                                                text: text,
+                                                note: midi,
+                                                isRest: false,
+                                                speed: speed,
+                                                multiNote: true
+                                            });
+                                        } else if (midi === 0) {
+                                            // Rest within multi-note atom
+                                            noteEvents.push({
+                                                text: text,
+                                                note: null,
+                                                isRest: true,
+                                                speed: speed,
+                                                multiNote: true
+                                            });
+                                        }
+                                    }
+                                } else {
+                                    // Scalar format (legacy) - single MIDI number
+                                    if (atom.midiNumber > 0) {
+                                        noteEvents.push({
+                                            text: text,
+                                            note: atom.midiNumber,
+                                            isRest: false,
+                                            speed: speed
+                                        });
+                                    }
+                                }
                             } else {
-                                // Convert note text to MIDI number (using sruthi as key)
+                                // Fallback: Convert note text to MIDI number (using sruthi as key)
                                 const midiNote = noteTextToMidiNumber(text, sruthi);
                                 if (midiNote !== null) {
                                     noteEvents.push({
@@ -3133,6 +3168,90 @@
             return variants;
         }
 
+        // ===== ARRAY ENRICHMENT HELPER FUNCTIONS =====
+        function parseAtomCharacters(atomText) {
+            const chars = [];
+            let i = 0;
+            const text = atomText || '';
+            const noteRegex = /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?/;
+            
+            while (i < text.length) {
+                const substr = text.substring(i);
+                const match = substr.match(noteRegex);
+                
+                if (match) {
+                    chars.push(match[0]);
+                    i += match[0].length;
+                } else if ([',', '-', '*', '|', '\\', '/', '.', ' '].includes(text[i])) {
+                    i++;
+                } else {
+                    i++;
+                }
+            }
+            return chars;
+        }
+        
+        function getCharacterRagaswara(noteChar, variantMap) {
+            const baseNote = noteChar.toLowerCase().charAt(0);
+            const stripped = stripDiacritics(baseNote);
+            const numericMatch = noteChar.match(/\d/);
+            
+            if (numericMatch) {
+                return noteChar.toLowerCase().normalize('NFC');
+            }
+            
+            const selected = variantMap[stripped] || variantMap[baseNote] || baseNote.toUpperCase();
+            return selected.toLowerCase().normalize('NFC');
+        }
+        
+        function getCharacterMIDI(noteChar, sruthiLookup, variantMap) {
+            const ragaswara = getCharacterRagaswara(noteChar, variantMap);
+            const normalized = ragaswara.toUpperCase().normalize('NFC');
+            
+            if (sruthiLookup[normalized]) {
+                return sruthiLookup[normalized].midiNumber;
+            }
+            return null;
+        }
+        
+        function enrichAtomToArrays(atom, sruthiLookup, variantMap) {
+            const text = atom.text || '';
+            
+            if (!text || [',', '-', '*'].includes(text)) {
+                return { midiNumber: [0], ragaswaraEquivalent: ['rest'], frequency: [0] };
+            }
+            
+            const chars = parseAtomCharacters(text);
+            if (chars.length === 0) {
+                return { midiNumber: [0], ragaswaraEquivalent: ['rest'], frequency: [0] };
+            }
+            
+            const midiNumbers = [];
+            const ragaswaras = [];
+            const frequencies = [];
+            
+            for (let char of chars) {
+                if ([',', '-', '*', '|', '\\', '/', '.', ' '].includes(char)) {
+                    midiNumbers.push(0);
+                    ragaswaras.push('rest');
+                    frequencies.push(0);
+                } else {
+                    const midi = getCharacterMIDI(char, sruthiLookup, variantMap);
+                    const raga = getCharacterRagaswara(char, variantMap);
+                    
+                    if (midi !== null) {
+                        midiNumbers.push(midi);
+                        ragaswaras.push(raga);
+                        const normalized = raga.toUpperCase().normalize('NFC');
+                        const freq = sruthiLookup[normalized]?.frequency || 0;
+                        frequencies.push(freq);
+                    }
+                }
+            }
+            
+            return { midiNumber: midiNumbers, ragaswaraEquivalent: ragaswaras, frequency: frequencies };
+        }
+
         // Enrich song with frequency/MIDI data from sruthi_midi_mapping.json
         async function enrichSongWithFrequencyData(song) {
             const sruthi = document.getElementById('sruthi').value || 'C';
@@ -3317,20 +3436,30 @@
                                     const noteData = sruthiLookup[normalizedLookupNote];
                                     const westernNote = noteData.westernNote || semitoneToWesternNote(sruthiSemitoneOffset + noteData.semitones);
 
-                                    atom.frequency = noteData.frequency;
-                                    atom.midiNumber = noteData.midiNumber;
-                                    atom.ragaswaraEquivalent = normalizedLookupNote.toLowerCase();
+                                    // ENRICHMENT: Convert to array-based MIDI and ragaswara
+                                    const enriched = enrichAtomToArrays(atom, sruthiLookup, variantMap);
+                                    
+                                    atom.frequency = enriched.frequency;
+                                    atom.midiNumber = enriched.midiNumber;
+                                    atom.ragaswaraEquivalent = enriched.ragaswaraEquivalent;
                                     atom.sruthiNoteEquivalent = westernNote;
                                     atom.isRest = false;
                                     atom.sruthi = sruthi;
                                     enrichedNotes++;
                                     
-                                    console.log(`  ✅ [${totalCells}] "${atom.text}" → ${normalizedLookupNote}: f=${noteData.frequency}Hz, m=${noteData.midiNumber}`);
+                                    console.log(`  ✅ [${totalCells}] "${atom.text}" → ${normalizedLookupNote}: midi=[${enriched.midiNumber.join(',')}], freq=[${enriched.frequency.map(f => f.toFixed(1)).join(',')}]Hz`);
                                 } else if (!atom.ragaswaraEquivalent) {
                                     console.warn(`  ⚠️  [${totalCells}] "${atom.text}": FAILED TO ENRICH (lookupNote=${lookupNote}, normalized=${normalizedLookupNote})`);
                                 }
                             } else if (!atom.ragaswaraEquivalent) {
                                 console.warn(`  ⚠️  [${totalCells}] "${atom.text}": FAILED TO ENRICH`);
+                                // Also enrich rests to arrays
+                                const enriched = enrichAtomToArrays(atom, sruthiLookup, variantMap);
+                                atom.frequency = enriched.frequency;
+                                atom.midiNumber = enriched.midiNumber;
+                                atom.ragaswaraEquivalent = enriched.ragaswaraEquivalent;
+                                atom.isRest = true;
+                                atom.sruthi = sruthi;
                             }
                         }
                     }
@@ -3651,43 +3780,55 @@
                         for (const atom of row.atoms) {
                             if (!isPlaying) break;
 
-                            let speedMultiplier = atom.speed || 1;  // Use atom speed property (1 for normal, 2 for 2x, etc)
+                            let speedMultiplier = atom.speed || 1;
 
                             // Highlight playing cell
                             highlightPlayingCell(cellCounter, true);
 
-                            // Determine frequency to play
-                            let frequency = null;
+                            // Determine frequencies to play - handle both array (enriched) and scalar (legacy)
+                            let frequencies = [];
                             
-                            // Priority 1: Use enriched frequency data if available
                             if (atom.frequency && !atom.isRest) {
-                                frequency = atom.frequency;
-                                console.log(`🎵 [${cellCounter}] "${atom.text}": Using enriched frequency ${frequency}Hz`);
+                                // Handle both array (enriched) and scalar (legacy) formats
+                                if (Array.isArray(atom.frequency)) {
+                                    frequencies = atom.frequency.filter(f => f !== 0);
+                                    console.log(`🎵 [${cellCounter}] "${atom.text}": Array enriched [${frequencies.join(', ')}]Hz`);
+                                } else {
+                                    frequencies = [atom.frequency];
+                                    console.log(`🎵 [${cellCounter}] "${atom.text}": Scalar enriched ${atom.frequency}Hz`);
+                                }
                             } else if (atom.isRest) {
-                                // Rest cell - no sound
-                                frequency = null;
+                                frequencies = [];
                                 console.log(`🔇 [${cellCounter}] "${atom.text}": REST (silence)`);
                             } else {
-                                // Fallback: Calculate from note text if enrichment not available
                                 let cellNote = (atom.text || '').trim().toLowerCase();
                                 if (cellNote === ',' || cellNote === '-' || cellNote === '*') {
-                                    frequency = null;
+                                    frequencies = [];
                                 } else if (cellNote) {
-                                    frequency = noteToFrequency(cellNote, sruthi);
-                                    console.log(`⚠️  [${cellCounter}] "${atom.text}": Fallback calculation ${frequency}Hz`);
+                                    const freq = noteToFrequency(cellNote, sruthi);
+                                    frequencies = [freq];
+                                    console.log(`⚠️  [${cellCounter}] "${atom.text}": Fallback calculation ${freq}Hz`);
                                 }
                             }
 
                             // Calculate adjusted duration based on speed
                             const adjustedDuration = cellDuration / speedMultiplier;
+                            
+                            // For multi-note atoms (arrays), divide duration evenly
+                            const durationPerNote = adjustedDuration / Math.max(frequencies.length, 1);
 
-                            // Play sound
-                            if (frequency) {
-                                playTone(ctx, frequency, adjustedDuration);
+                            // Play each frequency in sequence
+                            if (frequencies.length > 0) {
+                                for (let freq of frequencies) {
+                                    if (freq > 0) {
+                                        playTone(ctx, freq, durationPerNote);
+                                    }
+                                    await sleep(durationPerNote);
+                                }
+                            } else {
+                                // Rest - just wait
+                                await sleep(adjustedDuration);
                             }
-
-                            // Wait for adjusted duration
-                            await sleep(adjustedDuration);
 
                             highlightPlayingCell(cellCounter, false);
                             cellCounter++;

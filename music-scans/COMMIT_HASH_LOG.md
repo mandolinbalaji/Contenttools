@@ -1,3 +1,18 @@
+Commit: 37e1572
+
+Changes committed:
+
+✅ Extended reference-data.json (v3.0) with complete validCharacters catalog
+✅ Implemented spell-check style character validation with red border + wavy underline
+✅ Fixed parser to accept notation without commas and without section headers
+✅ Preserve existing metadata when parsing notation without metadata headers
+✅ Preserve manual grid edits when Parse & Display is clicked
+✅ Clean, minimal validation feedback
+✅ Removed automatic metadata extraction from notation text
+
+
+
+
 Commit f26b868 has been uploaded with both JSON files:
 
 notation-composer.json
