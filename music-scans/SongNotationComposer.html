@@ -2405,7 +2405,8 @@
                                 // Check if midiNumber is enriched (array) or scalar (legacy)
                                 if (Array.isArray(atom.midiNumber)) {
                                     // Array-based enriched format - one event per MIDI number
-                                    const midiNumbers = atom.midiNumber || [];\n                                    for (let midi of midiNumbers) {
+                                    const midiNumbers = atom.midiNumber || [];
+                                    for (let midi of midiNumbers) {
                                         if (midi > 0) {
                                             noteEvents.push({
                                                 text: text,
