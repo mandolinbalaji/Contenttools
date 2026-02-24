@@ -973,6 +973,34 @@
             return char in referenceData.validCharacters.groupingSymbols.characters;
         }
 
+        // Check if a character is a valid swara note (from reference-data)
+        function isValidNoteCharacter(char) {
+            if (!char) return false;
+            
+            // Check plain ASCII notes first
+            if (/[SRGMPDNsrgmpdn]/.test(char)) return true;
+            
+            // Check dots-above notes from reference-data
+            if (referenceData && referenceData.validCharacters && referenceData.validCharacters.validCharactersList) {
+                const allDotsAbove = referenceData.validCharacters.validCharactersList.allDotsAboveNotes || '';
+                const allDotsBelow = referenceData.validCharacters.validCharactersList.allDotsBelowNotes || '';
+                
+                // Split by spaces to get individual characters (note: some use combining marks)
+                const validChars = (allDotsAbove + ' ' + allDotsBelow).split(' ').filter(c => c);
+                if (validChars.includes(char)) return true;
+            }
+            
+            // Fallback: check specific Unicode codepoints for dots above/below
+            // Dots above: \u1E60-\u1E61 (Ṡṡ), \u1E58-\u1E59 (Ṙṙ), \u0120-\u0121 (Ġġ), \u1E40-\u1E41 (Ṁṁ), \u1E56-\u1E57 (Ṗṗ), \u1E0A-\u1E0B (Ḋḋ), \u1E44-\u1E45 (Ṅṅ)
+            const dotCodepoints = [
+                '\u1E60', '\u1E61', '\u1E58', '\u1E59', '\u0120', '\u0121', '\u1E40', '\u1E41', 
+                '\u1E56', '\u1E57', '\u1E0A', '\u1E0B', '\u1E44', '\u1E45',
+                '\u1E62', '\u1E63', '\u1E5A', '\u1E5B', '\u0122', '\u0123', '\u1E42', '\u1E43',
+                '\u1E64', '\u1E65', '\u1E0C', '\u1E0D', '\u1E46', '\u1E47'
+            ];
+            return dotCodepoints.includes(char);
+        }
+
         // Get note regex from reference data (for parsing notes with variants and octave markers)
         function getNoteRegex() {
             // Match only valid Carnatic note characters: S,R,G,M,P,D,N (with/without combining marks)
@@ -1599,6 +1627,32 @@
             }
         }
 
+        // Match a note starting at position i in text
+        // Returns { text, newIndex } or null if no note found
+        function matchNote(text, i) {
+            if (i >= text.length) return null;
+            
+            // Check if current character is a valid note
+            if (!isValidNoteCharacter(text[i])) return null;
+            
+            let noteText = text[i];
+            let j = i + 1;
+            
+            // Collect numeric suffixes (1, 2, 3, ¹, ², ³)
+            while (j < text.length && /[0-9¹²³]/.test(text[j])) {
+                noteText += text[j];
+                j++;
+            }
+            
+            // Collect combining diacritical marks (unicode 0300-036F)
+            while (j < text.length && /[\u0300-\u036F]/.test(text[j])) {
+                noteText += text[j];
+                j++;
+            }
+            
+            return { text: noteText, newIndex: j };
+        }
+
         // Global counter for unique brace group IDs across all tokenizations
         let globalBraceGroupCounter = 0;
 
@@ -1612,9 +1666,6 @@
             let tokens = [];
             let i = 0;
             let atomIndex = 0; // Global position for atoms
-            
-            // Note regex: swara note with optional superscript & combining marks
-            const noteRegex = getNoteRegex();
             
             console.log(`🧹 Tokenizing cleaned line: ${line}`);
             
@@ -1641,11 +1692,10 @@
                             j++;
                         } else {
                             // Try to match a note
-                            const substr = braceContent.substring(j);
-                            const noteMatch = substr.match(noteRegex);
+                            const noteMatch = matchNote(braceContent, j);
                             if (noteMatch) {
-                                braceAtoms.push(noteMatch[0]);
-                                j += noteMatch[0].length;
+                                braceAtoms.push(noteMatch.text);
+                                j = noteMatch.newIndex;
                             } else {
                                 // Skip unknown character
                                 console.log(`   ⊘ Skipped: "${braceContent[j]}"`);
@@ -1711,10 +1761,9 @@
                     i++;
                 } else {
                     // Try to match a note (regular)
-                    const substr = line.substring(i);
-                    const noteMatch = substr.match(getNoteRegex());
+                    const noteMatch = matchNote(line, i);
                     if (noteMatch) {
-                        const noteText = noteMatch[0];
+                        const noteText = noteMatch.text;
                         tokens.push({
                             text: noteText,
                             index: atomIndex,
@@ -1722,7 +1771,7 @@
                         });
                         console.log(`✓ Atom: "${noteText}" (index ${atomIndex})`);
                         atomIndex++;
-                        i += noteText.length;
+                        i = noteMatch.newIndex;
                     } else {
                         // Skip unknown character
                         console.log(`⊘ Skipped: "${line[i]}"`);
@@ -1757,7 +1806,7 @@
                     // Penalty logic: Prioritize musical notes over delimiters.
                     // If the token is a delimiter/extension, add a penalty to the distance.
                     // This favors assigning lyrics to a nearby note (within 1 char) even if a delimiter is at the exact index.
-                    const isNote = /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45]/.test(atom.text);
+                    const isNote = isValidNoteCharacter(atom.text.charAt(0));
                     if (!isNote) {
                         diff += 1.1; // Penalty ensures notes within 1 char are preferred over exact delimiters.
                     }
@@ -3234,18 +3283,34 @@
             const chars = [];
             let i = 0;
             const text = atomText || '';
-            const noteRegex = /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45][0-9¹²³]*[\u0300-\u036F]?/;
             
             while (i < text.length) {
-                const substr = text.substring(i);
-                const match = substr.match(noteRegex);
-                
-                if (match) {
-                    chars.push(match[0]);
-                    i += match[0].length;
-                } else if ([',', '-', '*', '|', '\\', '/', '.', ' '].includes(text[i])) {
+                // Check for rest characters first
+                if (isRestCharacter(text[i])) {
+                    i++;
+                } else if (isValidNoteCharacter(text[i])) {
+                    // Start of a note - may have numeric suffix or combining mark
+                    let noteChars = text[i];
+                    i++;
+                    
+                    // Collect any numeric suffixes (1, 2, 3, ¹, ², ³)
+                    while (i < text.length && /[0-9¹²³]/.test(text[i])) {
+                        noteChars += text[i];
+                        i++;
+                    }
+                    
+                    // Collect any combining diacritical marks (unicode 0300-036F)
+                    while (i < text.length && /[\u0300-\u036F]/.test(text[i])) {
+                        noteChars += text[i];
+                        i++;
+                    }
+                    
+                    chars.push(noteChars);
+                } else if (['-', '*', '|', '\\', '/', '.', ' '].includes(text[i])) {
+                    // Skip separators and markers
                     i++;
                 } else {
+                    // Unknown character - skip
                     i++;
                 }
             }
