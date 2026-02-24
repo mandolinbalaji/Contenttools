@@ -949,21 +949,57 @@
             return false;
         }
 
-        // Check if a line contains notation content (actual notes, rests, or structural symbols)
-        // This is more precise than regex - we look for ACTUAL notes, not just any character 's'
-        function hasNotationContent(line) {
+        // Smart notation detection: based on STRUCTURE not just character presence
+        // Notation = short notation "words" (1-4 chars mostly note chars) + structural symbols
+        // Lyric = full multi-char words that are primarily text/syllables
+        function looksLikeNotation(line) {
             if (!line || line.length === 0) return false;
             
-            // Check for structural symbols or rests that definitely indicate notation
+            // STRONG indicators: structural symbols present = definitely notation
             if (/[,;{}[\]|/\\\:\-]/.test(line)) return true;
             
-            // Check for actual note characters with proper context
-            // Don't just match any 's' - must be a valid note character
-            for (let i = 0; i < line.length; i++) {
-                if (isValidNoteCharacter(line[i])) {
-                    return true;
+            // Pattern analysis: split by spaces and analyze "words"
+            const words = line.trim().split(/\s+/);
+            if (words.length === 0) return false;
+            
+            let notePatternCount = 0;
+            let totalWords = 0;
+            
+            for (let word of words) {
+                if (word.length === 0) continue;
+                totalWords++;
+                
+                // Check if this word looks like a notation sequence
+                // Either: single note char, OR multi-char sequence of notes/numbers/diacritics
+                // Pattern: 1-4 characters that are mostly note symbols or commas
+                
+                // Count how many characters in word are valid note characters
+                let noteCharCount = 0;
+                let totalCharCount = 0;
+                
+                for (let i = 0; i < word.length; i++) {
+                    totalCharCount++;
+                    if (isValidNoteCharacter(word[i]) || word[i] === ',' || word[i] === '.') {
+                        noteCharCount++;
+                    }
+                }
+                
+                // If word is short (<=4 chars) and mostly note characters, count as notation pattern
+                if (word.length <= 4 && noteCharCount / totalCharCount >= 0.6) {
+                    notePatternCount++;
                 }
             }
+            
+            // If we have meaningful number of words AND 50%+ match notation patterns, it's notation
+            if (totalWords >= 3 && notePatternCount / totalWords >= 0.5) {
+                return true;
+            }
+            
+            // If we have VERY few words and they're all short notation patterns, it's notation
+            if (totalWords <= 2 && notePatternCount === totalWords && totalWords >= 1) {
+                return true;
+            }
+            
             return false;
         }
 
@@ -1126,8 +1162,8 @@
                     sections.push(currentSection);
                 }
                 // Check for notation (swara notes, rests, and symbols)
-                // Uses isValidNoteCharacter() to check if line contains actual notes
-                else if (hasNotationContent(trimmed)) {
+                // Uses looksLikeNotation() to check structural patterns
+                else if (looksLikeNotation(trimmed)) {
                     hasFoundNotation = true;
                     
                     // Create default section if none exists
@@ -1158,7 +1194,7 @@
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
-                            const nextIsNotation = hasNotationContent(nextTrimmed);
+                            const nextIsNotation = looksLikeNotation(nextTrimmed);
                             const nextIsSection = isSectionHeader(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
