@@ -976,10 +976,10 @@
         // Get note regex from reference data (for parsing notes with variants and octave markers)
         function getNoteRegex() {
             // Match only valid Carnatic note characters: S,R,G,M,P,D,N (with/without combining marks)
-            // Pattern: [note letter] + [optional numbers 1-3 or superscripts] + [optional combining diacritical mark]
-            // Valid notes with dots: Ṡ, Ṙ, Ġ, Ṁ, Ṗ, Ḋ, Ṅ (and lowercase variants)
-            // These use: base letter (S/R/G/M/P/D/N) + combining dot above/below/macron
-            return /[SRGMPDNsrgmpdn](?:[0-9¹²³])?(?:[\u0300-\u036F])?/;
+            // ALSO match precomposed Unicode variants: Ṡ,Ṙ,Ġ,Ṁ,Ṗ,Ḋ,Ṅ (and lowercase)
+            // Pattern: [note letter or precomposed variant] + [optional numbers 1-3 or superscripts] + [optional combining diacritical mark]
+            // Valid precomposed: \u1E60-\u1E61 (Ṡṡ), \u1E58-\u1E59 (Ṙṙ), \u0120-\u0121 (Ġġ), \u1E40-\u1E41 (Ṁṁ), \u1E56-\u1E57 (Ṗṗ), \u1E0A-\u1E0B (Ḋḋ), \u1E44-\u1E45 (Ṅṅ)
+            return /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45](?:[0-9¹²³])?(?:[\u0300-\u036F])?/;
         }
 
         // Validate notation text and highlight invalid characters
@@ -1080,9 +1080,9 @@
                     sections.push(currentSection);
                 }
                 // Check for notation (swara notes, rests, and symbols)
-                // Valid notes: S,R,G,M,P,D,N (plain or with combining marks for dotted variants)
+                // Valid notes: S,R,G,M,P,D,N and precomposed variants (Ṡ,Ṙ,Ġ,Ṁ,Ṗ,Ḋ,Ṅ)
                 // Separators and rests: , ; { } [ ] | / \ : - (spaces already trimmed)
-                else if (/[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(trimmed)) {
+                else if (/[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(trimmed)) {
                     hasFoundNotation = true;
                     
                     // Create default section if none exists
@@ -1113,7 +1113,7 @@
                         if (i + 1 < lines.length) {
                             const nextLine = lines[i + 1];
                             const nextTrimmed = nextLine.trim();
-                            const nextIsNotation = /[SRGMPDNsrgmpdn,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(nextTrimmed);
+                            const nextIsNotation = /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45,;{}[\]|/\\\:\-]|[\u0300-\u036F]/.test(nextTrimmed);
                             const nextIsSection = isSectionHeader(nextTrimmed);
 
                             if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
@@ -1757,7 +1757,7 @@
                     // Penalty logic: Prioritize musical notes over delimiters.
                     // If the token is a delimiter/extension, add a penalty to the distance.
                     // This favors assigning lyrics to a nearby note (within 1 char) even if a delimiter is at the exact index.
-                    const isNote = /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F]/.test(atom.text);
+                    const isNote = /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45]/.test(atom.text);
                     if (!isNote) {
                         diff += 1.1; // Penalty ensures notes within 1 char are preferred over exact delimiters.
                     }
@@ -3234,7 +3234,7 @@
             const chars = [];
             let i = 0;
             const text = atomText || '';
-            const noteRegex = /[SRGMPDNsrgmpdn\u1E00-\u1EFF\u0100-\u017F][0-9¹²³]*[\u0300-\u036F]?/;
+            const noteRegex = /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45][0-9¹²³]*[\u0300-\u036F]?/;
             
             while (i < text.length) {
                 const substr = text.substring(i);
