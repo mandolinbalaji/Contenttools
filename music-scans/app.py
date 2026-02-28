@@ -653,6 +653,7 @@ def _save_kalpana_swara_song(song_data):
 def _delete_kalpana_swara_song(song_id):
     """Delete a KalpanaSwaramComposer song file from songs/ folder by ID"""
     # Search through all song files to find and delete the one with matching ID
+    import time
     logger.info(f"Attempting to delete song with ID: {song_id}")
     
     if not KALPANA_SWARA_SONGS_DIR.exists():
@@ -661,24 +662,41 @@ def _delete_kalpana_swara_song(song_id):
     
     try:
         for song_file in KALPANA_SWARA_SONGS_DIR.glob("*.json"):
-            try:
-                with open(song_file, 'r', encoding='utf-8') as f:
-                    song_data = json.load(f)
-                    file_id = song_data.get('id')
-                    file_name = song_data.get('name', 'Unknown')
-                    logger.debug(f"Checking file {song_file.name}: id={file_id[:8]}..., name={file_name}")
-                    
-                    if file_id == song_id:
-                        logger.info(f"Found matching song! Deleting: {song_file.name}")
-                        song_file.unlink()  # Delete the file
-                        logger.info(f"Successfully deleted: {song_file.name}")
-                        return True
-            except json.JSONDecodeError as je:
-                logger.error(f"Failed to parse JSON in {song_file.name}: {je}")
-                continue
-            except Exception as e:
-                logger.error(f"Error reading {song_file.name}: {e}")
-                continue
+            song_data = None
+            file_id = None
+            
+            # Retry logic for file locks on Windows
+            for attempt in range(3):
+                try:
+                    with open(song_file, 'r', encoding='utf-8') as f:
+                        song_data = json.load(f)
+                        file_id = song_data.get('id')
+                        file_name = song_data.get('name', 'Unknown')
+                        logger.debug(f"Checking file {song_file.name}: id={file_id[:8] if file_id else 'None'}..., name={file_name}")
+                        break  # Successfully read file, exit retry loop
+                except PermissionError as pe:
+                    if attempt < 2:
+                        logger.debug(f"File lock on {song_file.name}, retrying... (attempt {attempt + 1}/3)")
+                        time.sleep(0.1)  # Small delay before retry
+                    else:
+                        logger.error(f"File {song_file.name} remained locked after 3 attempts: {pe}")
+                except json.JSONDecodeError as je:
+                    logger.error(f"Failed to parse JSON in {song_file.name}: {je}")
+                    break  # Don't retry on JSON errors
+                except Exception as e:
+                    logger.error(f"Error reading {song_file.name}: {e}")
+                    break  # Don't retry on other errors
+            
+            # If we successfully read the file and ID matches, delete it
+            if file_id == song_id:
+                logger.info(f"Found matching song! Deleting: {song_file.name}")
+                try:
+                    song_file.unlink()  # Delete the file
+                    logger.info(f"Successfully deleted: {song_file.name}")
+                    return True
+                except Exception as e:
+                    logger.error(f"Failed to delete file {song_file.name}: {e}")
+                    return False
         
         logger.warning(f"Song with ID {song_id} not found in any file")
     except Exception as e:
