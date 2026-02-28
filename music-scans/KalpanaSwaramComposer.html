@@ -1419,9 +1419,9 @@
                 <span class="font-size-display" id="fontSizeDisplay">100%</span>
             </div>
             <a href="index.html" style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">← Back to Kanakku</a>
-            <button onclick="saveSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Save Song">💾 Save</button>
-            <button onclick="importSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import Song">📥 Import</button>
-            <button onclick="exportSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Export Song">📤 Export</button>
+            <button onclick="newSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Create New Song">➕ New</button>
+            <button onclick="saveSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Save Song as JSON">💾 Save</button>
+            <button onclick="importSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import Song from JSON file">📥 Import</button>
             <button onclick="openPracticeMode()" style="background: #ffd700; color: #333; font-weight: 600; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;" title="Practice Mode">🎯 Practice</button>
             <button onclick="openHelp()">?</button>
             <button onclick="toggleSettings()">⚙</button>
@@ -2550,15 +2550,13 @@
             try {
                 const response = await fetch(`${API_BASE}/kalpana-swara-songs`);
                 if (response.ok) {
-                    allSongs = await response.json();
-                    renderPlaylist();
-                    renderTagsFilter();
-                } else {
-                    console.error('Failed to load songs');
+                    const songs = await response.json();
+                    return songs;
                 }
             } catch (e) {
-                console.error('Error loading songs:', e);
+                console.error('Failed to load songs from server:', e);
             }
+            return [];
         }
 
         async function saveSongToServer() {
@@ -2796,41 +2794,103 @@
         // MODULE 9: DATA PERSISTENCE
         // ============================================================================
 
+        function newSong() {
+            // Ask user for song name
+            const songName = prompt('Enter song name for new composition:');
+            if (!songName || !songName.trim()) return;
+            
+            // Create new song
+            currentSong = {
+                id: generateUUID(),
+                name: songName.trim(),
+                ragam: '',
+                composer: '',
+                sruthi: 'C',
+                thalam: 'Adhi',
+                beats: 8,
+                nadai: 4,
+                eduppu: 4,
+                tags: [],
+                scale: '',
+                cycles: []
+            };
+            
+            // Add first empty cycle
+            addCycle();
+            
+            // Reload UI
+            loadSongToUI();
+            alert(`New song "${songName}" created!`);
+        }
+
         function saveSong() {
             saveSongToServer();
         }
 
-        function importSong() {
+        async function importSong() {
+            // Offer choice between importing from server or local file
+            const choice = confirm('Click OK to load from server songs, or Cancel to load from local file');
+            
+            if (choice) {
+                // Import from server
+                await importSongFromServer();
+            } else {
+                // Import from local file
+                importSongFromFile();
+            }
+        }
+
+        async function importSongFromServer() {
+            try {
+                const songs = await loadAllSongs();
+                if (songs.length === 0) {
+                    alert('No songs available on server');
+                    return;
+                }
+
+                // Create a simple selection list
+                const songNames = songs.map(s => s.name).sort();
+                const songName = prompt('Available songs:\\n' + songNames.join('\\n') + '\\n\\nEnter song name to load:');
+                
+                if (!songName) return;
+
+                const song = songs.find(s => s.name === songName);
+                if (song) {
+                    currentSong = song;
+                    loadSongToUI();
+                    alert(`Song "${currentSong.name}" loaded successfully!`);
+                } else {
+                    alert('Song not found');
+                }
+            } catch (e) {
+                alert('Failed to load from server: ' + e.message);
+            }
+        }
+
+        function importSongFromFile() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.json';
             input.onchange = (e) => {
                 const file = e.target.files[0];
+                if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     try {
                         currentSong = JSON.parse(event.target.result);
-                        currentSong.id = generateUUID(); // New ID for imported song
+                        // Keep the song ID to allow updating existing song
+                        if (!currentSong.id) {
+                            currentSong.id = generateUUID();
+                        }
                         loadSongToUI();
-                        saveSongToServer();
+                        alert(`Song "${currentSong.name}" imported successfully!`);
                     } catch (e) {
-                        alert('Invalid file');
+                        alert('Invalid JSON file: ' + e.message);
                     }
                 };
                 reader.readAsText(file);
             };
             input.click();
-        }
-
-        function exportSong() {
-            updateMetadata();
-            const dataStr = JSON.stringify(currentSong, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${currentSong.name.replace(/\s+/g, '_')}.json`;
-            link.click();
         }
 
         function loadSongToUI() {
