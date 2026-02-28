@@ -569,9 +569,18 @@ KALPANA_SWARA_SONGS_DIR = BASE_DIR / "songs"
 # Ensure kalpana songs directory exists
 KALPANA_SWARA_SONGS_DIR.mkdir(exist_ok=True)
 
-def _get_song_filepath(song_id):
-    """Get the filepath for a song based on its ID"""
-    return KALPANA_SWARA_SONGS_DIR / f"{song_id}.json"
+def _sanitize_filename(name):
+    """Sanitize song name to create a valid filename"""
+    import re
+    # Replace spaces and special chars with underscores
+    sanitized = re.sub(r'[<>:"/\\|?*]', '', name)
+    sanitized = re.sub(r'\s+', '_', sanitized.strip())
+    return sanitized or "Untitled"
+
+def _get_song_filepath(song_name):
+    """Get the filepath for a song based on its name"""
+    sanitized_name = _sanitize_filename(song_name)
+    return KALPANA_SWARA_SONGS_DIR / f"{sanitized_name}.json"
 
 def _load_kalpana_swara_songs():
     """Load all KalpanaSwaramComposer songs from songs/ folder"""
@@ -583,12 +592,16 @@ def _load_kalpana_swara_songs():
             try:
                 with open(song_file, 'r', encoding='utf-8') as f:
                     song_data = json.load(f)
-                    songs.append(song_data)
-            except:
+                    # Only add valid songs with a name
+                    if song_data.get('name'):
+                        songs.append(song_data)
+            except Exception as e:
+                logger.error(f"Failed to load song from {song_file}: {e}")
                 continue
         # Sort by lastModified in descending order
         songs.sort(key=lambda s: s.get('lastModified', ''), reverse=True)
-    except:
+    except Exception as e:
+        logger.error(f"Failed to load songs from folder: {e}")
         return []
     return songs
 
@@ -596,31 +609,39 @@ def _save_kalpana_swara_songs(songs):
     """Save each KalpanaSwaramComposer song as individual JSON file in songs/ folder"""
     # This function is kept for backward compatibility but now saves individual files
     for song in songs:
-        if song.get('id'):
-            filepath = _get_song_filepath(song['id'])
+        if song.get('name'):
+            filepath = _get_song_filepath(song['name'])
             try:
                 with open(filepath, 'w', encoding='utf-8') as f:
                     json.dump(song, f, indent=2, ensure_ascii=False)
             except Exception as e:
-                logger.error(f"Failed to save song {song.get('id')}: {e}")
+                logger.error(f"Failed to save song {song.get('name')}: {e}")
 
 def _load_kalpana_swara_song_by_id(song_id):
-    """Load a specific KalpanaSwaramComposer song from songs/ folder"""
-    filepath = _get_song_filepath(song_id)
-    if not filepath.exists():
+    """Load a specific KalpanaSwaramComposer song from songs/ folder by ID"""
+    # Search through all song files to find the one with matching ID
+    if not KALPANA_SWARA_SONGS_DIR.exists():
         return None
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except:
-        return None
+        for song_file in KALPANA_SWARA_SONGS_DIR.glob("*.json"):
+            try:
+                with open(song_file, 'r', encoding='utf-8') as f:
+                    song_data = json.load(f)
+                    if song_data.get('id') == song_id:
+                        return song_data
+            except:
+                continue
+    except Exception as e:
+        logger.error(f"Failed to load song by ID: {e}")
+    return None
 
 def _save_kalpana_swara_song(song_data):
-    """Save a single KalpanaSwaramComposer song as JSON file in songs/ folder"""
+    """Save a single KalpanaSwaramComposer song as JSON file in songs/ folder using song name"""
     if not song_data.get('id'):
         song_data['id'] = str(uuid.uuid4())
     
-    filepath = _get_song_filepath(song_data['id'])
+    song_name = song_data.get('name', 'Untitled')
+    filepath = _get_song_filepath(song_name)
     try:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(song_data, f, indent=2, ensure_ascii=False)
@@ -630,12 +651,20 @@ def _save_kalpana_swara_song(song_data):
         return None
 
 def _delete_kalpana_swara_song(song_id):
-    """Delete a KalpanaSwaramComposer song file from songs/ folder"""
-    filepath = _get_song_filepath(song_id)
+    """Delete a KalpanaSwaramComposer song file from songs/ folder by ID"""
+    # Search through all song files to find and delete the one with matching ID
+    if not KALPANA_SWARA_SONGS_DIR.exists():
+        return False
     try:
-        if filepath.exists():
-            filepath.unlink()  # Delete the file
-            return True
+        for song_file in KALPANA_SWARA_SONGS_DIR.glob("*.json"):
+            try:
+                with open(song_file, 'r', encoding='utf-8') as f:
+                    song_data = json.load(f)
+                    if song_data.get('id') == song_id:
+                        song_file.unlink()  # Delete the file
+                        return True
+            except:
+                continue
     except Exception as e:
         logger.error(f"Failed to delete song {song_id}: {e}")
     return False
