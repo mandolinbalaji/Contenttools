@@ -1,5 +1,14 @@
 [
   {
+    "id": "f46510d9-f411-4151-8934-4e4f9525504c",
+    "name": "SriMahaGanapathi_Gowlai",
+    "ragam": "",
+    "thalam": "",
+    "composer": "",
+    "sruthi": "C#",
+    "file": "songs/SriMahaGanapathi_Gowlai.json"
+  },
+  {
     "id": "f50dfca1-dba7-4f2d-a3eb-88a426886379",
     "name": "Swaratest",
     "ragam": "Swarastest",
@@ -29,7 +38,7 @@
   {
     "id": "init-sujana",
     "name": "Sujana Jeevana",
-    "ragam": "Khamas (Mēḷa 28)",
+    "ragam": "Khamas | Tāḷa: Rūpaka (3x4) | Ārō: SMG³MPD²N²Ṡ | Avarō: ṠN²D²PM¹G³R²S",
     "thalam": "Rupakam",
     "composer": "Thyagaraja",
     "sruthi": "C#",

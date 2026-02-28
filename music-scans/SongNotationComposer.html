@@ -521,12 +521,13 @@
         }
 
         .speed-btn {
-            padding: 6px 12px;
+            padding: 4px 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             background: white;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 11px;
+            font-weight: 600;
             transition: all 0.2s;
         }
 
@@ -872,18 +873,31 @@
                     title="Play notation using Web Audio">🎵 Play</button>
                 <button class="btn btn-outline" id="multiSelectBtn" onclick="toggleMultiSelect()" 
                     title="Enable multi-cell selection - select cells then copy/paste (ESC to exit)">📋 Multi Select</button>
+                <button class="btn btn-outline" id="deleteModeBtn" onclick="toggleDeleteMode()" 
+                    title="🗑️ Delete Mode: Click a cell to delete it (following cells shift left)">🗑️ Delete</button>
+                <button class="btn btn-outline" id="insertModeBtn" onclick="toggleInsertMode()" 
+                    title="➕ Insert Mode: Click a cell to insert empty cell before it (following cells shift right)">➕ Insert</button>
                 <button class="btn btn-outline" id="dragModeBtn" onclick="toggleLyricDragMode()" 
                     title="🎯 Drag Mode: Click to enable/disable lyric dragging (disables editing when ON)">✋ Drag Lyrics</button>
                 <button class="btn btn-outline" id="sourceBtn" onclick="toggleSourceView()"
                     title="Toggle Floating Source Image">📷 Source</button>
                 <button class="btn btn-outline" id="shareBtn" onclick="shareSong()" style="display: none;">🔗
                     Share</button>
+                <div id="speedToolbar" style="display: flex; gap: 8px; align-items: center; padding-left: 12px; border-left: 1px solid #ddd;">
+                    <button class="btn btn-outline btn-sm" id="toggleNotationBtn" onclick="toggleNotationVisibility()" 
+                        title="Show/Hide notation text area">👁️ Show Text</button>
+                    <label style="font-size: 12px; font-weight: 600; margin: 0;">Speed:</label>
+                    <button id="speedNormalBtn" class="speed-btn" onclick="toggleSpeedMode('normal', this)" title="Normal speed (1x)">1x</button>
+                    <button id="speed2xBtn" class="speed-btn" onclick="toggleSpeedMode('2x', this)" title="Double speed (2x)">2x</button>
+                    <button id="speed3xBtn" class="speed-btn" onclick="toggleSpeedMode('3x', this)" title="Triplet (3x)">3x</button>
+                    <button id="clearSpeedBtn" class="btn btn-outline btn-sm" onclick="clearAllSpeeds()" title="Clear all speed marks">🗑</button>
+                </div>
             </div>
         </header>
 
         <div class="content-area">
 
-            <div class="input-section">
+            <div class="input-section" id="inputSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <label>Notation Text</label>
                     <div class="upload-controls">
@@ -904,24 +918,6 @@
                     <span id="invalidCharIndicator" style="display: none; font-size: 12px; color: #ff7675; font-weight: 600; align-items: center; gap: 6px;">
                         <span>⚠️ Invalid characters detected</span>
                     </span>
-                </div>
-                
-                <div id="speedToolbar" class="speed-toolbar" style="display: none;">
-                    <label>Mark cells for speed:</label>
-                    <button id="speedNormalBtn" class="speed-btn" onclick="toggleSpeedMode('normal', this)" title="Normal speed (1x)">
-                        ✓ 1x Normal
-                    </button>
-                    <button id="speed2xBtn" class="speed-btn" onclick="toggleSpeedMode('2x', this)" title="Double speed (2x)">
-                        2x Double
-                    </button>
-                    <button id="speed3xBtn" class="speed-btn" onclick="toggleSpeedMode('3x', this)" title="Triplet (3x)">
-                        3x Triplet
-                    </button>
-                    <div class="separator"></div>
-                    <button id="clearSpeedBtn" class="btn btn-outline" onclick="clearAllSpeeds()" title="Clear all speed marks">
-                        🗑 Clear
-                    </button>
-                    <span class="speed-toolbar-help">Click cells to mark →</span>
                 </div>
             </div>
 
@@ -1814,6 +1810,7 @@
             `;
 
             cellLocationMap = {};  // Reset location map for this render
+            cellSpeedMap = {};  // Reset speed map for this render (speeds from JSON via atom.speed will be restored)
             let globalCellIndex = 0;  // Track absolute cell position across all sections
 
             // DISPLAY VALIDATION BANNER if there are line note count issues
@@ -1936,6 +1933,9 @@
                                         const swaraDiv = document.createElement('div');
                                         swaraDiv.className = 'swara-cell';
                                         swaraDiv.setAttribute('data-cell-index', globalCellIndex);
+                                        swaraDiv.setAttribute('data-section-idx', sIdx);
+                                        swaraDiv.setAttribute('data-row-idx', r);
+                                        swaraDiv.setAttribute('data-atom-idx', row.atoms.indexOf(groupAtom));
                                         swaraDiv.contentEditable = "true";
                                         swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
                                         // HIGHLIGHT: If line has invalid note count
@@ -1982,6 +1982,9 @@
                                             const swaraDiv = document.createElement('div');
                                             swaraDiv.className = 'swara-cell';
                                             swaraDiv.setAttribute('data-cell-index', globalCellIndex);
+                                            swaraDiv.setAttribute('data-section-idx', sIdx);
+                                            swaraDiv.setAttribute('data-row-idx', r);
+                                            swaraDiv.setAttribute('data-atom-idx', row.atoms.indexOf(groupAtom));
                                             swaraDiv.classList.add('speed-2x');
                                             swaraDiv.contentEditable = "true";
                                             swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
@@ -2030,6 +2033,9 @@
                                     swaraDiv.className = 'swara-cell';
                                     // Add cell index attribute for tracking edits
                                     swaraDiv.setAttribute('data-cell-index', globalCellIndex);
+                                    swaraDiv.setAttribute('data-section-idx', sIdx);
+                                    swaraDiv.setAttribute('data-row-idx', r);
+                                    swaraDiv.setAttribute('data-atom-idx', aIdx);
                                     // Apply speed-2x styling only if atom has speed=2 (braced notes)
                                     if (atom.speed === 2) {
                                         swaraDiv.classList.add('speed-2x');
@@ -2057,6 +2063,38 @@
                                         // Only editable if NOT in drag mode
                                         if (!lyricDragMode) {
                                             lyricDiv.contentEditable = "true";
+                                        } else {
+                                            // When in drag mode, ensure contentEditable is explicitly false
+                                            lyricDiv.contentEditable = "false";
+                                            lyricDiv.style.cursor = 'grab';
+                                            lyricDiv.style.userSelect = 'none';
+                                            // Prevent any editing attempts in drag mode
+                                            lyricDiv.onclick = (e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                if (lyricDragMode) {
+                                                    lyricDiv.style.cursor = 'grabbing';
+                                                }
+                                            };
+                                            // Prevent focus/blur which might trigger editing
+                                            lyricDiv.onfocus = (e) => {
+                                                if (lyricDragMode) {
+                                                    e.preventDefault();
+                                                    lyricDiv.blur();
+                                                }
+                                            };
+                                            // Prevent any text input/editing in drag mode
+                                            lyricDiv.onbeforeinput = (e) => {
+                                                if (lyricDragMode) {
+                                                    e.preventDefault();
+                                                }
+                                            };
+                                            // Prevent key events that might trigger editing
+                                            lyricDiv.onkeydown = (e) => {
+                                                if (lyricDragMode) {
+                                                    e.preventDefault();
+                                                }
+                                            };
                                         }
                                         lyricDiv.draggable = true;
                                         const lyricRowIdx = section.rows.indexOf(lyricRow);
@@ -2069,7 +2107,10 @@
                                         
                                         lyricDiv.oninput = (e) => handleCellEdit(sIdx, lyricRowIdx, aIdx, 'lyric', e.target.textContent);
                                         lyricDiv.ondragstart = (e) => handleLyricDragStart(e);
-                                        lyricDiv.ondragend = (e) => handleLyricDragEnd(e);
+                                        lyricDiv.ondragend = (e) => {
+                                            handleLyricDragEnd(e);
+                                            if (lyricDragMode) lyricDiv.style.cursor = 'grab';
+                                        };
                                         lyricDiv.ondragover = (e) => handleLyricDragOver(e);
                                         lyricDiv.ondragleave = (e) => handleLyricDragLeave(e);
                                         lyricDiv.ondrop = (e) => handleLyricDrop(e);
@@ -2099,6 +2140,9 @@
                             const cell = document.createElement('td');
                             const swaraDiv = document.createElement('div');
                             swaraDiv.className = 'swara-cell';
+                            swaraDiv.setAttribute('data-section-idx', sIdx);
+                            swaraDiv.setAttribute('data-row-idx', 0);
+                            swaraDiv.setAttribute('data-atom-idx', idx);
                             swaraDiv.textContent = formatSwaraForDisplay(atom.text);
                             const lyricDiv = document.createElement('div');
                             lyricDiv.className = 'lyrics-cell';
@@ -2115,7 +2159,10 @@
             });
 
             // Show speed toolbar if grid has content
-            document.getElementById('speedToolbar').style.display = currentSong.sections && currentSong.sections.length > 0 ? 'flex' : 'none';
+            const speedToolbar = document.getElementById('speedToolbar');
+            if (speedToolbar) {
+                speedToolbar.style.display = currentSong.sections && currentSong.sections.length > 0 ? 'flex' : 'none';
+            }
 
             // Update override indicators and beat markers after rendering
             setTimeout(() => {
@@ -2132,7 +2179,24 @@
                 let cellIndex = 0;
                 document.querySelectorAll('.swara-cell').forEach((cell, idx) => {
                     cell.onclick = (e) => {
-                        if (gridSpeedMode && e.target === cell) {
+                        // Delete/Insert Mode handling
+                        if (deleteCellMode) {
+                            e.stopPropagation();
+                            // Find which section and row this cell belongs to
+                            const sectionIdx = parseInt(cell.getAttribute('data-section-idx') || 0);
+                            const rowIdx = parseInt(cell.getAttribute('data-row-idx') || 0);
+                            const atomIdx = parseInt(cell.getAttribute('data-atom-idx') || idx);
+                            deleteCellAtIndex(sectionIdx, rowIdx, atomIdx);
+                            return;
+                        } else if (insertCellMode) {
+                            e.stopPropagation();
+                            // Find which section and row this cell belongs to
+                            const sectionIdx = parseInt(cell.getAttribute('data-section-idx') || 0);
+                            const rowIdx = parseInt(cell.getAttribute('data-row-idx') || 0);
+                            const atomIdx = parseInt(cell.getAttribute('data-atom-idx') || idx);
+                            insertCellAtIndex(sectionIdx, rowIdx, atomIdx);
+                            return;
+                        } else if (gridSpeedMode && e.target === cell) {
                             e.stopPropagation();
                             handleSpeedCellClick(cell, idx);
                         } else {
@@ -2159,7 +2223,7 @@
                         }
                     };
                     
-                    // Restore speed marks from map
+                    // Restore speed marks from map - cell is already .swara-cell, not lyrics
                     if (cellSpeedMap[idx] === 2) {
                         cell.classList.add('speed-2x');
                     } else if (cellSpeedMap[idx] === 3) {
@@ -2814,6 +2878,29 @@
             console.log(`🏷️  ${show ? 'Showing' : 'Hiding'} subdivision labels (not yet implemented)`);
         }
 
+        function toggleNotationVisibility() {
+            const inputSection = document.getElementById('inputSection');
+            const toggleBtn = document.getElementById('toggleNotationBtn');
+            const isHidden = inputSection.style.display === 'none';
+            
+            if (isHidden) {
+                // Show the notation text area
+                inputSection.style.display = 'block';
+                toggleBtn.textContent = '👁️ Hide Text';
+                toggleBtn.style.background = '#e8f5e9';
+                toggleBtn.style.borderColor = '#4caf50';
+                document.getElementById('notationInput').focus();
+                console.log('📝 Notation text area visible');
+            } else {
+                // Hide the notation text area
+                inputSection.style.display = 'none';
+                toggleBtn.textContent = '👁️ Show Text';
+                toggleBtn.style.background = '';
+                toggleBtn.style.borderColor = '';
+                console.log('🚫 Notation text area hidden');
+            }
+        }
+
         function formatSwaraForDisplay(atom) {
             // Skip brace group child markers - they're displayed as part of groups
             if (typeof atom === 'object' && atom.isBraceChild) {
@@ -3059,17 +3146,42 @@
         let draggedLyricCell = null;
         let lyricDragMode = false;
         
+        // Delete/Insert Cell Mode Variables
+        let deleteCellMode = false;
+        let insertCellMode = false;
+        
         function toggleLyricDragMode() {
             lyricDragMode = !lyricDragMode;
             const btn = document.getElementById('dragModeBtn');
             
             if (lyricDragMode) {
+                // IMMEDIATELY disable editing on ALL existing lyric cells - do NOT wait for re-render
+                document.querySelectorAll('.lyrics-cell, .lyric-cell-mode-a, .lyric-cell-mode-b').forEach(cell => {
+                    // Blur any focused cell to stop editing immediately
+                    if (document.activeElement === cell) {
+                        cell.blur();
+                    }
+                    // Force disable contentEditable
+                    cell.contentEditable = "false";
+                    cell.style.cursor = 'grab';
+                    cell.style.userSelect = 'none';
+                    // Remove any editing class
+                    cell.classList.remove('editing');
+                });
+                
                 btn.style.background = '#4CAF50';
                 btn.style.borderColor = '#4CAF50';
                 btn.style.color = 'white';
                 btn.title = '✋ Drag Mode ON - Lyrics locked for dragging only';
                 showToast('🎯 Drag Mode ON - Click lyrics to drag, cannot edit', 'success');
             } else {
+                // Re-enable editing when drag mode OFF
+                document.querySelectorAll('.lyrics-cell, .lyric-cell-mode-a, .lyric-cell-mode-b').forEach(cell => {
+                    cell.contentEditable = "true";
+                    cell.style.cursor = 'text';
+                    cell.style.userSelect = 'auto';
+                });
+                
                 btn.style.background = 'transparent';
                 btn.style.borderColor = '#ddd';
                 btn.style.color = 'var(--secondary)';
@@ -3078,6 +3190,150 @@
             }
             
             // Re-render to apply the new mode to all lyric cells
+            renderSong();
+        }
+        
+        function toggleDeleteMode() {
+            deleteCellMode = !deleteCellMode;
+            insertCellMode = false; // Disable insert mode when delete mode activated
+            const deleteBtn = document.getElementById('deleteModeBtn');
+            const insertBtn = document.getElementById('insertModeBtn');
+            
+            if (deleteCellMode) {
+                deleteBtn.style.background = '#ff6b6b';
+                deleteBtn.style.borderColor = '#ff6b6b';
+                deleteBtn.style.color = 'white';
+                deleteBtn.title = '🗑️ Delete Mode ON - Click a cell to delete';
+                insertBtn.style.background = 'transparent';
+                insertBtn.style.borderColor = '#ddd';
+                insertBtn.style.color = 'var(--secondary)';
+                showToast('🗑️ Delete Mode ON - Click a cell to delete it', 'warning');
+            } else {
+                deleteBtn.style.background = 'transparent';
+                deleteBtn.style.borderColor = '#ddd';
+                deleteBtn.style.color = 'var(--secondary)';
+                deleteBtn.title = '🗑️ Delete Mode: Click a cell to delete';
+                showToast('Delete Mode OFF', 'info');
+            }
+        }
+        
+        function toggleInsertMode() {
+            insertCellMode = !insertCellMode;
+            deleteCellMode = false; // Disable delete mode when insert mode activated
+            const deleteBtn = document.getElementById('deleteModeBtn');
+            const insertBtn = document.getElementById('insertModeBtn');
+            
+            if (insertCellMode) {
+                insertBtn.style.background = '#2ecc71';
+                insertBtn.style.borderColor = '#2ecc71';
+                insertBtn.style.color = 'white';
+                insertBtn.title = '➕ Insert Mode ON - Click a cell to insert before it';
+                deleteBtn.style.background = 'transparent';
+                deleteBtn.style.borderColor = '#ddd';
+                deleteBtn.style.color = 'var(--secondary)';
+                showToast('➕ Insert Mode ON - Click a cell to insert empty cell before it', 'success');
+            } else {
+                insertBtn.style.background = 'transparent';
+                insertBtn.style.borderColor = '#ddd';
+                insertBtn.style.color = 'var(--secondary)';
+                insertBtn.title = '➕ Insert Mode: Click a cell to insert';
+                showToast('Insert Mode OFF', 'info');
+            }
+        }
+        
+        function deleteCellAtIndex(sectionIdx, rowIdx, atomIdx) {
+            const section = currentSong.sections[sectionIdx];
+            const row = section.rows[rowIdx];
+            
+            if (!section || !row || !row.atoms) return;
+            
+            // Find the corresponding lyric row (if it exists)
+            const lyricRow = section.rows.find(lr => 
+                (lr.lineType === 'lyric' || lr.type === 'lyric') && 
+                section.rows.indexOf(lr) === rowIdx + 1
+            );
+            
+            // Flatten all atoms: swara atoms + lyric atoms as one continuous string
+            const swaraAtoms = [...row.atoms];
+            const lyricAtoms = lyricRow ? [...lyricRow.atoms] : [];
+            const originalSwaraLength = swaraAtoms.length;
+            const allAtoms = [...swaraAtoms, ...lyricAtoms];
+            
+            // Delete the cell at global position
+            if (atomIdx >= 0 && atomIdx < allAtoms.length) {
+                allAtoms.splice(atomIdx, 1);
+            }
+            
+            // Determine how many atoms belong to swara row after deletion
+            // If deleted from swara range, swara loses one; otherwise stays same length
+            const newSwaraLength = atomIdx < originalSwaraLength ? originalSwaraLength - 1 : originalSwaraLength;
+            
+            // Redistribute atoms back into swara and lyric rows
+            row.atoms = allAtoms.slice(0, newSwaraLength);
+            
+            if (lyricRow && allAtoms.length > newSwaraLength) {
+                lyricRow.atoms = allAtoms.slice(newSwaraLength);
+            } else if (lyricRow) {
+                lyricRow.atoms = [];
+            }
+            
+            gridIsDirty = true;
+            deleteCellMode = false;
+            const deleteBtn = document.getElementById('deleteModeBtn');
+            deleteBtn.style.background = 'transparent';
+            deleteBtn.style.borderColor = '#ddd';
+            deleteBtn.style.color = 'var(--secondary)';
+            showToast(`🗑️ Cell deleted - all content shifted left like text`, 'success');
+            renderSong();
+        }
+        
+        function insertCellAtIndex(sectionIdx, rowIdx, atomIdx) {
+            const section = currentSong.sections[sectionIdx];
+            const row = section.rows[rowIdx];
+            
+            if (!section || !row || !row.atoms) return;
+            
+            // Find the corresponding lyric row (if it exists)
+            const lyricRow = section.rows.find(lr => 
+                (lr.lineType === 'lyric' || lr.type === 'lyric') && 
+                section.rows.indexOf(lr) === rowIdx + 1
+            );
+            
+            // Create new empty atom for swara row
+            const newAtom = {
+                text: '',
+                lineNumber: row.lineNumber || 0,
+                hasInvalidLineCount: false,
+                isBraceChild: false
+            };
+            
+            // Flatten all atoms: swara atoms + lyric atoms as one continuous string
+            const swaraAtoms = [...row.atoms];
+            const lyricAtoms = lyricRow ? [...lyricRow.atoms] : [];
+            const originalSwaraLength = swaraAtoms.length;
+            const allAtoms = [...swaraAtoms, ...lyricAtoms];
+            
+            // Insert empty cell at global position
+            allAtoms.splice(atomIdx, 0, newAtom);
+            
+            // Determine how many atoms belong to swara row after insertion
+            // If inserted into swara range, swara gains one; otherwise stays same length
+            const newSwaraLength = atomIdx <= originalSwaraLength ? originalSwaraLength + 1 : originalSwaraLength;
+            
+            // Redistribute atoms back into swara and lyric rows
+            row.atoms = allAtoms.slice(0, newSwaraLength);
+            
+            if (lyricRow) {
+                lyricRow.atoms = allAtoms.slice(newSwaraLength);
+            }
+            
+            gridIsDirty = true;
+            insertCellMode = false;
+            const insertBtn = document.getElementById('insertModeBtn');
+            insertBtn.style.background = 'transparent';
+            insertBtn.style.borderColor = '#ddd';
+            insertBtn.style.color = 'var(--secondary)';
+            showToast(`➕ Cell inserted - all content shifted right like text`, 'success');
             renderSong();
         }
         
@@ -3837,6 +4093,12 @@
         function validateLineNoteCounts(songs, totalCells) {
             const lineIssuesMap = {};
             
+            // SAFETY: Handle undefined sections
+            if (!songs || !songs.sections) {
+                console.warn('⚠️  validateLineNoteCounts: No sections to validate');
+                return lineIssuesMap;
+            }
+            
             songs.sections.forEach((section, sIdx) => {
                 // Group atoms by lineNumber
                 const atomsByLine = {};
@@ -3901,6 +4163,17 @@
             globalBraceGroupCounter = 0;
             
             console.log('🔧 applyFormatting() started');
+            
+            // SAFETY: Check if song is loaded
+            if (!currentSong) {
+                alert('❌ No song loaded. Please load a song first.');
+                return;
+            }
+            if (!currentSong.sections) {
+                alert('❌ Song has no sections. Please parse the notation first.');
+                return;
+            }
+            
             const eduppuPos = parseInt(document.getElementById('eduppu').value);
             const totalCells = calculateTotalCells();
             

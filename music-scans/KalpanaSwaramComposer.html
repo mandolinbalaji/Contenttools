@@ -65,6 +65,32 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .font-size-control label {
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .font-size-control input[type="range"] {
+            width: 100px;
+            cursor: pointer;
+        }
+
+        .font-size-display {
+            font-size: 12px;
+            min-width: 30px;
+            text-align: right;
+        }
+
         /* ============================================================================
            TOP NAVIGATION (STICKY)
            ============================================================================ */
@@ -771,17 +797,18 @@
         .spreadsheet-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            margin-top: 20px;
+            table-layout: auto;
         }
 
-        .spreadsheet-table th,
         .spreadsheet-table td {
-            border: 1px solid #ddd;
-            padding: 4px 2px;
+            border: 1px solid #eee;
+            padding: 4px;
             text-align: center;
-            font-size: 11px;
-            min-width: 28px;
-            height: 28px;
+            vertical-align: top;
+            padding-top: 15px;
+            position: relative;
+            min-width: 60px;
         }
 
         .spreadsheet-table th {
@@ -791,17 +818,103 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            border: 1px solid #eee;
+            padding: 4px 2px;
         }
 
-        .spreadsheet-table td {
-            background: white;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
+        .swara-cell {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 16px;
+            color: #000;
+            padding-bottom: 2px;
+            transition: font-size 0.2s;
+        }
+
+        .lyrics-cell {
+            font-family: monospace;
+            font-style: italic;
+            font-size: 13px;
+            color: #0047b3;
+            min-height: 1.2em;
+            padding: 2px 4px;
+            border: 1px solid transparent;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow: visible;
+            cursor: grab;
+            transition: font-size 0.2s;
+            display: block;
+        }
+        
+        /* Lyrics cells - read-only display only */
+        .lyrics-cell {
+            font-family: monospace;
+            font-style: italic;
+            font-size: 13px;
+            color: #0047b3;
+            min-height: 1.2em;
+            padding: 2px 4px;
+            border: 1px solid transparent;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow: visible;
+            cursor: default;
+            transition: font-size 0.2s;
+            display: block;
+            background: rgba(76, 175, 80, 0.05);
+            border: 1px solid #c8e6c9;
             font-weight: 500;
         }
 
-        .spreadsheet-table tr:nth-child(even) td {
-            background: #f8f9fa;
+        .swara-cell[contenteditable="true"]:focus,
+        .lyrics-cell[contenteditable="true"]:focus {
+            outline: none;
+            background: #fff;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 5px rgba(108, 92, 231, 0.2);
+            z-index: 10;
+        }
+
+        /* Comma/rest cells - make them 3x bigger */
+        .spreadsheet-table td.comma-cell {
+            font-size: 24px;
+            font-weight: bold;
+            color: #999;
+            vertical-align: middle;
+            padding: 12px 4px;
+        }
+
+        /* Override indicator - shows when cell note differs from ragaswara */
+        .swara-cell.override {
+            background-color: #fff3cd;
+            border-left: 3px solid #ffc107;
+            font-weight: bold;
+        }
+
+        /* Playing cell indicator */
+        .swara-cell.playing {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+            animation: pulse 0.5s infinite;
+        }
+
+        /* Beat markers based on nadai */
+        .swara-cell.beat-start {
+            border-left: 4px solid #6c5ce7 !important;
+        }
+
+        .swara-cell.beat-mid {
+            border-left: 2px dashed #a29bfe;
+        }
+
+        /* Cell selection for copy/paste */
+        .swara-cell.selected {
+            background-color: #b3e5fc !important;
+            border: 2px solid #0288d1;
+            box-shadow: inset 0 0 4px rgba(2, 136, 209, 0.3);
         }
 
         .spreadsheet-label {
@@ -1240,6 +1353,11 @@
     <header>
         <h1>🎵 KalpanaSwaramComposer</h1>
         <header-right>
+            <div class="font-size-control">
+                <label for="fontSizeSlider">Font:</label>
+                <input type="range" id="fontSizeSlider" min="0.5" max="2" step="0.1" value="1" title="Adjust font size">
+                <span class="font-size-display" id="fontSizeDisplay">100%</span>
+            </div>
             <a href="index.html" style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">← Back to Kanakku</a>
             <button onclick="saveSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Save Song">💾 Save</button>
             <button onclick="importSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import Song">📥 Import</button>
@@ -1976,7 +2094,7 @@
                         <div class="form-group">
                             <label>Lyrics</label>
                             <textarea id="cycleLyrics-${cycle.id}" 
-                                      placeholder="Add lyrics..." 
+                                      placeholder="Add lyrics using | to separate by swara (e.g., sa|ri|ga|ma)" 
                                       onchange="updateCycle('${cycle.id}', 'lyrics', this.value)" 
                                       style="min-height: 80px;">${cycle.lyrics}</textarea>
                         </div>
@@ -2123,68 +2241,64 @@
                     landingCellIndex = eduppu - 1;
                 }
                 
+                // Get lyrics items for pairing with swaras
+                // Split by | delimiter (e.g., "sa|ri|ga|ma")
+                const allLyricsItems = lyricsDisplay.trim() ? lyricsDisplay.split('|').map(s => s.trim()) : [];
+                
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
-                    const item = rowItems[i] || '';
-                    cell.textContent = item;
+                    const noteItem = rowItems[i] || '';
+                    const lyricItem = allLyricsItems[i] || '';
+                    
+                    // Create swara div
+                    const swaraDiv = document.createElement('div');
+                    swaraDiv.className = 'swara-cell';
+                    swaraDiv.textContent = noteItem;
+                    
+                    // Make comma cells much larger for visibility
+                    if (noteItem === ',' || noteItem === ',,') {
+                        cell.classList.add('comma-cell');
+                        swaraDiv.style.fontSize = '24px';
+                        swaraDiv.style.fontWeight = 'bold';
+                        swaraDiv.style.color = '#999';
+                    }
+                    
+                    cell.appendChild(swaraDiv);
+                    
+                    // Create lyric div (only if we have lyrics)
+                    if (lyricsDisplay.trim()) {
+                        const lyricDiv = document.createElement('div');
+                        lyricDiv.className = 'lyrics-cell';
+                        lyricDiv.textContent = lyricItem;
+                        
+                        cell.appendChild(lyricDiv);
+                    }
+                    
                     if (i === landingCellIndex) {
-                        cell.className = 'spreadsheet-landing';
+                        cell.classList.add('spreadsheet-landing');
                     }
                 }
             });
-
-            // Render lyrics row ONLY ONCE (first row only) - applies to ALL swaras rows
-            // This prevents confusion when cycle has multiple continuation rows
-            if (lyricsDisplay.trim()) {
-                const lyricsRow = tbody.insertRow();
-                const lyricsLabel = lyricsRow.insertCell();
-                lyricsLabel.className = 'spreadsheet-label';
-                lyricsLabel.textContent = '    Lyrics';
-                
-                // Show ALL lyrics items in the first row
-                const allLyricsItems = phraseToItems(lyricsDisplay);
-                
-                for (let i = 0; i < cycleLength; i++) {
-                    const cell = lyricsRow.insertCell();
-                    const item = allLyricsItems[i] || '';
-                    
-                    // Make cell editable on single click
-                    cell.contentEditable = true;
-                    cell.textContent = item;
-                    cell.style.backgroundColor = '#f9f9f9';
-                    cell.style.fontStyle = 'italic';
-                    cell.style.cursor = 'text';
-                    cell.dataset.cycleId = cycleData.id;
-                    
-                    // Save lyrics on blur
-                    cell.addEventListener('blur', function() {
-                        saveLyricsFromSpreadsheet(cycleData.id);
-                    });
-                    
-                    // Prevent Enter from inserting line break
-                    cell.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            this.blur();
-                        }
-                    });
-                }
-            }
         }
 
         function saveLyricsFromSpreadsheet(cycleId) {
-            // Collect all edited lyrics cells for this cycle and join them
-            const spreadsheetTable = document.querySelector('.spreadsheet-table');
-            if (!spreadsheetTable) return;
+            // Collect all edited lyrics from nested divs with data-cycle-id matching this cycle
+            const lyricDivs = document.querySelectorAll('.lyrics-cell[data-cycle-id]');
             
-            // Find all contenteditable cells for this cycle (should only be one row)
-            const editableCells = spreadsheetTable.querySelectorAll('td[contenteditable="true"]');
+            // Find the cycle index to know which lyric divs belong to this cycle
+            const cycle = currentSong.cycles.find(c => c.id === cycleId);
+            if (!cycle) return;
             
-            // Collect text from each cell in order, only for this cycle
+            // Collect all lyric div texts in order for this cycle
+            let lyricIndex = 0;
+            let cycleCount = 0;
             const allLyricsItems = [];
-            editableCells.forEach(cell => {
-                if (cell.dataset.cycleId === cycleId) {
-                    allLyricsItems.push(cell.textContent || '');
+            
+            lyricDivs.forEach(div => {
+                // Check if this div is for the current cycle by counting cycles visited
+                // Count how many lyric divs we've seen so far for the current cycle position
+                if (div.dataset.cycleId === cycleId) {
+                    allLyricsItems.push(div.textContent || '');
                 }
             });
             
@@ -2192,10 +2306,7 @@
             const lyricsText = allLyricsItems.join('');
             
             // Save back to cycle
-            const cycle = currentSong.cycles.find(c => c.id === cycleId);
-            if (cycle) {
-                cycle.lyrics = lyricsText;
-            }
+            cycle.lyrics = lyricsText;
         }
 
         // ============================================================================
@@ -2654,6 +2765,40 @@
 
             // Window scroll for navigation updates
             window.addEventListener('scroll', updateActiveNavigation);
+
+            // Font size control
+            const fontSizeSlider = document.getElementById('fontSizeSlider');
+            const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+            
+            fontSizeSlider.addEventListener('input', function() {
+                const scale = parseFloat(this.value);
+                const percentage = Math.round(scale * 100);
+                
+                // Update display
+                fontSizeDisplay.textContent = percentage + '%';
+                
+                // Update swara cells
+                const swaraCells = document.querySelectorAll('.swara-cell');
+                swaraCells.forEach(cell => {
+                    cell.style.fontSize = (16 * scale) + 'px';
+                });
+                
+                // Update lyric cells
+                const lyricCells = document.querySelectorAll('.lyrics-cell');
+                lyricCells.forEach(cell => {
+                    cell.style.fontSize = (13 * scale) + 'px';
+                });
+                
+                // Save preference to localStorage
+                localStorage.setItem('fontSizeScale', scale);
+            });
+            
+            // Restore saved font size preference
+            const savedScale = localStorage.getItem('fontSizeScale');
+            if (savedScale) {
+                fontSizeSlider.value = savedScale;
+                fontSizeSlider.dispatchEvent(new Event('input'));
+            }
 
             // Initialize UI
             updateEduppuOptions();
