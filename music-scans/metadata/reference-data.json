@@ -19,6 +19,8 @@
       "sruthi_midi_mapping.json - MIDI and frequency data",
       "reference-data.json - metadata and structure"
     ],
+    "defaultSectionName": "Notation",
+    "defaultSectionDescription": "Used as section title when notation appears before any section keyword",
     "octaveMarkers": {
       "plain": {
         "description": "Plain notes → Middle octave C4 (Octave 4)",
@@ -224,16 +226,56 @@
       "description": "Keywords marking song metadata, sections, and line types. Used by parser to identify structure.",
       "parseBehavior": "Parser checks lines against these keywords. When found, triggers appropriate parsing behavior.",
       "keywords": {
-        "Composition:": "Song title - extract value after colon",
-        "Rāga:": "Raga name (Unicode)",
-        "Ragam:": "Raga name (ASCII)",
-        "Tāḷa:": "Tala name (Unicode)",
-        "Talam:": "Tala name (ASCII)",
-        "Composer:": "Composer name",
-        "Ārōhaṇa:": "Ascending scale (Unicode)",
-        "Arohana:": "Ascending scale (ASCII)",
-        "Avarōhaṇa:": "Descending scale (Unicode)",
-        "Avarohana:": "Descending scale (ASCII)"
+        "Composition:": {
+          "description": "Song title - extract value after colon",
+          "field": "name",
+          "type": "string"
+        },
+        "Rāga:": {
+          "description": "Raga name (Unicode)",
+          "field": "ragam",
+          "type": "string"
+        },
+        "Ragam:": {
+          "description": "Raga name (ASCII)",
+          "field": "ragam",
+          "type": "string"
+        },
+        "Tāḷa:": {
+          "description": "Tala name (Unicode)",
+          "field": "thalam",
+          "type": "string"
+        },
+        "Talam:": {
+          "description": "Tala name (ASCII)",
+          "field": "thalam",
+          "type": "string"
+        },
+        "Composer:": {
+          "description": "Composer name",
+          "field": "composer",
+          "type": "string"
+        },
+        "Ārōhaṇa:": {
+          "description": "Ascending scale (Unicode)",
+          "field": "arohana",
+          "type": "string"
+        },
+        "Arohana:": {
+          "description": "Ascending scale (ASCII)",
+          "field": "arohana",
+          "type": "string"
+        },
+        "Avarōhaṇa:": {
+          "description": "Descending scale (Unicode)",
+          "field": "avarohana",
+          "type": "string"
+        },
+        "Avarohana:": {
+          "description": "Descending scale (ASCII)",
+          "field": "avarohana",
+          "type": "string"
+        }
       }
     },
     "sectionKeywords": {

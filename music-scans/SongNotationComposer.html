@@ -388,6 +388,120 @@
         .notation-table td.beat-marker {
             border-left: 4px solid #333;
         }
+
+        /* ========== DISPLAY MODE B: STACKED BEATS CSS ========== */
+        
+        .mode-b-section {
+            /* Already defined inline, but keeping for consistency */
+        }
+
+        .mode-b-row-container {
+            /* Layout container for notation + lyrics pair */
+        }
+
+        .mode-b-notation-row {
+            /* Flex row displaying beats horizontally */
+        }
+
+        .beat-container {
+            /* Individual beat column */
+        }
+
+        .subdivisions-row {
+            /* Row of 4 cells (nadai=4) */
+        }
+
+        .swara-cell-mode-b {
+            /* Notation cell in Mode B */
+            transition: all 0.2s ease;
+        }
+
+        .swara-cell-mode-b:hover {
+            background: #e8f5e9 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .swara-cell-mode-b:focus {
+            outline: none;
+            background: #fff !important;
+            border: 2px solid #667eea !important;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .swara-cell-mode-b[contenteditable="true"] {
+            cursor: text;
+        }
+
+        .mode-b-lyric-row {
+            /* Flex row for lyrics aligned with beats */
+        }
+
+        .lyric-cell-mode-b {
+            transition: all 0.2s ease;
+        }
+
+        .lyric-cell-mode-b:hover {
+            background: #e3f2fd !important;
+            cursor: grab;
+        }
+
+        .lyric-cell-mode-b:active {
+            cursor: grabbing;
+        }
+
+        /* ========== DISPLAY MODE A: SINGLE ROW CSS ========== */
+
+        .mode-a-section {
+            /* Already defined inline */
+        }
+
+        .mode-a-row-container {
+            /* Layout container */
+        }
+
+        .mode-a-notation-row {
+            /* Single horizontal row of cells */
+        }
+
+        .swara-cell-mode-a {
+            /* Notation cell in Mode A */
+            transition: all 0.2s ease;
+        }
+
+        .swara-cell-mode-a:hover {
+            background: #e8f5e9 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .swara-cell-mode-a:focus {
+            outline: none;
+            background: #fff !important;
+            border: 2px solid #667eea !important;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .swara-cell-mode-a[contenteditable="true"] {
+            cursor: text;
+        }
+
+        .mode-a-lyric-row {
+            /* Horizontal lyric row */
+        }
+
+        .lyric-cell-mode-a {
+            /* Lyric cell in Mode A */
+            transition: all 0.2s ease;
+        }
+
+        .lyric-cell-mode-a:hover {
+            background: #e3f2fd !important;
+            cursor: grab;
+        }
+
+        .lyric-cell-mode-a:active {
+            cursor: grabbing;
+        }
+
         /* Speed marking toolbar */
         .speed-toolbar {
             margin-top: 15px;
@@ -1089,20 +1203,21 @@
 
         // Get line keyword type and strip prefix (e.g., "LR: maa gaa naa" → {keyword: "LR:", content: "maa gaa naa", isLyric: true})
         function extractLineKeywordAndContent(trimmedLine) {
-            if (!referenceData || !referenceData.lineKeywords) {
+            if (!referenceData || !referenceData.validCharacters?.lineKeywords) {
+                // Fallback if reference data not loaded - use regex with hardcoded fallback
                 const match = trimmedLine.match(/^(Line:|Line1:|Line2:|LR:)\s*(.*)/);
                 if (match) {
                     return {
                         keyword: match[1],
                         content: match[2],
-                        isLyric: match[1] === 'LR:',
+                        isLyric: match[1] === 'LR:',  // Fallback hardcoding - only when reference-data unavailable
                         lineType: match[1]
                     };
                 }
                 return null;
             }
             
-            const lineKeywords = referenceData.lineKeywords.keywords;
+            const lineKeywords = referenceData.validCharacters.lineKeywords.keywords;
             for (const keyword in lineKeywords) {
                 if (trimmedLine.startsWith(keyword)) {
                     const content = trimmedLine.substring(keyword.length).trim();
@@ -1402,18 +1517,13 @@
                 // Use extractMetadataKeywordAndValue() for dynamic keyword support
                 const metadataMatch = extractMetadataKeywordAndValue(trimmed);
                 if (metadataMatch) {
-                    if (metadataMatch.keyword.includes('Composition')) {
-                        songMetadata.name = metadataMatch.value;
-                    } else if (metadataMatch.keyword.includes('Rāga') || metadataMatch.keyword.includes('Ragam')) {
-                        songMetadata.ragam = metadataMatch.value;
-                    } else if (metadataMatch.keyword.includes('Tāḷa') || metadataMatch.keyword.includes('Talam')) {
-                        songMetadata.thalam = metadataMatch.value;
-                    } else if (metadataMatch.keyword.includes('Composer')) {
-                        songMetadata.composer = metadataMatch.value;
-                    } else if (metadataMatch.keyword.includes('Ārōhaṇa') || metadataMatch.keyword.includes('Arohana')) {
-                        songMetadata.arohana = metadataMatch.value;
-                    } else if (metadataMatch.keyword.includes('Avarōhaṇa') || metadataMatch.keyword.includes('Avarohana')) {
-                        songMetadata.avarohana = metadataMatch.value;
+                    // Look up the field mapping from reference-data.json instead of hardcoding
+                    if (referenceData && referenceData.validCharacters?.metadataKeywords?.keywords) {
+                        const keywordData = referenceData.validCharacters.metadataKeywords.keywords[metadataMatch.keyword];
+                        if (keywordData && keywordData.field) {
+                            songMetadata[keywordData.field] = metadataMatch.value;
+                            console.log(`✅ Metadata parsed: ${metadataMatch.keyword} → songMetadata.${keywordData.field} = "${metadataMatch.value}"`);
+                        }
                     }
                     continue;
                 }
@@ -1475,8 +1585,9 @@
                     
                     // Create default section if none exists
                     if (!currentSection) {
+                        const defaultTitle = referenceData?._metadata?.defaultSectionName || 'Notation';
                         currentSection = { 
-                            title: 'Notation', 
+                            title: defaultTitle, 
                             rows: [],
                             startLineIndex: i,
                             lineIndices: [i]
@@ -2270,6 +2381,437 @@
             });
 
             return result;
+        }
+
+        /**
+         * DISPLAY MODE FUNCTIONS (FUTURE IMPLEMENTATION)
+         * Switch between different visual representations of notation
+         * - 'grid': Current implementation (single unified grid per section)
+         * - 'optionA': Single row per line with 12 columns for Rūpaka (3×4)
+         * - 'optionB': Beat rows stacked vertically with subdivisions
+         */
+        
+        function switchDisplayMode(mode) {
+            // TODO: Implement display mode switching
+            // Valid modes: 'grid', 'optionA', 'optionB'
+            console.log(`📊 Switching to display mode: ${mode} (not yet implemented)`);
+            
+            const container = document.getElementById('notationGrid');
+            if (!container) return;
+            
+            switch(mode) {
+                case 'optionA':
+                    renderDisplayModeA(currentSong, container);
+                    break;
+                case 'optionB':
+                    renderDisplayModeB(currentSong, container);
+                    break;
+                case 'grid':
+                default:
+                    renderSong(); // Current default grid view
+                    break;
+            }
+        }
+
+        function renderDisplayModeA(song, container) {
+            // Display Mode A: Single Horizontal Row Layout
+            // Shows all cells in one horizontal line, with beat markers
+            // For Rūpaka: [1][2][3][4] | [1][2][3][4] | [1][2][3][4] (12 cells)
+            
+            if (!song || !song.sections || song.sections.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; color: #999;">No notation data to display</div>';
+                return;
+            }
+
+            container.innerHTML = ''; // Clear previous
+            const beats = parseInt(song.beats) || 3;
+            const nadai = parseInt(song.nadai) || 4;
+            const totalCells = beats * nadai;
+
+            // Render each section
+            song.sections.forEach((section, sIdx) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'mode-a-section';
+                sectionDiv.style.cssText = 'margin-bottom: 40px; background: #f9f9f9; padding: 20px; border-left: 4px solid #667eea; border-radius: 8px;';
+
+                // Section title
+                const titleDiv = document.createElement('div');
+                titleDiv.style.cssText = 'font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #2d3436;';
+                titleDiv.textContent = section.title;
+                sectionDiv.appendChild(titleDiv);
+
+                // Render each row (notation + lyric pair)
+                section.rows.forEach((row, rIdx) => {
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'mode-a-row-container';
+                    rowContainer.style.cssText = 'margin-bottom: 30px;';
+
+                    // NOTATION ROW - Single horizontal line
+                    const notationDiv = document.createElement('div');
+                    notationDiv.className = 'mode-a-notation-row';
+                    notationDiv.style.cssText = 'display: flex; gap: 4px; margin-bottom: 15px; flex-wrap: wrap; align-items: stretch;';
+
+                    // Render all 12 cells (or total cells based on beats/nadai)
+                    for (let cellIdx = 0; cellIdx < totalCells; cellIdx++) {
+                        // BEAT MARKER - Visual separator every nadai cells
+                        if (cellIdx > 0 && cellIdx % nadai === 0) {
+                            const marker = document.createElement('div');
+                            marker.style.cssText = 'width: 2px; background: #ddd; margin: 0 8px;';
+                            notationDiv.appendChild(marker);
+                        }
+
+                        const atom = row.atoms[cellIdx];
+
+                        // CELL
+                        const cell = document.createElement('div');
+                        cell.className = 'swara-cell-mode-a';
+                        cell.style.cssText = `
+                            flex: 0 0 45px;
+                            height: 50px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: white;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                            font-weight: bold;
+                            cursor: text;
+                            transition: 0.2s;
+                            font-size: 13px;
+                        `;
+                        cell.contentEditable = 'true';
+                        cell.setAttribute('data-cell-index', cellIdx);
+                        cell.setAttribute('data-beat', Math.floor(cellIdx / nadai));
+                        cell.setAttribute('data-subdivision', cellIdx % nadai);
+
+                        // Beat start marker
+                        if (cellIdx % nadai === 0) {
+                            cell.style.borderLeft = '3px solid #667eea';
+                        }
+
+                        // Highlight invalid line counts
+                        if (atom && atom.hasInvalidLineCount) {
+                            cell.style.cssText += 'background-color: #ffeaea; border: 2px solid #ff7675;';
+                            cell.title = `Line ${atom.lineNumber} has invalid note count`;
+                        }
+
+                        // Hover effect
+                        cell.onmouseover = () => {
+                            if (!cell.dataset.edited) cell.style.background = '#f0f2f5';
+                        };
+                        cell.onmouseout = () => {
+                            if (!cell.dataset.edited) cell.style.background = 'white';
+                        };
+
+                        // Edit handler
+                        cell.onInput = (e) => {
+                            if (atom) {
+                                atom.text = e.target.textContent;
+                                cell.dataset.edited = 'true';
+                            }
+                        };
+
+                        // Click to focus
+                        cell.onclick = () => cell.focus();
+
+                        cell.textContent = atom ? formatSwaraForDisplay(atom.text) : '';
+                        notationDiv.appendChild(cell);
+                    }
+
+                    rowContainer.appendChild(notationDiv);
+
+                    // LYRIC ROW - Aligned horizontally below notation
+                    const lyricRow = row.lyricRow;
+                    if (lyricRow) {
+                        const lyricDiv = document.createElement('div');
+                        lyricDiv.className = 'mode-a-lyric-row';
+                        lyricDiv.style.cssText = 'display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap;';
+
+                        for (let cellIdx = 0; cellIdx < totalCells; cellIdx++) {
+                            // Beat marker spacing
+                            if (cellIdx > 0 && cellIdx % nadai === 0) {
+                                const marker = document.createElement('div');
+                                marker.style.cssText = 'width: 2px; margin: 0 8px;';
+                                lyricDiv.appendChild(marker);
+                            }
+
+                            const lyricCell = document.createElement('div');
+                            lyricCell.className = 'lyric-cell-mode-a';
+                            lyricCell.style.cssText = `
+                                flex: 0 0 45px;
+                                height: 40px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background: #f9f9f9;
+                                border: 1px solid #eee;
+                                border-radius: 4px;
+                                font-size: 11px;
+                                color: #666;
+                                cursor: grab;
+                                user-select: none;
+                                text-align: center;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            `;
+                            lyricCell.draggable = true;
+
+                            // Populate with lyric if exists
+                            if (lyricRow.lyrics && lyricRow.lyrics[cellIdx]) {
+                                lyricCell.textContent = lyricRow.lyrics[cellIdx];
+                            }
+
+                            // Drag handlers for lyric alignment
+                            lyricCell.ondragstart = (e) => {
+                                e.dataTransfer.effectAllowed = 'move';
+                                e.dataTransfer.setData('text/plain', lyricCell.textContent);
+                                e.target.style.opacity = '0.5';
+                            };
+
+                            lyricCell.ondragend = (e) => {
+                                e.target.style.opacity = '1';
+                            };
+
+                            lyricCell.ondragover = (e) => {
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = 'move';
+                                e.target.style.background = '#e8f5e9';
+                            };
+
+                            lyricCell.ondragleave = (e) => {
+                                if (e.target === lyricCell) {
+                                    e.target.style.background = '#f9f9f9';
+                                }
+                            };
+
+                            lyricCell.ondrop = (e) => {
+                                e.preventDefault();
+                                const draggedText = e.dataTransfer.getData('text/plain');
+                                lyricCell.textContent = draggedText;
+                                lyricCell.style.background = '#f9f9f9';
+                            };
+
+                            lyricDiv.appendChild(lyricCell);
+                        }
+
+                        rowContainer.appendChild(lyricDiv);
+                    }
+
+                    sectionDiv.appendChild(rowContainer);
+                });
+
+                container.appendChild(sectionDiv);
+            });
+
+            console.log('✅ Display Mode A (Single Row) rendered successfully');
+        }
+
+        function renderDisplayModeB(song, container) {
+            // Display Mode B: Stacked Beats Layout
+            // Shows beats vertically: 3 rows (one per beat) × 4 subdivisions
+            // For Rūpaka thaala (3×4)
+            
+            if (!song || !song.sections || song.sections.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; color: #999;">No notation data to display</div>';
+                return;
+            }
+
+            container.innerHTML = ''; // Clear previous
+            const beats = parseInt(song.beats) || 3;
+            const nadai = parseInt(song.nadai) || 4;
+            const totalCells = beats * nadai;
+            const cellsPerBeat = nadai;
+
+            // Render each section
+            song.sections.forEach((section, sIdx) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'mode-b-section';
+                sectionDiv.style.cssText = 'margin-bottom: 40px; background: #f9f9f9; padding: 20px; border-left: 4px solid #667eea; border-radius: 8px;';
+
+                // Section title
+                const titleDiv = document.createElement('div');
+                titleDiv.style.cssText = 'font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #2d3436;';
+                titleDiv.textContent = section.title;
+                sectionDiv.appendChild(titleDiv);
+
+                // Render each row (notation + lyric pair)
+                section.rows.forEach((row, rIdx) => {
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'mode-b-row-container';
+                    rowContainer.style.cssText = 'margin-bottom: 30px;';
+
+                    // NOTATION ROW - Stacked Beats Layout
+                    const notationDiv = document.createElement('div');
+                    notationDiv.className = 'mode-b-notation-row';
+                    notationDiv.style.cssText = 'display: flex; gap: 20px; margin-bottom: 15px; align-items: flex-start;';
+
+                    // Render each beat
+                    for (let beatIdx = 0; beatIdx < beats; beatIdx++) {
+                        const beatDiv = document.createElement('div');
+                        beatDiv.className = 'beat-container';
+                        beatDiv.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 10px;';
+
+                        // Beat label
+                        const beatLabel = document.createElement('div');
+                        beatLabel.style.cssText = 'font-size: 12px; font-weight: bold; color: #667eea; text-align: center; width: 100%;';
+                        beatLabel.textContent = `Beat ${beatIdx + 1}`;
+                        beatDiv.appendChild(beatLabel);
+
+                        // Subdivision row (4 cells for nadai)
+                        const subdivisionsDiv = document.createElement('div');
+                        subdivisionsDiv.className = 'subdivisions-row';
+                        subdivisionsDiv.style.cssText = 'display: flex; gap: 8px; border-bottom: 2px solid #ddd; padding-bottom: 8px;';
+
+                        for (let subIdx = 0; subIdx < cellsPerBeat; subIdx++) {
+                            const cellIdx = beatIdx * cellsPerBeat + subIdx;
+                            const atom = row.atoms[cellIdx];
+
+                            // CELL
+                            const cell = document.createElement('div');
+                            cell.className = 'swara-cell-mode-b';
+                            cell.style.cssText = `
+                                width: 50px;
+                                height: 50px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background: white;
+                                border: 1px solid #ddd;
+                                border-radius: 4px;
+                                font-weight: bold;
+                                cursor: text;
+                                transition: 0.2s;
+                                font-size: 14px;
+                            `;
+                            cell.contentEditable = 'true';
+                            cell.setAttribute('data-cell-index', cellIdx);
+                            cell.setAttribute('data-beat', beatIdx);
+                            cell.setAttribute('data-subdivision', subIdx);
+
+                            // Highlight invalid line counts
+                            if (atom && atom.hasInvalidLineCount) {
+                                cell.style.cssText += 'background-color: #ffeaea; border: 2px solid #ff7675;';
+                                cell.title = `Line ${atom.lineNumber} has invalid note count`;
+                            }
+
+                            // Hover effect
+                            cell.onmouseover = () => {
+                                if (!cell.dataset.edited) cell.style.background = '#f0f2f5';
+                            };
+                            cell.onmouseout = () => {
+                                if (!cell.dataset.edited) cell.style.background = 'white';
+                            };
+
+                            // Edit handler
+                            cell.onInput = (e) => {
+                                if (atom) {
+                                    atom.text = e.target.textContent;
+                                    cell.dataset.edited = 'true';
+                                }
+                            };
+
+                            // Click to focus
+                            cell.onclick = () => cell.focus();
+
+                            cell.textContent = atom ? formatSwaraForDisplay(atom.text) : '';
+                            subdivisionsDiv.appendChild(cell);
+                        }
+
+                        beatDiv.appendChild(subdivisionsDiv);
+                        notationDiv.appendChild(beatDiv);
+                    }
+
+                    rowContainer.appendChild(notationDiv);
+
+                    // LYRIC ROW - Aligned below notation
+                    const lyricRow = row.lyricRow;
+                    if (lyricRow) {
+                        const lyricDiv = document.createElement('div');
+                        lyricDiv.className = 'mode-b-lyric-row';
+                        lyricDiv.style.cssText = 'display: flex; gap: 20px; margin-top: 10px; align-items: flex-start;';
+
+                        for (let beatIdx = 0; beatIdx < beats; beatIdx++) {
+                            const beatLyricDiv = document.createElement('div');
+                            beatLyricDiv.style.cssText = 'display: flex; gap: 8px; flex: 1;';
+
+                            for (let subIdx = 0; subIdx < cellsPerBeat; subIdx++) {
+                                const lyricCell = document.createElement('div');
+                                lyricCell.className = 'lyric-cell-mode-b';
+                                lyricCell.style.cssText = `
+                                    width: 50px;
+                                    height: 40px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    background: #f9f9f9;
+                                    border: 1px solid #eee;
+                                    border-radius: 4px;
+                                    font-size: 12px;
+                                    color: #666;
+                                    cursor: grab;
+                                    user-select: none;
+                                `;
+                                lyricCell.draggable = true;
+
+                                // Populate with lyric if exists
+                                const cellIdx = beatIdx * cellsPerBeat + subIdx;
+                                if (lyricRow.lyrics && lyricRow.lyrics[cellIdx]) {
+                                    lyricCell.textContent = lyricRow.lyrics[cellIdx];
+                                }
+
+                                // Drag handlers for lyric alignment
+                                lyricCell.ondragstart = (e) => {
+                                    e.dataTransfer.effectAllowed = 'move';
+                                    e.dataTransfer.setData('text/plain', lyricCell.textContent);
+                                    e.target.style.opacity = '0.5';
+                                };
+
+                                lyricCell.ondragend = (e) => {
+                                    e.target.style.opacity = '1';
+                                };
+
+                                lyricCell.ondragover = (e) => {
+                                    e.preventDefault();
+                                    e.dataTransfer.dropEffect = 'move';
+                                    e.target.style.background = '#e8f5e9';
+                                };
+
+                                lyricCell.ondragleave = (e) => {
+                                    if (e.target === lyricCell) {
+                                        e.target.style.background = '#f9f9f9';
+                                    }
+                                };
+
+                                lyricCell.ondrop = (e) => {
+                                    e.preventDefault();
+                                    const draggedText = e.dataTransfer.getData('text/plain');
+                                    lyricCell.textContent = draggedText;
+                                    lyricCell.style.background = '#f9f9f9';
+                                };
+
+                                beatLyricDiv.appendChild(lyricCell);
+                            }
+
+                            lyricDiv.appendChild(beatLyricDiv);
+                        }
+
+                        rowContainer.appendChild(lyricDiv);
+                    }
+
+                    sectionDiv.appendChild(rowContainer);
+                });
+
+                container.appendChild(sectionDiv);
+            });
+
+            console.log('✅ Display Mode B (Stacked Beats) rendered successfully');
+        }
+
+        function toggleSubdivisionLabels(show) {
+            // TODO: Implement subdivision label toggle
+            // When true: Show [1][2][3][4] above each beat
+            // When false: Show only beat numbers (B1, B2, B3)
+            console.log(`🏷️  ${show ? 'Showing' : 'Hiding'} subdivision labels (not yet implemented)`);
         }
 
         function formatSwaraForDisplay(atom) {
