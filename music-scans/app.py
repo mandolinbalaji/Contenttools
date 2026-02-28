@@ -653,20 +653,37 @@ def _save_kalpana_swara_song(song_data):
 def _delete_kalpana_swara_song(song_id):
     """Delete a KalpanaSwaramComposer song file from songs/ folder by ID"""
     # Search through all song files to find and delete the one with matching ID
+    logger.info(f"Attempting to delete song with ID: {song_id}")
+    
     if not KALPANA_SWARA_SONGS_DIR.exists():
+        logger.error("Songs directory does not exist")
         return False
+    
     try:
         for song_file in KALPANA_SWARA_SONGS_DIR.glob("*.json"):
             try:
                 with open(song_file, 'r', encoding='utf-8') as f:
                     song_data = json.load(f)
-                    if song_data.get('id') == song_id:
+                    file_id = song_data.get('id')
+                    file_name = song_data.get('name', 'Unknown')
+                    logger.debug(f"Checking file {song_file.name}: id={file_id[:8]}..., name={file_name}")
+                    
+                    if file_id == song_id:
+                        logger.info(f"Found matching song! Deleting: {song_file.name}")
                         song_file.unlink()  # Delete the file
+                        logger.info(f"Successfully deleted: {song_file.name}")
                         return True
-            except:
+            except json.JSONDecodeError as je:
+                logger.error(f"Failed to parse JSON in {song_file.name}: {je}")
                 continue
+            except Exception as e:
+                logger.error(f"Error reading {song_file.name}: {e}")
+                continue
+        
+        logger.warning(f"Song with ID {song_id} not found in any file")
     except Exception as e:
         logger.error(f"Failed to delete song {song_id}: {e}")
+    
     return False
 
 
@@ -733,7 +750,11 @@ def update_kalpana_swara_song(song_id):
 @app.route('/api/kalpana-swara-songs/<song_id>', methods=['DELETE'])
 def delete_kalpana_swara_song(song_id):
     """Delete a KalpanaSwaramComposer song from songs/ folder"""
-    if _delete_kalpana_swara_song(song_id):
+    logger.info(f"DELETE endpoint called with song_id: {song_id}")
+    result = _delete_kalpana_swara_song(song_id)
+    logger.info(f"Delete result: {result}")
+    
+    if result:
         return jsonify({"success": True})
     return jsonify({"error": "Song not found"}), 404
 
