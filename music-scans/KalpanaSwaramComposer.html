@@ -3038,7 +3038,9 @@
             // Remove spaces and pipes from phrase display
             const phraseDisplay = notation.replace(/[\s|]+/g, '');
             
-            // Count notes only on first line (before pipe) for eduppu calculation
+            // Count all notes for reference, but don't apply eduppu offset for LLM imports
+            // since user specifies exact notation they want
+            const allNoteCount = countNotes(notation);
             const firstLineOnly = notation.split('|')[0];
             const firstLineNoteCount = countNotes(firstLineOnly);
             
@@ -3050,8 +3052,8 @@
                 phraseDisplay: phraseDisplay,
                 lyrics: lyrics,
                 comments: comments,
-                noteCount: firstLineNoteCount,
-                leadingCommas: 0,
+                noteCount: firstLineNoteCount,  // Use first line for eduppu calculation
+                leadingCommas: 0,  // No leading commas for LLM imports - user specifies exact notation
                 fullPhrase: phraseDisplay
             };
         }
