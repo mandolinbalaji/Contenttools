@@ -2311,8 +2311,12 @@
             // All cycles use currentSong.eduppu
             const eduppu = currentSong.eduppu;
             
-            // Calculate leading commas and total items
-            const leadingCommas = calculateLeadingCommas(cycleData.noteCount, cycleLength, eduppu);
+            // Use stored leading commas if available (e.g., 0 for LLM imports)
+            // Otherwise calculate based on eduppu
+            let leadingCommas = cycleData.leadingCommas;
+            if (leadingCommas === undefined || leadingCommas === null) {
+                leadingCommas = calculateLeadingCommas(cycleData.noteCount, cycleLength, eduppu);
+            }
             
             // Convert to items array (treating r1, g3 etc as single items)
             const items = [];
