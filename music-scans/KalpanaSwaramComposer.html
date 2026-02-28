@@ -2551,6 +2551,11 @@
                 const response = await fetch(`${API_BASE}/kalpana-swara-songs`);
                 if (response.ok) {
                     const songs = await response.json();
+                    // Update the global allSongs array
+                    allSongs = songs;
+                    // Render playlist and filters
+                    renderPlaylist();
+                    renderTagsFilter();
                     return songs;
                 }
             } catch (e) {
