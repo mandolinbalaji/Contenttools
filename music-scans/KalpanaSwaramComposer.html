@@ -2907,15 +2907,17 @@
         }
 
         function importLLMFormat() {
-            const songName = prompt('Enter song name for LLM import:');
-            if (!songName || !songName.trim()) return;
-
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.txt';
             input.onchange = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
+                
+                // Ask for song name after file is selected
+                const songName = prompt('Enter song name for LLM import:');
+                if (!songName || !songName.trim()) return;
+                
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     try {
