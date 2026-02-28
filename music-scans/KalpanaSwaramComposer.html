@@ -872,6 +872,9 @@
             color: #000;
             padding-bottom: 2px;
             transition: font-size 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .lyrics-cell {
@@ -882,28 +885,9 @@
             min-height: 1.2em;
             padding: 2px 4px;
             border: 1px solid transparent;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            overflow: visible;
-            cursor: grab;
-            transition: font-size 0.2s;
-            display: block;
-        }
-        
-        /* Lyrics cells - read-only display only */
-        .lyrics-cell {
-            font-family: monospace;
-            font-style: italic;
-            font-size: 13px;
-            color: #0047b3;
-            min-height: 1.2em;
-            padding: 2px 4px;
-            border: 1px solid transparent;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            overflow: visible;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             cursor: default;
             transition: font-size 0.2s;
             display: block;
@@ -3055,7 +3039,7 @@
             
             return {
                 id: cycleId,
-                label: `Cycle ${Date.now()}`,
+                label: `Cycle ${currentSong.cycles.length + 1}`,
                 expanded: true,
                 phraseText: notation,
                 phraseDisplay: phraseDisplay,
