@@ -1422,6 +1422,7 @@
             <button onclick="newSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Create New Song">➕ New</button>
             <button onclick="saveSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Save Song as JSON">💾 Save</button>
             <button onclick="importSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import Song from JSON file">📥 Import</button>
+            <button onclick="importLLMFormat()" style="background: rgba(255,165,0,0.3); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import from LLM format text file">🦾 LLM Import</button>
             <button onclick="openPracticeMode()" style="background: #ffd700; color: #333; font-weight: 600; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;" title="Practice Mode">🎯 Practice</button>
             <button onclick="openHelp()">?</button>
             <button onclick="toggleSettings()">⚙</button>
@@ -2903,6 +2904,161 @@
                 reader.readAsText(file);
             };
             input.click();
+        }
+
+        function importLLMFormat() {
+            const songName = prompt('Enter song name for LLM import:');
+            if (!songName || !songName.trim()) return;
+
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.txt';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const txtContent = event.target.result;
+                        const parsedSong = parseLLMFormat(txtContent, songName.trim());
+                        
+                        currentSong = parsedSong;
+                        loadSongToUI();
+                        
+                        // Store reference to source file
+                        currentSong.sourceFile = file.name;
+                        
+                        alert(`✓ Imported "${songName}"!\n\nCreated ${parsedSong.cycles.length} cycles\n\nNow click Save to save the song`);
+                    } catch (error) {
+                        alert('Error parsing LLM format: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function parseLLMFormat(content, songName) {
+            // Parse LLM format text and create a song object with cycles
+            
+            const lines = content.split('\n');
+            const cycles = [];
+            let currentSection = '';
+            let sectionInfo = '';
+            let pendingLine = null;
+            let pendingLyrics = null;
+            
+            // Parse metadata from first lines
+            let ragam = '';
+            let composer = '';
+            
+            for (let line of lines) {
+                line = line.trim();
+                
+                // Skip empty lines and comments
+                if (!line || line.startsWith('#')) continue;
+                
+                // Parse metadata
+                if (line.toLowerCase().startsWith('ragam:')) {
+                    ragam = line.substring(7).trim();
+                    continue;
+                }
+                if (line.toLowerCase().startsWith('composer:')) {
+                    composer = line.substring(9).trim();
+                    continue;
+                }
+                
+                // Detect section headers (Pallavi:, Anupallavi:, etc.)
+                if (line.match(/^[A-Za-z\s]+:$/) && !line.toLowerCase().startsWith('line:') && !line.toLowerCase().startsWith('lr:') && !line.toLowerCase().startsWith('infos:') && !line.toLowerCase().startsWith('infoe:')) {
+                    currentSection = line;
+                    sectionInfo = currentSection;
+                    continue;
+                }
+                
+                // Parse InfoS (section start info)
+                if (line.toLowerCase().startsWith('infos:')) {
+                    const infoText = line.substring(6).trim();
+                    sectionInfo += (sectionInfo ? '\nInfoS: ' : 'InfoS: ') + infoText;
+                    continue;
+                }
+                
+                // Parse InfoE (section end info)
+                if (line.toLowerCase().startsWith('infoe:')) {
+                    const infoText = line.substring(6).trim();
+                    sectionInfo += '\nInfoE: ' + infoText;
+                    continue;
+                }
+                
+                // Parse Line: (notation)
+                if (line.toLowerCase().startsWith('line:')) {
+                    // If we have a pending line without lyrics, create cycle first
+                    if (pendingLine && !pendingLyrics) {
+                        const cycle = createCycleFromLLM(pendingLine, pendingLyrics || '', sectionInfo);
+                        cycles.push(cycle);
+                    }
+                    
+                    pendingLine = line.substring(5).trim();
+                    pendingLyrics = null;
+                    continue;
+                }
+                
+                // Parse LR: (lyrics)
+                if (line.toLowerCase().startsWith('lr:')) {
+                    pendingLyrics = line.substring(3).trim();
+                    
+                    // Create cycle when we get both Line and LR
+                    if (pendingLine) {
+                        const cycle = createCycleFromLLM(pendingLine, pendingLyrics, sectionInfo);
+                        cycles.push(cycle);
+                        pendingLine = null;
+                        pendingLyrics = null;
+                    }
+                    continue;
+                }
+            }
+            
+            // Don't forget the last pending line if any
+            if (pendingLine) {
+                const cycle = createCycleFromLLM(pendingLine, pendingLyrics || '', sectionInfo);
+                cycles.push(cycle);
+            }
+            
+            // Create the song object
+            const song = {
+                id: generateUUID(),
+                name: songName,
+                ragam: ragam,
+                composer: composer,
+                sruthi: 'C',
+                thalam: 'Adhi',
+                beats: 8,
+                nadai: 4,
+                eduppu: 4,
+                tags: ['imported-llm'],
+                scale: '',
+                cycles: cycles,
+                sourceFile: ''
+            };
+            
+            return song;
+        }
+
+        function createCycleFromLLM(notation, lyrics, comments) {
+            const cycleId = `cycle-${Date.now()}-${Math.random()}`;
+            const phraseDisplay = notation.replace(/\s+/g, '');
+            
+            return {
+                id: cycleId,
+                label: `Cycle ${Date.now()}`,
+                expanded: true,
+                phraseText: notation,
+                phraseDisplay: phraseDisplay,
+                lyrics: lyrics,
+                comments: comments,
+                noteCount: countNotes(notation),
+                leadingCommas: 0,
+                fullPhrase: phraseDisplay
+            };
         }
 
         function loadSongToUI() {
