@@ -221,9 +221,10 @@
       }
     },
     "metadataKeywords": {
-      "description": "Keywords marking song metadata",
+      "description": "Keywords marking song metadata, sections, and line types. Used by parser to identify structure.",
+      "parseBehavior": "Parser checks lines against these keywords. When found, triggers appropriate parsing behavior.",
       "keywords": {
-        "Composition:": "Song title",
+        "Composition:": "Song title - extract value after colon",
         "Rāga:": "Raga name (Unicode)",
         "Ragam:": "Raga name (ASCII)",
         "Tāḷa:": "Tala name (Unicode)",
@@ -232,11 +233,98 @@
         "Ārōhaṇa:": "Ascending scale (Unicode)",
         "Arohana:": "Ascending scale (ASCII)",
         "Avarōhaṇa:": "Descending scale (Unicode)",
-        "Avarohana:": "Descending scale (ASCII)",
-        "Pallavi": "First section",
-        "Anupallavi": "Second section",
-        "Charaṇam": "Third section (Unicode)",
-        "Charanam": "Third section (ASCII)"
+        "Avarohana:": "Descending scale (ASCII)"
+      }
+    },
+    "sectionKeywords": {
+      "description": "Keywords that mark major sections of a composition. Parser creates new section when found. Supports both abbreviated (PALLAV:) and display name (Pallavi:) formats.",
+      "format": "Keyword followed by colon (e.g., PALLAV: or Pallavi:, CHARANAM: or Charanam:)",
+      "parseBehavior": "When encountered: (1) Create new section with matching title, (2) Suppress keyword line from content, (3) Parse subsequent lines as section notation/lyrics",
+      "keywords": {
+        "PALLAV:": {
+          "name": "Pallavi",
+          "meaning": "First/head section - establishes raga",
+          "sections": 1,
+          "type": "songSection"
+        },
+        "Pallavi:": {
+          "name": "Pallavi",
+          "meaning": "First/head section - establishes raga (display name format)",
+          "sections": 1,
+          "type": "songSection"
+        },
+        "ANUPALLAVI:": {
+          "name": "Anupallavi",
+          "meaning": "Second section - develops theme",
+          "sections": 1,
+          "type": "songSection"
+        },
+        "Anupallavi:": {
+          "name": "Anupallavi",
+          "meaning": "Second section - develops theme (display name format)",
+          "sections": 1,
+          "type": "songSection"
+        },
+        "CHARANAM:": {
+          "name": "Charanam",
+          "meaning": "Third section - culmination, often with multiple sub-sections",
+          "sections": "1+",
+          "type": "songSection"
+        },
+        "Charanam:": {
+          "name": "Charanam",
+          "meaning": "Third section - culmination, often with multiple sub-sections (display name format)",
+          "sections": "1+",
+          "type": "songSection"
+        },
+        "Charaṇam:": {
+          "name": "Charanam",
+          "meaning": "Third section - culmination with Unicode ṇ (display name format with diacritics)",
+          "sections": "1+",
+          "type": "songSection"
+        }
+      }
+    },
+    "lineKeywords": {
+      "description": "Keywords that identify line types within sections. Used to label and structure content within sections.",
+      "format": "Keyword followed by colon at start of line (e.g., Line:, Line1:, Line2:, LR:)",
+      "parseBehavior": "Remove keyword prefix and classify row type based on keyword. Next line inherits classification.",
+      "keywords": {
+        "Line:": {
+          "name": "Line",
+          "meaning": "Generic notation line (same as Line1:, Line2:, etc.)",
+          "rowType": "swara",
+          "treatAs": "notation"
+        },
+        "Line1:": {
+          "name": "Line 1",
+          "meaning": "First line of a section or subsection",
+          "rowType": "swara",
+          "treatAs": "notation"
+        },
+        "Line2:": {
+          "name": "Line 2",
+          "meaning": "Second line of a section or subsection",
+          "rowType": "swara",
+          "treatAs": "notation"
+        },
+        "LR:": {
+          "name": "Lyric Row",
+          "meaning": "Lyric/text corresponding to swara row. LR: must follow a swara line.",
+          "rowType": "lyric",
+          "treatAs": "lyric",
+          "parseInstruction": "Extract lyrics and align with previous swara row atoms"
+        }
+      }
+    },
+    "infoBlockKeywords": {
+      "description": "Keywords marking information blocks that should be ignored during composition parsing and formatting.",
+      "format": "InfoS: (start) and InfoE: (end) as standalone lines",
+      "parseBehavior": "All lines between InfoS: and InfoE: (inclusive) are skipped. Not included in song content or atoms.",
+      "useCase": "Store metadata, comments, or reference info without affecting parsed composition",
+      "keywords": {
+        "InfoS:": { "name": "Info Section Start", "meaning": "Mark beginning of information block to ignore", "action": "START SKIP MODE - do not parse lines until InfoE: found", "includeLine": false },
+        "InfoE:": { "name": "Info Section End", "meaning": "Mark end of information block", "action": "END SKIP MODE - resume parsing after this line", "includeLine": false }
       }
     },
     "validCharactersList": {
@@ -245,6 +333,7 @@
       "allVariants": "0 1 2 3",
       "allDotsAboveNotes": "Ṡ Ṙ Ġ Ṁ Ṗ Ḋ Ṅ",
       "allDotsBelowNotes": "Ṣ Ṛ G̣ Ṃ P̣ Ḍ Ṇ",
+      "allAccentVariants": "Ś ś Ŕ ŕ Ɠ ɠ",
       "allStructuralSymbols": "{ } [ ] | / \\ : - .",
       "rest": ",",
       "notes": "All lowercase variants also valid"
@@ -252,8 +341,8 @@
     "validationRegex": {
       "description": "Patterns for programmatic validation",
       "note": "Use these in SongNotationComposer.html validator",
-      "allValidCharacters": "/[SRGMPDNsrgmpdn0-3,{}\\[\\]|/\\\\:\\-.\\.\\sṠṘĠṀṖḊṄṡṙġṁṗḋṅṢṛG̣ṃP̣ḍṇṣ]/g",
-      "invalidCharacters": "/[^SRGMPDNsrgmpdn0-3,{}\\[\\]|/\\\\:\\-.\\.\\sṠṘĠṀṖḊṄṡṙġṁṗḋṅṢṛG̣ṃP̣ḍṇṣ]/g"
+      "allValidCharacters": "/[SRGMPDNsrgmpdn0-3,{}\\[\\]|/\\\\:\\-.\\.\\sṠṘĠṀṖḊṄṡṙġṁṗḋṅṢṛG̣ṃP̣ḍṇṣŚśŔŕƓɠ]/g",
+      "invalidCharacters": "/[^SRGMPDNsrgmpdn0-3,{}\\[\\]|/\\\\:\\-.\\.\\sṠṘĠṀṖḊṄṡṙġṁṗḋṅṢṛG̣ṃP̣ḍṇṣŚśŔŕƓɠ]/g"
     }
   },
   "version": "3.0",

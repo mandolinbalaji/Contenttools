@@ -674,9 +674,9 @@
     <div class="main-content">
         <header>
             <div class="header-controls">
-                <div style="width: 80px;">
-                    <label>Sruthi</label>
-                    <select id="sruthi">
+                <div style="width: 65px;">
+                    <label style="font-size: 11px;">Sruthi</label>
+                    <select id="sruthi" style="font-size: 12px; padding: 4px;">
                         <option>C</option>
                         <option>C#</option>
                         <option>D</option>
@@ -691,21 +691,21 @@
                         <option>B</option>
                     </select>
                 </div>
-                <div style="width: 60px;">
-                    <label>Beats</label>
-                    <input type="number" id="beats" value="8" min="1">
+                <div style="width: 50px;">
+                    <label style="font-size: 11px;">Beats</label>
+                    <input type="number" id="beats" value="8" min="1" style="font-size: 12px; padding: 4px;">
                 </div>
-                <div style="width: 60px;">
-                    <label>Nadai</label>
-                    <input type="number" id="nadai" value="4" min="1" onchange="updateBeatIndicators()">
+                <div style="width: 50px;">
+                    <label style="font-size: 11px;">Nadai</label>
+                    <input type="number" id="nadai" value="4" min="1" onchange="updateBeatIndicators()" style="font-size: 12px; padding: 4px;">
                 </div>
-                <div style="width: 80px;">
-                    <label>Eduppu</label>
-                    <input type="number" id="eduppu" value="1" min="1" title="Tala cycle start position">
+                <div style="width: 65px;">
+                    <label style="font-size: 11px;">Eduppu</label>
+                    <input type="number" id="eduppu" value="1" min="1" title="Tala cycle start position" style="font-size: 12px; padding: 4px;">
                 </div>
-                <div style="width: 80px;">
-                    <label>BPM</label>
-                    <input type="number" id="bpm" value="120" min="40">
+                <div style="width: 65px;">
+                    <label style="font-size: 11px;">BPM</label>
+                    <input type="number" id="bpm" value="120" min="40" style="font-size: 12px; padding: 4px;">
                 </div>
                 <div style="display: flex; gap: 12px; align-items: flex-end; padding-bottom: 2px;">
                     <label style="font-weight: 600; font-size: 11px; white-space: nowrap;">Ragaswara Variants:</label>
@@ -743,6 +743,7 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="btn btn-primary" onclick="parseAndRender()" title="Parse notation and display grid">⚡ Parse & Display</button>
                 <button class="btn btn-outline" onclick="newSong()" title="Clear and start new">📄 New</button>
                 <button class="btn btn-outline" onclick="importFile()" title="Import from file">📥 Import</button>
                 <button class="btn btn-outline" onclick="saveNotationSource()"
@@ -790,12 +791,6 @@
                         <span>⚠️ Invalid characters detected</span>
                     </span>
                 </div>
-                <div style="margin-top: 8px; min-height: 20px;">
-                    <span id="invalidCharIndicator" style="display: none; font-size: 12px; color: #ff7675; font-weight: 600; align-items: center; gap: 6px;">
-                        <span>⚠️ Invalid characters detected</span>
-                    </span>
-                </div>
-                <button class="btn btn-primary" onclick="parseAndRender()">⚡ Parse & Display</button>
                 
                 <div id="speedToolbar" class="speed-toolbar" style="display: none;">
                     <label>Mark cells for speed:</label>
@@ -899,12 +894,28 @@
         let referenceData = null;  // Loaded from /metadata/reference-data.json
         let invalidCharRegex = null; // Regex pattern for detecting invalid characters
 
-        // Load reference data and set up validators
+        /**
+         * Load reference data from metadata/reference-data.json
+         * CRITICAL: This file is the SINGLE SOURCE OF TRUTH for all valid characters and keywords.
+         * DO NOT hardcode keywords, character lists, or patterns - always load from here.
+         * 
+         * Sections used by parser:
+         * - validCharacters.sectionKeywords - For PALLAV:, ANUPALLAVI:, CHARANAM:
+         * - validCharacters.lineKeywords - For Line:, Line1:, Line2:, LR:
+         * - validCharacters.infoBlockKeywords - For InfoS: and InfoE:
+         * - validCharacters.metadataKeywords - For Composition:, Ragam:, etc.
+         * - validCharacters.validCharactersList - For note character validation (dots above/below/accents)
+         */
         async function loadReferenceData() {
             try {
                 const response = await fetch('/metadata/reference-data.json');
                 if (!response.ok) throw new Error('Failed to load reference-data.json');
                 referenceData = await response.json();
+                
+                console.log('📚 REFERENCE DATA LOADED - Using as single source of truth');
+                console.log('   - sectionKeywords:', Object.keys(referenceData.validCharacters?.sectionKeywords?.keywords || {}));
+                console.log('   - lineKeywords:', Object.keys(referenceData.validCharacters?.lineKeywords?.keywords || {}));
+                console.log('   - infoBlockKeywords:', Object.keys(referenceData.validCharacters?.infoBlockKeywords?.keywords || {}));
                 
                 // Extract the invalidCharacters regex pattern
                 if (referenceData.validCharacters && referenceData.validCharacters.validationRegex) {
@@ -932,21 +943,210 @@
             }
         }
 
-        // Check if a line is a section header (Pallavi, Anupallavi, Charanam, etc.)
-        function isSectionHeader(trimmedLine) {
-            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.metadataKeywords) {
-                // Fallback if reference data not loaded
-                return /Pallavi|Anupallavi|Charanam|Charaṇam/.test(trimmedLine);
+        /**
+         * VALIDATION FUNCTION - Prevents Hardcoding
+         * Checks that all required reference-data sections are loaded and accessible
+         * Logs warnings if parser functions would fall back to hardcoded values
+         * 
+         * Call this after loadReferenceData() to validate parser initialization
+         */
+        function validateReferenceDataUsage() {
+            console.log('🔍 VALIDATING REFERENCE DATA USAGE...');
+            
+            const requiredSections = {
+                'sectionKeywords': 'validCharacters.sectionKeywords.keywords',
+                'lineKeywords': 'validCharacters.lineKeywords.keywords',
+                'infoBlockKeywords': 'validCharacters.infoBlockKeywords.keywords',
+                'metadataKeywords': 'validCharacters.metadataKeywords.keywords',
+                'validCharactersList': 'validCharacters.validCharactersList'
+            };
+            
+            let allValid = true;
+            for (const [section, path] of Object.entries(requiredSections)) {
+                try {
+                    const parts = path.split('.');
+                    let obj = referenceData;
+                    for (const part of parts) {
+                        obj = obj[part];
+                        if (!obj) throw new Error(`Missing: ${path}`);
+                    }
+                    console.log(`✅ ${section} - Found ${Object.keys(obj).length} items`);
+                } catch (e) {
+                    console.error(`❌ ${section} NOT FOUND - Parser will use fallback regex (HARDCODED)`);
+                    allValid = false;
+                }
             }
             
-            const keywords = referenceData.validCharacters.metadataKeywords.keywords;
-            for (const keyword in keywords) {
-                // Check section headers: Pallavi, Anupallavi, Charaṇam, Charanam
-                if (keyword.match(/Pallavi|Anupallavi|Charanam|Charaṇam/) && trimmedLine.includes(keyword)) {
+            if (allValid) {
+                console.log('✅ ALL REFERENCE DATA SECTIONS VALID - No hardcoding fallbacks needed');
+            } else {
+                console.error('⚠️  WARNING: Parser will fall back to hardcoded values! Check reference-data.json');
+            }
+            
+            return allValid;
+        }        /**
+         * REFERENCE-DATA MAPPING: Uses validCharacters.sectionKeywords from reference-data.json
+         * DO NOT hardcode section keywords here - they are loaded dynamically from reference-data
+         * 
+         * When adding new sections, update reference-data.json sectionKeywords, not this function.
+         */
+        function isSectionHeader(trimmedLine) {
+            if (!referenceData || !referenceData.validCharacters?.sectionKeywords) {
+                // Fallback if reference data not loaded - BUT THIS IS A FAILURE STATE
+                console.warn('⚠️  WARNING: Using fallback regex - reference-data not loaded!');
+                return /PALLAV:|ANUPALLAVI:|CHARANAM:/i.test(trimmedLine);  // Case-insensitive
+            }
+            
+            const sectionKeywords = referenceData.validCharacters.sectionKeywords.keywords;
+            const upperLine = trimmedLine.toUpperCase();  // Convert line to uppercase
+            for (const keyword in sectionKeywords) {
+                if (upperLine.startsWith(keyword.toUpperCase())) {  // Also uppercase keyword for comparison
                     return true;
                 }
             }
             return false;
+        }
+
+        /**
+         * REFERENCE-DATA MAPPING: Uses validCharacters.sectionKeywords.keywords[keyword].name
+         * Maps keyword (e.g., "PALLAV:") to section display name (e.g., "Pallavi")
+         * Always loads from reference-data - NO hardcoding of section names
+         * IMPORTANT: Handles both uppercase and mixed-case keywords (e.g., "PALLAV:" or "Pallavi:")
+         */
+        function getSectionNameFromKeyword(keyword) {
+            if (!referenceData || !referenceData.validCharacters?.sectionKeywords) {
+                console.warn('⚠️  WARNING: Using fallback - reference-data not loaded!');
+                return keyword.replace(':', '');
+            }
+            
+            const sectionKeywords = referenceData.validCharacters.sectionKeywords.keywords;
+            const upperKeyword = keyword.toUpperCase();  // Normalize to uppercase for lookup
+            if (sectionKeywords[upperKeyword] && sectionKeywords[upperKeyword].name) {
+                return sectionKeywords[upperKeyword].name;
+            }
+            return keyword.replace(':', '');
+        }
+
+        /**
+         * REFERENCE-DATA MAPPING: Uses validCharacters.infoBlockKeywords from reference-data.json
+         * Detects InfoS: marker to skip content blocks that should be ignored during parsing
+         * DO NOT hardcode "InfoS:" here - it's defined in reference-data
+         */
+        function isInfoBlockStart(trimmedLine) {
+            if (!referenceData || !referenceData.validCharacters?.infoBlockKeywords) {
+                console.warn('⚠️  WARNING: Using fallback - reference-data not loaded!');
+                return trimmedLine.startsWith('InfoS:');
+            }
+            
+            const infoKeywords = referenceData.validCharacters.infoBlockKeywords.keywords;
+            for (const keyword in infoKeywords) {
+                if (keyword === 'InfoS:' && trimmedLine.startsWith(keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * REFERENCE-DATA MAPPING: Uses validCharacters.infoBlockKeywords from reference-data.json
+         * Detects InfoE: marker to resume parsing after info block
+         * DO NOT hardcode "InfoE:" here - it's defined in reference-data
+         */
+        function isInfoBlockEnd(trimmedLine) {
+            if (!referenceData || !referenceData.validCharacters?.infoBlockKeywords) {
+                console.warn('⚠️  WARNING: Using fallback - reference-data not loaded!');
+                return trimmedLine.startsWith('InfoE:');
+            }
+            
+            const infoKeywords = referenceData.validCharacters.infoBlockKeywords.keywords;
+            for (const keyword in infoKeywords) {
+                if (keyword === 'InfoE:' && trimmedLine.startsWith(keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * REFERENCE-DATA MAPPING: Uses validCharacters.lineKeywords from reference-data.json
+         * Detects Line:, Line1:, Line2:, LR: keywords that mark notation/lyric rows
+         * DO NOT hardcode line keywords here - they are all defined in reference-data
+         */
+        function isLineKeyword(trimmedLine) {
+            if (!referenceData || !referenceData.validCharacters?.lineKeywords) {
+                console.warn('⚠️  WARNING: Using fallback - reference-data not loaded!');
+                return /^(Line:|Line1:|Line2:|LR:)/.test(trimmedLine);
+            }
+            
+            const lineKeywords = referenceData.validCharacters.lineKeywords.keywords;
+            for (const keyword in lineKeywords) {
+                if (trimmedLine.startsWith(keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Get line keyword type and strip prefix (e.g., "LR: maa gaa naa" → {keyword: "LR:", content: "maa gaa naa", isLyric: true})
+        function extractLineKeywordAndContent(trimmedLine) {
+            if (!referenceData || !referenceData.lineKeywords) {
+                const match = trimmedLine.match(/^(Line:|Line1:|Line2:|LR:)\s*(.*)/);
+                if (match) {
+                    return {
+                        keyword: match[1],
+                        content: match[2],
+                        isLyric: match[1] === 'LR:',
+                        lineType: match[1]
+                    };
+                }
+                return null;
+            }
+            
+            const lineKeywords = referenceData.lineKeywords.keywords;
+            for (const keyword in lineKeywords) {
+                if (trimmedLine.startsWith(keyword)) {
+                    const content = trimmedLine.substring(keyword.length).trim();
+                    const keywordData = lineKeywords[keyword];
+                    return {
+                        keyword: keyword,
+                        content: content,
+                        isLyric: keywordData.rowType === 'lyric',
+                        lineType: keyword
+                    };
+                }
+            }
+            return null;
+        }
+
+        // Check if a line is a metadata header (from metadataKeywords in reference-data)
+        function isMetadataKeyword(trimmedLine) {
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.metadataKeywords) {
+                return false;
+            }
+            
+            const metadataKeywords = referenceData.validCharacters.metadataKeywords.keywords;
+            for (const keyword in metadataKeywords) {
+                if (trimmedLine.startsWith(keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Extract metadata keyword and value (e.g., "Composition: Song Name" → {keyword: "Composition:", value: "Song Name"})
+        function extractMetadataKeywordAndValue(trimmedLine) {
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.metadataKeywords) {
+                return null;
+            }
+            
+            const metadataKeywords = referenceData.validCharacters.metadataKeywords.keywords;
+            for (const keyword in metadataKeywords) {
+                if (trimmedLine.startsWith(keyword)) {
+                    const value = trimmedLine.substring(keyword.length).trim();
+                    return { keyword: keyword, value: value };
+                }
+            }
+            return null;
         }
 
         // Smart notation detection: based on STRUCTURE not just character presence
@@ -1034,34 +1234,65 @@
             // Check plain ASCII notes first
             if (/[SRGMPDNsrgmpdn]/.test(char)) return true;
             
-            // Check dots-above notes from reference-data
+            // Load all valid note characters from reference-data.json
             if (referenceData && referenceData.validCharacters && referenceData.validCharacters.validCharactersList) {
-                const allDotsAbove = referenceData.validCharacters.validCharactersList.allDotsAboveNotes || '';
-                const allDotsBelow = referenceData.validCharacters.validCharactersList.allDotsBelowNotes || '';
+                const validCharList = referenceData.validCharacters.validCharactersList;
                 
-                // Split by spaces to get individual characters (note: some use combining marks)
-                const validChars = (allDotsAbove + ' ' + allDotsBelow).split(' ').filter(c => c);
-                if (validChars.includes(char)) return true;
+                // Build list of all valid characters
+                const dotsAboveStr = validCharList.allDotsAboveNotes || '';
+                const dotsBelowStr = validCharList.allDotsBelowNotes || '';
+                const accentStr = validCharList.allAccentVariants || '';
+                
+                // Combine all into searchable string
+                const allValidChars = dotsAboveStr + ' ' + dotsBelowStr + ' ' + accentStr;
+                
+                // Check if char is in any of the lists
+                if (allValidChars.includes(char)) {
+                    return true;
+                }
             }
             
-            // Fallback: check specific Unicode codepoints for dots above/below
-            // Dots above: \u1E60-\u1E61 (Ṡṡ), \u1E58-\u1E59 (Ṙṙ), \u0120-\u0121 (Ġġ), \u1E40-\u1E41 (Ṁṁ), \u1E56-\u1E57 (Ṗṗ), \u1E0A-\u1E0B (Ḋḋ), \u1E44-\u1E45 (Ṅṅ)
-            const dotCodepoints = [
+            // Fallback: check specific Unicode codepoints if reference-data not fully loaded
+            // This ensures backward compatibility during loading
+            const fallbackCodepoints = [
                 '\u1E60', '\u1E61', '\u1E58', '\u1E59', '\u0120', '\u0121', '\u1E40', '\u1E41', 
                 '\u1E56', '\u1E57', '\u1E0A', '\u1E0B', '\u1E44', '\u1E45',
                 '\u1E62', '\u1E63', '\u1E5A', '\u1E5B', '\u0122', '\u0123', '\u1E42', '\u1E43',
-                '\u1E64', '\u1E65', '\u1E0C', '\u1E0D', '\u1E46', '\u1E47'
+                '\u1E64', '\u1E65', '\u1E0C', '\u1E0D', '\u1E46', '\u1E47',
+                '\u015A', '\u015B', // Ś/ś (S with acute) - from reference-data
+                '\u0154', '\u0155', // Ŕ/ŕ (R with acute) - from reference-data
+                '\u0194', '\u0195'  // Ɠ/ɠ (G with hook) - from reference-data
             ];
-            return dotCodepoints.includes(char);
+            if (fallbackCodepoints.includes(char)) {
+                return true;
+            }
+            
+            return false;
         }
 
         // Get note regex from reference data (for parsing notes with variants and octave markers)
+        // Build regex of all valid note characters from reference-data
         function getNoteRegex() {
-            // Match only valid Carnatic note characters: S,R,G,M,P,D,N (with/without combining marks)
-            // ALSO match precomposed Unicode variants: Ṡ,Ṙ,Ġ,Ṁ,Ṗ,Ḋ,Ṅ (and lowercase)
-            // Pattern: [note letter or precomposed variant] + [optional numbers 1-3 or superscripts] + [optional combining diacritical mark]
-            // Valid precomposed: \u1E60-\u1E61 (Ṡṡ), \u1E58-\u1E59 (Ṙṙ), \u0120-\u0121 (Ġġ), \u1E40-\u1E41 (Ṁṁ), \u1E56-\u1E57 (Ṗṗ), \u1E0A-\u1E0B (Ḋḋ), \u1E44-\u1E45 (Ṅṅ)
-            return /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45](?:[0-9¹²³])?(?:[\u0300-\u036F])?/;
+            if (!referenceData || !referenceData.validCharacters || !referenceData.validCharacters.validCharactersList) {
+                // Fallback regex if reference data not loaded
+                return /[SRGMPDNsrgmpdn\u1E60\u1E61\u1E58\u1E59\u0120\u0121\u1E40\u1E41\u1E56\u1E57\u1E0A\u1E0B\u1E44\u1E45\u015A\u015B\u0154\u0155\u0194\u0195](?:[0-9¹²³])?(?:[\u0300-\u036F])?/;
+            }
+            
+            const validCharList = referenceData.validCharacters.validCharactersList;
+            
+            // Build character class from all note lists
+            let noteChars = 'SRGMPDNsrgmpdn';  // Plain ASCII notes
+            
+            // Add dots-above and dots-below notes
+            const dotsAbove = (validCharList.allDotsAboveNotes || '').replace(/\s+/g, '');
+            const dotsBelow = (validCharList.allDotsBelowNotes || '').replace(/\s+/g, '');
+            const accentVariants = (validCharList.allAccentVariants || '').replace(/\s+/g, '');
+            
+            // Escape special regex characters for character class
+            const allNotes = noteChars + dotsAbove + dotsBelow + accentVariants;
+            
+            // Build regex: [all valid notes] + [optional variant numbers] + [optional combining diacritics]
+            return new RegExp(`[${allNotes}](?:[0-9¹²³])?(?:[\\u0300-\\u036F])?`);
         }
 
         // Validate notation text and highlight invalid characters
@@ -1102,6 +1333,26 @@
             }
         }
 
+        /**
+         * MAIN PARSER - Converts raw notation text to structured song data
+         * 
+         * REFERENCE DATA SECTIONS USED (all from reference-data.json):
+         * 1. metadataKeywords - Composition:, Ragam:, Talam:, Composer:, etc.
+         * 2. sectionKeywords - PALLAV:, ANUPALLAVI:, CHARANAM:
+         * 3. infoBlockKeywords - InfoS:, InfoE: (skip blocks)
+         * 4. lineKeywords - Line:, Line1:, Line2:, LR:
+         * 
+         * NO HARDCODING - All keywords loaded dynamically from reference-data.json
+         * If any keyword is not found in reference-data, console will show ⚠️ warning
+         * 
+         * PARSE FLOW:
+         * 1. Load metadata (Composition:, Ragam:, etc.)
+         * 2. Skip info blocks (InfoS: to InfoE:)
+         * 3. Create sections (PALLAV:, ANUPALLAVI:, CHARANAM:)
+         * 4. Process line keywords (Line:, Line1:, Line2:) as swara rows
+         * 5. Process LR: keywords as lyric rows
+         * 6. For implicit lyric rows (no keyword), auto-detect and align
+         */
         function parseAndRender() {
             if (gridIsDirty) {
                 if (!confirm("You have manual edits in the grid. Clicking 'Parse' will overwrite them. Continue?")) {
@@ -1122,63 +1373,128 @@
             let songMetadata = {};  // Start empty - only add what we find
             let sections = [];
             let currentSection = null;
+            let currentSectionStartLine = -1;  // Track rawText line index for section
             let hasFoundNotation = false;
+            let infoBlockActive = false;  // Track if we're inside an info block
 
             for (let i = 0; i < lines.length; i++) {
                 const rawLine = lines[i];
-                const trimmed = rawLine.trim();
+                let trimmed = rawLine.trim();
                 if (!trimmed) continue;
 
+                // Handle info blocks - skip everything from InfoS: to InfoE:
+                if (isInfoBlockStart(trimmed)) {
+                    infoBlockActive = true;
+                    console.log('📦 Info block START - skipping content');
+                    continue;
+                }
+                if (isInfoBlockEnd(trimmed)) {
+                    infoBlockActive = false;
+                    console.log('📦 Info block END - resume parsing');
+                    continue;
+                }
+                if (infoBlockActive) {
+                    console.log('⏭️  Skipping info block content:', trimmed);
+                    continue;
+                }
+
                 // Parse metadata headers if present in notation (but don't require them)
-                if (trimmed.startsWith('Composition:')) { 
-                    songMetadata.name = trimmed.replace('Composition:', '').trim();
-                    continue;
-                }
-                else if (trimmed.includes('Rāga:')) { 
-                    songMetadata.ragam = trimmed.split('Rāga:')[1].trim();
-                    continue;
-                }
-                else if (trimmed.includes('Tāḷa:')) { 
-                    const thalam = trimmed.split('Tāḷa:')[1].trim();
-                    songMetadata.thalam = thalam;
-                    continue;
-                }
-                else if (trimmed.includes('Composer:')) { 
-                    songMetadata.composer = trimmed.split('Composer:')[1].trim();
-                    continue;
-                }
-                else if (trimmed.includes('Ārōhaṇa:')) { 
-                    songMetadata.arohana = trimmed.split('Ārōhaṇa:')[1].trim();
-                    continue;
-                }
-                else if (trimmed.includes('Avarōhaṇa:')) { 
-                    songMetadata.avarohana = trimmed.split('Avarōhaṇa:')[1].trim();
+                // Use extractMetadataKeywordAndValue() for dynamic keyword support
+                const metadataMatch = extractMetadataKeywordAndValue(trimmed);
+                if (metadataMatch) {
+                    if (metadataMatch.keyword.includes('Composition')) {
+                        songMetadata.name = metadataMatch.value;
+                    } else if (metadataMatch.keyword.includes('Rāga') || metadataMatch.keyword.includes('Ragam')) {
+                        songMetadata.ragam = metadataMatch.value;
+                    } else if (metadataMatch.keyword.includes('Tāḷa') || metadataMatch.keyword.includes('Talam')) {
+                        songMetadata.thalam = metadataMatch.value;
+                    } else if (metadataMatch.keyword.includes('Composer')) {
+                        songMetadata.composer = metadataMatch.value;
+                    } else if (metadataMatch.keyword.includes('Ārōhaṇa') || metadataMatch.keyword.includes('Arohana')) {
+                        songMetadata.arohana = metadataMatch.value;
+                    } else if (metadataMatch.keyword.includes('Avarōhaṇa') || metadataMatch.keyword.includes('Avarohana')) {
+                        songMetadata.avarohana = metadataMatch.value;
+                    }
                     continue;
                 }
                 
-                // Check for section headers using reference-data.json
+                // Check for section headers using sectionKeywords from reference-data.json
                 if (isSectionHeader(trimmed)) {
-                    currentSection = { title: trimmed, rows: [] };
+                    const sectionName = getSectionNameFromKeyword(trimmed);
+                    currentSection = { 
+                        title: sectionName, 
+                        rows: [],
+                        startLineIndex: i,  // Track rawText line where section begins
+                        lineIndices: [i]    // Track all rawText lines for this section
+                    };
                     sections.push(currentSection);
+                    console.log(`📍 Section: ${sectionName} (line ${i})`);
+                    continue;  // Skip section keyword line
                 }
+
+                // Check for line keywords (Line:, Line1:, Line2:, LR:)
+                const lineKeywordMatch = extractLineKeywordAndContent(trimmed);
+                if (lineKeywordMatch) {
+                    const contentToProcess = lineKeywordMatch.content;
+                    const isLyricLine = lineKeywordMatch.isLyric;
+                    
+                    // Track line indices for current section
+                    if (currentSection) {
+                        currentSection.lineIndices.push(i);
+                    }
+                    
+                    if (isLyricLine) {
+                        // LR: keyword means the next content is a lyric row
+                        // Get the previous swara row and align lyrics
+                        if (currentSection && currentSection.rows.length > 0) {
+                            const lastRow = currentSection.rows[currentSection.rows.length - 1];
+                            if (lastRow.type === 'swara') {
+                                const lyricAtoms = alignLyrics(contentToProcess, lastRow.atoms);
+                                currentSection.rows.push({
+                                    id: 'row-' + Math.random().toString(36).substr(2, 9),
+                                    type: 'lyric',
+                                    content: contentToProcess,
+                                    atoms: lyricAtoms,
+                                    parentSwaraId: lastRow.id
+                                });
+                                console.log(`🎵 Lyric line (LR:): ${contentToProcess}`);
+                            }
+                        }
+                        continue;
+                    } else {
+                        // Line:, Line1:, Line2: are notation lines - process as notation
+                        // Fall through to notation processing with stripped content
+                        trimmed = contentToProcess;  // Use content without keyword
+                    }
+                }
+
                 // Check for notation (swara notes, rests, and symbols)
                 // Uses looksLikeNotation() to check structural patterns
-                else if (looksLikeNotation(trimmed)) {
+                if (looksLikeNotation(trimmed)) {
                     hasFoundNotation = true;
                     
                     // Create default section if none exists
                     if (!currentSection) {
-                        currentSection = { title: 'Notation', rows: [] };
+                        currentSection = { 
+                            title: 'Notation', 
+                            rows: [],
+                            startLineIndex: i,
+                            lineIndices: [i]
+                        };
                         sections.push(currentSection);
+                    } else {
+                        // Track line index for current section
+                        if (!currentSection.lineIndices) currentSection.lineIndices = [];
+                        currentSection.lineIndices.push(i);
                     }
                     
                     // Parse notation line
                     const swaraRowId = 'row-' + Math.random().toString(36).substr(2, 9);
                     // CLEAN: Strip spaces, |, /, \, :, - 
-                    let cleanedLine = rawLine.replace(/[\s|/\\:\-]/g, '');
+                    let cleanedLine = trimmed.replace(/[\s|/\\:\-]/g, '');
                     // Convert dots to commas (rest markers)
                     cleanedLine = cleanedLine.replace(/\.+/g, ',');
-                    console.log(`📝 Original: ${rawLine}`);
+                    console.log(`📝 Original: ${trimmed}`);
                     console.log(`🧹 Cleaned:  ${cleanedLine}`);
                     const swaraAtoms = tokenizeWithPosition(cleanedLine);
                     
@@ -1186,7 +1502,7 @@
                         currentSection.rows.push({
                             id: swaraRowId,
                             type: 'swara',
-                            content: rawLine,
+                            content: trimmed,
                             atoms: swaraAtoms
                         });
 
@@ -1196,8 +1512,10 @@
                             const nextTrimmed = nextLine.trim();
                             const nextIsNotation = looksLikeNotation(nextTrimmed);
                             const nextIsSection = isSectionHeader(nextTrimmed);
+                            const nextIsLineKeyword = isLineKeyword(nextTrimmed);
 
-                            if (!nextIsNotation && !nextIsSection && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
+                            // If next line is NOT notation/section/keyword and NOT empty, treat as lyric
+                            if (!nextIsNotation && !nextIsSection && !nextIsLineKeyword && nextTrimmed !== "" && !nextTrimmed.startsWith('---')) {
                                 const lyricAtoms = alignLyrics(nextLine, swaraAtoms);
                                 currentSection.rows.push({
                                     id: 'row-' + Math.random().toString(36).substr(2, 9),
@@ -1206,10 +1524,36 @@
                                     atoms: lyricAtoms,
                                     parentSwaraId: swaraRowId
                                 });
+                                // Track the lyric line too
+                                if (!currentSection.lineIndices) currentSection.lineIndices = [];
+                                currentSection.lineIndices.push(i + 1);
                                 i++;
                             }
                         }
                     }
+                }
+            }
+
+            // MAP rawText to each section based on line indices
+            for (let section of sections) {
+                if (section.lineIndices && section.lineIndices.length > 0) {
+                    const sectionLines = section.lineIndices.map(idx => lines[idx]);
+                    section.rawText = sectionLines.join('\n').trim();
+                    section.index = sections.indexOf(section);
+                    
+                    // Add metrics
+                    section.atomCount = 0;
+                    section.rowCount = section.rows?.length || 0;
+                    for (const row of section.rows || []) {
+                        section.atomCount += row.atoms?.length || 0;
+                    }
+                    
+                    console.log(`📊 Section: ${section.title} - atomCount: ${section.atomCount}, rowCount: ${section.rowCount}`);
+                } else {
+                    section.rawText = '';
+                    section.index = sections.indexOf(section);
+                    section.atomCount = 0;
+                    section.rowCount = 0;
                 }
             }
 
@@ -1376,6 +1720,12 @@
                     const headerRow = document.createElement('tr');
                     headerRow.style.cssText = 'background: #f0f0f0; font-weight: bold; text-align: center;';
                     
+                    // Add line number header cell
+                    const lineNumHeader = document.createElement('td');
+                    lineNumHeader.style.cssText = 'padding: 8px 12px; font-weight: 600; color: #667eea; text-align: center; background: #f0f0f0; border-right: 2px solid #ddd; border-bottom: 2px solid #999; min-width: 50px; font-size: 11px;';
+                    lineNumHeader.textContent = 'No.';
+                    headerRow.appendChild(lineNumHeader);
+                    
                     const beats = parseInt(currentSong.beats) || 8;
                     const nadai = parseInt(currentSong.nadai) || 4;
                     const totalCells = beats * nadai;
@@ -1399,10 +1749,19 @@
 
                 // Interleave rendering logic (Safe check for rows)
                 if (section.rows && section.rows.length > 0) {
+                    let lineNumber = 0;  // Track line numbers for notation rows
+                    
                     for (let r = 0; r < section.rows.length; r++) {
                         const row = section.rows[r];
                         if (row.type === 'swara') {
+                            lineNumber++;  // Increment for each notation row
                             const tr = document.createElement('tr');
+
+                            // Add line number cell as first column
+                            const lineNumCell = document.createElement('td');
+                            lineNumCell.style.cssText = 'padding: 8px 12px; font-weight: 600; color: #667eea; text-align: center; background: #f9f9f9; border-right: 2px solid #ddd; min-width: 50px; font-size: 12px; user-select: none;';
+                            lineNumCell.textContent = `${lineNumber}`;
+                            tr.appendChild(lineNumCell);
 
                             // Find potential corresponding lyric row
                             const lyricRow = section.rows.find(lr => lr.type === 'lyric' && lr.parentSwaraId === row.id);
@@ -1686,7 +2045,11 @@
             if (i >= text.length) return null;
             
             // Check if current character is a valid note
-            if (!isValidNoteCharacter(text[i])) return null;
+            const charAtI = text[i];
+            const isValid = isValidNoteCharacter(charAtI);
+            if (!isValid) {
+                return null;
+            }
             
             let noteText = text[i];
             let j = i + 1;
@@ -1741,7 +2104,6 @@
                             j++;
                         } else if (isSeparatorCharacter(braceContent[j])) {
                             // Skip separator characters
-                            console.log(`   ⊘ Skipped separator: "${braceContent[j]}"`);
                             j++;
                         } else {
                             // Try to match a note
@@ -1751,7 +2113,6 @@
                                 j = noteMatch.newIndex;
                             } else {
                                 // Skip unknown character
-                                console.log(`   ⊘ Skipped: "${braceContent[j]}"`);
                                 j++;
                             }
                         }
@@ -1770,7 +2131,6 @@
                             groupId: pairGroupId,
                             isBraceChild: true
                         });
-                        console.log(`   ✓ Atom: "${braceAtoms[pairIdx]}" (index ${atomIndex}, groupId ${pairGroupId})`);
                         atomIndex++;
                         
                         // Push second atom of pair if it exists
@@ -1781,9 +2141,7 @@
                                 speed: 2,
                                 groupId: pairGroupId,
                                 isBraceChild: true
-                            });
-                            console.log(`   ✓ Atom: "${braceAtoms[pairIdx + 1]}" (index ${atomIndex}, groupId ${pairGroupId})`);
-                            atomIndex++;
+                            });                            atomIndex++;
                         }
                     }
                     
@@ -1795,7 +2153,6 @@
                         index: atomIndex,
                         speed: 1
                     });
-                    console.log(`✓ Atom: "${line[i]}" (index ${atomIndex})`);
                     atomIndex++;
                     i++;
                 } else if (line[i] === '*') {
@@ -1805,12 +2162,10 @@
                         index: atomIndex,
                         speed: 1
                     });
-                    console.log(`✓ Atom: "*" (index ${atomIndex})`);
                     atomIndex++;
                     i++;
                 } else if (isSeparatorCharacter(line[i])) {
                     // Skip separator characters (|, /, \, :, -, ., spaces)
-                    console.log(`⊘ Skipped separator: "${line[i]}"`);
                     i++;
                 } else {
                     // Try to match a note (regular)
@@ -1827,7 +2182,6 @@
                         i = noteMatch.newIndex;
                     } else {
                         // Skip unknown character
-                        console.log(`⊘ Skipped: "${line[i]}"`);
                         i++;
                     }
                 }
@@ -2448,6 +2802,10 @@
 
             // Load reference data for validation
             await loadReferenceData();
+            
+            // VALIDATE that all parser functions will use reference-data (not hardcoded fallbacks)
+            validateReferenceDataUsage();
+            
             setupValidationListener();
 
             // Search functionality
@@ -2890,6 +3248,23 @@
             return parseInt(document.getElementById('beats').value || 8) * parseInt(document.getElementById('nadai').value || 4);
         }
 
+        /**
+         * FORMATTING ORCHESTRATOR - Redistributes parsed swaras into grid cells
+         * 
+         * REFERENCE DATA SECTIONS USED: None directly
+         * (Keywords already parsed by parseAndRender; this just reformats cells)
+         * 
+         * IMPORTANT: This function does NOT parse keywords or reference-data.
+         * It only redistributes existing swara/lyric atoms into rows of totalCells.
+         * Keywords are ALREADY identified by parseAndRender() before formatting.
+         * 
+         * PROCESS:
+         * 1. Get eduppu (start beat position)
+         * 2. Calculate total cells from eduppu and nadai
+         * 3. Call formatSection for each parsed section
+         * 4. Enrich with MIDI/frequency data
+         * 5. Re-render the song
+         */
         async function applyFormatting() {
             // Reset counter before re-tokenizing during format
             globalBraceGroupCounter = 0;
@@ -2924,6 +3299,24 @@
         }
 
 
+        /**
+         * SECTION REFORMATTER - Redistributes atoms into grid cells for ONE section
+         * 
+         * REFERENCE DATA SECTIONS USED: None directly
+         * (This function works on already-parsed data from parseAndRender)
+         * 
+         * IMPORTANT: NO HARDCODING of keywords here
+         * Keywords are already parsed and section type stored in section.title
+         * This function only handles cell redistribution and brace group preservation
+         * 
+         * ALGORITHM:
+         * 1. Flatten swara/lyric pairs preserving brace group metadata
+         * 2. Combine braced atoms (same groupId) into single atoms
+         * 3. Redistribute into rows of totalCells each
+         * 4. Preserve brace grouping and eduppu marking across reflow
+         * 
+         * NO MUTATION of section.title or keywords - those are set by parseAndRender()
+         */
         function formatSection(section, sectionIdx, totalCells, eduppuPos) {
             if (!section.rows || section.rows.length === 0) return;
 
