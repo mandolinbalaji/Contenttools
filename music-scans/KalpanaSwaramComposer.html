@@ -2612,9 +2612,12 @@
         async function deleteSongFromServer(songId) {
             if (!confirm('Delete this song?')) return;
             try {
+                console.log('Deleting song:', songId);
                 const response = await fetch(`${API_BASE}/kalpana-swara-songs/${songId}`, {
                     method: 'DELETE'
                 });
+                console.log('Delete response status:', response.status, response.ok);
+                
                 if (response.ok) {
                     alert('Song deleted!');
                     currentSong = {
@@ -2633,9 +2636,13 @@
                     };
                     loadSongToUI();
                     await loadAllSongs();
+                } else {
+                    const errorData = await response.json();
+                    alert('Failed to delete song: ' + (errorData.error || 'Unknown error'));
                 }
             } catch (e) {
                 console.error('Error deleting song:', e);
+                alert('Error deleting song: ' + e.message);
             }
         }
 
