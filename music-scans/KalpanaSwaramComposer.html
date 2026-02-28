@@ -1279,6 +1279,23 @@
             font-weight: 700;
         }
 
+        .practice-swara-cell {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 12pt;
+            color: #000;
+            padding-bottom: 2px;
+        }
+
+        .practice-lyrics-cell {
+            font-family: monospace;
+            font-style: italic;
+            font-size: 9pt;
+            color: #0047b3;
+            font-weight: 600;
+            padding-top: 2px;
+        }
+
         .practice-buttons {
             text-align: center;
             margin-top: 4mm;
@@ -2899,19 +2916,20 @@
 
         function renderPracticeSpreadsheetLine(tbody, cycleNumber, cycleData, cycleLength) {
             const phraseDisplay = cycleData.phraseDisplay || '';
+            const lyricsDisplay = cycleData.lyrics || '';
             const eduppu = currentSong.eduppu;
             
             // Calculate leading commas using fixed formula
             const leadingCommas = ((eduppu - 1 - cycleData.noteCount) % cycleLength + cycleLength) % cycleLength;
             
-            // Create items array
+            // Create items array for swaras
             const items = [];
             for (let i = 0; i < leadingCommas; i++) {
                 items.push(',');
             }
             items.push(...phraseToItems(phraseDisplay));
             
-            // Split items and lyrics into rows
+            // Split items into rows
             const rows = [];
             for (let i = 0; i < items.length; i += cycleLength) {
                 rows.push(items.slice(i, i + cycleLength));
@@ -2921,20 +2939,10 @@
                 rows.push([]);
             }
 
-            // Get lyrics array
-            const lyricsPhrase = cycleData.lyrics || '';
-            const lyricsItems = [];
-            for (let i = 0; i < leadingCommas; i++) {
-                lyricsItems.push('');
-            }
-            lyricsItems.push(...phraseToItems(lyricsPhrase));
-            
-            const lyricsRows = [];
-            for (let i = 0; i < lyricsItems.length; i += cycleLength) {
-                lyricsRows.push(lyricsItems.slice(i, i + cycleLength));
-            }
+            // Get lyrics items using | delimiter (same logic as spreadsheet)
+            const allLyricsItems = lyricsDisplay.trim() ? lyricsDisplay.split('|').map(s => s.trim()) : [];
 
-            // Render swaras rows
+            // Render swaras + lyrics paired rows
             rows.forEach((rowItems, rowIndex) => {
                 const notesRow = tbody.insertRow();
                 const labelCell = notesRow.insertCell();
@@ -2950,27 +2958,26 @@
                 
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
-                    const item = rowItems[i] || '';
-                    cell.textContent = item;
+                    const noteItem = rowItems[i] || '';
+                    const lyricItem = allLyricsItems[i] || '';
+                    
+                    // Create swara div
+                    const swaraDiv = document.createElement('div');
+                    swaraDiv.className = 'practice-swara-cell';
+                    swaraDiv.textContent = noteItem;
+                    cell.appendChild(swaraDiv);
+                    
+                    // Create lyric div if we have lyrics
+                    if (lyricsDisplay.trim()) {
+                        const lyricDiv = document.createElement('div');
+                        lyricDiv.className = 'practice-lyrics-cell';
+                        lyricDiv.textContent = lyricItem;
+                        cell.appendChild(lyricDiv);
+                    }
+                    
                     if (i === landingCellIndex) {
                         cell.className = 'practice-landing';
                     }
-                }
-            });
-
-            // Render lyrics rows directly below each swaras row
-            lyricsRows.forEach((rowItems, rowIndex) => {
-                const lyricsRow = tbody.insertRow();
-                lyricsRow.className = 'practice-lyrics-row';
-                
-                const labelCell = lyricsRow.insertCell();
-                labelCell.className = 'practice-label';
-                labelCell.textContent = '';
-                
-                for (let i = 0; i < cycleLength; i++) {
-                    const cell = lyricsRow.insertCell();
-                    const item = rowItems[i] || '';
-                    cell.textContent = item;
                 }
             });
         }
