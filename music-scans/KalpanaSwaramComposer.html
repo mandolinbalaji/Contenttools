@@ -886,8 +886,9 @@
             padding: 2px 4px;
             border: 1px solid transparent;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            overflow: visible;
+            position: relative;
+            z-index: 10;
             cursor: default;
             transition: font-size 0.2s;
             display: block;
@@ -3061,6 +3062,11 @@
             document.getElementById('nadai').value = currentSong.nadai;
             document.getElementById('eduppu').value = currentSong.eduppu;
             document.getElementById('scaleInput').value = currentSong.scale || '';
+
+            // Normalize cycle labels to sequential counters
+            currentSong.cycles.forEach((cycle, index) => {
+                cycle.label = `Cycle ${index + 1}`;
+            });
 
             renderTags();
             updateEduppuOptions();
