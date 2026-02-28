@@ -478,7 +478,30 @@
             border-color: #e63946;
         }
 
-        .btn-small {
+        .insert-lyrics-btn {
+            background: #f0f0f0;
+            color: #666;
+            border: 1px solid #ddd;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .insert-lyrics-btn:hover {
+            background: #e8e8e8;
+            border-color: #999;
+        }
+
+        .insert-lyrics-btn.active {
+            background: #0047b3;
+            color: white;
+            border-color: #0047b3;
+            font-weight: 600;
+        }
+
+        .insert-lyrics-btn.active:hover {
+            background: #003580;
+            border-color: #003580;
+        }        .btn-small {
             padding: 6px 12px;
             font-size: 12px;
         }
@@ -655,6 +678,26 @@
             font-size: 14px;
             font-weight: 600;
             color: #667eea;
+        }
+
+        .note-count {
+            font-size: 12px;
+            font-weight: normal;
+            color: #999;
+            margin-left: 8px;
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .lyric-count {
+            font-size: 12px;
+            font-weight: normal;
+            color: #0047b3;
+            margin-left: 6px;
+            background: #e3f2fd;
+            padding: 2px 8px;
+            border-radius: 12px;
         }
 
         .cycle-toggle {
@@ -1626,6 +1669,7 @@
         let octaveModifier = null; // 'up' | 'down' | null
         let allSongs = [];
         let isPlaying = false;
+        let insertLyricsCycleId = null; // Track which cycle is in insert mode for lyrics
         let currentAudioContext = null;
         let currentOscillators = [];
 
@@ -1725,6 +1769,23 @@
                 }
             }
             return items;
+        }
+
+        // Count notes in a phrase: variants count as 1 note, commas count as 1
+        function countNotes(phraseText) {
+            if (!phraseText || !phraseText.trim()) return 0;
+            
+            const items = phraseToItems(phraseText);
+            // Each item is already counted as 1 (including variants like R1, R2)
+            return items.length;
+        }
+
+        // Count vertical lines in lyrics (| delimiter count)
+        function countLyrics(lyricsText) {
+            if (!lyricsText || !lyricsText.trim()) return 0;
+            
+            // Count the number of | characters
+            return (lyricsText.match(/\|/g) || []).length;
         }
 
         // Parse scale definition and return map of swara -> variant
@@ -2079,6 +2140,11 @@
                 }
 
                 updateSpreadsheet();
+                
+                // Rerender cycles to update note/lyric count display
+                if (field === 'phraseText' || field === 'lyrics') {
+                    renderCycles();
+                }
             }
         }
 
@@ -2089,9 +2155,11 @@
             currentSong.cycles.forEach((cycle, cycleIndex) => {
                 const cycleCard = document.createElement('div');
                 cycleCard.className = 'cycle-card';
+                const noteCount = countNotes(cycle.phraseText);
+                const lyricCount = countLyrics(cycle.lyrics);
                 cycleCard.innerHTML = `
                     <div class="cycle-header">
-                        <div class="cycle-title">${cycle.label}</div>
+                        <div class="cycle-title">${cycle.label} <span class="note-count" title="Total notes (variants count as 1)">(${noteCount} notes)</span>${lyricCount > 0 ? `<span class="lyric-count" title="Total lyrics">(${lyricCount} lyrics)</span>` : ''}</div>
                         <div style="display: flex; gap: 6px; align-items: center;">
                             ${cycleIndex > 0 ? `<button class="btn btn-small" onclick="moveCycleUp('${cycle.id}')" title="Move Up">▲</button>` : ''}
                             ${cycleIndex < currentSong.cycles.length - 1 ? `<button class="btn btn-small" onclick="moveCycleDown('${cycle.id}')" title="Move Down">▼</button>` : ''}
@@ -2109,11 +2177,17 @@
                                       onclick="handleCycleInputClick(event, '${cycle.id}')">${cycle.phraseText}</textarea>
                         </div>
                         <div class="form-group">
-                            <label>Lyrics</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <label>Lyrics</label>
+                                <button class="btn btn-small insert-lyrics-btn ${insertLyricsCycleId === cycle.id ? 'active' : ''}" 
+                                        onclick="toggleInsertLyricsMode('${cycle.id}')" 
+                                        title="Click to enable | insertion mode">${insertLyricsCycleId === cycle.id ? '✓ Inserting' : 'Add |'}</button>
+                            </div>
                             <textarea id="cycleLyrics-${cycle.id}" 
                                       placeholder="Add lyrics using | to separate by swara (e.g., sa|ri|ga|ma)" 
                                       onchange="updateCycle('${cycle.id}', 'lyrics', this.value)" 
-                                      style="min-height: 80px;">${cycle.lyrics}</textarea>
+                                      onclick="handleLyricsClick(event, '${cycle.id}')"
+                                      style="min-height: 80px; cursor: ${insertLyricsCycleId === cycle.id ? 'crosshair' : 'text'};">${cycle.lyrics}</textarea>
                         </div>
                         <div class="form-group">
                             <label>Comments (Optional)</label>
@@ -2126,6 +2200,41 @@
                 `;
                 container.appendChild(cycleCard);
             });
+        }
+
+        function toggleInsertLyricsMode(cycleId) {
+            if (insertLyricsCycleId === cycleId) {
+                // Disable mode
+                insertLyricsCycleId = null;
+            } else {
+                // Enable mode for this cycle
+                insertLyricsCycleId = cycleId;
+            }
+            renderCycles();
+        }
+
+        function handleLyricsClick(event, cycleId) {
+            if (insertLyricsCycleId === cycleId) {
+                event.preventDefault();
+                
+                const textarea = event.target;
+                const cursorPos = textarea.selectionStart;
+                const currentText = textarea.value;
+                
+                // Insert | at cursor position
+                const newText = currentText.slice(0, cursorPos) + '|' + currentText.slice(cursorPos);
+                textarea.value = newText;
+                
+                // Update cycle data
+                const cycle = currentSong.cycles.find(c => c.id === cycleId);
+                if (cycle) {
+                    cycle.lyrics = newText;
+                }
+                
+                // Move cursor after the inserted |
+                textarea.selectionStart = textarea.selectionEnd = cursorPos + 1;
+                textarea.focus();
+            }
         }
 
         function toggleCycleExpansion(cycleId) {
