@@ -1496,14 +1496,15 @@
                     cleanedLine = cleanedLine.replace(/\.+/g, ',');
                     console.log(`📝 Original: ${trimmed}`);
                     console.log(`🧹 Cleaned:  ${cleanedLine}`);
-                    const swaraAtoms = tokenizeWithPosition(cleanedLine);
+                    const swaraAtoms = tokenizeWithPosition(cleanedLine, i);  // Pass line index
                     
                     if (swaraAtoms.length > 0) {  // Only add if atoms found
                         currentSection.rows.push({
                             id: swaraRowId,
                             type: 'swara',
                             content: trimmed,
-                            atoms: swaraAtoms
+                            atoms: swaraAtoms,
+                            lineIndex: i  // Track the raw line number
                         });
 
                         // Check for lyrics in next line
@@ -1704,6 +1705,23 @@
             cellLocationMap = {};  // Reset location map for this render
             let globalCellIndex = 0;  // Track absolute cell position across all sections
 
+            // DISPLAY VALIDATION BANNER if there are line note count issues
+            if (currentSong.lineValidation) {
+                const invalidLines = Object.keys(currentSong.lineValidation).filter(lineNum => !currentSong.lineValidation[lineNum].isValid);
+                if (invalidLines.length > 0) {
+                    const validationBanner = document.createElement('div');
+                    validationBanner.style.cssText = 'background: #ffeaea; border: 2px solid #ff7675; border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; color: #c92a2a; font-weight: 600;';
+                    let bannerText = `⚠️  Line Note Count Validation: ${invalidLines.length} line(s) have incorrect note counts (highlighted in red)\n\n`;
+                    bannerText += 'Expected: ' + (currentSong.lineValidation[invalidLines[0]]?.expected || '?') + ' notes per line (beats × nadai)\n\nIssues:\n';
+                    invalidLines.forEach(lineNum => {
+                        const validation = currentSong.lineValidation[lineNum];
+                        bannerText += `  Line ${lineNum}: ${validation.actual} notes (expected ${validation.expected})\n`;
+                    });
+                    validationBanner.innerHTML = bannerText.replace(/\n/g, '<br>');
+                    viewer.appendChild(validationBanner);
+                }
+            }
+
             currentSong.sections.forEach((section, sIdx) => {
                 const sectionContainer = document.createElement('div');
                 sectionContainer.style.marginBottom = '40px';
@@ -1809,6 +1827,11 @@
                                         swaraDiv.setAttribute('data-cell-index', globalCellIndex);
                                         swaraDiv.contentEditable = "true";
                                         swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
+                                        // HIGHLIGHT: If line has invalid note count
+                                        if (groupAtom.hasInvalidLineCount) {
+                                            swaraDiv.style.cssText += 'background-color: #ffeaea; border-left: 3px solid #ff7675;';
+                                            swaraDiv.title = `Line ${groupAtom.lineNumber} has ${currentSong.lineValidation[groupAtom.lineNumber]?.actual || 0} notes instead of ${currentSong.lineValidation[groupAtom.lineNumber]?.expected || 0}`;
+                                        }
                                         swaraDiv.textContent = formatSwaraForDisplay(groupAtom.text);
                                         swaraDiv.oninput = (e) => {
                                             groupAtom.text = e.target.textContent;
@@ -1851,6 +1874,11 @@
                                             swaraDiv.classList.add('speed-2x');
                                             swaraDiv.contentEditable = "true";
                                             swaraDiv.style.cssText = 'flex: 0 0 auto; font-size: 0.9em; padding: 4px 6px;';
+                                            // HIGHLIGHT: If line has invalid note count
+                                            if (groupAtom.hasInvalidLineCount) {
+                                                swaraDiv.style.cssText += 'background-color: #ffeaea; border-left: 3px solid #ff7675;';
+                                                swaraDiv.title = `Line ${groupAtom.lineNumber} has ${currentSong.lineValidation[groupAtom.lineNumber]?.actual || 0} notes instead of ${currentSong.lineValidation[groupAtom.lineNumber]?.expected || 0}`;
+                                            }
                                             swaraDiv.textContent = formatSwaraForDisplay(groupAtom.text);
                                             swaraDiv.oninput = (e) => {
                                                 groupAtom.text = e.target.textContent;
@@ -1894,6 +1922,12 @@
                                     // Apply speed-2x styling only if atom has speed=2 (braced notes)
                                     if (atom.speed === 2) {
                                         swaraDiv.classList.add('speed-2x');
+                                    }
+                                    // HIGHLIGHT: If line has invalid note count
+                                    if (atom.hasInvalidLineCount) {
+                                        swaraDiv.style.backgroundColor = '#ffeaea';  // Light red background
+                                        swaraDiv.style.borderLeft = '3px solid #ff7675';  // Red left border
+                                        swaraDiv.title = `Line ${atom.lineNumber} has ${currentSong.lineValidation[atom.lineNumber]?.actual || 0} notes instead of ${currentSong.lineValidation[atom.lineNumber]?.expected || 0}`;
                                     }
                                     swaraDiv.contentEditable = "true";
                                     swaraDiv.textContent = formatSwaraForDisplay(atom.text);
@@ -2072,7 +2106,7 @@
         // Global counter for unique brace group IDs across all tokenizations
         let globalBraceGroupCounter = 0;
 
-        function tokenizeWithPosition(line) {
+        function tokenizeWithPosition(line, lineNumber) {
             // FRESH BRACE LOGIC
             // 1. Detect {notes} groups
             // 2. Create atoms: notes/commas inside braces get speed=2 + groupId
@@ -2129,7 +2163,8 @@
                             index: atomIndex,
                             speed: 2,
                             groupId: pairGroupId,
-                            isBraceChild: true
+                            isBraceChild: true,
+                            lineNumber: lineNumber
                         });
                         atomIndex++;
                         
@@ -2140,8 +2175,10 @@
                                 index: atomIndex,
                                 speed: 2,
                                 groupId: pairGroupId,
-                                isBraceChild: true
-                            });                            atomIndex++;
+                                isBraceChild: true,
+                                lineNumber: lineNumber
+                            });
+                            atomIndex++;
                         }
                     }
                     
@@ -2151,7 +2188,8 @@
                     tokens.push({
                         text: line[i],
                         index: atomIndex,
-                        speed: 1
+                        speed: 1,
+                        lineNumber: lineNumber
                     });
                     atomIndex++;
                     i++;
@@ -2160,7 +2198,8 @@
                     tokens.push({
                         text: '*',
                         index: atomIndex,
-                        speed: 1
+                        speed: 1,
+                        lineNumber: lineNumber
                     });
                     atomIndex++;
                     i++;
@@ -2175,9 +2214,10 @@
                         tokens.push({
                             text: noteText,
                             index: atomIndex,
-                            speed: 1
+                            speed: 1,
+                            lineNumber: lineNumber
                         });
-                        console.log(`✓ Atom: "${noteText}" (index ${atomIndex})`);
+                        console.log(`✓ Atom: "${noteText}" (line ${lineNumber}, index ${atomIndex})`);
                         atomIndex++;
                         i = noteMatch.newIndex;
                     } else {
@@ -3249,6 +3289,55 @@
         }
 
         /**
+         * Validates that each Line: has correct number of notes
+         * Returns map of { lineNumber: { expected, actual, isValid } }
+         */
+        function validateLineNoteCounts(songs, totalCells) {
+            const lineIssuesMap = {};
+            
+            songs.sections.forEach((section, sIdx) => {
+                // Group atoms by lineNumber
+                const atomsByLine = {};
+                section.rows?.forEach((row) => {
+                    if (row.type === 'swara' && row.atoms) {
+                        row.atoms.forEach((atom) => {
+                            const lineNum = atom.lineNumber;
+                            if (lineNum !== undefined) {
+                                if (!atomsByLine[lineNum]) {
+                                    atomsByLine[lineNum] = [];
+                                }
+                                // Only count non-marker atoms for note count
+                                if (atom.text !== '*' && !isSeparatorCharacter(atom.text)) {
+                                    atomsByLine[lineNum].push(atom);
+                                }
+                            }
+                        });
+                    }
+                });
+                
+                // Validate each line
+                Object.keys(atomsByLine).forEach((lineNum) => {
+                    const actualCount = atomsByLine[lineNum].length;
+                    const expectedCount = totalCells;
+                    const isValid = actualCount === expectedCount;
+                    
+                    lineIssuesMap[lineNum] = {
+                        expected: expectedCount,
+                        actual: actualCount,
+                        isValid: isValid,
+                        sectionIdx: sIdx
+                    };
+                    
+                    if (!isValid) {
+                        console.warn(`⚠️  Line ${lineNum}: Expected ${expectedCount} notes, found ${actualCount} - MISMATCH!`);
+                    }
+                });
+            });
+            
+            return lineIssuesMap;
+        }
+
+        /**
          * FORMATTING ORCHESTRATOR - Redistributes parsed swaras into grid cells
          * 
          * REFERENCE DATA SECTIONS USED: None directly
@@ -3281,6 +3370,24 @@
             }
 
             currentSong.eduppu = eduppuPos;
+            
+            // VALIDATE: Check that each Line: has correct number of notes (beats × nadai)
+            const lineIssuesMap = validateLineNoteCounts(currentSong, totalCells);
+            currentSong.lineValidation = lineIssuesMap;  // Store for rendering
+            
+            // Mark atoms from invalid lines
+            currentSong.sections.forEach((section) => {
+                section.rows?.forEach((row) => {
+                    if (row.type === 'swara' && row.atoms) {
+                        row.atoms.forEach((atom) => {
+                            const lineNum = atom.lineNumber;
+                            if (lineNum !== undefined && lineIssuesMap[lineNum] && !lineIssuesMap[lineNum].isValid) {
+                                atom.hasInvalidLineCount = true;  // Flag for highlighting
+                            }
+                        });
+                    }
+                });
+            });
 
             // Format each section
             currentSong.sections.forEach((section, sIdx) => {
@@ -3343,7 +3450,7 @@
                         if (atom.text === '*') {
                             eduppuMarkPos = allSwaras.length; // Track eduppu position
                         } else if (!isSeparatorCharacter(atom.text) && atom.text !== '*' && !isGroupingSymbol(atom.text)) {
-                            // Add swara - PRESERVE ALL PROPERTIES including brace grouping
+                            // Add swara - PRESERVE ALL PROPERTIES including brace grouping and validation flags
                             const swaraObj = {
                                 text: atom.text,
                                 index: atom.index || 0
@@ -3352,6 +3459,9 @@
                             if (atom.speed !== undefined) swaraObj.speed = atom.speed;
                             if (atom.groupId !== undefined) swaraObj.groupId = atom.groupId;
                             if (atom.isBraceChild !== undefined) swaraObj.isBraceChild = atom.isBraceChild;
+                            // Preserve validation flags and line tracking
+                            if (atom.hasInvalidLineCount !== undefined) swaraObj.hasInvalidLineCount = atom.hasInvalidLineCount;
+                            if (atom.lineNumber !== undefined) swaraObj.lineNumber = atom.lineNumber;
                             allSwaras.push(swaraObj);
                             
                             // Add corresponding lyric if it exists
@@ -3408,6 +3518,9 @@
                         groupId: currentAtom.groupId,
                         isBraceChild: currentAtom.isBraceChild
                     };
+                    // Preserve validation flags
+                    if (currentAtom.hasInvalidLineCount) combinedAtom.hasInvalidLineCount = currentAtom.hasInvalidLineCount;
+                    if (currentAtom.lineNumber !== undefined) combinedAtom.lineNumber = currentAtom.lineNumber;
                     combinedSwaras.push(combinedAtom);
                     combinedLyrics.push(combinedLyric);
                     
@@ -3461,7 +3574,7 @@
                     newRows.push(currentLyricRow);
                 }
 
-                // Add swara to cell - PRESERVE BRACE GROUP PROPERTIES
+                // Add swara to cell - PRESERVE BRACE GROUP PROPERTIES and validation flags
                 const newAtom = {
                     text: finalSwaras[i].text,
                     index: i,
@@ -3471,6 +3584,9 @@
                 if (finalSwaras[i].speed !== undefined) newAtom.speed = finalSwaras[i].speed;
                 if (finalSwaras[i].groupId !== undefined) newAtom.groupId = finalSwaras[i].groupId;
                 if (finalSwaras[i].isBraceChild !== undefined) newAtom.isBraceChild = finalSwaras[i].isBraceChild;
+                // Preserve validation flags and line tracking
+                if (finalSwaras[i].hasInvalidLineCount !== undefined) newAtom.hasInvalidLineCount = finalSwaras[i].hasInvalidLineCount;
+                if (finalSwaras[i].lineNumber !== undefined) newAtom.lineNumber = finalSwaras[i].lineNumber;
                 currentSwaraRow.atoms.push(newAtom);
 
                 // Add corresponding lyric if available
