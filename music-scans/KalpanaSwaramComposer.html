@@ -3038,6 +3038,10 @@
             // Remove spaces and pipes from phrase display
             const phraseDisplay = notation.replace(/[\s|]+/g, '');
             
+            // Count notes only on first line (before pipe) for eduppu calculation
+            const firstLineOnly = notation.split('|')[0];
+            const firstLineNoteCount = countNotes(firstLineOnly);
+            
             return {
                 id: cycleId,
                 label: `Cycle ${currentSong.cycles.length + 1}`,
@@ -3046,7 +3050,7 @@
                 phraseDisplay: phraseDisplay,
                 lyrics: lyrics,
                 comments: comments,
-                noteCount: countNotes(notation),
+                noteCount: firstLineNoteCount,
                 leadingCommas: 0,
                 fullPhrase: phraseDisplay
             };
