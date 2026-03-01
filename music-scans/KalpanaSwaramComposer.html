@@ -1844,12 +1844,18 @@
             return items.length;
         }
 
-        // Count commas in lyrics (, delimiter count)
+        // Count lyrics as: all commas + all syllables (non-empty segments between commas)
         function countLyrics(lyricsText) {
             if (!lyricsText || !lyricsText.trim()) return 0;
             
-            // Count the number of , characters
-            return (lyricsText.match(/,/g) || []).length;
+            // Count commas
+            const commaCount = (lyricsText.match(/,/g) || []).length;
+            
+            // Count syllables (non-empty segments between commas)
+            const syllables = lyricsText.split(',').filter(s => s.trim().length > 0).length;
+            
+            // Total = commas + syllables
+            return commaCount + syllables;
         }
 
         // Parse scale definition and return map of swara -> variant
@@ -2620,6 +2626,28 @@
             // Get lyrics text - NO RULES APPLIED, just display as user typed
             const lyricsDisplay = cycleData.lyrics || '';
             
+            // Parse lyrics: each comma is one item, each syllable (non-comma sequence) is one item
+            function parseLyricsToItems(text) {
+                const items = [];
+                let i = 0;
+                while (i < text.length) {
+                    if (text[i] === ',') {
+                        items.push(',');
+                        i++;
+                    } else {
+                        let syllable = '';
+                        while (i < text.length && text[i] !== ',') {
+                            syllable += text[i];
+                            i++;
+                        }
+                        items.push(syllable);
+                    }
+                }
+                return items;
+            }
+            
+            const allLyricsItems = parseLyricsToItems(lyricsDisplay);
+            
             // Render swaras rows
             rows.forEach((rowItems, rowIndex) => {
                 // Notes row
@@ -2641,14 +2669,12 @@
                     landingCellIndex = eduppu - 1;
                 }
                 
-                // Get lyrics items for pairing with swaras
-                // Split by | delimiter (e.g., "sa|ri|ga|ma")
-                const allLyricsItems = lyricsDisplay.trim() ? lyricsDisplay.split('|').map(s => s.trim()) : [];
-                
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
                     const noteItem = rowItems[i] || '';
-                    const lyricItem = allLyricsItems[i] || '';
+                    // Calculate global index across all rows
+                    const globalLyricIndex = (rowIndex * cycleLength) + i;
+                    const lyricItem = allLyricsItems[globalLyricIndex] || '';
                     
                     // Create swara div
                     const swaraDiv = document.createElement('div');
@@ -2669,7 +2695,8 @@
                     if (lyricsDisplay.trim()) {
                         const lyricDiv = document.createElement('div');
                         lyricDiv.className = 'lyrics-cell';
-                        lyricDiv.textContent = lyricItem;
+                        // Display comma or whitespace-only as dot (.)
+                        lyricDiv.textContent = (lyricItem === ',' || !lyricItem.trim()) ? '.' : lyricItem;
                         
                         cell.appendChild(lyricDiv);
                     }
@@ -3745,8 +3772,27 @@
                 rows.push([]);
             }
 
-            // Get lyrics items using | delimiter (same logic as spreadsheet)
-            const allLyricsItems = lyricsDisplay.trim() ? lyricsDisplay.split('|').map(s => s.trim()) : [];
+            // Parse lyrics: each comma is one item, each syllable (non-comma sequence) is one item
+            function parseLyricsToItems(text) {
+                const items = [];
+                let i = 0;
+                while (i < text.length) {
+                    if (text[i] === ',') {
+                        items.push(',');
+                        i++;
+                    } else {
+                        let syllable = '';
+                        while (i < text.length && text[i] !== ',') {
+                            syllable += text[i];
+                            i++;
+                        }
+                        items.push(syllable);
+                    }
+                }
+                return items;
+            }
+            
+            const allLyricsItems = parseLyricsToItems(lyricsDisplay);
 
             // Render swaras + lyrics paired rows
             rows.forEach((rowItems, rowIndex) => {
@@ -3765,7 +3811,9 @@
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
                     const noteItem = rowItems[i] || '';
-                    const lyricItem = allLyricsItems[i] || '';
+                    // Calculate global index across all rows
+                    const globalLyricIndex = (rowIndex * cycleLength) + i;
+                    const lyricItem = allLyricsItems[globalLyricIndex] || '';
                     
                     // Create swara div
                     const swaraDiv = document.createElement('div');
@@ -3777,7 +3825,8 @@
                     if (lyricsDisplay.trim()) {
                         const lyricDiv = document.createElement('div');
                         lyricDiv.className = 'practice-lyrics-cell';
-                        lyricDiv.textContent = lyricItem;
+                        // Display comma or whitespace-only as dot (.)
+                        lyricDiv.textContent = (lyricItem === ',' || !lyricItem.trim()) ? '.' : lyricItem;
                         cell.appendChild(lyricDiv);
                     }
                     
