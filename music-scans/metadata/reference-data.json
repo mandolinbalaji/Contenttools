@@ -199,14 +199,63 @@
     "rests": {
       "description": "Silence and empty cells",
       "characters": {
-        ",": { "name": "Comma (Rest)", "meaning": "One beat of silence/rest", "unicode": "U+002C", "usage": "Represents a rest for one cell" }
+        ",": { "name": "Comma (Rest)", "meaning": "One beat of silence/rest", "unicode": "U+002C", "usage": "Represents a rest for one cell" },
+        "*": { "name": "Asterisk (Eduppu Marker)", "meaning": "Landing position marker (end of phrase)", "unicode": "U+002A", "usage": "Marks where the eduppu (phrase landing) occurs; ignored during note count and rendering; used only as a visual guide" }
       }
     },
     "groupingSymbols": {
-      "description": "Symbols for grouping related notes",
+      "description": "Symbols for grouping related notes - used for speed modifications and phrase grouping",
+      "bracesDetailedDefinition": {
+        "summary": "Curly braces {} denote grouped notes played at 2× speed (double-time notation)",
+        "musicMeaning": "A notational device to mark phrases or passages that should be performed at double speed relative to the normal beat",
+        "syntaxFormat": "{notes} where notes can be: base notes (s,r,g,m,p,d,n), variants (r1,r2,etc), rests (,), and separators (|,/,\\)",
+        "example": "{srgm} → 4 notes played at 2× speed",
+        "parsingBehavior": "Braces are NOT tokenized - they serve as delimiters only",
+        "processingPipeline": [
+          "Step 1: Content extraction - Extract notes/commas from between braces {srgm} → srgm",
+          "Step 2: Atom parsing - Parse extracted content into atoms (notes + commas), skipping separators (|,/,\\,:,-,.)",
+          "Step 3: Pair splitting - Split atoms into pairs, each pair gets unique groupId (e.g., brace-0, brace-2)",
+          "Step 4: Flagging - Mark each atom with: speed=2 (double-time), isBraceChild=true, groupId (groups related atoms)"
+        ],
+        "dataStructureExample": {
+          "notation": "{srgm}",
+          "atoms": [
+            { "text": "s", "speed": 2, "groupId": "brace-0", "isBraceChild": true },
+            { "text": "r", "speed": 2, "groupId": "brace-0", "isBraceChild": true },
+            { "text": "g", "speed": 2, "groupId": "brace-2", "isBraceChild": true },
+            { "text": "m", "speed": 2, "groupId": "brace-2", "isBraceChild": true }
+          ]
+        },
+        "implementation": {
+          "codebase": "SongNotationComposer.html",
+          "methods": [
+            {
+              "name": "tokenizeWithPosition(line, lineNumber)",
+              "file": "SongNotationComposer.html",
+              "lineRange": "2273-2410",
+              "purpose": "Main tokenization function that detects and processes brace groups",
+              "logic": "Scans for { character, extracts content until }, creates atom objects with speed and groupId flags"
+            },
+            {
+              "name": "matchNote(text, i)",
+              "file": "SongNotationComposer.html",
+              "lineRange": "2243-2279",
+              "purpose": "Matches individual note tokens (including variants and combining marks)",
+              "logic": "Identifies base note, collects numeric suffixes (1,2,3), collects Unicode combining diacriticals"
+            }
+          ],
+          "globalCounter": "globalBraceGroupCounter (incremented by 2 for each pair to ensure unique groupIds)"
+        },
+        "renderingBehavior": {
+          "display": "Atoms with isBraceChild are grouped into cells, typically 2 atoms per cell",
+          "speedIndicator": "A '2×' badge displayed below grouped cells to indicate speed modification",
+          "cellGrouping": "All atoms with same groupId are rendered together in one table cell (see line 1951)"
+        },
+        "symbolBehavior": "Braces are stripped (not rendered) - they appear only in notation source, not in spreadsheet display"
+      },
       "characters": {
-        "{": { "name": "Left Brace", "meaning": "Start grouping/slur", "unicode": "U+007B" },
-        "}": { "name": "Right Brace", "meaning": "End grouping/slur", "unicode": "U+007D" },
+        "{": { "name": "Left Brace", "meaning": "Start grouping/slur (2× speed marker)", "unicode": "U+007B" },
+        "}": { "name": "Right Brace", "meaning": "End grouping/slur (2× speed marker)", "unicode": "U+007D" },
         "[": { "name": "Left Bracket", "meaning": "Start variant", "unicode": "U+005B" },
         "]": { "name": "Right Bracket", "meaning": "End variant", "unicode": "U+005D" }
       }
