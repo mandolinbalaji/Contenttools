@@ -501,7 +501,21 @@
         .insert-lyrics-btn.active:hover {
             background: #003580;
             border-color: #003580;
-        }        .btn-small {
+        }
+
+        .btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .btn.active:hover {
+            background: #764ba2;
+            border-color: #764ba2;
+        }
+
+        .btn-small {
             padding: 6px 12px;
             font-size: 12px;
         }
@@ -690,6 +704,18 @@
             border-radius: 12px;
         }
 
+        .note-count.correct {
+            background: #d4edda;
+            color: #155724;
+            font-weight: 600;
+        }
+
+        .note-count.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            font-weight: 600;
+        }
+
         .lyric-count {
             font-size: 12px;
             font-weight: normal;
@@ -852,6 +878,8 @@
             padding-top: 15px;
             position: relative;
             min-width: 60px;
+            height: 3.2em;
+            overflow: visible;
         }
 
         .spreadsheet-table th {
@@ -882,7 +910,7 @@
             font-style: italic;
             font-size: 13px;
             color: #0047b3;
-            min-height: 1.2em;
+            height: 1.2em;
             padding: 2px 4px;
             border: 1px solid transparent;
             white-space: nowrap;
@@ -893,6 +921,8 @@
             transition: font-size 0.2s;
             display: block;
             background: rgba(76, 175, 80, 0.05);
+            line-height: 1.2;
+        }
             border: 1px solid #c8e6c9;
             font-weight: 500;
         }
@@ -950,6 +980,26 @@
             font-weight: 600;
             text-align: left;
             color: #667eea;
+        }
+
+        .spreadsheet-section-header {
+            background: #667eea;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: left;
+            padding: 8px 12px;
+        }
+
+        .cycle-section-header {
+            background: #667eea;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 12px 16px;
+            margin: 16px 0 8px 0;
+            border-radius: 4px;
+            border-left: 4px solid #5568d3;
         }
 
         .spreadsheet-landing {
@@ -1280,6 +1330,8 @@
             text-align: center;
             font-weight: 700;
             font-size: 12pt;
+            height: 2.4em;
+            overflow: visible;
         }
 
         .practice-spreadsheet-table .practice-label {
@@ -1290,6 +1342,15 @@
             padding-left: 3px;
             width: 50px;
             font-size: 9pt;
+        }
+
+        .practice-spreadsheet-table .practice-section-header {
+            background: #333;
+            color: white;
+            font-weight: 700;
+            font-size: 12pt;
+            text-align: left;
+            padding: 8px 12px;
         }
 
         .practice-spreadsheet-table .practice-lyrics-row td {
@@ -1322,6 +1383,10 @@
             color: #0047b3;
             font-weight: 600;
             padding-top: 2px;
+            height: 1.2em;
+            overflow: visible;
+            white-space: nowrap;
+            line-height: 1.2;
         }
 
         .practice-buttons {
@@ -1406,6 +1471,7 @@
             <a href="index.html" style="color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 4px; font-size: 14px;">← Back to Kanakku</a>
             <button onclick="newSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Create New Song">➕ New</button>
             <button onclick="saveSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Save Song as JSON">💾 Save</button>
+            <button onclick="shareSourceFile()" style="background: rgba(100,200,255,0.3); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Copy share link to LLM source file" id="shareButton" style="display: none;">🔗 Share</button>
             <button onclick="importSong()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import Song from JSON file">📥 Import</button>
             <button onclick="importLLMFormat()" style="background: rgba(255,165,0,0.3); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;" title="Import from LLM format text file">🦾 LLM Import</button>
             <button onclick="openPracticeMode()" style="background: #ffd700; color: #333; font-weight: 600; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;" title="Practice Mode">🎯 Practice</button>
@@ -1421,6 +1487,7 @@
         <a href="#" onclick="jumpToSection('top'); return false;">↑ Top</a>
         <a href="#section-metadata" onclick="jumpToSection('metadata'); return false;">① Metadata</a>
         <a href="#section-cycles" onclick="jumpToSection('cycles'); return false;">② Cycles</a>
+        <span id="cycleSectionJumps" style="display: inline-flex; gap: 4px; margin: 0 4px;"></span>
         <a href="#section-play" onclick="jumpToSection('play'); return false;">③ Play</a>
         <a href="#section-spreadsheet" onclick="jumpToSection('spreadsheet'); return false;">④ Spreadsheet</a>
         <a href="#" onclick="jumpToBottom(); return false;">Bottom ↓</a>
@@ -1620,6 +1687,10 @@
             <div class="nav-bullet" onclick="jumpToSection('play')">Play</div>
             <div class="nav-bullet" onclick="jumpToSection('spreadsheet')">Spreadsheet</div>
         </div>
+        <div class="floating-nav-spreadsheet-container" id="spreadsheetSectionsContainer" style="display: none; max-height: 200px; overflow-y: auto; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px;">
+            <div style="font-size: 11px; color: #666; padding: 4px 8px; font-weight: 600;">Spreadsheet Sections</div>
+            <div class="floating-nav-spreadsheet-sections" id="spreadsheetSections"></div>
+        </div>
         <div class="floating-nav-buttons">
             <button class="float-nav-btn" onclick="scrollSections('up', 3)">▲▲▲</button>
             <button class="float-nav-btn" onclick="scrollSections('up', 1)">↑↑↑</button>
@@ -1723,30 +1794,33 @@
         }
 
         function cleanPhrase(text) {
-            return text.replace(/[\s|]+/g, '');
+            return text.replace(/[\s,]+/g, '');
         }
 
         // Convert phrase string to array of items, treating variants as single items
         // E.g., "ns,r1,,,r,,,rrg" → ["n", "s", ",", "r1", ",", ",", "r", ",", ",", "r", "r", "g"]
         function phraseToItems(text) {
+            // Normalize Unicode: decompose pre-composed characters (e.g., Ṡ → S + combining dot)
+            const normalized = text.normalize('NFD');
             const items = [];
             
-            for (let i = 0; i < text.length; i++) {
-                const char = text[i].toLowerCase();
+            for (let i = 0; i < normalized.length; i++) {
+                const char = normalized[i].toLowerCase();
                 if (char === ' ' || char === '|') continue; // Skip spaces and pipes
+                if (char === '{' || char === '}') continue; // Skip curly braces
                 
                 if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
-                    let item = text[i]; // Keep original case
+                    let item = normalized[i]; // Keep original case
                     
                     // Check if this note has a variant digit (e.g., r1, r2, g3)
-                    if (i + 1 < text.length && /[1-9]/.test(text[i + 1])) {
-                        item += text[i + 1];
+                    if (i + 1 < normalized.length && /[1-9]/.test(normalized[i + 1])) {
+                        item += normalized[i + 1];
                         i++; // Skip the digit
                     }
                     
                     // Check for combining characters (dot above U+0307 or dot below U+0323)
-                    while (i + 1 < text.length && ['\u0307', '\u0323'].includes(text[i + 1])) {
-                        item += text[i + 1];
+                    while (i + 1 < normalized.length && ['\u0307', '\u0323'].includes(normalized[i + 1])) {
+                        item += normalized[i + 1];
                         i++; // Skip the combining character
                     }
                     
@@ -1754,27 +1828,28 @@
                 } else if (char === ',') {
                     items.push(',');
                 } else if (char === '*') {
-                    items.push('*'); // Treat * as a special marker/rest
+                    // Skip * - it's just an eduppu marker, not a renderable item
+                    continue;
                 }
             }
             return items;
         }
 
-        // Count notes in a phrase: variants count as 1 note, commas count as 1
+        // Count notes in a phrase: variants count as 1 note, commas (rests) count as 1
         function countNotes(phraseText) {
             if (!phraseText || !phraseText.trim()) return 0;
             
             const items = phraseToItems(phraseText);
-            // Each item is already counted as 1 (including variants like R1, R2)
+            // Each item is counted as 1 (including variants like R1, R2, and commas)
             return items.length;
         }
 
-        // Count vertical lines in lyrics (| delimiter count)
+        // Count commas in lyrics (, delimiter count)
         function countLyrics(lyricsText) {
             if (!lyricsText || !lyricsText.trim()) return 0;
             
-            // Count the number of | characters
-            return (lyricsText.match(/\|/g) || []).length;
+            // Count the number of , characters
+            return (lyricsText.match(/,/g) || []).length;
         }
 
         // Parse scale definition and return map of swara -> variant
@@ -1994,8 +2069,8 @@
 
         function applyDotToCurrentCursor(textarea, mode) {
             console.log('[DEBUG] applyDotToCurrentCursor called', {mode, textareaId: textarea.id, textareaValue: textarea.value});
-            if (!octaveModifier) {
-                console.log('[DEBUG] octaveModifier is null, returning');
+            if (!mode) {
+                console.log('[DEBUG] mode is null, returning');
                 return null;
             }
             
@@ -2065,10 +2140,12 @@
         }
 
         function handleCycleInputClick(event, cycleId) {
-            console.log('[DEBUG] handleCycleInputClick called', {cycleId, octaveModifier});
-            if (octaveModifier) {
+            const cycle = currentSong.cycles.find(c => c.id === cycleId);
+            const dottingMode = cycle ? cycle.dottingModifier : null;
+            console.log('[DEBUG] handleCycleInputClick called', {cycleId, dottingMode});
+            if (dottingMode) {
                 const textarea = event.target;
-                const newText = applyDotToCurrentCursor(textarea, octaveModifier);
+                const newText = applyDotToCurrentCursor(textarea, dottingMode);
                 if (newText !== null) {
                     console.log('[DEBUG] Dot applied successfully, updating cycle', {cycleId, newText});
                     updateCycle(cycleId, 'phraseText', newText);
@@ -2092,7 +2169,9 @@
                 comments: '',
                 noteCount: 0,
                 leadingCommas: 0,
-                fullPhrase: ''
+                fullPhrase: '',
+                calculateCommas: true,
+                dottingModifier: null
             };
             currentSong.cycles.push(cycle);
             updateCycleLabels();
@@ -2100,7 +2179,32 @@
             updateSpreadsheet();
         }
 
-        function deleteCycle(cycleId) {
+        function addCycleAfter(cycleId) {
+            const cycleIndex = currentSong.cycles.findIndex(c => c.id === cycleId);
+            if (cycleIndex === -1) return;
+            
+            const newCycleId = `cycle-${Date.now()}`;
+            const newCycle = {
+                id: newCycleId,
+                label: `Cycle ${cycleIndex + 2}`,
+                expanded: true,
+                phraseText: '',
+                phraseDisplay: '',
+                lyrics: '',
+                comments: '',
+                noteCount: 0,
+                leadingCommas: 0,
+                fullPhrase: '',
+                calculateCommas: true,
+                dottingModifier: null
+            };
+            
+            // Insert after current cycle
+            currentSong.cycles.splice(cycleIndex + 1, 0, newCycle);
+            updateCycleLabels();
+            renderCycles();
+            updateSpreadsheet();
+        }        function deleteCycle(cycleId) {
             if (confirm('Delete cycle?')) {
                 currentSong.cycles = currentSong.cycles.filter(c => c.id !== cycleId);
                 updateCycleLabels();
@@ -2122,17 +2226,56 @@
                     const cycleLength = currentSong.beats * currentSong.nadai;
                     cycle.leadingCommas = calculateLeadingCommas(cycle.noteCount, cycleLength, currentSong.eduppu);
                     cycle.fullPhrase = ','.repeat(cycle.leadingCommas) + cycle.phraseDisplay;
+                    
+                    // Update note count display without re-rendering entire cycles
+                    updateNoteLyricCountDisplay(cycleId);
                 } else if (field === 'lyrics') {
                     cycle.lyrics = value;
+                    
+                    // Update lyric count display without re-rendering entire cycles
+                    updateNoteLyricCountDisplay(cycleId);
                 } else if (field === 'comments') {
                     cycle.comments = value;
+                } else if (field === 'calculateCommas') {
+                    cycle.calculateCommas = value;
                 }
 
                 updateSpreadsheet();
                 
-                // Rerender cycles to update note/lyric count display
-                if (field === 'phraseText' || field === 'lyrics') {
+                // Only re-render cycles if comments or calculateCommas changed (which affect section headers and spreadsheet grouping)
+                if (field === 'comments' || field === 'calculateCommas') {
                     renderCycles();
+                }
+            }
+        }
+
+        function updateNoteLyricCountDisplay(cycleId) {
+            const cycle = currentSong.cycles.find(c => c.id === cycleId);
+            if (cycle) {
+                const noteCount = countNotes(cycle.phraseText);
+                const lyricCount = countLyrics(cycle.lyrics);
+                const expectedNoteCount = currentSong.beats * currentSong.nadai;
+                const noteCountClass = noteCount === expectedNoteCount ? 'correct' : 'incorrect';
+                
+                // Find the cycle card by searching from the cycle-content upward
+                const cycleContent = document.getElementById(`cycle-content-${cycleId}`);
+                if (cycleContent) {
+                    const cycleCard = cycleContent.closest('.cycle-card');
+                    if (cycleCard) {
+                        // Update the note count span
+                        const noteCountSpan = cycleCard.querySelector('span.note-count');
+                        if (noteCountSpan) {
+                            noteCountSpan.textContent = `(${noteCount} notes)`;
+                            noteCountSpan.className = `note-count ${noteCountClass}`;
+                            noteCountSpan.title = `Total notes (variants count as 1). Expected: ${expectedNoteCount}`;
+                        }
+                        
+                        // Update the lyric count span
+                        const lyricCountSpan = cycleCard.querySelector('span.lyric-count');
+                        if (lyricCountSpan) {
+                            lyricCountSpan.textContent = `(${lyricCount} lyrics)`;
+                        }
+                    }
                 }
             }
         }
@@ -2141,54 +2284,109 @@
             const container = document.getElementById('cyclesContainer');
             container.innerHTML = '';
 
+            // Group cycles by section tag
+            const sections = [];
+            let currentSection = { tag: null, cycles: [] };
+            
             currentSong.cycles.forEach((cycle, cycleIndex) => {
-                const cycleCard = document.createElement('div');
-                cycleCard.className = 'cycle-card';
-                const noteCount = countNotes(cycle.phraseText);
-                const lyricCount = countLyrics(cycle.lyrics);
-                cycleCard.innerHTML = `
-                    <div class="cycle-header">
-                        <div class="cycle-title">${cycle.label} <span class="note-count" title="Total notes (variants count as 1)">(${noteCount} notes)</span>${lyricCount > 0 ? `<span class="lyric-count" title="Total lyrics">(${lyricCount} lyrics)</span>` : ''}</div>
-                        <div style="display: flex; gap: 6px; align-items: center;">
-                            ${cycleIndex > 0 ? `<button class="btn btn-small" onclick="moveCycleUp('${cycle.id}')" title="Move Up">▲</button>` : ''}
-                            ${cycleIndex < currentSong.cycles.length - 1 ? `<button class="btn btn-small" onclick="moveCycleDown('${cycle.id}')" title="Move Down">▼</button>` : ''}
-                            <button class="cycle-toggle ${!cycle.expanded ? 'collapsed' : ''}" 
-                                    onclick="toggleCycleExpansion('${cycle.id}')">⌄</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteCycle('${cycle.id}')">🗑</button>
-                        </div>
-                    </div>
-                    <div class="cycle-content ${!cycle.expanded ? 'collapsed' : ''}" id="cycle-content-${cycle.id}">
-                        <div class="form-group">
-                            <label>Swaras (s, r, g, m, p, d, n)</label>
-                            <textarea id="cycleSwaras-${cycle.id}" 
-                                      placeholder="Enter swaras..." 
-                                      onchange="updateCycle('${cycle.id}', 'phraseText', this.value)"
-                                      onclick="handleCycleInputClick(event, '${cycle.id}')">${cycle.phraseText}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <label>Lyrics</label>
-                                <button class="btn btn-small insert-lyrics-btn ${insertLyricsCycleId === cycle.id ? 'active' : ''}" 
-                                        onclick="toggleInsertLyricsMode('${cycle.id}')" 
-                                        title="Click to enable | insertion mode">${insertLyricsCycleId === cycle.id ? '✓ Inserting' : 'Add |'}</button>
-                            </div>
-                            <textarea id="cycleLyrics-${cycle.id}" 
-                                      placeholder="Add lyrics using | to separate by swara (e.g., sa|ri|ga|ma)" 
-                                      onchange="updateCycle('${cycle.id}', 'lyrics', this.value)" 
-                                      onclick="handleLyricsClick(event, '${cycle.id}')"
-                                      style="min-height: 80px; cursor: ${insertLyricsCycleId === cycle.id ? 'crosshair' : 'text'};">${cycle.lyrics}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Comments (Optional)</label>
-                            <textarea id="cycleComments-${cycle.id}" 
-                                      placeholder="Add notes about this cycle..." 
-                                      onchange="updateCycle('${cycle.id}', 'comments', this.value)" 
-                                      style="min-height: 60px;">${cycle.comments}</textarea>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(cycleCard);
+                const sectionTag = extractSectionTag(cycle.comments);
+                
+                // If section tag changed, save current section and start new one
+                if (sectionTag !== currentSection.tag) {
+                    if (currentSection.cycles.length > 0) {
+                        sections.push(currentSection);
+                    }
+                    currentSection = { tag: sectionTag, cycles: [] };
+                }
+                
+                currentSection.cycles.push({ cycle, index: cycleIndex });
             });
+            
+            // Don't forget the last section
+            if (currentSection.cycles.length > 0) {
+                sections.push(currentSection);
+            }
+            
+            // Render sections with headers and cycles
+            sections.forEach((section, sectionIndex) => {
+                // Add section header if there's a section tag
+                if (section.tag) {
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'cycle-section-header';
+                    headerDiv.id = `cycle-section-${sectionIndex}`;
+                    headerDiv.textContent = section.tag;
+                    container.appendChild(headerDiv);
+                }
+                
+                // Render cycles in this section
+                section.cycles.forEach(({ cycle, index }) => {
+                    const cycleCard = document.createElement('div');
+                    cycleCard.className = 'cycle-card';
+                    const noteCount = countNotes(cycle.phraseText);
+                    const lyricCount = countLyrics(cycle.lyrics);
+                    const expectedNoteCount = currentSong.beats * currentSong.nadai;
+                    const noteCountClass = noteCount === expectedNoteCount ? 'correct' : 'incorrect';
+                    cycleCard.innerHTML = `
+                        <div class="cycle-header">
+                            <div class="cycle-title">${cycle.label} <span class="note-count ${noteCountClass}" title="Total notes (variants count as 1). Expected: ${expectedNoteCount}">(${noteCount} notes)</span>${lyricCount > 0 ? `<span class="lyric-count" title="Total lyrics">(${lyricCount} lyrics)</span>` : ''}</div>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                ${index > 0 ? `<button class="btn btn-small" onclick="moveCycleUp('${cycle.id}')" title="Move Up">▲</button>` : ''}
+                                ${index < currentSong.cycles.length - 1 ? `<button class="btn btn-small" onclick="moveCycleDown('${cycle.id}')" title="Move Down">▼</button>` : ''}
+                                <button class="btn btn-small" onclick="addCycleAfter('${cycle.id}')" title="Add Cycle Below">+</button>
+                                <button class="btn btn-small ${cycle.dottingModifier === 'up' ? 'active' : ''}" onclick="toggleCycleDottingMode('${cycle.id}', 'up')" title="Add dot above (ṡ, ṙ, ġ...)">⬆</button>
+                                <button class="btn btn-small ${cycle.dottingModifier === 'down' ? 'active' : ''}" onclick="toggleCycleDottingMode('${cycle.id}', 'down')" title="Add dot below (ṣ, ṛ, g̣...)">⬇</button>
+                                <button class="cycle-toggle ${!cycle.expanded ? 'collapsed' : ''}" 
+                                        onclick="toggleCycleExpansion('${cycle.id}')">⌄</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteCycle('${cycle.id}')">🗑</button>
+                            </div>
+                        </div>
+                        <div class="cycle-content ${!cycle.expanded ? 'collapsed' : ''}" id="cycle-content-${cycle.id}">
+                            <div class="form-group">
+                                <label>Swaras (s, r, g, m, p, d, n)</label>
+                                <textarea id="cycleSwaras-${cycle.id}" 
+                                          placeholder="Enter swaras..." 
+                                          onchange="updateCycle('${cycle.id}', 'phraseText', this.value)"
+                                          oninput="updateCycle('${cycle.id}', 'phraseText', this.value)"
+                                          onclick="handleCycleInputClick(event, '${cycle.id}')">${cycle.phraseText}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" 
+                                           id="calculateCommas-${cycle.id}" 
+                                           ${cycle.calculateCommas ? 'checked' : ''} 
+                                           onchange="updateCycle('${cycle.id}', 'calculateCommas', this.checked)">
+                                    <span>Calculate landing position & add commas</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <label>Lyrics</label>
+                                    <button class="btn btn-small insert-lyrics-btn ${insertLyricsCycleId === cycle.id ? 'active' : ''}" 
+                                            onclick="toggleInsertLyricsMode('${cycle.id}')" 
+                                            title="Click to enable , insertion mode">${insertLyricsCycleId === cycle.id ? '✓ Inserting' : 'Add ,'}</button>
+                                </div>
+                                <textarea id="cycleLyrics-${cycle.id}" 
+                                          placeholder="Add lyrics using , to separate by swara (e.g., sa,ri,ga,ma)" 
+                                          onchange="updateCycle('${cycle.id}', 'lyrics', this.value)"
+                                          oninput="updateCycle('${cycle.id}', 'lyrics', this.value)"
+                                          onclick="handleLyricsClick(event, '${cycle.id}')"
+                                          style="min-height: 80px; cursor: ${insertLyricsCycleId === cycle.id ? 'crosshair' : 'text'};">${cycle.lyrics}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Comments (Optional)</label>
+                                <textarea id="cycleComments-${cycle.id}" 
+                                          placeholder="Add notes about this cycle..." 
+                                          onchange="updateCycle('${cycle.id}', 'comments', this.value)" 
+                                          style="min-height: 60px;">${cycle.comments}</textarea>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(cycleCard);
+                });
+            });
+            
+            // Update top nav with cycle section jumps
+            updateCycleSectionJumps();
         }
 
         function toggleInsertLyricsMode(cycleId) {
@@ -2210,8 +2408,8 @@
                 const cursorPos = textarea.selectionStart;
                 const currentText = textarea.value;
                 
-                // Insert | at cursor position
-                const newText = currentText.slice(0, cursorPos) + '|' + currentText.slice(cursorPos);
+                // Insert , at cursor position
+                const newText = currentText.slice(0, cursorPos) + ',' + currentText.slice(cursorPos);
                 textarea.value = newText;
                 
                 // Update cycle data
@@ -2220,7 +2418,7 @@
                     cycle.lyrics = newText;
                 }
                 
-                // Move cursor after the inserted |
+                // Move cursor after the inserted ,
                 textarea.selectionStart = textarea.selectionEnd = cursorPos + 1;
                 textarea.focus();
             }
@@ -2230,6 +2428,19 @@
             const cycle = currentSong.cycles.find(c => c.id === cycleId);
             if (cycle) {
                 cycle.expanded = !cycle.expanded;
+                renderCycles();
+            }
+        }
+
+        function toggleCycleDottingMode(cycleId, mode) {
+            const cycle = currentSong.cycles.find(c => c.id === cycleId);
+            if (cycle) {
+                // Toggle: if already active, turn off; otherwise, activate this mode
+                if (cycle.dottingModifier === mode) {
+                    cycle.dottingModifier = null;
+                } else {
+                    cycle.dottingModifier = mode;
+                }
                 renderCycles();
             }
         }
@@ -2270,36 +2481,101 @@
         // MODULE 6: SPREADSHEET DISPLAY
         // ============================================================================
 
+        // Extract section tag from cycle comments (Pallavi:, Anupallavi:, Charanam:, etc.)
+        function extractSectionTag(comments) {
+            if (!comments) return null;
+            
+            // Match section keywords (case-insensitive)
+            const sectionMatch = comments.match(/^(Pallavi|PALLAVI|Anupallavi|ANUPALLAVI|Charanam|CHARANAM|Charaṇam):/i);
+            
+            if (sectionMatch) {
+                const tag = sectionMatch[1];
+                // Normalize to display format
+                if (tag.toLowerCase() === 'pallavi') return 'Pallavi';
+                if (tag.toLowerCase() === 'anupallavi') return 'Anupallavi';
+                if (tag.toLowerCase() === 'charanam' || tag.toLowerCase() === 'charaṇam') return 'Charanam';
+            }
+            
+            return null;
+        }
+
         function updateSpreadsheet() {
             const cycleLength = currentSong.beats * currentSong.nadai;
             const header = document.getElementById('spreadsheetHeader');
             const body = document.getElementById('spreadsheetBody');
+            
+            // Update spreadsheet section bullets in floating nav
+            updateSpreadsheetSectionBullets();
 
-            // Create header with beat numbers and nadai subdivisions
+            // Create header with continuous numbering row + beat numbers and nadai subdivisions
+            let continuousNumberHTML = '<tr><th></th>';  // Empty cell for label column
             let beatHeaderHTML = '<tr><th></th>';  // Empty cell for label column
             let nadaiHeaderHTML = '<tr><th></th>';  // Empty cell for label column
+            
+            // Add continuous numbering 1 to cycleLength
+            for (let i = 1; i <= cycleLength; i++) {
+                continuousNumberHTML += `<th style="background: #333; color: white; font-weight: 700; font-size: 11px;">${i}</th>`;
+            }
+            continuousNumberHTML += '</tr>';
             
             for (let beat = 1; beat <= currentSong.beats; beat++) {
                 // Add beat number spanning nadai cells
                 beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #667eea; color: white; font-weight: 600;">Beat ${beat}</th>`;
                 
-                // Add nadai subdivisions
+                // Add nadai subdivisions with repeating pattern (1, 2, 3, ... nadai, 1, 2, 3, ... nadai)
                 for (let n = 1; n <= currentSong.nadai; n++) {
-                    nadaiHeaderHTML += `<th style="background: #888; color: white; font-size: 10px;">n${n}</th>`;
+                    nadaiHeaderHTML += `<th style="background: #888; color: white; font-size: 10px;">${n}</th>`;
                 }
             }
             beatHeaderHTML += '</tr>';
             nadaiHeaderHTML += '</tr>';
             
-            header.innerHTML = beatHeaderHTML + nadaiHeaderHTML;
+            header.innerHTML = continuousNumberHTML + beatHeaderHTML + nadaiHeaderHTML;
 
-            // Create body with all cycles
+            // Create body with cycles grouped by section tags
             body.innerHTML = '';
 
-            // Add all cycles rows
+            // Group cycles by section tag
+            const sections = [];
+            let currentSection = { tag: null, cycles: [] };
+            
             currentSong.cycles.forEach((cycle, cycleIndex) => {
-                const label = `Cycle ${cycleIndex + 1}`;
-                renderSpreadsheetLine(body, label, cycle, cycleLength);
+                const sectionTag = extractSectionTag(cycle.comments);
+                
+                // If section tag changed, save current section and start new one
+                if (sectionTag !== currentSection.tag) {
+                    if (currentSection.cycles.length > 0) {
+                        sections.push(currentSection);
+                    }
+                    currentSection = { tag: sectionTag, cycles: [] };
+                }
+                
+                currentSection.cycles.push({ cycle, index: cycleIndex });
+            });
+            
+            // Don't forget the last section
+            if (currentSection.cycles.length > 0) {
+                sections.push(currentSection);
+            }
+            
+            // Render sections with headers
+            sections.forEach((section, sectionIndex) => {
+                // Add section header row if there's a section tag
+                if (section.tag) {
+                    const headerRow = body.insertRow();
+                    headerRow.className = 'spreadsheet-section-row';
+                    headerRow.id = `spreadsheet-section-${sectionIndex}`;
+                    const headerCell = headerRow.insertCell();
+                    headerCell.className = 'spreadsheet-section-header';
+                    headerCell.colSpan = cycleLength + 1;  // +1 for label column
+                    headerCell.textContent = section.tag;
+                }
+                
+                // Add cycles in this section
+                section.cycles.forEach(({ cycle, index }) => {
+                    const label = `Cycle ${index + 1}`;
+                    renderSpreadsheetLine(body, label, cycle, cycleLength);
+                });
             });
         }
 
@@ -2311,11 +2587,16 @@
             // All cycles use currentSong.eduppu
             const eduppu = currentSong.eduppu;
             
-            // Use stored leading commas if available (e.g., 0 for LLM imports)
-            // Otherwise calculate based on eduppu
-            let leadingCommas = cycleData.leadingCommas;
-            if (leadingCommas === undefined || leadingCommas === null) {
+            // Determine if we should calculate commas
+            const shouldCalculateCommas = cycleData.calculateCommas !== false; // Default to true if not specified
+            
+            let leadingCommas;
+            if (shouldCalculateCommas) {
+                // Calculate based on eduppu
                 leadingCommas = calculateLeadingCommas(cycleData.noteCount, cycleLength, eduppu);
+            } else {
+                // Don't calculate - use no commas (just place notes as-is)
+                leadingCommas = 0;
             }
             
             // Convert to items array (treating r1, g3 etc as single items)
@@ -2577,7 +2858,15 @@
                     currentSong.id = savedSong.id;
                     currentSong.createdDate = savedSong.createdDate;
                     currentSong.lastModified = savedSong.lastModified;
-                    alert('Song saved successfully!');
+                    
+                    // Build success message with share URL if LLM source exists
+                    let message = 'Song saved successfully!';
+                    if (currentSong.sourceFile) {
+                        const shareUrl = `${window.location.origin}/api/kalpana-swara-source/${currentSong.sourceFile}`;
+                        message += `\n\nShare LLM source:\n${shareUrl}`;
+                    }
+                    
+                    alert(message);
                     await loadAllSongs();
                     highlightCurrentSong();
                 } else {
@@ -2740,6 +3029,86 @@
             }
         }
 
+        function updateSpreadsheetSectionBullets() {
+            const uniqueSections = [];
+            const seenTags = new Set();
+            
+            currentSong.cycles.forEach(cycle => {
+                const tag = extractSectionTag(cycle.comments);
+                if (tag && !seenTags.has(tag)) {
+                    uniqueSections.push(tag);
+                    seenTags.add(tag);
+                }
+            });
+            
+            const container = document.getElementById('spreadsheetSections');
+            const containerWrapper = document.getElementById('spreadsheetSectionsContainer');
+            container.innerHTML = '';
+            
+            if (uniqueSections.length > 0) {
+                containerWrapper.style.display = 'block';
+                uniqueSections.forEach(tag => {
+                    const bullet = document.createElement('div');
+                    bullet.className = 'nav-bullet';
+                    bullet.style.fontSize = '12px';
+                    bullet.textContent = tag.replace(/:$/, '');  // Remove trailing colon
+                    bullet.onclick = () => jumpToSpreadsheetSection(tag);
+                    container.appendChild(bullet);
+                });
+            } else {
+                containerWrapper.style.display = 'none';
+            }
+        }
+
+        function jumpToSpreadsheetSection(sectionTag) {
+            const rows = document.querySelectorAll('.spreadsheet-section-row');
+            for (let row of rows) {
+                if (row.textContent.trim() === sectionTag.trim()) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    break;
+                }
+            }
+        }
+
+        function updateCycleSectionJumps() {
+            const uniqueSections = [];
+            const seenTags = new Set();
+            
+            currentSong.cycles.forEach(cycle => {
+                const tag = extractSectionTag(cycle.comments);
+                if (tag && !seenTags.has(tag)) {
+                    uniqueSections.push(tag);
+                    seenTags.add(tag);
+                }
+            });
+            
+            const container = document.getElementById('cycleSectionJumps');
+            container.innerHTML = '';
+            
+            if (uniqueSections.length > 0) {
+                uniqueSections.forEach((tag, index) => {
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.textContent = tag.replace(/:$/, '');  // Remove trailing colon
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        jumpToCycleSection(index);
+                    };
+                    link.style.cssText = 'color: #667eea; text-decoration: none; font-weight: 600; font-size: 13px; padding: 2px 6px; border-radius: 3px; transition: all 0.2s;';
+                    link.onmouseover = (e) => e.target.style.backgroundColor = '#f0f0f0';
+                    link.onmouseout = (e) => e.target.style.backgroundColor = 'transparent';
+                    container.appendChild(link);
+                });
+            }
+        }
+
+        function jumpToCycleSection(sectionIndex) {
+            const element = document.getElementById(`cycle-section-${sectionIndex}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         function jumpToBottom() {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
@@ -2825,6 +3194,7 @@
             
             // Reload UI
             loadSongToUI();
+            updateShareButton();
             alert(`New song "${songName}" created!`);
         }
 
@@ -2906,23 +3276,25 @@
                 const file = e.target.files[0];
                 if (!file) return;
                 
-                // Ask for song name after file is selected
-                const songName = prompt('Enter song name for LLM import:');
-                if (!songName || !songName.trim()) return;
+                // Use filename as song name (remove .txt extension)
+                const songName = file.name.replace(/\.txt$/i, '');
                 
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     try {
                         const txtContent = event.target.result;
-                        const parsedSong = parseLLMFormat(txtContent, songName.trim());
+                        const parsedSong = parseLLMFormat(txtContent, songName);
                         
                         currentSong = parsedSong;
                         loadSongToUI();
                         
-                        // Store reference to source file
+                        // Store reference to source file name and raw LLM content
                         currentSong.sourceFile = file.name;
+                        currentSong.llmSourceContent = txtContent;
                         
-                        alert(`✓ Imported "${songName}"!\n\nCreated ${parsedSong.cycles.length} cycles\n\nNow click Save to save the song`);
+                        updateShareButton();
+                        
+                        alert(`✓ Imported "${songName}"!\n\nCreated ${parsedSong.cycles.length} cycles\n\nThe txt file will be saved with the song when you click Save`);
                     } catch (error) {
                         alert('Error parsing LLM format: ' + error.message);
                     }
@@ -3058,7 +3430,9 @@
                 comments: comments,
                 noteCount: firstLineNoteCount,  // Use first line for eduppu calculation
                 leadingCommas: 0,  // No leading commas for LLM imports - user specifies exact notation
-                fullPhrase: phraseDisplay
+                fullPhrase: phraseDisplay,
+                calculateCommas: false,  // LLM imports default to no recalculation
+                dottingModifier: null
             };
         }
 
@@ -3073,15 +3447,20 @@
             document.getElementById('eduppu').value = currentSong.eduppu;
             document.getElementById('scaleInput').value = currentSong.scale || '';
 
-            // Normalize cycle labels to sequential counters
+            // Normalize cycle labels to sequential counters and ensure calculateCommas is set
             currentSong.cycles.forEach((cycle, index) => {
                 cycle.label = `Cycle ${index + 1}`;
+                // Ensure calculateCommas property exists (default to true for backwards compatibility)
+                if (cycle.calculateCommas === undefined) {
+                    cycle.calculateCommas = true;
+                }
             });
 
             renderTags();
             updateEduppuOptions();
             renderCycles();
             updateSpreadsheet();
+            updateShareButton();
         }
 
         // ============================================================================
@@ -3171,6 +3550,31 @@
             alert('KalpanaSwaramComposer v1.0\n\nHelp & Documentation coming soon!');
         }
 
+        function shareSourceFile() {
+            if (!currentSong.sourceFile) {
+                alert('No LLM source file to share. Import a song from LLM format first.');
+                return;
+            }
+            
+            const shareUrl = `${window.location.origin}/api/kalpana-swara-source/${currentSong.sourceFile}`;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert(`Share link copied to clipboard!\n\n${shareUrl}`);
+            }).catch(err => {
+                alert(`Share link:\n\n${shareUrl}`);
+            });
+        }
+
+        function updateShareButton() {
+            const shareButton = document.getElementById('shareButton');
+            if (currentSong.sourceFile && shareButton) {
+                shareButton.style.display = 'inline-block';
+            } else if (shareButton) {
+                shareButton.style.display = 'none';
+            }
+        }
+
         function toggleSettings() {
             alert('Settings panel coming soon!');
         }
@@ -3234,26 +3638,76 @@
             const header = document.getElementById('practiceSpreadsheetHeader');
             const body = document.getElementById('practiceSpreadsheetBody');
 
-            // Create header with beat numbers and nadai subdivisions
+            // Create header with continuous numbering row + beat numbers and nadai subdivisions
+            let continuousNumberHTML = '<tr><th></th>';  // Empty cell for label column
             let beatHeaderHTML = '<tr><th></th>';
             let nadaiHeaderHTML = '<tr><th></th>';
+            
+            // Add continuous numbering 1 to cycleLength
+            for (let i = 1; i <= cycleLength; i++) {
+                continuousNumberHTML += `<th style="background: #222; color: white; font-weight: 700; font-size: 10px;">${i}</th>`;
+            }
+            continuousNumberHTML += '</tr>';
             
             for (let beat = 1; beat <= currentSong.beats; beat++) {
                 beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #333; color: white;">Beat ${beat}</th>`;
                 for (let n = 1; n <= currentSong.nadai; n++) {
-                    nadaiHeaderHTML += `<th style="background: #666; color: white; font-size: 9pt;">n${n}</th>`;
+                    nadaiHeaderHTML += `<th style="background: #666; color: white; font-size: 9pt;">${n}</th>`;
                 }
             }
             beatHeaderHTML += '</tr>';
             nadaiHeaderHTML += '</tr>';
             
-            header.innerHTML = beatHeaderHTML + nadaiHeaderHTML;
+            header.innerHTML = continuousNumberHTML + beatHeaderHTML + nadaiHeaderHTML;
 
-            // Create body with all cycles + lyrics rows
+            // Create body with cycles grouped by section tags
             body.innerHTML = '';
 
+            // Group cycles by section tag
+            const sections = [];
+            let currentSection = { tag: null, cycles: [] };
+            
             currentSong.cycles.forEach((cycle, cycleIndex) => {
-                renderPracticeSpreadsheetLine(body, cycleIndex + 1, cycle, cycleLength);
+                const sectionTag = extractSectionTag(cycle.comments);
+                
+                // If section tag changed, save current section and start new one
+                if (sectionTag !== currentSection.tag) {
+                    if (currentSection.cycles.length > 0) {
+                        sections.push(currentSection);
+                    }
+                    currentSection = { tag: sectionTag, cycles: [] };
+                }
+                
+                currentSection.cycles.push({ cycle, index: cycleIndex });
+            });
+            
+            // Don't forget the last section
+            if (currentSection.cycles.length > 0) {
+                sections.push(currentSection);
+            }
+            
+            // Render sections with headers
+            sections.forEach((section, sectionIndex) => {
+                // Add section header row if there's a section tag
+                if (section.tag) {
+                    const headerRow = body.insertRow();
+                    headerRow.className = 'practice-section-row';
+                    headerRow.id = `practice-section-${sectionIndex}`;
+                    const headerCell = headerRow.insertCell();
+                    headerCell.className = 'practice-section-header';
+                    headerCell.colSpan = cycleLength + 1;  // +1 for label column
+                    headerCell.textContent = section.tag;
+                    headerCell.style.background = '#333';
+                    headerCell.style.color = 'white';
+                    headerCell.style.fontWeight = '700';
+                    headerCell.style.fontSize = '14px';
+                    headerCell.style.padding = '8px 12px';
+                }
+                
+                // Add cycles in this section
+                section.cycles.forEach(({ cycle, index }) => {
+                    renderPracticeSpreadsheetLine(body, index + 1, cycle, cycleLength);
+                });
             });
         }
 
@@ -3262,8 +3716,17 @@
             const lyricsDisplay = cycleData.lyrics || '';
             const eduppu = currentSong.eduppu;
             
-            // Calculate leading commas using fixed formula
-            const leadingCommas = ((eduppu - 1 - cycleData.noteCount) % cycleLength + cycleLength) % cycleLength;
+            // Determine if we should calculate commas
+            const shouldCalculateCommas = cycleData.calculateCommas !== false; // Default to true if not specified
+            
+            let leadingCommas;
+            if (shouldCalculateCommas) {
+                // Calculate using fixed formula
+                leadingCommas = ((eduppu - 1 - cycleData.noteCount) % cycleLength + cycleLength) % cycleLength;
+            } else {
+                // Don't calculate - use no commas (just place notes as-is)
+                leadingCommas = 0;
+            }
             
             // Create items array for swaras
             const items = [];
