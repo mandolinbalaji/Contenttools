@@ -354,6 +354,8 @@
             padding: 20px 40px;
             max-width: 1400px;
             margin: 0 auto;
+            z-index: 10;
+            position: relative;
         }
 
         /* Section Styling */
@@ -449,6 +451,7 @@
             background: #667eea;
             color: white;
             border-color: #667eea;
+            display:none;
         }
 
         .btn-primary:hover {
@@ -540,6 +543,28 @@
             padding: 20px;
             border-radius: 8px;
             border: 1px solid #ddd;
+        }
+
+        .metadata-toggle-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.2s;
+            min-width: 40px;
+        }
+
+        .metadata-toggle-btn:hover {
+            background: #5568d3;
+        }
+
+        .metadata-summary {
+            font-weight: 500;
+            padding: 10px 0;
         }
 
         .thala-shortcuts {
@@ -665,6 +690,32 @@
             padding: 20px;
             border-radius: 8px;
             border: 1px solid #ddd;
+            margin-left:5%;
+        }
+
+        #cyclesContainer {
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 8px;
+        }
+
+        #cyclesContainer::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #cyclesContainer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #cyclesContainer::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        #cyclesContainer::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         .cycle-card {
@@ -793,6 +844,7 @@
             position: sticky;
             top: 140px;
             z-index: 100;
+            margin-left:5%;
         }
 
         .play-content {
@@ -854,13 +906,35 @@
             border-radius: 8px;
             border: 1px solid #ddd;
             overflow-x: auto;
+            margin-left:5%;
         }
 
         .spreadsheet-container {
             border: 2px solid #667eea;
             border-radius: 4px;
-            overflow: auto;
+            overflow-y: auto;
+            overflow-x: auto;
             background: white;
+            max-height: 500px;
+        }
+
+        .spreadsheet-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .spreadsheet-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .spreadsheet-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .spreadsheet-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         .spreadsheet-table {
@@ -1048,10 +1122,13 @@
             max-height: 80vh;
             overflow-y: auto;
             transition: all 0.3s ease;
+            display:none;
+            
         }
 
         .floating-nav.collapsed {
             width: 50px;
+            
         }
 
         .floating-nav-header {
@@ -1304,7 +1381,28 @@
 
         .practice-spreadsheet-container {
             overflow-x: auto;
+            overflow-y: auto;
             margin-top: 2mm;
+            max-height: 500px;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         .practice-spreadsheet-table {
@@ -1540,9 +1638,13 @@
         <main class="content-area">
             <!-- ① METADATA SECTION -->
             <section id="section-metadata">
-                <h2>① Metadata Section</h2>
-
-                <div class="form-row">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+                    <h2 style="margin: 0;">① Metadata Section</h2>
+                    <button class="metadata-toggle-btn" id="metadataToggleBtn" onclick="toggleMetadataSection()">−</button>
+                </div>
+                <div class="metadata-summary" id="metadataSummary" style="display: none; font-size: 14px; color: #666; padding: 8px 0; border-bottom: 1px solid #ddd; margin-bottom: 12px;"></div>
+                
+                <div id="metadataContent">
                     <div class="form-group">
                         <label>Song Name *</label>
                         <input type="text" id="songName" placeholder="e.g., Pakkala_Nilabadi">
@@ -1615,6 +1717,7 @@
                         <button class="thala-shortcut-btn" onclick="applyThala(7, 2)">Misra: 7, 2</button>
                         <button class="thala-shortcut-btn" onclick="applyThala(5, 2)">Kanda: 5, 2</button>
                     </div>
+                </div>
                 </div>
             </section>
 
@@ -1920,6 +2023,7 @@
             currentSong.nadai = parseInt(document.getElementById('nadai').value) || 4;
             currentSong.eduppu = parseInt(document.getElementById('eduppu').value) || 1;
             currentSong.scale = document.getElementById('scaleInput').value.trim();
+            updateMetadataSummary();
             recalculate();
         }
 
@@ -1958,12 +2062,18 @@
         }
 
         function removeTag(tag) {
+            if (!currentSong.tags || !Array.isArray(currentSong.tags)) {
+                currentSong.tags = [];
+            }
             currentSong.tags = currentSong.tags.filter(t => t !== tag);
             renderTags();
         }
 
         function renderTags() {
             const tagsDisplay = document.getElementById('tagsDisplay');
+            if (!currentSong.tags || !Array.isArray(currentSong.tags)) {
+                currentSong.tags = [];
+            }
             tagsDisplay.innerHTML = currentSong.tags.map(tag =>
                 `<div class="tag">${tag}<span class="tag-remove" onclick="removeTag('${tag}')">×</span></div>`
             ).join('');
@@ -2896,12 +3006,22 @@
             try {
                 const response = await fetch(`${API_BASE}/kalpana-swara-songs/${songId}`);
                 if (response.ok) {
-                    currentSong = await response.json();
+                    const data = await response.json();
+                    if (!data) {
+                        console.error('Empty response from server');
+                        alert('Error: Empty song data received');
+                        return;
+                    }
+                    currentSong = data;
                     loadSongToUI();
                     highlightCurrentSong();
+                } else {
+                    console.error('Failed to load song:', response.status);
+                    alert('Failed to load song: ' + response.statusText);
                 }
             } catch (e) {
                 console.error('Error loading song:', e);
+                alert('Error loading song: ' + e.message);
             }
         }
 
@@ -3461,6 +3581,29 @@
             document.getElementById('eduppu').value = currentSong.eduppu;
             document.getElementById('scaleInput').value = currentSong.scale || '';
 
+            // Ensure cycles array exists
+            if (!currentSong.cycles || !Array.isArray(currentSong.cycles)) {
+                currentSong.cycles = [];
+            }
+
+            // Ensure tags array exists
+            if (!currentSong.tags || !Array.isArray(currentSong.tags)) {
+                currentSong.tags = [];
+            }
+
+            // Ensure mainPhrase object exists
+            if (!currentSong.mainPhrase || typeof currentSong.mainPhrase !== 'object') {
+                currentSong.mainPhrase = {
+                    phraseText: '',
+                    phraseDisplay: '',
+                    noteCount: 0,
+                    leadingCommas: 0,
+                    fullPhrase: '',
+                    eduppu: currentSong.eduppu,
+                    dottingModifier: null
+                };
+            }
+
             // Normalize cycle labels to sequential counters and ensure calculateCommas is set
             if (currentSong.cycles && Array.isArray(currentSong.cycles)) {
                 currentSong.cycles.forEach((cycle, index) => {
@@ -3480,11 +3623,40 @@
             renderCycles();
             updateSpreadsheet();
             updateShareButton();
+            updateMetadataSummary();
         }
 
-        // ============================================================================
-        // MODULE 10: RECALCULATION ENGINE
-        // ============================================================================
+        function toggleMetadataSection() {
+            const btn = document.getElementById('metadataToggleBtn');
+            const content = document.getElementById('metadataContent');
+            const summary = document.getElementById('metadataSummary');
+            
+            const isHidden = content.style.display === 'none';
+            
+            if (isHidden) {
+                // Show content
+                content.style.display = 'block';
+                summary.style.display = 'none';
+                btn.textContent = '−';
+            } else {
+                // Hide content
+                content.style.display = 'none';
+                summary.style.display = 'block';
+                btn.textContent = '+';
+                updateMetadataSummary();
+            }
+        }
+
+        function updateMetadataSummary() {
+            const songName = document.getElementById('songName').value || 'Untitled';
+            const ragam = document.getElementById('ragam').value || 'Ragam';
+            const beats = document.getElementById('beats').value || '8';
+            const nadai = document.getElementById('nadai').value || '4';
+            const eduppu = document.getElementById('eduppu').value || '1';
+            
+            const summary = `Song: ${songName} | Raga: ${ragam} | Beats: ${beats} | Nadai: ${nadai} | Eduppu: ${eduppu}`;
+            document.getElementById('metadataSummary').textContent = summary;
+        }
 
         function recalculate() {
             updateEduppuOptions();
