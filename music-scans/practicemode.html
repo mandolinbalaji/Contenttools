@@ -618,8 +618,16 @@
                 const phraseText = cycle.phraseText ? cycle.phraseText.trim() : '';
 
                 if (phraseText) {
-                    // Check if cycle has a header/section identifier
-                    const cycleHeader = cycle.header || cycle.section || cycle.title || cycle.name;
+                    // Check if cycle has a header/section identifier (comment field, header, section, title, name)
+                    let cycleHeader = cycle.header || cycle.section || cycle.title || cycle.name;
+                    
+                    // If no explicit header, check comment field for section names (e.g., "Pallavi:", "Anupallavi:")
+                    if (!cycleHeader && cycle.comment) {
+                        const match = cycle.comment.match(/^(.*?:)\s*$/);
+                        if (match) {
+                            cycleHeader = match[1].trim();
+                        }
+                    }
                     
                     // Display section header if it's different from current
                     if (cycleHeader && cycleHeader !== currentSection) {
