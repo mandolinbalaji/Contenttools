@@ -781,9 +781,13 @@
             background: none;
             border: none;
             color: #667eea;
-            font-size: 18px;
+            font-size: 28px;
             cursor: pointer;
             transition: transform 0.2s;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .cycle-toggle.collapsed {
@@ -2452,7 +2456,7 @@
                                 <button class="btn btn-small ${cycle.dottingModifier === 'up' ? 'active' : ''}" onclick="toggleCycleDottingMode('${cycle.id}', 'up')" title="Add dot above (ṡ, ṙ, ġ...)">⬆</button>
                                 <button class="btn btn-small ${cycle.dottingModifier === 'down' ? 'active' : ''}" onclick="toggleCycleDottingMode('${cycle.id}', 'down')" title="Add dot below (ṣ, ṛ, g̣...)">⬇</button>
                                 <button class="cycle-toggle ${!cycle.expanded ? 'collapsed' : ''}" 
-                                        onclick="toggleCycleExpansion('${cycle.id}')">⌄</button>
+                                        onclick="toggleCycleExpansion('${cycle.id}')">▼</button>
                                 <button class="btn btn-danger btn-small" onclick="deleteCycle('${cycle.id}')">🗑</button>
                             </div>
                         </div>

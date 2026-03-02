@@ -40,7 +40,7 @@
       "id": "cycle-1772454999395-0.48042305971938304",
       "label": "Cycle 3",
       "leadingCommas": 1,
-      "lyrics": "mā     kē     la             rā       vi   cā      ra mu",
+      "lyrics": "mu,,,,,ma,,,ke,,,la,ra,,,,,vi,,,ch,,,ra,",
       "noteCount": 34,
       "phraseDisplay": "G*MDN|NDDMGM|GMGRSR||",
       "phraseText": "G, ,, ,, *M, ,, D, ,,  N,            | NDD, M,  G, M | G, M GRS, R, || "
@@ -54,7 +54,7 @@
       "id": "cycle-1772454999395-0.08913439736343076",
       "label": "Cycle 4",
       "leadingCommas": 3,
-      "lyrics": "mā     kē     la             rā        vi   cā      ra mu",
+      "lyrics": "mu,,,,,ma,,,ke,,,la,ra,,,,,vi,,,ch,,,ra,",
       "noteCount": 32,
       "phraseDisplay": "G*MDṠ|{DṠṘĠMĠ}ṘṠ|NDMMGRSR||",
       "phraseText": "G, ,, ,, *M, ,, D, ,, Ṡ,             | {DṠṘĠMĠ} ṘṠ   | NDM MGR SR || "
@@ -230,8 +230,17 @@
   ],
   "eduppu": 7,
   "id": "0b5f3a5e-aaac-4c14-a5d6-5babee90b226",
-  "lastModified": "2026-03-02T14:23:10.089398",
+  "lastModified": "2026-03-02T17:49:55.980367",
   "llmSourceContent": "Pallavi:\r\nLine: , , , , , , *M, ,, G, ,, M, | G, ,, ,,  GR | GRS, ,, R, || G, ,, ,, *\r\nLR:               mā     kē     la   rā        vi   cā      ra mu\r\n\r\nLine: M, ,, D, ,, M,             | G, ,, ,,  RG | MG GRS, R, || G, ,, ,, *\r\nLR:   mā     kē     la             rā        vi   cā      ra mu\r\n\r\nLine: *M, ,, D, ,,  N,            | NDD, M,  G, M | G, M GRS, R, || G, ,, ,, *\r\nLR:   mā     kē     la             rā       vi   cā      ra mu\r\n\r\nLine: *M, ,, D, ,, Ṡ,             | {DṠṘĠMĠ} ṘṠ   | NDM MGR SR || G, ,, ,, *\r\nLR:   mā     kē     la             rā        vi   cā      ra mu\r\n\r\nLine: M, M, D, ,, N,             | NDD, ,,  D,  | Ṡ, Ṡ, ṠND, || {ṠṠNNDD,} *\r\nLR:   ma ru gan na śrī             rā        ma   can         dra\r\n\r\nLine: *M, ,, D, ,, Ṡ,             | {DṠṘĠMĠ} ṘṠ   | NDM MGR SR || G, ,, ,, *\r\nLR:   mā     kē     la             rā        vi   cā      ra mu\r\n\r\nLine: MGM, D, ,, ṠN              | NDD, ,,  D,  | Ṡ, Ṡ, ṠNND || {MDN DṘṠN} *\r\nLR:   ma ru gan na śrī             rā        ma   can         dra\r\n\r\nLine: , , , , , , *M, ,, G, ,, M, | G, ,, ,,  ,, | ,,,, ,, ,, || ,, ,, ,, *\r\nLR:               mā     kē     la   rā       \r\n\r\nAnupallavi:\r\nLine: , , , , , , *M, N, NDD, D, | Ṡ, ,, ,,  Ṙ Ġ | {Ṁ Ġ Ṙ},, ,, Ġ M || Ġ R Ṡ, ,, *\r\nLR:               sā     kē     ta   rā        ja        ku mā      ra\r\n\r\nLine: *D, Ṡ, {ṠNN,} D,            | M, ,, D, ,, N | ,, {ṠNN,} D, || {ṠNNDD,} *\r\nLR:   sad    bha    kta            man    dā     rā   śrī    ka   ra\r\n\r\nLine: DṠ, N NDD, D,              | Ṡ, MDṠ, Ṙ Ġ  | {ṀĠṘ} Ṙ, Ṙ Ġ || {ṀĠṘ} Ṡ, ,, *\r\nLR:   sā     kē ta rā              ja        ku   mā        ra\r\n\r\nLine: D, Ṙ Ṡ, {ṠNN,} D,           | DM, D, ,, N   | {D, ṘṠ ṠNND} || {ṠNND,} D, *\r\nLR:   sad    bha   ktaman          dā        rā   śrī      ka ra\r\n\r\nCharanam:\r\nLine: , , , , , , *M, M, M, ,, M, | M G G, ,,  G, | M, D, ,, Ṡ N || N D D, ,, *\r\nLR:               ja ta gūrc ci     nā    ta     ka sū     tra mu nu\r\n\r\nLine: D, ṠN NDD, M,               | {GMGRS,} MG     | M D, ,, Ṡ N || ND, D, ,, *\r\nLR:   ja ga mel   la                mec     ca ga  kā     ra mu na ni  ḍi\r\n\r\nLine: , , , , , , *M, N, NDD, D, | Ṡ, ,, ,,  Ṙ Ġ | {Ṁ Ġ Ṙ},, ,, Ġ M || Ġ R Ṡ, ,, *\r\nLR:               ga ti tap  pa     kā       ḍiñ    cē       vu sum  mi\r\n\r\nLine: *D, Ṡ, {ṠNN,} D,            | M, ,, D, ,, N | ,, {ṠNN,} D, || {ṠNNDD,} *\r\nLR:   na ta tyā  ga                rā   ja  gi    rī   śa    vi nu   ta",
+  "mainPhrase": {
+    "dottingModifier": null,
+    "eduppu": 7,
+    "fullPhrase": "",
+    "leadingCommas": 0,
+    "noteCount": 0,
+    "phraseDisplay": "",
+    "phraseText": ""
+  },
   "nadai": 4,
   "name": "MakelaraVicharamu",
   "ragam": "",
@@ -241,14 +250,5 @@
   "tags": [
     "imported-llm"
   ],
-  "thalam": "Adhi",
-  "mainPhrase": {
-    "phraseText": "",
-    "phraseDisplay": "",
-    "noteCount": 0,
-    "leadingCommas": 0,
-    "fullPhrase": "",
-    "eduppu": 7,
-    "dottingModifier": null
-  }
+  "thalam": "Adhi"
 }
