@@ -382,7 +382,7 @@
             <div class="control-group">
                 <label class="control-label">Sruthi:</label>
                 <select id="sruthiSelect" class="control-input">
-                    <option value="C#">C#</option>
+                    <option value="C#" selected>C#</option>
                     <option value="D">D</option>
                     <option value="D#">D#</option>
                     <option value="E">E</option>
@@ -653,6 +653,23 @@
             return div.innerHTML;
         }
 
+        // Variant offset mappings: how many semitones to adjust from base note
+        const variantOffsets = {
+            'r': { '1': -1, '2': 0, '3': 1 },    // R: r1 = -1 semitone, r2 = base, r3 = +1
+            'g': { '1': -2, '2': -1, '3': 0 },   // G: g1 = -2, g2 = -1, g3 = base
+            'm': { '1': 0, '2': 1 },              // M: m1 = base, m2 = +1
+            'd': { '1': -1, '2': 0, '3': 1 },    // D: d1 = -1, d2 = base, d3 = +1
+            'n': { '1': -2, '2': -1, '3': 0 }    // N: n1 = -2, n2 = -1, n3 = base
+        };
+
+        function getVariantOffset(noteChar, variantDigit) {
+            const charLower = noteChar.toLowerCase();
+            if (variantOffsets[charLower] && variantOffsets[charLower][variantDigit]) {
+                return variantOffsets[charLower][variantDigit];
+            }
+            return 0; // No variant or base variant
+        }
+
         function phraseToItems(text) {
             // Normalize Unicode: decompose pre-composed characters
             const normalized = text.normalize('NFD');
@@ -885,7 +902,25 @@
             updatePlayButton();
 
             const bpm = parseInt(document.getElementById('bpmInput').value) || 80;
-            const sruthi = document.getElementById('sruthiSelect').value || 'C#';
+            const sruthilet semitones = sruthiInfo.notes[charLower] || 0;
+                        
+                        // Check if this note has a variant digit (1, 2, or 3)
+                        let variantDigit = null;
+                        // Look ahead at the phrase to see if next character is a variant digit
+                        let phraseChars = phrase.split('');
+                        for (let j = 0; j < phraseChars.length; j++) {
+                            if (phraseChars[j].toLowerCase() === charLower && j + 1 < phraseChars.length && /[1-3]/.test(phraseChars[j + 1])) {
+                                variantDigit = phraseChars[j + 1];
+                                break;
+                            }
+                        }
+                        
+                        // Apply variant offset if present
+                        if (variantDigit) {
+                            const offset = getVariantOffset(charLower, variantDigit);
+                            semitones += offset;
+                        }
+                         'C#';
             const beatDuration = 60 / bpm;
             const noteDuration = beatDuration / currentSong.nadai;
 
