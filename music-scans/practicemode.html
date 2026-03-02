@@ -598,6 +598,35 @@
             renderSpreadsheet();
         }
 
+        // ============================================================================
+        // HELPER FUNCTIONS
+        // ============================================================================
+        function extractSectionTag(comments) {
+            if (!comments) return null;
+            
+            // Match section keywords (case-insensitive)
+            const sectionMatch = comments.match(/^(Pallavi|PALLAVI|Anupallavi|ANUPALLAVI|Charanam|CHARANAM|Charaṇam):/i);
+            
+            if (sectionMatch) {
+                const tag = sectionMatch[1];
+                // Normalize to display format
+                if (tag.toLowerCase() === 'pallavi') return 'Pallavi';
+                if (tag.toLowerCase() === 'anupallavi') return 'Anupallavi';
+                if (tag.toLowerCase() === 'charanam' || tag.toLowerCase() === 'charaṇam') return 'Charanam';
+            }
+            
+            return null;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================================================
+        // RENDER FUNCTIONS
+        // ============================================================================
         function renderSpreadsheet() {
             const contentArea = document.getElementById('contentArea');
             contentArea.innerHTML = '';
@@ -618,23 +647,15 @@
                 const phraseText = cycle.phraseText ? cycle.phraseText.trim() : '';
 
                 if (phraseText) {
-                    // Check if cycle has a header/section identifier (comment field, header, section, title, name)
-                    let cycleHeader = cycle.header || cycle.section || cycle.title || cycle.name;
-                    
-                    // If no explicit header, check comment field for section names (e.g., "Pallavi:", "Anupallavi:")
-                    if (!cycleHeader && cycle.comment) {
-                        const match = cycle.comment.match(/^(.*?:)\s*$/);
-                        if (match) {
-                            cycleHeader = match[1].trim();
-                        }
-                    }
+                    // Extract section tag from comments field (Pallavi:, Anupallavi:, Charanam:)
+                    const sectionTag = extractSectionTag(cycle.comments);
                     
                     // Display section header if it's different from current
-                    if (cycleHeader && cycleHeader !== currentSection) {
-                        currentSection = cycleHeader;
+                    if (sectionTag && sectionTag !== currentSection) {
+                        currentSection = sectionTag;
                         html += `
                             <div style="background: #667eea; color: white; padding: 12px 16px; font-weight: 600; font-size: 13px; border-bottom: 2px solid #764ba2;">
-                                ${escapeHtml(cycleHeader)}
+                                ${escapeHtml(sectionTag)}
                             </div>
                         `;
                     }
@@ -773,12 +794,6 @@
         function showError(message) {
             const contentArea = document.getElementById('contentArea');
             contentArea.innerHTML = `<div class="error-section">${escapeHtml(message)}</div>`;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
         }
 
         // ============================================================================
