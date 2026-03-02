@@ -2588,7 +2588,7 @@
         function renderSpreadsheetLine(tbody, label, cycleData, cycleLength) {
             // Display phrase exactly as typed (no scale transformation)
             // Scale is metadata for context/playback, not display
-            const phraseDisplay = cycleData.phraseDisplay || '';
+            const phraseText = cycleData.phraseText || '';
             
             // All cycles use currentSong.eduppu
             const eduppu = currentSong.eduppu;
@@ -2596,21 +2596,8 @@
             // Determine if we should calculate commas
             const shouldCalculateCommas = cycleData.calculateCommas !== false; // Default to true if not specified
             
-            let leadingCommas;
-            if (shouldCalculateCommas) {
-                // Calculate based on eduppu
-                leadingCommas = calculateLeadingCommas(cycleData.noteCount, cycleLength, eduppu);
-            } else {
-                // Don't calculate - use no commas (just place notes as-is)
-                leadingCommas = 0;
-            }
-            
-            // Convert to items array (treating r1, g3 etc as single items)
-            const items = [];
-            for (let i = 0; i < leadingCommas; i++) {
-                items.push(',');
-            }
-            items.push(...phraseToItems(phraseDisplay));
+            // Convert to items array from phraseText (which has all commas and original spacing)
+            const items = phraseToItems(phraseText);
             
             // Split items into rows of cycleLength
             const rows = [];
@@ -2664,8 +2651,8 @@
                 
                 let landingCellIndex = -1;
                 
-                // Calculate if landing falls on this row (only for first row)
-                if (rowIndex === 0) {
+                // Calculate landing position only if calculateCommas is true (only for first row)
+                if (rowIndex === 0 && shouldCalculateCommas) {
                     landingCellIndex = eduppu - 1;
                 }
                 
@@ -3475,13 +3462,18 @@
             document.getElementById('scaleInput').value = currentSong.scale || '';
 
             // Normalize cycle labels to sequential counters and ensure calculateCommas is set
-            currentSong.cycles.forEach((cycle, index) => {
-                cycle.label = `Cycle ${index + 1}`;
-                // Ensure calculateCommas property exists (default to true for backwards compatibility)
-                if (cycle.calculateCommas === undefined) {
-                    cycle.calculateCommas = true;
-                }
-            });
+            if (currentSong.cycles && Array.isArray(currentSong.cycles)) {
+                currentSong.cycles.forEach((cycle, index) => {
+                    cycle.label = `Cycle ${index + 1}`;
+                    // Ensure calculateCommas property exists (default to true for backwards compatibility)
+                    if (cycle.calculateCommas === undefined) {
+                        cycle.calculateCommas = true;
+                    }
+                });
+            } else {
+                // Initialize empty cycles array if not present
+                currentSong.cycles = [];
+            }
 
             renderTags();
             updateEduppuOptions();
@@ -3739,28 +3731,15 @@
         }
 
         function renderPracticeSpreadsheetLine(tbody, cycleNumber, cycleData, cycleLength) {
-            const phraseDisplay = cycleData.phraseDisplay || '';
+            const phraseText = cycleData.phraseText || '';
             const lyricsDisplay = cycleData.lyrics || '';
             const eduppu = currentSong.eduppu;
             
             // Determine if we should calculate commas
             const shouldCalculateCommas = cycleData.calculateCommas !== false; // Default to true if not specified
             
-            let leadingCommas;
-            if (shouldCalculateCommas) {
-                // Calculate using fixed formula
-                leadingCommas = ((eduppu - 1 - cycleData.noteCount) % cycleLength + cycleLength) % cycleLength;
-            } else {
-                // Don't calculate - use no commas (just place notes as-is)
-                leadingCommas = 0;
-            }
-            
-            // Create items array for swaras
-            const items = [];
-            for (let i = 0; i < leadingCommas; i++) {
-                items.push(',');
-            }
-            items.push(...phraseToItems(phraseDisplay));
+            // Create items array from phraseText (which has all commas and original spacing)
+            const items = phraseToItems(phraseText);
             
             // Split items into rows
             const rows = [];
@@ -3806,7 +3785,7 @@
                     labelCell.textContent = '';
                 }
                 
-                const landingCellIndex = (rowIndex === 0) ? eduppu - 1 : -1;
+                const landingCellIndex = (rowIndex === 0 && shouldCalculateCommas) ? eduppu - 1 : -1;
                 
                 for (let i = 0; i < cycleLength; i++) {
                     const cell = notesRow.insertCell();
