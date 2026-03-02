@@ -2909,12 +2909,22 @@
             try {
                 const response = await fetch(`${API_BASE}/kalpana-swara-songs/${songId}`);
                 if (response.ok) {
-                    currentSong = await response.json();
+                    const data = await response.json();
+                    if (!data) {
+                        console.error('Empty response from server');
+                        alert('Error: Empty song data received');
+                        return;
+                    }
+                    currentSong = data;
                     loadSongToUI();
                     highlightCurrentSong();
+                } else {
+                    console.error('Failed to load song:', response.status);
+                    alert('Failed to load song: ' + response.statusText);
                 }
             } catch (e) {
                 console.error('Error loading song:', e);
+                alert('Error loading song: ' + e.message);
             }
         }
 
@@ -3473,6 +3483,11 @@
             document.getElementById('nadai').value = currentSong.nadai;
             document.getElementById('eduppu').value = currentSong.eduppu;
             document.getElementById('scaleInput').value = currentSong.scale || '';
+
+            // Ensure cycles array exists
+            if (!currentSong.cycles || !Array.isArray(currentSong.cycles)) {
+                currentSong.cycles = [];
+            }
 
             // Normalize cycle labels to sequential counters and ensure calculateCommas is set
             currentSong.cycles.forEach((cycle, index) => {
