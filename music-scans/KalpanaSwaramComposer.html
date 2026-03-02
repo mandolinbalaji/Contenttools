@@ -1958,12 +1958,18 @@
         }
 
         function removeTag(tag) {
+            if (!currentSong.tags || !Array.isArray(currentSong.tags)) {
+                currentSong.tags = [];
+            }
             currentSong.tags = currentSong.tags.filter(t => t !== tag);
             renderTags();
         }
 
         function renderTags() {
             const tagsDisplay = document.getElementById('tagsDisplay');
+            if (!currentSong.tags || !Array.isArray(currentSong.tags)) {
+                currentSong.tags = [];
+            }
             tagsDisplay.innerHTML = currentSong.tags.map(tag =>
                 `<div class="tag">${tag}<span class="tag-remove" onclick="removeTag('${tag}')">×</span></div>`
             ).join('');
@@ -3487,6 +3493,24 @@
             // Ensure cycles array exists
             if (!currentSong.cycles || !Array.isArray(currentSong.cycles)) {
                 currentSong.cycles = [];
+            }
+
+            // Ensure tags array exists
+            if (!currentSong.tags || !Array.isArray(currentSong.tags)) {
+                currentSong.tags = [];
+            }
+
+            // Ensure mainPhrase object exists
+            if (!currentSong.mainPhrase || typeof currentSong.mainPhrase !== 'object') {
+                currentSong.mainPhrase = {
+                    phraseText: '',
+                    phraseDisplay: '',
+                    noteCount: 0,
+                    leadingCommas: 0,
+                    fullPhrase: '',
+                    eduppu: currentSong.eduppu,
+                    dottingModifier: null
+                };
             }
 
             // Normalize cycle labels to sequential counters and ensure calculateCommas is set
