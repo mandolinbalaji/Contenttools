@@ -902,7 +902,24 @@
             updatePlayButton();
 
             const bpm = parseInt(document.getElementById('bpmInput').value) || 80;
-            const sruthilet semitones = sruthiInfo.notes[charLower] || 0;
+            const sruthi = document.getElementById('sruthiSelect').value || 'C#';
+            const beatDuration = 60 / bpm;
+            const noteDuration = beatDuration / currentSong.nadai;
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                currentAudioContext = audioContext;
+                currentOscillators = [];
+
+                const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
+                let currentTime = audioContext.currentTime;
+
+                for (let char of phrase) {
+                    if (char === ' ' || char === '\n') continue;
+
+                    const charLower = char.toLowerCase();
+                    if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(charLower)) {
+                        let semitones = sruthiInfo.notes[charLower] || 0;
                         
                         // Check if this note has a variant digit (1, 2, or 3)
                         let variantDigit = null;
@@ -920,24 +937,7 @@
                             const offset = getVariantOffset(charLower, variantDigit);
                             semitones += offset;
                         }
-                         'C#';
-            const beatDuration = 60 / bpm;
-            const noteDuration = beatDuration / currentSong.nadai;
-
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                currentAudioContext = audioContext;
-                currentOscillators = [];
-
-                const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
-                let currentTime = audioContext.currentTime;
-
-                for (let char of phrase) {
-                    if (char === ' ' || char === '\n') continue;
-
-                    const charLower = char.toLowerCase();
-                    if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(charLower)) {
-                        const semitones = sruthiInfo.notes[charLower] || 0;
+                        
                         const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
 
                         const osc = audioContext.createOscillator();
