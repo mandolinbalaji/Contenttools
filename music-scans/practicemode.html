@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Mode - Carnatic Music</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .practice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+
+        /* Header */
+        .practice-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .practice-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .practice-metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .metadata-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .metadata-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Controls Section */
+        .practice-controls {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            padding: 20px 30px;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 14px;
+            min-width: 60px;
+        }
+
+        .control-input {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            min-width: 100px;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .play-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .play-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .play-button.playing {
+            background: #ff6b6b;
+        }
+
+        /* Content Area */
+        .practice-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Spreadsheet Container */
+        .practice-spreadsheet-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        .practice-spreadsheet-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .spreadsheet-row {
+            display: flex;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .spreadsheet-row:hover {
+            background: #f8f9fa;
+        }
+
+        .row-label {
+            min-width: 80px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-right: 2px solid #e9ecef;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 13px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .row-content {
+            flex: 1;
+            padding: 12px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        /* Error Message */
+        .error-section {
+            background: #ffe0e0;
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            padding: 20px;
+            color: #d32f2f;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Loading */
+        .loading-section {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .practice-footer {
+            background: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+            padding: 16px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .practice-container {
+                height: 95vh;
+            }
+
+            .practice-header {
+                padding: 20px 16px;
+            }
+
+            .practice-title {
+                font-size: 28px;
+            }
+
+            .practice-metadata {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                font-size: 12px;
+            }
+
+            .practice-controls {
+                padding: 12px 16px;
+                gap: 12px;
+            }
+
+            .control-label {
+                font-size: 12px;
+                min-width: 50px;
+            }
+
+            .control-input {
+                padding: 6px 10px;
+                font-size: 12px;
+                min-width: 80px;
+            }
+
+            .play-button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
+            .practice-content {
+                padding: 16px;
+            }
+
+            .row-label {
+                min-width: 60px;
+                padding: 8px;
+                font-size: 11px;
+            }
+
+            .row-content {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="practice-container">
+        <!-- Header -->
+        <div class="practice-header">
+            <div class="practice-title" id="songTitle">Loading...</div>
+            <div class="practice-metadata" id="metadataSection">
+                <div class="metadata-item">
+                    <div class="metadata-label">Raga</div>
+                    <div class="metadata-value" id="metaRaga">-</div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Thalam</div>
+                    <div class="metadata-value" id="metaThalam">-</div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Composer</div>
+                    <div class="metadata-value" id="metaComposer">-</div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Beats</div>
+                    <div class="metadata-value" id="metaBeats">-</div>
+                </div>
+                <div class="metadata-item">
+                    <div class="metadata-label">Nadai</div>
+                    <div class="metadata-value" id="metaNadai">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="practice-controls">
+            <div class="control-group">
+                <label class="control-label">Sruthi:</label>
+                <select id="sruthiSelect" class="control-input">
+                    <option value="C#">C#</option>
+                    <option value="D">D</option>
+                    <option value="D#">D#</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                    <option value="A">A</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label class="control-label">BPM:</label>
+                <input type="number" id="bpmInput" class="control-input" value="80" min="30" max="200" step="5">
+            </div>
+            <button class="play-button" id="playButton" onclick="playPhrase()">▶ Play</button>
+        </div>
+
+        <!-- Content -->
+        <div class="practice-content" id="contentArea">
+            <div class="loading-section">
+                <div class="spinner"></div>
+                <div>Loading song...</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="practice-footer">
+            Practice Mode • Carnatic Music Notation
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // SRUTHI FREQUENCIES AND MAPPINGS
+        // ============================================================================
+        const sruthiFrequencies = {
+            'C#': {
+                baseFreq: 138.59,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'D': {
+                baseFreq: 146.83,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'D#': {
+                baseFreq: 155.56,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'E': {
+                baseFreq: 164.81,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'F': {
+                baseFreq: 174.61,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'F#': {
+                baseFreq: 185.00,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'G': {
+                baseFreq: 196.00,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'G#': {
+                baseFreq: 207.65,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'A': {
+                baseFreq: 220.00,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'A#': {
+                baseFreq: 233.08,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            },
+            'B': {
+                baseFreq: 246.94,
+                notes: {
+                    's': 0,
+                    'r': 1,
+                    'g': 3,
+                    'm': 5,
+                    'p': 7,
+                    'd': 8,
+                    'n': 10
+                }
+            }
+        };
+
+        // ============================================================================
+        // GLOBAL STATE
+        // ============================================================================
+        let currentSong = null;
+        let isPlaying = false;
+        let currentAudioContext = null;
+        let currentOscillators = [];
+
+        // ============================================================================
+        // LOAD SONG FROM URL PARAMETER
+        // ============================================================================
+        function loadSongFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const songName = params.get('song');
+
+            if (!songName) {
+                showError('No song specified. Please use ?song=SongName');
+                return;
+            }
+
+            fetchSongData(songName);
+        }
+
+        function fetchSongData(songName) {
+            fetch(`songs/${songName}.json`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Song file not found: ${songName}.json`);
+                    }
+                    return response.json();
+                })
+                .then(song => {
+                    currentSong = song;
+                    initializeSruthi();
+                    renderPracticePage();
+                })
+                .catch(error => {
+                    console.error('Error loading song:', error);
+                    showError(`Failed to load song: ${error.message}`);
+                });
+        }
+
+        // ============================================================================
+        // INITIALIZE SRUTHI
+        // ============================================================================
+        function initializeSruthi() {
+            const sruthiSelect = document.getElementById('sruthiSelect');
+            if (currentSong.sruthi) {
+                sruthiSelect.value = currentSong.sruthi;
+            }
+        }
+
+        // ============================================================================
+        // RENDER PRACTICE PAGE
+        // ============================================================================
+        function renderPracticePage() {
+            // Update title
+            document.getElementById('songTitle').textContent = currentSong.name || 'Untitled Song';
+
+            // Update metadata
+            document.getElementById('metaRaga').textContent = currentSong.ragam || '-';
+            document.getElementById('metaThalam').textContent = currentSong.thalam || '-';
+            document.getElementById('metaComposer').textContent = currentSong.composer || '-';
+            document.getElementById('metaBeats').textContent = currentSong.beats || '-';
+            document.getElementById('metaNadai').textContent = currentSong.nadai || '-';
+
+            // Render spreadsheet
+            renderSpreadsheet();
+        }
+
+        function renderSpreadsheet() {
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = '';
+
+            if (!currentSong.cycles || currentSong.cycles.length === 0) {
+                contentArea.innerHTML = '<div class="error-section">No cycles found in this song.</div>';
+                return;
+            }
+
+            const spreadsheetDiv = document.createElement('div');
+            spreadsheetDiv.className = 'practice-spreadsheet-container';
+
+            let html = '';
+            let lineNumber = 1;
+            let currentSection = '';
+
+            currentSong.cycles.forEach((cycle) => {
+                const phraseText = cycle.phraseText ? cycle.phraseText.trim() : '';
+
+                if (phraseText) {
+                    // Check if cycle has a header/section identifier
+                    const cycleHeader = cycle.header || cycle.section || cycle.title || cycle.name;
+                    
+                    // Display section header if it's different from current
+                    if (cycleHeader && cycleHeader !== currentSection) {
+                        currentSection = cycleHeader;
+                        html += `
+                            <div style="background: #667eea; color: white; padding: 12px 16px; font-weight: 600; font-size: 13px; border-bottom: 2px solid #764ba2;">
+                                ${escapeHtml(cycleHeader)}
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div class="spreadsheet-row">
+                            <div class="row-label">${lineNumber}</div>
+                            <div class="row-content">${escapeHtml(phraseText)}</div>
+                        </div>
+                    `;
+                    lineNumber++;
+                }
+            });
+
+            spreadsheetDiv.innerHTML = html;
+            contentArea.appendChild(spreadsheetDiv);
+        }
+
+        // ============================================================================
+        // AUDIO PLAYBACK
+        // ============================================================================
+        function playPhrase() {
+            if (isPlaying) {
+                stopPlayback();
+                return;
+            }
+
+            if (!currentSong || !currentSong.cycles || currentSong.cycles.length === 0) {
+                return;
+            }
+
+            // Concatenate all phrases
+            let fullPhrase = '';
+            for (let cycle of currentSong.cycles) {
+                if (cycle.phraseText) {
+                    fullPhrase += cycle.phraseText + ' ';
+                }
+            }
+
+            playPhrase_Internal(fullPhrase);
+        }
+
+        function playPhrase_Internal(phrase) {
+            if (!phrase || phrase.trim().length === 0) {
+                return;
+            }
+
+            isPlaying = true;
+            updatePlayButton();
+
+            const bpm = parseInt(document.getElementById('bpmInput').value) || 80;
+            const sruthi = document.getElementById('sruthiSelect').value || 'C#';
+            const beatDuration = 60 / bpm;
+            const noteDuration = beatDuration / currentSong.nadai;
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                currentAudioContext = audioContext;
+                currentOscillators = [];
+
+                const sruthiInfo = sruthiFrequencies[sruthi] || sruthiFrequencies['C#'];
+                let currentTime = audioContext.currentTime;
+
+                for (let char of phrase) {
+                    if (char === ' ' || char === '\n') continue;
+
+                    const charLower = char.toLowerCase();
+                    if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(charLower)) {
+                        const semitones = sruthiInfo.notes[charLower] || 0;
+                        const frequency = sruthiInfo.baseFreq * Math.pow(2, semitones / 12);
+
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = frequency;
+                        osc.type = 'sine';
+
+                        gain.gain.setValueAtTime(0, currentTime);
+                        gain.gain.linearRampToValueAtTime(0.3, currentTime + 0.01);
+                        gain.gain.setValueAtTime(0.3, currentTime + noteDuration - 0.05);
+                        gain.gain.linearRampToValueAtTime(0, currentTime + noteDuration);
+
+                        osc.start(currentTime);
+                        osc.stop(currentTime + noteDuration);
+
+                        currentOscillators.push(osc);
+                        currentTime += noteDuration;
+                    } else if (char === ',') {
+                        currentTime += noteDuration;
+                    }
+                }
+
+                setTimeout(() => {
+                    isPlaying = false;
+                    updatePlayButton();
+                }, currentTime * 1000 - audioContext.currentTime * 1000);
+
+            } catch (e) {
+                console.error('Error playing audio:', e);
+                isPlaying = false;
+                updatePlayButton();
+            }
+        }
+
+        function stopPlayback() {
+            if (currentAudioContext) {
+                currentOscillators.forEach(osc => {
+                    try {
+                        osc.stop();
+                    } catch (e) {
+                        // Already stopped
+                    }
+                });
+                currentOscillators = [];
+            }
+            isPlaying = false;
+            updatePlayButton();
+        }
+
+        function updatePlayButton() {
+            const btn = document.getElementById('playButton');
+            if (isPlaying) {
+                btn.textContent = '⏹ Stop';
+                btn.classList.add('playing');
+            } else {
+                btn.textContent = '▶ Play';
+                btn.classList.remove('playing');
+            }
+        }
+
+        // ============================================================================
+        // ERROR HANDLING
+        // ============================================================================
+        function showError(message) {
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = `<div class="error-section">${escapeHtml(message)}</div>`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+        window.addEventListener('DOMContentLoaded', loadSongFromUrl);
+    </script>
+</body>
+</html>

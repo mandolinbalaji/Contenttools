@@ -345,6 +345,27 @@
             background: #ff5555;
         }
 
+        .playlist-item-practice {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: background 0.2s;
+            opacity: 0;
+            margin-right: 4px;
+        }
+
+        .playlist-item:hover .playlist-item-practice {
+            opacity: 1;
+        }
+
+        .playlist-item-practice:hover {
+            background: #5568d3;
+        }
+
         /* ─────────────────────────────────────────────────────────────────────────
            MAIN CONTENT AREA (Sections)
            ───────────────────────────────────────────────────────────────────────── */
@@ -3083,6 +3104,7 @@
                         <div style="font-weight: 600;">${song.name}</div>
                         <div class="playlist-item-meta">${song.ragam || 'Unknown'} • ${song.thalam || 'Adhi'}</div>
                     </div>
+                    <button class="playlist-item-practice" onclick="event.stopPropagation(); window.open('practicemode.html?song=${encodeURIComponent(song.name)}', '_blank');" title="Open in Practice Mode">🎹</button>
                     <button class="playlist-item-delete" onclick="event.stopPropagation(); deleteSongFromServer('${song.id}');">Delete</button>
                 </div>
             `).join('');
@@ -3127,6 +3149,7 @@
                         <div style="font-weight: 600;">${song.name}</div>
                         <div class="playlist-item-meta">${song.ragam || 'Unknown'} • ${song.thalam || 'Adhi'}</div>
                     </div>
+                    <button class="playlist-item-practice" onclick="event.stopPropagation(); window.open('practicemode.html?song=${encodeURIComponent(song.name)}', '_blank');" title="Open in Practice Mode">🎹</button>
                     <button class="playlist-item-delete" onclick="event.stopPropagation(); deleteSongFromServer('${song.id}');">Delete</button>
                 </div>
             `).join('');
