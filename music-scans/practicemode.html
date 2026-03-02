@@ -179,74 +179,55 @@
             background: #999;
         }
 
-        .spreadsheet-table {
+        .practice-spreadsheet-table {
             width: 100%;
             border-collapse: collapse;
+            font-family: 'Courier New', monospace;
         }
 
-        .spreadsheet-row {
-            display: flex;
-            border-bottom: 1px solid #e9ecef;
+        .practice-spreadsheet-table th,
+        .practice-spreadsheet-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
         }
 
-        .spreadsheet-row:hover {
+        .practice-spreadsheet-table th {
+            background: #333;
+            color: white;
+            font-weight: 700;
+        }
+
+        .practice-label {
             background: #f8f9fa;
-        }
-
-        .row-label {
-            min-width: 80px;
-            padding: 12px;
-            background: #f8f9fa;
-            border-right: 2px solid #e9ecef;
             font-weight: 600;
             color: #667eea;
-            font-size: 13px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 50px;
+            min-width: 50px;
         }
 
-        .row-content {
-            flex: 1;
-            padding: 12px 16px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+        .practice-swara-cell {
+            font-weight: 600;
             color: #333;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            line-height: 1.6;
         }
 
-        .lyrics-row {
-            display: flex;
-            border-bottom: 1px solid #e9ecef;
-            background: #f9f9f9;
-        }
-
-        .lyrics-label {
-            min-width: 80px;
-            padding: 12px;
-            background: #f0f0f0;
-            border-right: 2px solid #e9ecef;
-            font-size: 13px;
-            color: #999;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lyrics-content {
-            flex: 1;
-            padding: 12px 16px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+        .practice-lyrics-cell {
+            font-size: 11px;
             color: #666;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            line-height: 1.6;
             font-style: italic;
+        }
+
+        .practice-landing {
+            background: #fff3cd;
+        }
+
+        .practice-section-row th {
+            background: #667eea;
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 10px;
         }
 
         /* Error Message */
@@ -419,9 +400,11 @@
 
         <!-- Content -->
         <div class="practice-content" id="contentArea">
-            <div class="loading-section">
-                <div class="spinner"></div>
-                <div>Loading song...</div>
+            <div class="practice-spreadsheet-container">
+                <table class="practice-spreadsheet-table" id="practiceSpreadsheet">
+                    <thead id="practiceSpreadsheetHeader"></thead>
+                    <tbody id="practiceSpreadsheetBody"></tbody>
+                </table>
             </div>
         </div>
 
@@ -666,66 +649,203 @@
             return div.innerHTML;
         }
 
+        function phraseToItems(text) {
+            // Normalize Unicode: decompose pre-composed characters
+            const normalized = text.normalize('NFD');
+            const items = [];
+            
+            for (let i = 0; i < normalized.length; i++) {
+                const char = normalized[i].toLowerCase();
+                if (char === ' ' || char === '|') continue; // Skip spaces and pipes
+                if (char === '{' || char === '}') continue; // Skip curly braces
+                
+                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    let item = normalized[i]; // Keep original case
+                    
+                    // Check if this note has a variant digit (e.g., r1, r2, g3)
+                    if (i + 1 < normalized.length && /[1-9]/.test(normalized[i + 1])) {
+                        item += normalized[i + 1];
+                        i++; // Skip the digit
+                    }
+                    
+                    // Check for combining characters (dot above U+0307 or dot below U+0323)
+                    while (i + 1 < normalized.length && ['\u0307', '\u0323'].includes(normalized[i + 1])) {
+                        item += normalized[i + 1];
+                        i++; // Skip the combining character
+                    }
+                    
+                    items.push(item);
+                } else if (char === ',') {
+                    items.push(',');
+                } else if (char === '*') {
+                    // Skip * - it's just an eduppu marker
+                    continue;
+                }
+            }
+            return items;
+        }
+
         // ============================================================================
         // RENDER FUNCTIONS
         // ============================================================================
         function renderSpreadsheet() {
-            const contentArea = document.getElementById('contentArea');
-            contentArea.innerHTML = '';
+            const cycleLength = currentSong.beats * currentSong.nadai;
+            const header = document.getElementById('practiceSpreadsheetHeader');
+            const body = document.getElementById('practiceSpreadsheetBody');
 
-            if (!currentSong.cycles || currentSong.cycles.length === 0) {
-                contentArea.innerHTML = '<div class="error-section">No cycles found in this song.</div>';
-                return;
+            // Create header with continuous numbering row + beat numbers and nadai subdivisions
+            let continuousNumberHTML = '<tr><th></th>';  // Empty cell for label column
+            let beatHeaderHTML = '<tr><th></th>';
+            let nadaiHeaderHTML = '<tr><th></th>';
+            
+            // Add continuous numbering 1 to cycleLength
+            for (let i = 1; i <= cycleLength; i++) {
+                continuousNumberHTML += `<th style="background: #222; color: white; font-weight: 700; font-size: 10px;">${i}</th>`;
+            }
+            continuousNumberHTML += '</tr>';
+            
+            for (let beat = 1; beat <= currentSong.beats; beat++) {
+                beatHeaderHTML += `<th colspan="${currentSong.nadai}" style="background: #333; color: white;">Beat ${beat}</th>`;
+                for (let n = 1; n <= currentSong.nadai; n++) {
+                    nadaiHeaderHTML += `<th style="background: #666; color: white; font-size: 9pt;">${n}</th>`;
+                }
+            }
+            beatHeaderHTML += '</tr>';
+            nadaiHeaderHTML += '</tr>';
+            
+            header.innerHTML = continuousNumberHTML + beatHeaderHTML + nadaiHeaderHTML;
+
+            // Create body with cycles grouped by section tags
+            body.innerHTML = '';
+
+            // Group cycles by section tag
+            const sections = [];
+            let currentSection = { tag: null, cycles: [] };
+            
+            currentSong.cycles.forEach((cycle, cycleIndex) => {
+                const sectionTag = extractSectionTag(cycle.comments);
+                
+                // If section tag changed, save current section and start new one
+                if (sectionTag !== currentSection.tag) {
+                    if (currentSection.cycles.length > 0) {
+                        sections.push(currentSection);
+                    }
+                    currentSection = { tag: sectionTag, cycles: [] };
+                }
+                
+                currentSection.cycles.push({ cycle, index: cycleIndex });
+            });
+            
+            // Don't forget the last section
+            if (currentSection.cycles.length > 0) {
+                sections.push(currentSection);
+            }
+            
+            // Render sections with headers
+            sections.forEach((section, sectionIndex) => {
+                // Add section header row if there's a section tag
+                if (section.tag) {
+                    const headerRow = body.insertRow();
+                    headerRow.className = 'practice-section-row';
+                    const headerCell = headerRow.insertCell();
+                    headerCell.colSpan = cycleLength + 1;  // +1 for label column
+                    headerCell.textContent = section.tag;
+                    headerCell.style.background = '#667eea';
+                    headerCell.style.color = 'white';
+                    headerCell.style.fontWeight = '700';
+                    headerCell.style.fontSize = '13px';
+                    headerCell.style.padding = '10px';
+                }
+                
+                // Add cycles in this section
+                section.cycles.forEach(({ cycle, index }) => {
+                    renderPracticeSpreadsheetLine(body, index + 1, cycle, cycleLength);
+                });
+            });
+        }
+
+        function renderPracticeSpreadsheetLine(tbody, cycleNumber, cycleData, cycleLength) {
+            const phraseText = cycleData.phraseText || '';
+            const lyricsDisplay = cycleData.lyrics || '';
+            const eduppu = currentSong.eduppu || 1;
+            
+            // Determine if we should calculate commas
+            const shouldCalculateCommas = cycleData.calculateCommas !== false;
+            
+            // Create items array from phraseText
+            const items = phraseToItems(phraseText);
+            
+            // Split items into rows
+            const rows = [];
+            for (let i = 0; i < items.length; i += cycleLength) {
+                rows.push(items.slice(i, i + cycleLength));
+            }
+            
+            if (rows.length === 0) {
+                rows.push([]);
             }
 
-            const spreadsheetDiv = document.createElement('div');
-            spreadsheetDiv.className = 'practice-spreadsheet-container';
+            // Parse lyrics: each comma is one item, each syllable is one item
+            function parseLyricsToItems(text) {
+                const items = [];
+                let i = 0;
+                while (i < text.length) {
+                    if (text[i] === ',') {
+                        items.push(',');
+                        i++;
+                    } else {
+                        let syllable = '';
+                        while (i < text.length && text[i] !== ',') {
+                            syllable += text[i];
+                            i++;
+                        }
+                        items.push(syllable);
+                    }
+                }
+                return items;
+            }
+            
+            const allLyricsItems = parseLyricsToItems(lyricsDisplay);
 
-            let html = '';
-            let lineNumber = 1;
-            let currentSection = '';
-
-            currentSong.cycles.forEach((cycle) => {
-                const phraseText = cycle.phraseText ? cycle.phraseText.trim() : '';
-
-                if (phraseText) {
-                    // Extract section tag from comments field (Pallavi:, Anupallavi:, Charanam:)
-                    const sectionTag = extractSectionTag(cycle.comments);
+            // Render swaras + lyrics paired rows
+            rows.forEach((rowItems, rowIndex) => {
+                const notesRow = tbody.insertRow();
+                const labelCell = notesRow.insertCell();
+                labelCell.className = 'practice-label';
+                
+                if (rowIndex === 0) {
+                    labelCell.textContent = cycleNumber;
+                } else {
+                    labelCell.textContent = '';
+                }
+                
+                const landingCellIndex = (rowIndex === 0 && shouldCalculateCommas) ? eduppu - 1 : -1;
+                
+                for (let i = 0; i < cycleLength; i++) {
+                    const cell = notesRow.insertCell();
+                    const noteItem = rowItems[i] || '';
+                    const globalLyricIndex = (rowIndex * cycleLength) + i;
+                    const lyricItem = allLyricsItems[globalLyricIndex] || '';
                     
-                    // Display section header if it's different from current
-                    if (sectionTag && sectionTag !== currentSection) {
-                        currentSection = sectionTag;
-                        html += `
-                            <div style="background: #667eea; color: white; padding: 12px 16px; font-weight: 600; font-size: 13px; border-bottom: 2px solid #764ba2;">
-                                ${escapeHtml(sectionTag)}
-                            </div>
-                        `;
+                    // Create swara div
+                    const swaraDiv = document.createElement('div');
+                    swaraDiv.className = 'practice-swara-cell';
+                    swaraDiv.textContent = noteItem;
+                    cell.appendChild(swaraDiv);
+                    
+                    // Create lyric div if we have lyrics
+                    if (lyricsDisplay.trim()) {
+                        const lyricDiv = document.createElement('div');
+                        lyricDiv.className = 'practice-lyrics-cell';
+                        lyricDiv.textContent = (lyricItem === ',' || !lyricItem.trim()) ? '.' : lyricItem;
+                        cell.appendChild(lyricDiv);
                     }
-
-                    // Notation row
-                    html += `
-                        <div class="spreadsheet-row">
-                            <div class="row-label">${lineNumber}</div>
-                            <div class="row-content">${escapeHtml(phraseText)}</div>
-                        </div>
-                    `;
-
-                    // Lyrics row (if lyrics exist)
-                    if (cycle.lyrics && cycle.lyrics.trim()) {
-                        html += `
-                            <div class="lyrics-row">
-                                <div class="lyrics-label">♪</div>
-                                <div class="lyrics-content">${escapeHtml(cycle.lyrics)}</div>
-                            </div>
-                        `;
+                    
+                    if (i === landingCellIndex) {
+                        cell.className = 'practice-landing';
                     }
-
-                    lineNumber++;
                 }
             });
-
-            spreadsheetDiv.innerHTML = html;
-            contentArea.appendChild(spreadsheetDiv);
         }
 
         // ============================================================================
