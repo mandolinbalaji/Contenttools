@@ -218,6 +218,37 @@
             line-height: 1.6;
         }
 
+        .lyrics-row {
+            display: flex;
+            border-bottom: 1px solid #e9ecef;
+            background: #f9f9f9;
+        }
+
+        .lyrics-label {
+            min-width: 80px;
+            padding: 12px;
+            background: #f0f0f0;
+            border-right: 2px solid #e9ecef;
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lyrics-content {
+            flex: 1;
+            padding: 12px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #666;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
         /* Error Message */
         .error-section {
             background: #ffe0e0;
@@ -317,6 +348,17 @@
             .row-content {
                 padding: 8px 12px;
                 font-size: 12px;
+            }
+
+            .lyrics-label {
+                min-width: 50px;
+                padding: 8px;
+                font-size: 10px;
+            }
+
+            .lyrics-content {
+                padding: 8px 12px;
+                font-size: 11px;
             }
         }
     </style>
@@ -660,12 +702,24 @@
                         `;
                     }
 
+                    // Notation row
                     html += `
                         <div class="spreadsheet-row">
                             <div class="row-label">${lineNumber}</div>
                             <div class="row-content">${escapeHtml(phraseText)}</div>
                         </div>
                     `;
+
+                    // Lyrics row (if lyrics exist)
+                    if (cycle.lyrics && cycle.lyrics.trim()) {
+                        html += `
+                            <div class="lyrics-row">
+                                <div class="lyrics-label">♪</div>
+                                <div class="lyrics-content">${escapeHtml(cycle.lyrics)}</div>
+                            </div>
+                        `;
+                    }
+
                     lineNumber++;
                 }
             });
