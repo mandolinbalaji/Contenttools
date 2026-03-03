@@ -1,0 +1,64 @@
+{
+  "beats": 2,
+  "composer": "",
+  "createdDate": "2026-03-03T11:04:40.498566",
+  "cycles": [
+    {
+      "calculateCommas": false,
+      "comments": "https://www.youtube.com/shorts/nqAq6tAmz3k",
+      "dottingModifier": null,
+      "expanded": true,
+      "fullPhrase": "",
+      "id": "cycle-1772535849955",
+      "label": "Cycle 1",
+      "leadingCommas": 0,
+      "lyrics": "gms,,,nddp mgm,,, drsrnd ,,gmp,, gmd,,, dpn,,, dpn,, ddpd,, pmgm \nnspmgm ,,rgrsn,, ssnd,, mgnddp \nppnsn\ndnpdpmgmg\nmgmnddp,,,,,,,\n",
+      "noteCount": 0,
+      "phraseText": ""
+    },
+    {
+      "calculateCommas": false,
+      "comments": "",
+      "dottingModifier": null,
+      "expanded": true,
+      "fullPhrase": "\n",
+      "id": "cycle-1772537088778",
+      "label": "Cycle 2",
+      "leadingCommas": 0,
+      "lyrics": "nds dndpd,p gmdn,,,",
+      "noteCount": 0,
+      "phraseText": "\n"
+    },
+    {
+      "calculateCommas": false,
+      "comments": "",
+      "dottingModifier": null,
+      "expanded": true,
+      "fullPhrase": "",
+      "id": "cycle-1772537056745",
+      "label": "Cycle 3",
+      "leadingCommas": 0,
+      "lyrics": "dnsdnpd,,,,,d,,nsrsn,,, sgmrgsr",
+      "noteCount": 0,
+      "phraseText": ""
+    }
+  ],
+  "eduppu": 1,
+  "id": "60c53765-c472-426a-bea0-b4c2d2d2f7af",
+  "lastModified": "2026-03-03T11:58:55.081145",
+  "mainPhrase": {
+    "dottingModifier": null,
+    "eduppu": 4,
+    "fullPhrase": "",
+    "leadingCommas": 0,
+    "noteCount": 0,
+    "phraseText": ""
+  },
+  "nadai": 2,
+  "name": "Alap_Khamas_Phrases",
+  "ragam": "Khamas",
+  "scale": "r2 g3 n2 m1 d2",
+  "sruthi": "C#",
+  "tags": [],
+  "thalam": "Adhi"
+}

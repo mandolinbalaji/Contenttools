@@ -1,6 +1,6 @@
 {
   "beats": 8,
-  "composer": "",
+  "composer": "Thyagaraja",
   "createdDate": "2026-03-02T12:36:44.659860",
   "cycles": [
     {
@@ -21,12 +21,12 @@
       "calculateCommas": false,
       "comments": "Pallavi:",
       "dottingModifier": null,
-      "expanded": false,
+      "expanded": true,
       "fullPhrase": ",,,G*MDM|GRG|MGGRSR||",
       "id": "cycle-1772454999395-0.9428071851134691",
       "label": "Cycle 2",
       "leadingCommas": 3,
-      "lyrics": "mu,,,,,mā     kē     la             rā        vi   cā      ra mu",
+      "lyrics": "mu,,,,,ma,,,ke,,,la,ra,,,,,vi,,,ch,,,ra,",
       "noteCount": 32,
       "phraseDisplay": "G*MDM|GRG|MGGRSR||",
       "phraseText": "G, ,, ,, *M, ,, D, ,, M,             | G, ,, ,,  RG | MG GRS, R, || "
@@ -36,14 +36,14 @@
       "comments": "Pallavi:",
       "dottingModifier": null,
       "expanded": true,
-      "fullPhrase": ",G*MDN|NDDMGM|GMGRSR||",
+      "fullPhrase": ",,,,,,G*MDN|NDDMGM|GMGRSR||",
       "id": "cycle-1772454999395-0.48042305971938304",
       "label": "Cycle 3",
-      "leadingCommas": 1,
+      "leadingCommas": 6,
       "lyrics": "mu,,,,,ma,,,ke,,,la,ra,,,,,vi,,,ch,,,ra,",
-      "noteCount": 34,
+      "noteCount": 32,
       "phraseDisplay": "G*MDN|NDDMGM|GMGRSR||",
-      "phraseText": "G, ,, ,, *M, ,, D, ,,  N,            | NDD, M,  G, M | G, M GRS, R, || "
+      "phraseText": "G, ,, ,, *M, ,, D, ,,  N,            | NDD M,  G, M | G M GRS, R, || "
     },
     {
       "calculateCommas": false,
@@ -68,7 +68,7 @@
       "id": "cycle-1772454999395-0.6305798391601255",
       "label": "Cycle 5",
       "leadingCommas": 3,
-      "lyrics": "ma ru gan na śrī             rā        ma   can         dra",
+      "lyrics": "mu,,,,,ma, ru, gan, ,na, śri,,,,,             rā,,, ma,   can,,,         ",
       "noteCount": 32,
       "phraseDisplay": "G*MMDN|NDDD|ṠṠṠND||",
       "phraseText": "G, ,, ,, *M, M, D, ,, N,             | NDD, ,,  D,  | Ṡ, Ṡ, ṠND, || "
@@ -78,14 +78,14 @@
       "comments": "Pallavi:",
       "dottingModifier": null,
       "expanded": true,
-      "fullPhrase": ",,{ṠṠNNDD}*MDṠ|{DṠṘĠMĠ}ṘṠ|NDMMGRSR||",
+      "fullPhrase": ",,,,,,ṠNNDD*MDṠ|{DṠṘĠMĠ}ṘṠ|NDMMGRSR||",
       "id": "cycle-1772454999395-0.3584052850901428",
       "label": "Cycle 6",
-      "leadingCommas": 2,
-      "lyrics": "mā     kē     la             rā        vi   cā      ra mu",
-      "noteCount": 33,
-      "phraseDisplay": "{ṠṠNNDD}*MDṠ|{DṠṘĠMĠ}ṘṠ|NDMMGRSR||",
-      "phraseText": "{ṠṠNNDD,} *M, ,, D, ,, Ṡ,             | {DṠṘĠMĠ} ṘṠ   | NDM MGR SR || "
+      "leadingCommas": 6,
+      "lyrics": "ra,,,,,ma,,,ke,,,la,ra,,,,,vi,,,ch,,,ra,",
+      "noteCount": 32,
+      "phraseDisplay": "ṠNNDD*MDṠ|{DṠṘĠMĠ}ṘṠ|NDMMGRSR||",
+      "phraseText": "ṠNNDD, *M, ,, D, ,, Ṡ,             | {DṠṘĠMĠ} ṘṠ   | NDM MGR SR || "
     },
     {
       "calculateCommas": false,
@@ -96,7 +96,7 @@
       "id": "cycle-1772454999396-0.03947740128258015",
       "label": "Cycle 7",
       "leadingCommas": 3,
-      "lyrics": "ma ru gan na śrī             rā        ma   can         dra",
+      "lyrics": "mu,,,,,ma, ru, gan, ,na, śri,,,,,             rā,,, ma,   can,,,",
       "noteCount": 32,
       "phraseDisplay": "G*MGMDṠN|NDDD|ṠṠṠNND||",
       "phraseText": "G, ,, ,, *MGM, D, ,, ṠN              | NDD, ,,  D,  | Ṡ, Ṡ, ṠNND || "
@@ -106,42 +106,42 @@
       "comments": "Pallavi:",
       "dottingModifier": null,
       "expanded": true,
-      "fullPhrase": ",,,,,,,,,,,,,,,,,,,,,,,,,,,,MDNDṘṠN*MGM|G|||*",
+      "fullPhrase": ",,,,,,MDNṘṠN*MGM|G|||",
       "id": "cycle-1772454999396-0.21621937816883174",
       "label": "Cycle 8",
-      "leadingCommas": 28,
-      "lyrics": "mā     kē     la   rā",
-      "noteCount": 39,
-      "phraseDisplay": "MDNDṘṠN*MGM|G|||*",
-      "phraseText": "MDN DṘṠN *M, ,, G, ,, M, | G, ,, ,,  ,, | ,,,, ,, ,, || ,, ,, ,, *"
+      "leadingCommas": 6,
+      "lyrics": "dra,,,,,ma,,,ke,,,la,ra,,,,,vi,,,ch,,,ra,",
+      "noteCount": 32,
+      "phraseDisplay": "MDNṘṠN*MGM|G|||",
+      "phraseText": "MDN ṘṠN *M, ,, G, ,, M, | G, ,, ,,  ,, | ,,,, ,, ,, ||"
     },
     {
       "calculateCommas": false,
       "comments": "Anupallavi:",
       "dottingModifier": null,
       "expanded": true,
-      "fullPhrase": ",,,,,,*M,N,NDD,D,Ṡ,,,,,ṘĠ{ṀĠṘ},,,,ĠMĠRṠ,,,*",
+      "fullPhrase": ",,,,,,*MNNDDD|ṠṘĠ|ṀĠṘĠM||",
       "id": "cycle-1772454999396-0.6008605454325529",
       "label": "Cycle 9",
-      "leadingCommas": 0,
-      "lyrics": "sā     kē     ta   rā        ja        ku mā      ra",
-      "noteCount": 16,
-      "phraseDisplay": ",,,,,,*M,N,NDD,D,Ṡ,,,,,ṘĠ{ṀĠṘ},,,,ĠMĠRṠ,,,*",
-      "phraseText": ", , , , , , *M, N, NDD, D, | Ṡ, ,, ,,  Ṙ Ġ | {Ṁ Ġ Ṙ},, ,, Ġ M || Ġ R Ṡ, ,, *"
+      "leadingCommas": 6,
+      "lyrics": ",,,,,,sā ,,,    kē,     ,ta  ,,, rā ,,,        ja ,,,       kuma  ,,,,,,",
+      "noteCount": 32,
+      "phraseDisplay": "*MNNDDD|ṠṘĠ|ṀĠṘĠM||",
+      "phraseText": ", , , , , , *M, N, NDD, D, | Ṡ, ,, ,,  Ṙ Ġ | Ṁ Ġ Ṙ,, , Ġ M ||"
     },
     {
       "calculateCommas": false,
       "comments": "Anupallavi:",
       "dottingModifier": null,
       "expanded": true,
-      "fullPhrase": "*D,Ṡ,{ṠNN,}D,M,,,D,,,N,,{ṠNN,}D,{ṠNNDD,}*",
+      "fullPhrase": " Ġ R Ṡ, ,, *D, Ṡ, ṠNN, D,            | M, ,, D, , N | ṠṠN, D,,, || {ṠNNDD,} *",
       "id": "cycle-1772454999396-0.25596712555948486",
       "label": "Cycle 10",
       "leadingCommas": 0,
-      "lyrics": "sad    bha    kta            man    dā     rā   śrī    ka   ra",
-      "noteCount": 10,
-      "phraseDisplay": "*D,Ṡ,{ṠNN,}D,M,,,D,,,N,,{ṠNN,}D,{ṠNNDD,}*",
-      "phraseText": "*D, Ṡ, {ṠNN,} D,            | M, ,, D, ,, N | ,, {ṠNN,} D, || {ṠNNDD,} *"
+      "lyrics": "ra,,,,,sad ,   bha ,   kta  ,          man ,,,,   dā,,     rā,,,,,   śrī,,    ka,,   ",
+      "noteCount": 38,
+      "phraseDisplay": "ĠRṠ*DṠṠNND|MDN|ṠNND||{ṠNNDD}*",
+      "phraseText": " Ġ R Ṡ, ,, *D, Ṡ, ṠNN, D,            | M, ,, D, , N | ṠṠN, D,,, || {ṠNNDD,} *"
     },
     {
       "calculateCommas": false,
@@ -152,7 +152,7 @@
       "id": "cycle-1772454999396-0.54365147532342",
       "label": "Cycle 11",
       "leadingCommas": 0,
-      "lyrics": "sā     kē ta rā              ja        ku   mā        ra",
+      "lyrics": "ra,,,,,,sā     kē ta rā              ja        ku   mā        ra",
       "noteCount": 10,
       "phraseDisplay": "DṠ,NNDD,D,Ṡ,MDṠ,ṘĠ{ṀĠṘ}Ṙ,ṘĠ{ṀĠṘ}Ṡ,,,*",
       "phraseText": "DṠ, N NDD, D,              | Ṡ, MDṠ, Ṙ Ġ  | {ṀĠṘ} Ṙ, Ṙ Ġ || {ṀĠṘ} Ṡ, ,, *"
@@ -230,7 +230,7 @@
   ],
   "eduppu": 7,
   "id": "0b5f3a5e-aaac-4c14-a5d6-5babee90b226",
-  "lastModified": "2026-03-02T17:49:55.980367",
+  "lastModified": "2026-03-03T10:31:16.491497",
   "llmSourceContent": "Pallavi:\r\nLine: , , , , , , *M, ,, G, ,, M, | G, ,, ,,  GR | GRS, ,, R, || G, ,, ,, *\r\nLR:               mā     kē     la   rā        vi   cā      ra mu\r\n\r\nLine: M, ,, D, ,, M,             | G, ,, ,,  RG | MG GRS, R, || G, ,, ,, *\r\nLR:   mā     kē     la             rā        vi   cā      ra mu\r\n\r\nLine: *M, ,, D, ,,  N,            | NDD, M,  G, M | G, M GRS, R, || G, ,, ,, *\r\nLR:   mā     kē     la             rā       vi   cā      ra mu\r\n\r\nLine: *M, ,, D, ,, Ṡ,             | {DṠṘĠMĠ} ṘṠ   | NDM MGR SR || G, ,, ,, *\r\nLR:   mā     kē     la             rā        vi   cā      ra mu\r\n\r\nLine: M, M, D, ,, N,             | NDD, ,,  D,  | Ṡ, Ṡ, ṠND, || {ṠṠNNDD,} *\r\nLR:   ma ru gan na śrī             rā        ma   can         dra\r\n\r\nLine: *M, ,, D, ,, Ṡ,             | {DṠṘĠMĠ} ṘṠ   | NDM MGR SR || G, ,, ,, *\r\nLR:   mā     kē     la             rā        vi   cā      ra mu\r\n\r\nLine: MGM, D, ,, ṠN              | NDD, ,,  D,  | Ṡ, Ṡ, ṠNND || {MDN DṘṠN} *\r\nLR:   ma ru gan na śrī             rā        ma   can         dra\r\n\r\nLine: , , , , , , *M, ,, G, ,, M, | G, ,, ,,  ,, | ,,,, ,, ,, || ,, ,, ,, *\r\nLR:               mā     kē     la   rā       \r\n\r\nAnupallavi:\r\nLine: , , , , , , *M, N, NDD, D, | Ṡ, ,, ,,  Ṙ Ġ | {Ṁ Ġ Ṙ},, ,, Ġ M || Ġ R Ṡ, ,, *\r\nLR:               sā     kē     ta   rā        ja        ku mā      ra\r\n\r\nLine: *D, Ṡ, {ṠNN,} D,            | M, ,, D, ,, N | ,, {ṠNN,} D, || {ṠNNDD,} *\r\nLR:   sad    bha    kta            man    dā     rā   śrī    ka   ra\r\n\r\nLine: DṠ, N NDD, D,              | Ṡ, MDṠ, Ṙ Ġ  | {ṀĠṘ} Ṙ, Ṙ Ġ || {ṀĠṘ} Ṡ, ,, *\r\nLR:   sā     kē ta rā              ja        ku   mā        ra\r\n\r\nLine: D, Ṙ Ṡ, {ṠNN,} D,           | DM, D, ,, N   | {D, ṘṠ ṠNND} || {ṠNND,} D, *\r\nLR:   sad    bha   ktaman          dā        rā   śrī      ka ra\r\n\r\nCharanam:\r\nLine: , , , , , , *M, M, M, ,, M, | M G G, ,,  G, | M, D, ,, Ṡ N || N D D, ,, *\r\nLR:               ja ta gūrc ci     nā    ta     ka sū     tra mu nu\r\n\r\nLine: D, ṠN NDD, M,               | {GMGRS,} MG     | M D, ,, Ṡ N || ND, D, ,, *\r\nLR:   ja ga mel   la                mec     ca ga  kā     ra mu na ni  ḍi\r\n\r\nLine: , , , , , , *M, N, NDD, D, | Ṡ, ,, ,,  Ṙ Ġ | {Ṁ Ġ Ṙ},, ,, Ġ M || Ġ R Ṡ, ,, *\r\nLR:               ga ti tap  pa     kā       ḍiñ    cē       vu sum  mi\r\n\r\nLine: *D, Ṡ, {ṠNN,} D,            | M, ,, D, ,, N | ,, {ṠNN,} D, || {ṠNNDD,} *\r\nLR:   na ta tyā  ga                rā   ja  gi    rī   śa    vi nu   ta",
   "mainPhrase": {
     "dottingModifier": null,
@@ -243,8 +243,8 @@
   },
   "nadai": 4,
   "name": "MakelaraVicharamu",
-  "ragam": "",
-  "scale": "",
+  "ragam": "Ravichandrika",
+  "scale": "r2 g3 m1 d2 n2",
   "sourceFile": "MakelaraVicharamu.txt",
   "sruthi": "C",
   "tags": [

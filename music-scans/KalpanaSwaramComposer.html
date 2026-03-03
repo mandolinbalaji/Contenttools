@@ -443,7 +443,7 @@
         }
 
         .form-group textarea {
-            min-height: 100px;
+            min-height: 50px;
             resize: vertical;
             font-family: 'Courier New', monospace;
         }
@@ -2118,7 +2118,6 @@
             }
 
             currentSong.mainPhrase.phraseText = processed;
-            currentSong.mainPhrase.phraseDisplay = cleanPhrase(processed);
             currentSong.mainPhrase.noteCount = countNotes(processed);
             currentSong.mainPhrase.eduppu = currentSong.eduppu;
 
@@ -2129,7 +2128,7 @@
                 cycleLength,
                 currentSong.mainPhrase.eduppu
             );
-            currentSong.mainPhrase.fullPhrase = ','.repeat(currentSong.mainPhrase.leadingCommas) + currentSong.mainPhrase.phraseDisplay;
+            currentSong.mainPhrase.fullPhrase = ','.repeat(currentSong.mainPhrase.leadingCommas) + currentSong.mainPhrase.phraseText;
 
             updatePhraseDisplay();
             updateSpreadsheet();
@@ -2305,7 +2304,6 @@
                 label: `Cycle ${currentSong.cycles.length + 1}`,
                 expanded: true,
                 phraseText: '',
-                phraseDisplay: '',
                 lyrics: '',
                 comments: '',
                 noteCount: 0,
@@ -2330,7 +2328,6 @@
                 label: `Cycle ${cycleIndex + 2}`,
                 expanded: true,
                 phraseText: '',
-                phraseDisplay: '',
                 lyrics: '',
                 comments: '',
                 noteCount: 0,
@@ -2360,13 +2357,12 @@
                 if (field === 'phraseText') {
                     const processed = value.replace(/;/g, ',,');
                     cycle.phraseText = processed;
-                    cycle.phraseDisplay = cleanPhrase(processed);
                     cycle.noteCount = countNotes(processed);
                     
                     // Recalculate leading commas using currentSong.eduppu (shared across all cycles)
                     const cycleLength = currentSong.beats * currentSong.nadai;
                     cycle.leadingCommas = calculateLeadingCommas(cycle.noteCount, cycleLength, currentSong.eduppu);
-                    cycle.fullPhrase = ','.repeat(cycle.leadingCommas) + cycle.phraseDisplay;
+                    cycle.fullPhrase = ','.repeat(cycle.leadingCommas) + cycle.phraseText;
                     
                     // Update note count display without re-rendering entire cycles
                     updateNoteLyricCountDisplay(cycleId);
@@ -2721,8 +2717,7 @@
         }
 
         function renderSpreadsheetLine(tbody, label, cycleData, cycleLength) {
-            // Display phrase exactly as typed (no scale transformation)
-            // Scale is metadata for context/playback, not display
+            // Always use phraseText (original notes)
             const phraseText = cycleData.phraseText || '';
             
             // All cycles use currentSong.eduppu
@@ -2731,8 +2726,16 @@
             // Determine if we should calculate commas
             const shouldCalculateCommas = cycleData.calculateCommas !== false; // Default to true if not specified
             
-            // Convert to items array from phraseText (which has all commas and original spacing)
-            const items = phraseToItems(phraseText);
+            // Get items from phraseText
+            const phraseItems = phraseToItems(phraseText);
+            
+            // If shouldCalculateCommas, add leading commas to position the phrase
+            let items = phraseItems;
+            if (shouldCalculateCommas && phraseItems.length > 0) {
+                const noteCount = phraseItems.length;
+                const leadingCommas = calculateLeadingCommas(noteCount, cycleLength, eduppu);
+                items = Array(leadingCommas).fill(',').concat(phraseItems);
+            }
             
             // Split items into rows of cycleLength
             const rows = [];
@@ -2786,9 +2789,13 @@
                 
                 let landingCellIndex = -1;
                 
-                // Calculate landing position only if calculateCommas is true (only for first row)
-                if (rowIndex === 0 && shouldCalculateCommas) {
-                    landingCellIndex = eduppu - 1;
+                // Calculate landing position (only for first row)
+                if (rowIndex === 0) {
+                    if (shouldCalculateCommas) {
+                        landingCellIndex = eduppu - 1;  // Position based on eduppu (e.g., position 3 for eduppu=4)
+                    } else {
+                        landingCellIndex = 0;  // Spreadsheet starts at first cell
+                    }
                 }
                 
                 for (let i = 0; i < cycleLength; i++) {
@@ -2898,7 +2905,7 @@
             // Play all cycles sequentially
             for (const cycle of currentSong.cycles) {
                 if (isPlaying) return; // Allow stopping
-                const phrase = cycle.fullPhrase || cycle.phraseDisplay;
+                const phrase = cycle.fullPhrase || cycle.phraseText;
                 if (phrase) {
                     await playAudio(phrase);
                     // Wait for audio to complete before next cycle
@@ -3572,8 +3579,6 @@
 
         function createCycleFromLLM(notation, lyrics, comments) {
             const cycleId = `cycle-${Date.now()}-${Math.random()}`;
-            // Remove spaces and pipes from phrase display
-            const phraseDisplay = notation.replace(/[\s|]+/g, '');
             
             // Count all notes for reference, but don't apply eduppu offset for LLM imports
             // since user specifies exact notation they want
@@ -3586,12 +3591,11 @@
                 label: `Cycle ${currentSong.cycles.length + 1}`,
                 expanded: true,
                 phraseText: notation,
-                phraseDisplay: phraseDisplay,
                 lyrics: lyrics,
                 comments: comments,
                 noteCount: firstLineNoteCount,  // Use first line for eduppu calculation
                 leadingCommas: 0,  // No leading commas for LLM imports - user specifies exact notation
-                fullPhrase: phraseDisplay,
+                fullPhrase: notation,
                 calculateCommas: false,  // LLM imports default to no recalculation
                 dottingModifier: null
             };
@@ -3622,7 +3626,6 @@
             if (!currentSong.mainPhrase || typeof currentSong.mainPhrase !== 'object') {
                 currentSong.mainPhrase = {
                     phraseText: '',
-                    phraseDisplay: '',
                     noteCount: 0,
                     leadingCommas: 0,
                     fullPhrase: '',
