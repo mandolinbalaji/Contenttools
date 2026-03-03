@@ -417,6 +417,20 @@
             gap: 6px;
         }
 
+        /* Inline form groups for side-by-side layout */
+        .form-group-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .form-group-row > div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
         .form-group label {
             font-size: 13px;
             font-weight: 600;
@@ -715,7 +729,7 @@
         }
 
         #cyclesContainer {
-            max-height: 600px;
+            max-height: 350px;
             overflow-y: auto;
             overflow-x: hidden;
             padding-right: 8px;
@@ -1743,6 +1757,22 @@
                         <button class="thala-shortcut-btn" onclick="applyThala(5, 2)">Kanda: 5, 2</button>
                     </div>
                 </div>
+
+                <!-- Play Control -->
+                <div style="border-top: 1px solid #ddd; padding-top: 16px; margin-top: 16px;">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <div class="form-group" style="flex: 0; margin-bottom: 0;">
+                            <label for="bpmInput">🎵 BPM:</label>
+                            <input type="number" id="bpmInput" value="80" min="0" max="250" step="5" style="width: 80px;">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-success" onclick="playPhrase()">▶ Play Phrase</button>
+                            <button class="btn" onclick="stopPlayback()">⏹ Stop</button>
+                            <button class="btn" onclick="playAllCycles()">▶ Play All</button>
+                            <button class="btn" onclick="openPracticeMode()">🎓 Practice</button>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </section>
 
@@ -1755,23 +1785,7 @@
                 <button class="btn btn-primary" onclick="addCycle()" style="width: 100%; margin-top: 16px;">+ Add New Cycle</button>
             </section>
 
-            <!-- ③ PLAY CONTROL PANEL -->
-            <section id="section-play">
-                <div class="play-content">
-                    <div class="bpm-control">
-                        <label for="bpmInput">🎵 BPM:</label>
-                        <input type="number" id="bpmInput" value="80" min="0" max="250" step="5">
-                    </div>
-                    <div class="play-buttons">
-                        <button class="btn btn-success" onclick="playPhrase()">▶ Play Phrase</button>
-                        <button class="btn" onclick="stopPlayback()">⏹ Stop</button>
-                        <button class="btn" onclick="playAllCycles()">▶ Play All</button>
-                        <button class="btn" onclick="openPracticeMode()">🎓 Practice</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ⑤ SPREADSHEET DISPLAY -->
+            <!-- ④ SPREADSHEET DISPLAY -->
             <section id="section-spreadsheet">
                 <h2>④ Spreadsheet Display</h2>
 
@@ -1812,7 +1826,6 @@
         <div class="floating-nav-bullets" id="floatingBullets">
             <div class="nav-bullet active" onclick="jumpToSection('metadata')">Metadata</div>
             <div class="nav-bullet" onclick="jumpToSection('cycles')">Cycles</div>
-            <div class="nav-bullet" onclick="jumpToSection('play')">Play</div>
             <div class="nav-bullet" onclick="jumpToSection('spreadsheet')">Spreadsheet</div>
         </div>
         <div class="floating-nav-spreadsheet-container" id="spreadsheetSectionsContainer" style="display: none; max-height: 200px; overflow-y: auto; border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px;">
@@ -2495,26 +2508,28 @@
                                     <span>Calculate landing position & add commas</span>
                                 </label>
                             </div>
-                            <div class="form-group">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <label>Lyrics</label>
-                                    <button class="btn btn-small insert-lyrics-btn ${insertLyricsCycleId === cycle.id ? 'active' : ''}" 
-                                            onclick="toggleInsertLyricsMode('${cycle.id}')" 
-                                            title="Click to enable , insertion mode">${insertLyricsCycleId === cycle.id ? '✓ Inserting' : 'Add ,'}</button>
+                            <div class="form-group-row">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <label>Lyrics</label>
+                                        <button class="btn btn-small insert-lyrics-btn ${insertLyricsCycleId === cycle.id ? 'active' : ''}" 
+                                                onclick="toggleInsertLyricsMode('${cycle.id}')" 
+                                                title="Click to enable , insertion mode">${insertLyricsCycleId === cycle.id ? '✓ Inserting' : 'Add ,'}</button>
+                                    </div>
+                                    <textarea id="cycleLyrics-${cycle.id}" 
+                                              placeholder="Add lyrics using , to separate by swara (e.g., sa,ri,ga,ma)" 
+                                              onchange="updateCycle('${cycle.id}', 'lyrics', this.value)"
+                                              oninput="updateCycle('${cycle.id}', 'lyrics', this.value)"
+                                              onclick="handleLyricsClick(event, '${cycle.id}')"
+                                              style="min-height: 50px; cursor: ${insertLyricsCycleId === cycle.id ? 'crosshair' : 'text'};">${cycle.lyrics}</textarea>
                                 </div>
-                                <textarea id="cycleLyrics-${cycle.id}" 
-                                          placeholder="Add lyrics using , to separate by swara (e.g., sa,ri,ga,ma)" 
-                                          onchange="updateCycle('${cycle.id}', 'lyrics', this.value)"
-                                          oninput="updateCycle('${cycle.id}', 'lyrics', this.value)"
-                                          onclick="handleLyricsClick(event, '${cycle.id}')"
-                                          style="min-height: 80px; cursor: ${insertLyricsCycleId === cycle.id ? 'crosshair' : 'text'};">${cycle.lyrics}</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Comments (Optional)</label>
-                                <textarea id="cycleComments-${cycle.id}" 
-                                          placeholder="Add notes about this cycle..." 
-                                          onchange="updateCycle('${cycle.id}', 'comments', this.value)" 
-                                          style="min-height: 60px;">${cycle.comments}</textarea>
+                                <div>
+                                    <label>Comments (Optional)</label>
+                                    <textarea id="cycleComments-${cycle.id}" 
+                                              placeholder="Add notes about this cycle..." 
+                                              onchange="updateCycle('${cycle.id}', 'comments', this.value)" 
+                                              style="min-height: 50px;">${cycle.comments}</textarea>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -2737,17 +2752,6 @@
                 items = Array(leadingCommas).fill(',').concat(phraseItems);
             }
             
-            // Split items into rows of cycleLength
-            const rows = [];
-            for (let i = 0; i < items.length; i += cycleLength) {
-                rows.push(items.slice(i, i + cycleLength));
-            }
-            
-            // If empty, show one empty row
-            if (rows.length === 0) {
-                rows.push([]);
-            }
-
             // Get lyrics text - NO RULES APPLIED, just display as user typed
             const lyricsDisplay = cycleData.lyrics || '';
             
@@ -2773,8 +2777,24 @@
             
             const allLyricsItems = parseLyricsToItems(lyricsDisplay);
             
-            // Render swaras rows
-            rows.forEach((rowItems, rowIndex) => {
+            // Calculate how many rows are needed based on whichever is longer
+            const totalSwaraItems = items.length;
+            const totalLyricItems = allLyricsItems.length;
+            const maxRowCount = Math.ceil(Math.max(totalSwaraItems, totalLyricItems) / cycleLength);
+            
+            // Split items into rows of cycleLength
+            const swararows = [];
+            for (let i = 0; i < items.length; i += cycleLength) {
+                swararows.push(items.slice(i, i + cycleLength));
+            }
+            
+            // Pad swararows to match maxRowCount
+            while (swararows.length < maxRowCount) {
+                swararows.push([]);
+            }
+            
+            // Render rows
+            swararows.forEach((rowItems, rowIndex) => {
                 // Notes row
                 const notesRow = tbody.insertRow();
                 const labelCell = notesRow.insertCell();
