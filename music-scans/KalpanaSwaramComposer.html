@@ -3335,28 +3335,35 @@
             
             container.innerHTML = '';
             
-            // Create buttons for all cycles (without sorting - use their actual display order)
-            // Each button finds its cycle by label text in the DOM
-            const cycleLabels = [...new Set(currentSong.cycles.map(c => c.label))].sort((a, b) => {
-                const numA = parseInt(a.split(' ')[1]);
-                const numB = parseInt(b.split(' ')[1]);
-                return numA - numB;
+            // Get all rendered cycle titles directly from the DOM
+            const cycleCards = document.querySelectorAll('.cycle-title');
+            const cycleLabelsInDOM = [];
+            
+            cycleCards.forEach((titleEl) => {
+                const text = titleEl.textContent.split('\n')[0].trim(); // Get first line
+                const match = text.match(/^Cycle\s+(\d+)/);
+                if (match) {
+                    cycleLabelsInDOM.push({ label: `Cycle ${match[1]}`, number: parseInt(match[1]) });
+                }
             });
             
-            cycleLabels.forEach((label) => {
+            // Sort by number and create buttons
+            cycleLabelsInDOM.sort((a, b) => a.number - b.number);
+            cycleLabelsInDOM.forEach((item) => {
                 const btn = document.createElement('button');
                 btn.className = 'cycle-quick-link';
-                btn.textContent = label.split(' ')[1];
-                btn.onclick = () => scrollToCycleByLabel(label);
+                btn.textContent = item.number.toString();
+                btn.onclick = () => scrollToCycleByLabel(item.label);
                 container.appendChild(btn);
             });
         }
 
         function scrollToCycleByLabel(label) {
-            // Find cycle card by searching for the label text in cycle titles
+            // Find cycle card by searching for the exact label text in cycle titles
             const cycleCards = document.querySelectorAll('.cycle-title');
             for (let titleEl of cycleCards) {
-                if (titleEl.textContent.startsWith(label)) {
+                const titleText = titleEl.textContent.split('\n')[0].trim(); // Get first line
+                if (titleText.startsWith(label)) {
                     const cycleCard = titleEl.closest('.cycle-card');
                     if (cycleCard) {
                         const container = document.getElementById('cyclesContainer');
