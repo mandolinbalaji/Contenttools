@@ -2497,6 +2497,9 @@
                 section.cycles.forEach(({ cycle, index }) => {
                     const cycleCard = document.createElement('div');
                     cycleCard.className = 'cycle-card';
+                    // Add data attribute for cycle navigation
+                    const cycleNum = cycle.label.match(/\d+/)[0];
+                    cycleCard.setAttribute('data-cycle-nav', cycleNum);
                     const noteCount = countNotes(cycle.phraseText);
                     const lyricCount = countLyrics(cycle.lyrics);
                     const expectedNoteCount = currentSong.beats * currentSong.nadai;
@@ -3335,25 +3338,16 @@
             
             container.innerHTML = '';
             
-            // Get all rendered cycle-title divs
-            const cycleTitles = document.querySelectorAll('.cycle-title');
+            // Get all cycle cards with data-cycle-nav attribute
+            const cycleCards = document.querySelectorAll('[data-cycle-nav]');
             const cycles = [];
             
-            cycleTitles.forEach((titleEl) => {
-                const cycleCard = titleEl.closest('.cycle-card');
-                if (cycleCard) {
-                    // Extract "Cycle N" text from title
-                    const fullText = titleEl.textContent;
-                    const match = fullText.match(/^Cycle\s+(\d+)/);
-                    if (match) {
-                        const cycleNum = parseInt(match[1]);
-                        cycles.push({
-                            number: cycleNum,
-                            cycleCard: cycleCard,
-                            titleEl: titleEl
-                        });
-                    }
-                }
+            cycleCards.forEach((cycleCard) => {
+                const cycleNum = parseInt(cycleCard.getAttribute('data-cycle-nav'));
+                cycles.push({
+                    number: cycleNum,
+                    cycleCard: cycleCard
+                });
             });
             
             // Sort by cycle number
