@@ -753,6 +753,28 @@
             background: #555;
         }
 
+        .cycle-quick-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cycle-quick-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2);
+        }
+
         .cycle-card {
             background: #f8f9fa;
             border: 2px solid #ddd;
@@ -1778,7 +1800,10 @@
 
             <!-- ② CYCLE MANAGEMENT SECTION -->
             <section id="section-cycles">
-                <h2>② Cycle Management</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h2 style="margin: 0;">② Cycle Management</h2>
+                    <div id="cycleQuickLinks" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+                </div>
 
                 <div id="cyclesContainer"></div>
 
@@ -2539,6 +2564,9 @@
             
             // Update top nav with cycle section jumps
             updateCycleSectionJumps();
+            
+            // Update cycle quick links
+            updateCycleQuickLinks();
         }
 
         function toggleInsertLyricsMode(cycleId) {
@@ -3299,6 +3327,31 @@
 
         function jumpToBottom() {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function updateCycleQuickLinks() {
+            const container = document.getElementById('cycleQuickLinks');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            currentSong.cycles.forEach((cycle, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'cycle-quick-link';
+                btn.textContent = (index + 1).toString();
+                btn.onclick = () => scrollToCycle(cycle.id);
+                container.appendChild(btn);
+            });
+        }
+
+        function scrollToCycle(cycleId) {
+            const cycleCard = document.querySelector(`[id*="${cycleId}"]`)?.closest('.cycle-card');
+            if (cycleCard) {
+                const container = document.getElementById('cyclesContainer');
+                if (container) {
+                    container.scrollTop = cycleCard.offsetTop - 10;
+                }
+            }
         }
 
         function scrollSections(direction, count) {
