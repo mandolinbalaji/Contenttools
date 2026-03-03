@@ -3335,7 +3335,14 @@
             
             container.innerHTML = '';
             
-            currentSong.cycles.forEach((cycle, index) => {
+            // Sort cycles by their label numbers and create buttons in order
+            const sortedCycles = [...currentSong.cycles].sort((a, b) => {
+                const numA = parseInt(a.label.split(' ')[1]);
+                const numB = parseInt(b.label.split(' ')[1]);
+                return numA - numB;
+            });
+            
+            sortedCycles.forEach((cycle) => {
                 const btn = document.createElement('button');
                 btn.className = 'cycle-quick-link';
                 btn.textContent = cycle.label.split(' ')[1];
