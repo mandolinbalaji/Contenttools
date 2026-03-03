@@ -3335,20 +3335,38 @@
             
             container.innerHTML = '';
             
-            // Sort cycles by their label numbers and create buttons in order
-            const sortedCycles = [...currentSong.cycles].sort((a, b) => {
-                const numA = parseInt(a.label.split(' ')[1]);
-                const numB = parseInt(b.label.split(' ')[1]);
+            // Create buttons for all cycles (without sorting - use their actual display order)
+            // Each button finds its cycle by label text in the DOM
+            const cycleLabels = [...new Set(currentSong.cycles.map(c => c.label))].sort((a, b) => {
+                const numA = parseInt(a.split(' ')[1]);
+                const numB = parseInt(b.split(' ')[1]);
                 return numA - numB;
             });
             
-            sortedCycles.forEach((cycle) => {
+            cycleLabels.forEach((label) => {
                 const btn = document.createElement('button');
                 btn.className = 'cycle-quick-link';
-                btn.textContent = cycle.label.split(' ')[1];
-                btn.onclick = () => scrollToCycle(cycle.id);
+                btn.textContent = label.split(' ')[1];
+                btn.onclick = () => scrollToCycleByLabel(label);
                 container.appendChild(btn);
             });
+        }
+
+        function scrollToCycleByLabel(label) {
+            // Find cycle card by searching for the label text in cycle titles
+            const cycleCards = document.querySelectorAll('.cycle-title');
+            for (let titleEl of cycleCards) {
+                if (titleEl.textContent.startsWith(label)) {
+                    const cycleCard = titleEl.closest('.cycle-card');
+                    if (cycleCard) {
+                        const container = document.getElementById('cyclesContainer');
+                        if (container) {
+                            container.scrollTop = cycleCard.offsetTop - 10;
+                        }
+                    }
+                    break;
+                }
+            }
         }
 
         function scrollToCycle(cycleId) {
