@@ -3335,45 +3335,43 @@
             
             container.innerHTML = '';
             
-            // Get all rendered cycle titles directly from the DOM
-            const cycleCards = document.querySelectorAll('.cycle-title');
-            const cycleLabelsInDOM = [];
+            // Get all rendered cycle-title divs
+            const cycleTitles = document.querySelectorAll('.cycle-title');
+            const cycles = [];
             
-            cycleCards.forEach((titleEl) => {
-                const text = titleEl.textContent.split('\n')[0].trim(); // Get first line
-                const match = text.match(/^Cycle\s+(\d+)/);
-                if (match) {
-                    cycleLabelsInDOM.push({ label: `Cycle ${match[1]}`, number: parseInt(match[1]) });
+            cycleTitles.forEach((titleEl) => {
+                const cycleCard = titleEl.closest('.cycle-card');
+                if (cycleCard) {
+                    // Extract "Cycle N" text from title
+                    const fullText = titleEl.textContent;
+                    const match = fullText.match(/^Cycle\s+(\d+)/);
+                    if (match) {
+                        const cycleNum = parseInt(match[1]);
+                        cycles.push({
+                            number: cycleNum,
+                            cycleCard: cycleCard,
+                            titleEl: titleEl
+                        });
+                    }
                 }
             });
             
-            // Sort by number and create buttons
-            cycleLabelsInDOM.sort((a, b) => a.number - b.number);
-            cycleLabelsInDOM.forEach((item) => {
+            // Sort by cycle number
+            cycles.sort((a, b) => a.number - b.number);
+            
+            // Create buttons
+            cycles.forEach((cycle) => {
                 const btn = document.createElement('button');
                 btn.className = 'cycle-quick-link';
-                btn.textContent = item.number.toString();
-                btn.onclick = () => scrollToCycleByLabel(item.label);
+                btn.textContent = cycle.number.toString();
+                btn.onclick = () => {
+                    const container = document.getElementById('cyclesContainer');
+                    if (container) {
+                        container.scrollTop = cycle.cycleCard.offsetTop - 10;
+                    }
+                };
                 container.appendChild(btn);
             });
-        }
-
-        function scrollToCycleByLabel(label) {
-            // Find cycle card by searching for the exact label text in cycle titles
-            const cycleCards = document.querySelectorAll('.cycle-title');
-            for (let titleEl of cycleCards) {
-                const titleText = titleEl.textContent.split('\n')[0].trim(); // Get first line
-                if (titleText.startsWith(label)) {
-                    const cycleCard = titleEl.closest('.cycle-card');
-                    if (cycleCard) {
-                        const container = document.getElementById('cyclesContainer');
-                        if (container) {
-                            container.scrollTop = cycleCard.offsetTop - 10;
-                        }
-                    }
-                    break;
-                }
-            }
         }
 
         function scrollToCycle(cycleId) {
