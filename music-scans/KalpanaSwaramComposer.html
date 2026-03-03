@@ -3338,7 +3338,7 @@
             currentSong.cycles.forEach((cycle, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'cycle-quick-link';
-                btn.textContent = (index + 1).toString();
+                btn.textContent = cycle.label.split(' ')[1];
                 btn.onclick = () => scrollToCycle(cycle.id);
                 container.appendChild(btn);
             });
