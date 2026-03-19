@@ -1217,12 +1217,21 @@
                     displayContent = '✓ Saved Patterns:\n\n';
                 }
                 
-                // Create beat header with alignment
-                let beatTokens = [];
+                // Create beat header with nadai-based pattern
+                let beatHeaderText = '';
                 for (let b = 1; b <= metadata.beats; b++) {
-                    beatTokens.push(b.toString());
+                    beatHeaderText += b;
+                    // Add commas based on nadai
+                    for (let c = 1; c < metadata.nadai; c++) {
+                        beatHeaderText += ',';
+                    }
+                    // Add pipe separator except after last beat
+                    if (b < metadata.beats) {
+                        beatHeaderText += '|';
+                    } else {
+                        beatHeaderText += ','; // Add comma after last beat for consistency
+                    }
                 }
-                const beatHeaderText = formatTokensWithSeparators(beatTokens, metadata.beats, metadata.nadai, metadata.edam);
                 let beatHeaderHTML = '<div style="display: flex; flex: 1; cursor: default; padding: 0; margin: 0 0 4px 0; font-size: 11px; color: #999; font-weight: 600;">';
                 beatHeaderHTML += '<span style="font-weight: bold; flex-shrink: 0; margin-right: 12px; color: #667eea;">Beat:</span>';
                 beatHeaderHTML += `<div style="white-space: pre-wrap; word-break: break-word; flex: 1; font-family: 'Courier New', monospace;">${beatHeaderText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
