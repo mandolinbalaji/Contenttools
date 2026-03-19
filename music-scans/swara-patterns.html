@@ -306,31 +306,33 @@
            DISPLAY SECTION (PREVIEW)
            ============================================================================ */
         .display-section {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            background: #e3f2fd;
+            border-left: 4px solid #667eea;
             padding: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
             display: flex;
             flex-direction: column;
+            margin-bottom: 16px;
         }
 
         .display-section h2 {
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 8px;
-            color: #667eea;
+            color: #0047b3;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .patterns-display {
             font-family: 'Courier New', monospace;
             font-size: 12px;
             line-height: 20px;
-            color: #333;
-            background: linear-gradient(#fafafa 19px, #e8f0ff 19px, #e8f0ff 20px);
-            background-size: 100% 20px;
+            color: #0047b3;
+            background: white;
             padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            border: 1px solid #bee3f8;
             min-height: 120px;
             max-height: 400px;
             overflow-y: auto;
@@ -352,18 +354,18 @@
 
         .pattern-item {
             cursor: pointer;
-            padding: 8px;
-            margin: 4px 0;
-            border-radius: 3px;
+            padding: 4px 6px;
+            margin: 2px 0;
+            border-radius: 2px;
             transition: all 0.2s;
             background: white;
             border-left: 3px solid #667eea;
+            color: #0047b3;
         }
 
         .pattern-item:hover {
             background: #e3f2fd;
             border-left: 3px solid #764ba2;
-            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
         }
 
         .pattern-delete-btn {
