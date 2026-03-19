@@ -361,6 +361,11 @@
             background: white;
             border-left: 3px solid #667eea;
             color: #0047b3;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
         }
 
         .pattern-item:hover {
@@ -386,10 +391,10 @@
         }
 
         .pattern-controls {
-            float: right;
             display: flex;
             gap: 4px;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .pattern-btn {
@@ -1221,7 +1226,7 @@
                     const downBtnStyle = canMoveDown ? '' : ' opacity: 0.5; cursor: not-allowed;';
                     
                     patternsHTML += `<div class="pattern-item" style="position: relative;">
-                        <div style="white-space: pre-wrap; word-break: break-word; cursor: pointer; padding-right: 60px;" onclick="loadPattern(${i})" title="Click to load in editor">${i + 1}. ${p.displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                        <div style="white-space: pre-wrap; word-break: break-word; cursor: pointer; flex: 1; overflow: hidden; text-overflow: ellipsis;" onclick="loadPattern(${i})" title="Click to load in editor">${i + 1}. ${p.displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
                         <div class="pattern-controls">
                             <span class="${upBtnClass}" onclick="movePatternUp(${i}); event.stopPropagation();" ${!canMoveUp ? 'style="' + upBtnStyle + '"' : ''} title="Move up">↑</span>
                             <span class="${downBtnClass}" onclick="movePatternDown(${i}); event.stopPropagation();" ${!canMoveDown ? 'style="' + downBtnStyle + '"' : ''} title="Move down">↓</span>
