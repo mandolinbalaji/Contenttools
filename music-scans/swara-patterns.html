@@ -288,6 +288,39 @@
             font-weight: bold;
         }
 
+        .pattern-item {
+            cursor: pointer;
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 3px;
+            transition: all 0.2s;
+            background: white;
+            border-left: 3px solid #667eea;
+        }
+
+        .pattern-item:hover {
+            background: #e3f2fd;
+            border-left: 3px solid #764ba2;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .pattern-delete-btn {
+            float: right;
+            cursor: pointer;
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .pattern-delete-btn:hover {
+            background: #ffe0e0;
+            color: #c92a2a;
+        }
+
         /* ============================================================================
            CONTROLS SECTION
            ============================================================================ */
@@ -773,6 +806,7 @@
             // Add to patterns
             const displayText = formatTokensWithSeparators(tokens, metadata.beats, metadata.nadai, metadata.edam);
             const pattern = {
+                originalNotes: notesText,
                 tokens: tokens,
                 displayText: displayText
             };
@@ -794,6 +828,58 @@
         }
 
         // ========================================================================
+        // PATTERN LOADING
+        // ========================================================================
+
+        function loadPattern(index) {
+            if (index < 0 || index >= patterns.length) {
+                showStatus('error', 'Invalid pattern');
+                return;
+            }
+
+            const pattern = patterns[index];
+            // Use originalNotes if available, otherwise extract from displayText
+            const notes = pattern.originalNotes || extractNotesFromDisplay(pattern.displayText);
+            
+            notesInput.value = notes;
+            renderDisplay();
+            notesInput.focus();
+            showStatus('success', `Loaded pattern ${index + 1}`);
+        }
+
+        /**
+         * Extract just the notes from a formatted display string
+         * Removes |, commas, and extra whitespace
+         */
+        function extractNotesFromDisplay(displayText) {
+            // Split by lines first, then remove |, then filter and join
+            return displayText
+                .split('\n')
+                .join(' ')
+                .split('|')
+                .join(' ')
+                .split(',')
+                .join('')
+                .split(/\s+/)
+                .filter(n => n && ['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(n[0].toLowerCase()))
+                .join(' ');
+        }
+
+        /**
+         * Delete a pattern by index
+         */
+        function deletePattern(index) {
+            if (index < 0 || index >= patterns.length) {
+                showStatus('error', 'Invalid pattern');
+                return;
+            }
+
+            patterns.splice(index, 1);
+            renderDisplay();
+            showStatus('success', 'Pattern deleted');
+        }
+
+        // ========================================================================
         // DISPLAY RENDERING
         // ========================================================================
 
@@ -808,22 +894,32 @@
                 displayContent = '▶ Current Input:\n' + previewText;
             }
 
-            // Show saved patterns
+            // Build saved patterns HTML
+            let patternsHTML = '';
             if (patterns.length > 0) {
                 if (displayContent) {
-                    displayContent += '\n\n' + '━'.repeat(40) + '\n\n';
+                    displayContent = displayContent + '\n\n' + '━'.repeat(40) + '\n\n✓ Saved Patterns:\n\n';
+                } else {
+                    displayContent = '✓ Saved Patterns:\n\n';
                 }
-                displayContent += '✓ Saved Patterns:\n\n';
-                displayContent += patterns.map((p, i) => `${i + 1}. ${p.displayText}`).join('\n\n');
+                
+                patterns.forEach((p, i) => {
+                    patternsHTML += `<div class="pattern-item" onclick="loadPattern(${i})" style="white-space: pre-wrap; word-break: break-word; position: relative; cursor: pointer;" title="Click to load in editor">${i + 1}. ${p.displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}<span class="pattern-delete-btn" onclick="deletePattern(${i}); event.stopPropagation();" title="Delete pattern">×</span></div>`;
+                });
             }
 
             // Update display
-            if (!displayContent) {
-                patternsDisplay.textContent = '(Start typing to see preview)';
+            if (!displayContent && patterns.length === 0) {
+                patternsDisplay.innerHTML = '<span>(Start typing to see preview)</span>';
                 patternsDisplay.classList.add('empty');
                 copySwaramBtn.style.display = 'none';
             } else {
-                patternsDisplay.textContent = displayContent;
+                // For current input text, keep as text. For saved patterns, render as clickable HTML
+                if (displayContent) {
+                    patternsDisplay.innerHTML = `<div style="white-space: pre-wrap; word-break: break-word;">${displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>${patternsHTML}`;
+                } else {
+                    patternsDisplay.innerHTML = patternsHTML;
+                }
                 patternsDisplay.classList.remove('empty');
                 copySwaramBtn.style.display = 'inline-block';
             }
@@ -1049,7 +1145,20 @@
             for (const match of lineMatches) {
                 const displayText = match[1].trim();
                 if (displayText) {
+                    // Extract original notes from displayText (remove |, commas, whitespace)
+                    const originalNotes = displayText
+                        .split('\n')
+                        .join(' ')
+                        .split('|')
+                        .join(' ')
+                        .split(',')
+                        .join('')
+                        .split(/\s+/)
+                        .filter(n => n && ['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(n[0].toLowerCase()))
+                        .join(' ');
+                    
                     patterns.push({
+                        originalNotes: originalNotes,
                         tokens: [],
                         displayText: displayText
                     });
