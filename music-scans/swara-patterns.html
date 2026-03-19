@@ -1226,10 +1226,13 @@
                     const downBtnStyle = canMoveDown ? '' : ' opacity: 0.5; cursor: not-allowed;';
                     
                     patternsHTML += `<div class="pattern-item" style="position: relative;">
-                        <div style="white-space: pre-wrap; word-break: break-word; cursor: pointer; flex: 1; overflow: hidden; text-overflow: ellipsis;" onclick="loadPattern(${i})" title="Click to load in editor"><span style="font-weight: bold; margin-right: 12px;">${i + 1}.</span>${p.displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                        <div style="display: flex; flex: 1; cursor: pointer; overflow: hidden;" onclick="loadPattern(${i})" title="Click to load in editor">
+                            <span style="font-weight: bold; flex-shrink: 0; margin-right: 12px;">${i + 1}.</span>
+                            <div style="white-space: pre-wrap; word-break: break-word; flex: 1;">${p.displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                        </div>
                         <div class="pattern-controls">
                             <span class="${upBtnClass}" onclick="movePatternUp(${i}); event.stopPropagation();" ${!canMoveUp ? 'style="' + upBtnStyle + '"' : ''} title="Move up">⬆️</span>
-                            <span class="${downBtnClass}" onclick="movePatternDown(${i}); event.stopPropagation();" ${!canMoveDown ? 'style="' + downBtnStyle + '"' : ''} title="Move down">⬇️</span>
+                            <span class="${downBtnClass}" onclick="movePatternDown(${i}); event.stopPropagation();" ${!canMoveDown ? 'style="' + downBtnStyle + '\"' : ''} title="Move down">⬇️</span>
                             <span class="pattern-delete-btn" onclick="deletePattern(${i}); event.stopPropagation();" title="Delete pattern">×</span>
                         </div>
                     </div>`;
