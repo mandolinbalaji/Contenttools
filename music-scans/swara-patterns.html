@@ -1217,6 +1217,26 @@
                     displayContent = '✓ Saved Patterns:\n\n';
                 }
                 
+                // Create nadai structure header (0th line in orange)
+                let structureHeaderText = '';
+                for (let b = 1; b <= metadata.beats; b++) {
+                    // Add commas based on nadai
+                    for (let c = 1; c < metadata.nadai; c++) {
+                        structureHeaderText += ',';
+                    }
+                    // Add pipe separator except after last beat
+                    if (b < metadata.beats) {
+                        structureHeaderText += '|';
+                    } else {
+                        structureHeaderText += ','; // Add comma after last beat for consistency
+                    }
+                }
+                let structureHeaderHTML = '<div style="display: flex; flex: 1; cursor: default; padding: 0; margin: 0 0 4px 0; font-size: 11px; color: #ff9800; font-weight: 600;">';
+                structureHeaderHTML += '<span style="font-weight: bold; flex-shrink: 0; margin-right: 12px; color: #ff9800;">0.</span>';
+                structureHeaderHTML += `<div style="white-space: pre-wrap; word-break: break-word; flex: 1; font-family: 'Courier New', monospace;">${structureHeaderText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                structureHeaderHTML += '</div>';
+                patternsHTML += structureHeaderHTML;
+
                 // Create beat header with nadai-based pattern
                 let beatHeaderText = '';
                 for (let b = 1; b <= metadata.beats; b++) {
