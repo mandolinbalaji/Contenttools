@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes Editor - Lyrics Annotation</title>
+    <style>
+        /* ============================================================================
+           GLOBAL STYLES
+           ============================================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            color: #2d3561;
+            line-height: 1.6;
+        }
+
+        /* ============================================================================
+           HEADER
+           ============================================================================ */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        header button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s, transform 0.2s;
+            font-weight: 600;
+        }
+
+        header button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        header button.active {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .filename-display {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            margin-left: 12px;
+            padding-left: 12px;
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 500px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 3px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filename-display:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .path-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .copy-path-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .copy-path-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .path-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .path-modal.show {
+            display: flex;
+        }
+
+        .path-modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .path-modal-content h3 {
+            margin-bottom: 12px;
+            color: #667eea;
+        }
+
+        .path-modal-content p {
+            margin-bottom: 12px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .path-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+
+        .path-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .path-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .path-modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .path-modal-buttons .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .path-modal-buttons .btn-primary:hover {
+            background: #764ba2;
+        }
+
+        .path-modal-buttons .btn-secondary {
+            background: #ddd;
+            color: #333;
+        }
+
+        .path-modal-buttons .btn-secondary:hover {
+            background: #ccc;
+        }
+
+        /* ============================================================================
+           MAIN CONTAINER
+           ============================================================================ */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ============================================================================
+           SECTION: UPLOAD AREA
+           ============================================================================ */
+        .upload-section {
+            background: white;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .upload-section:hover {
+            background: #f5f7ff;
+            border-color: #764ba2;
+        }
+
+        .upload-section.dragover {
+            background: #e3f2fd;
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .upload-section h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .upload-section p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #ddd;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #ccc;
+        }
+
+        /* ============================================================================
+           EDITOR SECTION
+           ============================================================================ */
+        .editor-section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #f5f5f5;
+            padding: 12px 16px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 500px;
+            padding: 16px;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #333;
+            resize: vertical;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            background: #fafafa;
+        }
+
+        .editor-container {
+            display: flex;
+            gap: 0;
+            flex: 1;
+            min-height: 500px;
+            max-height: 600px;
+            overflow: hidden;
+        }
+
+        .editor-main {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .line-counter {
+            width: 150px;
+            background: #fafafa;
+            border-left: 1px solid #ddd;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            line-height: 1.6;
+            color: #666;
+            flex-shrink: 0;
+        }
+
+        .line-count-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0px;
+            padding-right: 8px;
+        }
+
+        .line-count-label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .line-count-value {
+            font-weight: bold;
+            margin-left: 8px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            min-width: 30px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .line-count-value.green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .line-count-value.red {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .line-count-value.neutral {
+            background: #e3f2fd;
+            color: #0047b3;
+        }
+
+        .line-count-section {
+            margin-bottom: 12px;
+        }
+
+        .line-count-section-header {
+            font-size: 11px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #ddd;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================================================
+           STATUS & FEEDBACK
+           ============================================================================ */
+        .status-section {
+            margin-top: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #ddd;
+            display: none;
+        }
+
+        .status-section.show {
+            display: block;
+        }
+
+        .status-section.success {
+            background: #d4edda;
+            border-left-color: #1dd1a1;
+            color: #155724;
+        }
+
+        .status-section.error {
+            background: #f8d7da;
+            border-left-color: #ff6b6b;
+            color: #721c24;
+        }
+
+        .status-section.info {
+            background: #e3f2fd;
+            border-left-color: #667eea;
+            color: #0047b3;
+        }
+
+        .status-message {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .status-detail {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* ============================================================================
+           HIDDEN ELEMENTS
+           ============================================================================ */
+        .hidden {
+            display: none;
+        }
+
+        /* ============================================================================
+           RESPONSIVE
+           ============================================================================ */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            header h1 {
+                font-size: 18px;
+            }
+
+            .header-right {
+                width: 100%;
+            }
+
+            main {
+                padding: 12px;
+            }
+
+            .upload-section {
+                padding: 24px;
+            }
+
+            .editor-textarea {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================================================
+         HEADER
+         ============================================================================ -->
+    <header>
+        <h1>📝 Notes Editor - Lyrics Annotation</h1>
+        <div class="header-right">
+            <button id="dotAboveBtn" title="Add dot above (ṡ, ṙ, ġ...)">⬆️ Upper</button>
+            <button id="dotBelowBtn" title="Add dot below (ṣ, ṛ, g̣...)">⬇️ Lower</button>
+            <button id="pipeBtn" title="Toggle pipe mode - insert pipes at click positions">| Pipe</button>
+            <button id="saveBtn" class="btn" title="Save to server">💾 Save</button>
+            <button id="openBtn" class="btn btn-secondary" title="Open file picker">📂 Open</button>
+            <span class="filename-display" id="filenameDisplay" title="Click path to edit, use copy button to copy">
+                <span class="path-text" id="pathText"></span>
+                <button class="copy-path-btn" id="copyPathBtn" title="Copy path to clipboard" onclick="copyPathToClipboard(event)">📋 Copy</button>
+            </span>
+        </div>
+    </header>
+
+    <!-- ============================================================================
+         PATH MODAL
+         ============================================================================ -->
+    <div class="path-modal" id="pathModal">
+        <div class="path-modal-content">
+            <h3>File Physical Path</h3>
+            <p>Enter or edit the complete physical file path:</p>
+            <input type="text" id="pathInput" class="path-input" placeholder="Example: C:\iCloudDrive\BalajiWebsite\mandolinbalajipwa\public\notesfromtext\MakelaraVicharamu.txt">
+            <div class="path-modal-buttons">
+                <button class="btn-secondary" onclick="document.getElementById('pathModal').classList.remove('show')">Cancel</button>
+                <button class="btn-primary" onclick="savePhysicalPath()">Save Path</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================================
+         MAIN CONTENT
+         ============================================================================ -->
+    <main>
+        <!-- UPLOAD SECTION -->
+        <div class="upload-section" id="uploadArea">
+            <h3>📂 Load Notes File</h3>
+            <p>C:\iCloudDrive\BalajiWebsite\mandolinbalajipwa\public\notesfromtext  </p>
+            <p>Drag and drop a .txt file here or click to select</p>
+            <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+            <input type="file" id="fileInput" class="file-input" accept=".txt">
+        </div>
+
+        <!-- EDITOR SECTION -->
+        <div class="editor-section" id="editorSection" style="display: none;">
+            <div class="editor-header">
+                📄 File Content (edit freely, then save) C:\iCloudDrive\BalajiWebsite\mandolinbalajipwa\public\notesfromtext
+            </div>
+            <div class="editor-container">
+                <div class="editor-main">
+                    <textarea class="editor-textarea" id="contentTextarea"></textarea>
+                </div>
+                <div class="line-counter" id="lineCounter"></div>
+            </div>
+        </div>
+
+        <!-- STATUS SECTION -->
+        <div class="status-section" id="statusSection">
+            <div class="status-message" id="statusMessage"></div>
+            <div class="status-detail" id="statusDetail"></div>
+        </div>
+    </main>
+
+    <!-- ============================================================================
+         JAVASCRIPT
+         ============================================================================ -->
+    <script>
+        // ========================================================================
+        // STATE
+        // ========================================================================
+        let currentFileName = '';
+        let currentFilePath = ''; // Store full file path
+        let currentFileHandle = null; // Store file handle for File System Access API
+        let dotAboveMode = false;
+        let dotBelowMode = false;
+        let pipeMode = false;
+
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const editorSection = document.getElementById('editorSection');
+        const contentTextarea = document.getElementById('contentTextarea');
+        const filenameDisplay = document.getElementById('filenameDisplay');
+        const dotAboveBtn = document.getElementById('dotAboveBtn');
+        const dotBelowBtn = document.getElementById('dotBelowBtn');
+        const pipeBtn = document.getElementById('pipeBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const openBtn = document.getElementById('openBtn');
+        const statusSection = document.getElementById('statusSection');
+        const statusMessage = document.getElementById('statusMessage');
+        const statusDetail = document.getElementById('statusDetail');
+        const lineCounter = document.getElementById('lineCounter');
+        const pathModal = document.getElementById('pathModal');
+        const pathInput = document.getElementById('pathInput');
+        const pathText = document.getElementById('pathText');
+
+        // Metadata tracking
+        let beats = null;
+
+        // ========================================================================
+        // EVENT LISTENERS
+        // ========================================================================
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                loadFile(file);
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                loadFile(file);
+            }
+        });
+
+        // Button events
+        dotAboveBtn.addEventListener('click', () => {
+            toggleDotMode('above');
+        });
+
+        dotBelowBtn.addEventListener('click', () => {
+            toggleDotMode('below');
+        });
+
+        pipeBtn.addEventListener('click', () => {
+            togglePipeMode();
+        });
+
+        saveBtn.addEventListener('click', () => {
+            saveFile();
+        });
+
+        openBtn.addEventListener('click', () => {
+            // Reset all modes when opening new file
+            dotAboveMode = false;
+            dotBelowMode = false;
+            pipeMode = false;
+            dotAboveBtn.classList.remove('active');
+            dotBelowBtn.classList.remove('active');
+            pipeBtn.classList.remove('active');
+            
+            // Show upload area
+            editorSection.style.display = 'none';
+            uploadArea.style.display = 'block';
+            filenameDisplay.textContent = '';
+            showStatus('info', 'Ready to load', 'Drag and drop a .txt file or click to browse.');
+        });
+
+        // Textarea click - apply dot or pipe if mode active
+        contentTextarea.addEventListener('click', (e) => {
+            if (dotAboveMode || dotBelowMode) {
+                applyDotAtCursor();
+            } else if (pipeMode) {
+                insertPipeAtCursor();
+            }
+        });
+
+        // Textarea input - update line counter
+        contentTextarea.addEventListener('input', () => {
+            updateLineCounter();
+        });
+
+        // Sync scroll between textarea and line counter
+        contentTextarea.addEventListener('scroll', () => {
+            lineCounter.scrollTop = contentTextarea.scrollTop;
+        });
+
+        // Click filename display to edit path
+        filenameDisplay.addEventListener('click', () => {
+            if (currentFilePath) {
+                pathInput.value = currentFilePath;
+                pathModal.classList.add('show');
+            }
+        });
+
+        // Close modal when clicking outside
+        pathModal.addEventListener('click', (e) => {
+            if (e.target === pathModal) {
+                pathModal.classList.remove('show');
+            }
+        });
+
+        // ========================================================================
+        // COPY PATH TO CLIPBOARD
+        // ========================================================================
+
+        function copyPathToClipboard(event) {
+            event.stopPropagation(); // Prevent opening the modal
+            
+            const hardcodedPath = 'C:\\iCloudDrive\\BalajiWebsite\\mandolinbalajipwa\\public\\notesfromtext';
+
+            navigator.clipboard.writeText(hardcodedPath).then(() => {
+                showStatus('success', 'Copied', `Path copied: ${hardcodedPath}`);
+            }).catch(err => {
+                showStatus('error', 'Copy failed', 'Could not copy to clipboard. ' + err.message);
+            });
+        }
+
+        // ========================================================================
+        // LINE COUNTER & METADATA PARSING
+        // ========================================================================
+
+        /**
+         * Parse metadata from content to extract Beats value
+         */
+        function parseMetadata(content) {
+            const metaMatch = content.match(/MetaS:.*?Beats:(\d+)/);
+            if (metaMatch && metaMatch[1]) {
+                beats = parseInt(metaMatch[1]);
+            }
+        }
+
+        /**
+         * Count vertical lines (pipes) in a given text
+         */
+        function countVerticalLines(text) {
+            return (text.match(/\|/g) || []).length;
+        }
+
+        /**
+         * Get color class based on vertical line count vs beats
+         */
+        function getColorClass(lineCount) {
+            if (beats === null) return 'neutral';
+            
+            if (lineCount < beats) return 'red';
+            if (lineCount === beats) return 'green';
+            if (lineCount > beats) return 'red';
+            
+            return 'neutral';
+        }
+
+        /**
+         * Check if a line is a section keyword
+         */
+        function getSectionName(line) {
+            const trimmed = line.trim().toUpperCase();
+            if (trimmed.startsWith('PALLAVI:') || trimmed.startsWith('PALLAV:')) return 'Pallavi';
+            if (trimmed.startsWith('ANUPALLAVI:')) return 'Anupallavi';
+            if (trimmed.startsWith('CHARANAM:') || trimmed.startsWith('CHARAṆAM:')) return 'Charanam';
+            if (trimmed.startsWith('CHITTAI SWARAM:') || trimmed.startsWith('CHITTAI SWARA:')) return 'Chittai Swaram';
+            if (trimmed.startsWith('MADHYAMA KALA SAHITYA:') || trimmed.startsWith('MADHYAMA KALA SAHITYAM:')) return 'Madhyama Kala Sahitya';
+            return null;
+        }
+
+        /**
+         * Update the line counter display based on current textarea content
+         */
+        function updateLineCounter() {
+            const content = contentTextarea.value;
+            parseMetadata(content);
+
+            const lines = content.split('\n');
+            let lineCounterHTML = '';
+            let currentSection = 'Notation';
+            let sectionHTML = {};
+            let sections = [];
+            let sectionLineNumbers = {}; // Track line count per section
+
+            // First pass: group lines by section
+            lines.forEach((line, index) => {
+                const sectionName = getSectionName(line);
+                if (sectionName) {
+                    currentSection = sectionName;
+                    if (!sections.includes(sectionName)) {
+                        sections.push(sectionName);
+                    }
+                    if (!sectionHTML[sectionName]) {
+                        sectionHTML[sectionName] = '';
+                        sectionLineNumbers[sectionName] = 0;
+                    }
+                } else if (line.trim().startsWith('Line:')) {
+                    if (!sectionHTML[currentSection]) {
+                        sectionHTML[currentSection] = '';
+                        sectionLineNumbers[currentSection] = 0;
+                        if (!sections.includes(currentSection)) {
+                            sections.push(currentSection);
+                        }
+                    }
+                    
+                    // Increment line counter for this section
+                    sectionLineNumbers[currentSection]++;
+                    const lineNum = sectionLineNumbers[currentSection];
+                    
+                    const pipeCount = countVerticalLines(line);
+                    const colorClass = getColorClass(pipeCount);
+                    
+                    sectionHTML[currentSection] += `<div class="line-count-item">
+                        <span class="line-count-label">L${lineNum}</span>
+                        <span class="line-count-value ${colorClass}">${pipeCount}</span>
+                    </div>`;
+                }
+            });
+
+            // Build the final HTML with sections
+            if (beats !== null) {
+                lineCounterHTML = `<div class="line-count-item" style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #ddd;">
+                    <span class="line-count-label" style="color: #333; font-weight: bold;">Beats: ${beats}</span>
+                </div>`;
+            }
+
+            // Add each section
+            sections.forEach(section => {
+                lineCounterHTML += `<div class="line-count-section">
+                    <div class="line-count-section-header">${section}</div>
+                    ${sectionHTML[section]}
+                </div>`;
+            });
+
+            lineCounter.innerHTML = lineCounterHTML;
+        }
+
+        // ========================================================================
+        // FILE LOADING
+        // ========================================================================
+
+        function loadFile(file) {
+            // Validate file type
+            if (!file.name.endsWith('.txt')) {
+                showStatus('error', 'Invalid file type', 'Please load a .txt file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    currentFileName = file.name.replace(/\.txt$/, ''); // Remove .txt extension
+                    currentFileHandle = file; // Store the file handle for later save
+                    
+                    // Capture full path - try webkitRelativePath first, then use filename
+                    if (file.webkitRelativePath) {
+                        currentFilePath = file.webkitRelativePath;
+                    } else {
+                        currentFilePath = file.name;
+                    }
+                    
+                    contentTextarea.value = content;
+                    editorSection.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                    
+                    // Display path with click hint
+                    pathText.textContent = `📄 ${currentFilePath}`;
+                    filenameDisplay.title = `Click to edit file path`;
+                    
+                    showStatus('success', 'File loaded', `${currentFilePath} is ready for editing. Click to edit path or use Copy button.`);
+                    
+                    // Update line counter after loading
+                    updateLineCounter();
+                } catch (error) {
+                    showStatus('error', 'Load error', error.message);
+                }
+            };
+            reader.onerror = () => {
+                showStatus('error', 'Read error', 'Failed to read file.');
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+
+        // ========================================================================
+        // DOT ANNOTATION
+        // ========================================================================
+
+        function toggleDotMode(mode) {
+            if (mode === 'above') {
+                dotAboveMode = !dotAboveMode;
+                dotBelowMode = false; // Turn off below mode
+                dotAboveBtn.classList.toggle('active', dotAboveMode);
+                dotBelowBtn.classList.remove('active');
+            } else if (mode === 'below') {
+                dotBelowMode = !dotBelowMode;
+                dotAboveMode = false; // Turn off above mode
+                dotBelowBtn.classList.toggle('active', dotBelowMode);
+                dotAboveBtn.classList.remove('active');
+            }
+        }
+
+        function applyDotAtCursor() {
+            const textarea = contentTextarea;
+            const cursorPos = textarea.selectionStart;
+            const text = textarea.value;
+
+            // Find the note at or before cursor
+            let noteStart = cursorPos - 1;
+            while (noteStart >= 0) {
+                const char = text[noteStart].toLowerCase();
+                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                    // Found a note, find its end
+                    let noteEnd = noteStart + 1;
+
+                    // Skip variant digit if present (e.g., r1, g3)
+                    if (noteEnd < text.length && /[1-9]/.test(text[noteEnd])) {
+                        noteEnd++;
+                    }
+
+                    // Skip existing dot marks
+                    while (noteEnd < text.length && ['\u0307', '\u0323'].includes(text[noteEnd])) {
+                        noteEnd++;
+                    }
+
+                    const noteText = text.substring(noteStart, noteEnd);
+                    let newNoteText = noteText;
+
+                    if (dotAboveMode) {
+                        // Add dot above (U+0307), remove dot below first
+                        newNoteText = noteText.replace(/\u0323/g, '') + '\u0307';
+                    } else if (dotBelowMode) {
+                        // Add dot below (U+0323), remove dot above first
+                        newNoteText = noteText.replace(/\u0307/g, '') + '\u0323';
+                    }
+
+                    // Replace the note in text
+                    const newText = text.substring(0, noteStart) + newNoteText + text.substring(noteEnd);
+                    textarea.value = newText;
+                    textarea.selectionStart = textarea.selectionEnd = noteStart + newNoteText.length;
+                    
+                    // Trigger update of line counter
+                    updateLineCounter();
+
+                    return newText;
+                } else if (char === ',' || char === ' ') {
+                    // Hit separator without finding note
+                    break;
+                }
+                noteStart--;
+            }
+            return null;
+        }
+
+        // ========================================================================
+        // PIPE INSERTION
+        // ========================================================================
+
+        function togglePipeMode() {
+            pipeMode = !pipeMode;
+            pipeBtn.classList.toggle('active', pipeMode);
+            
+            // Turn off dot modes when pipe mode is enabled
+            if (pipeMode) {
+                dotAboveMode = false;
+                dotBelowMode = false;
+                dotAboveBtn.classList.remove('active');
+                dotBelowBtn.classList.remove('active');
+            }
+        }
+
+        function insertPipeAtCursor() {
+            const textarea = contentTextarea;
+            const cursorPos = textarea.selectionStart;
+            const text = textarea.value;
+
+            // Insert pipe at cursor position
+            const newText = text.substring(0, cursorPos) + ' | ' + text.substring(cursorPos);
+            textarea.value = newText;
+
+            // Move cursor after the pipe
+            textarea.selectionStart = textarea.selectionEnd = cursorPos + 3;
+            textarea.focus();
+            
+            // Trigger update of line counter
+            updateLineCounter();
+        }
+
+        // ========================================================================
+        // SAVE FILE
+        // ========================================================================
+
+        function savePhysicalPath() {
+            const newPath = pathInput.value.trim();
+            if (newPath) {
+                currentFilePath = newPath;
+                pathText.textContent = `📄 ${currentFilePath}`;
+                filenameDisplay.title = `Click to edit file path`;
+                pathModal.classList.remove('show');
+                showStatus('info', 'Path updated', `File path updated to: ${currentFilePath}`);
+            } else {
+                showStatus('error', 'Empty path', 'Please enter a valid file path.');
+            }
+        }
+
+        async function saveFile() {
+            if (!currentFileName || !currentFileHandle) {
+                showStatus('error', 'No file loaded', 'Please load a file first.');
+                return;
+            }
+
+            if (!contentTextarea.value.trim()) {
+                showStatus('error', 'Empty content', 'Cannot save empty file.');
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ Saving...';
+
+            try {
+                // Try using File System Access API first (modern browsers)
+                if ('showSaveFilePicker' in window && currentFileHandle) {
+                    try {
+                        const writable = await currentFileHandle.createWritable();
+                        await writable.write(contentTextarea.value);
+                        await writable.close();
+                        showStatus('success', 'File saved', `File saved to: ${currentFilePath || currentFileHandle.name}`);
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '💾 Save';
+                        return;
+                    } catch (apiError) {
+                        // If File System Access API fails, fall through to blob download
+                        console.log('File System Access API not available, using download method:', apiError);
+                    }
+                }
+
+                // Fallback: Download as blob
+                const blob = new Blob([contentTextarea.value], { type: 'text/plain;charset=utf-8' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `${currentFileHandle.name || currentFileName}.txt`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                showStatus('success', 'File downloaded', `Downloaded: ${currentFileHandle.name}. Move to: ${currentFilePath}`);
+            } catch (error) {
+                showStatus('error', 'Save error', error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 Save';
+            }
+        }
+
+        // ========================================================================
+        // STATUS MESSAGES
+        // ========================================================================
+
+        function showStatus(type, message, detail) {
+            statusMessage.textContent = message;
+            statusDetail.textContent = detail;
+            statusSection.className = `status-section show ${type}`;
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusSection.classList.remove('show');
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
