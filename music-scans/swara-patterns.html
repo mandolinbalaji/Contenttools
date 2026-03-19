@@ -119,6 +119,70 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .metadata-section.hidden {
+            padding: 12px 20px;
+        }
+
+        .metadata-section.hidden .metadata-grid {
+            display: none;
+        }
+
+        .metadata-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .metadata-section.hidden .metadata-header {
+            margin-bottom: 0;
+        }
+
+        .metadata-title {
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .metadata-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #667eea;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .metadata-toggle-btn:hover {
+            background: #e3f2fd;
+            color: #764ba2;
+        }
+
+        .metadata-compact {
+            display: none;
+            font-size: 13px;
+            color: #666;
+            gap: 20px;
+        }
+
+        .metadata-section.hidden .metadata-compact {
+            display: flex;
+        }
+
+        .metadata-compact-item {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .metadata-compact-label {
+            font-weight: 600;
+            color: #667eea;
         }
 
         .metadata-section h2 {
@@ -486,8 +550,25 @@
         <div id="statusMessage" class="status-message"></div>
 
         <!-- METADATA SECTION -->
-        <div class="metadata-section">
-            <h2>📋 Metadata</h2>
+        <div class="metadata-section" id="metadataSection">
+            <div class="metadata-header">
+                <span class="metadata-title">📋 Metadata</span>
+                <button class="metadata-toggle-btn" id="metadataToggleBtn" title="Toggle metadata">▼</button>
+            </div>
+            <div class="metadata-compact" id="metadataCompact">
+                <div class="metadata-compact-item">
+                    <span class="metadata-compact-label">Raga:</span>
+                    <span id="ragaCompact">Karaharapria</span>
+                </div>
+                <div class="metadata-compact-item">
+                    <span class="metadata-compact-label">Thala:</span>
+                    <span id="thalaCompact">-</span>
+                </div>
+                <div class="metadata-compact-item">
+                    <span class="metadata-compact-label">Nadai:</span>
+                    <span id="nadaiCompact">4</span>
+                </div>
+            </div>
             <div class="metadata-grid">
                 <div class="form-group">
                     <label for="ragaInput">Raga</label>
@@ -619,6 +700,11 @@
         const nadaiGroupsDisplay = document.getElementById('nadaiGroups');
         const dotAboveBtn = document.getElementById('dotAboveBtn');
         const dotBelowBtn = document.getElementById('dotBelowBtn');
+        const metadataSection = document.getElementById('metadataSection');
+        const metadataToggleBtn = document.getElementById('metadataToggleBtn');
+        const ragaCompact = document.getElementById('ragaCompact');
+        const thalaCompact = document.getElementById('thalaCompact');
+        const nadaiCompact = document.getElementById('nadaiCompact');
 
         // ========================================================================
         // EVENT LISTENERS
@@ -646,6 +732,7 @@
         copySwaramBtn.addEventListener('click', copySwaramToClipboard);
         dotAboveBtn.addEventListener('click', () => toggleDotMode('above'));
         dotBelowBtn.addEventListener('click', () => toggleDotMode('below'));
+        metadataToggleBtn.addEventListener('click', toggleMetadataVisibility);
 
         // Handle character insertion with dots when in dot mode
         notesInput.addEventListener('mouseup', applyDotWhenInMode);
@@ -675,6 +762,25 @@
 
             // Re-render display
             updateLivePreview();
+
+            // Update compact metadata display
+            ragaCompact.textContent = metadata.raga || 'Karaharapria';
+            thalaCompact.textContent = metadata.thala || '-';
+            nadaiCompact.textContent = metadata.nadai;
+        }
+
+        /**
+         * Toggle metadata section visibility
+         */
+        function toggleMetadataVisibility() {
+            metadataSection.classList.toggle('hidden');
+            
+            // Rotate toggle button
+            if (metadataSection.classList.contains('hidden')) {
+                metadataToggleBtn.textContent = '▶';
+            } else {
+                metadataToggleBtn.textContent = '▼';
+            }
         }
 
         /**
