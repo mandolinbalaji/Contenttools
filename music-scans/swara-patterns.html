@@ -321,6 +321,51 @@
             color: #c92a2a;
         }
 
+        .pattern-controls {
+            float: right;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .pattern-btn {
+            cursor: pointer;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+        }
+
+        .pattern-btn:hover {
+            background: #e3f2fd;
+            color: #764ba2;
+        }
+
+        .pattern-btn:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .pattern-btn:disabled:hover {
+            background: transparent;
+            color: #ccc;
+        }
+
+        .pattern-delete-btn {
+            color: #ff6b6b;
+        }
+
+        .pattern-delete-btn:hover {
+            background: #ffe0e0;
+            color: #c92a2a;
+        }
+
         /* ============================================================================
            CONTROLS SECTION
            ============================================================================ */
@@ -879,6 +924,38 @@
             showStatus('success', 'Pattern deleted');
         }
 
+        /**
+         * Move a pattern up (earlier in the list)
+         */
+        function movePatternUp(index) {
+            if (index <= 0 || index >= patterns.length) {
+                return;
+            }
+
+            // Swap with previous element
+            const temp = patterns[index];
+            patterns[index] = patterns[index - 1];
+            patterns[index - 1] = temp;
+            renderDisplay();
+            showStatus('success', 'Pattern moved up');
+        }
+
+        /**
+         * Move a pattern down (later in the list)
+         */
+        function movePatternDown(index) {
+            if (index < 0 || index >= patterns.length - 1) {
+                return;
+            }
+
+            // Swap with next element
+            const temp = patterns[index];
+            patterns[index] = patterns[index + 1];
+            patterns[index + 1] = temp;
+            renderDisplay();
+            showStatus('success', 'Pattern moved down');
+        }
+
         // ========================================================================
         // DISPLAY RENDERING
         // ========================================================================
@@ -904,7 +981,21 @@
                 }
                 
                 patterns.forEach((p, i) => {
-                    patternsHTML += `<div class="pattern-item" onclick="loadPattern(${i})" style="white-space: pre-wrap; word-break: break-word; position: relative; cursor: pointer;" title="Click to load in editor">${i + 1}. ${p.displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}<span class="pattern-delete-btn" onclick="deletePattern(${i}); event.stopPropagation();" title="Delete pattern">×</span></div>`;
+                    const canMoveUp = i > 0;
+                    const canMoveDown = i < patterns.length - 1;
+                    const upBtnClass = canMoveUp ? 'pattern-btn' : 'pattern-btn pattern-btn:disabled';
+                    const downBtnClass = canMoveDown ? 'pattern-btn' : 'pattern-btn pattern-btn:disabled';
+                    const upBtnStyle = canMoveUp ? '' : ' opacity: 0.5; cursor: not-allowed;';
+                    const downBtnStyle = canMoveDown ? '' : ' opacity: 0.5; cursor: not-allowed;';
+                    
+                    patternsHTML += `<div class="pattern-item" style="position: relative;">
+                        <div style="white-space: pre-wrap; word-break: break-word; cursor: pointer; padding-right: 60px;" onclick="loadPattern(${i})" title="Click to load in editor">${i + 1}. ${p.displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                        <div class="pattern-controls">
+                            <span class="${upBtnClass}" onclick="movePatternUp(${i}); event.stopPropagation();" ${!canMoveUp ? 'style="' + upBtnStyle + '"' : ''} title="Move up">↑</span>
+                            <span class="${downBtnClass}" onclick="movePatternDown(${i}); event.stopPropagation();" ${!canMoveDown ? 'style="' + downBtnStyle + '"' : ''} title="Move down">↓</span>
+                            <span class="pattern-delete-btn" onclick="deletePattern(${i}); event.stopPropagation();" title="Delete pattern">×</span>
+                        </div>
+                    </div>`;
                 });
             }
 
