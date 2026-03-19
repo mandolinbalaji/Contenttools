@@ -1217,14 +1217,16 @@
                     displayContent = '✓ Saved Patterns:\n\n';
                 }
                 
-                // Create beat header
-                let beatHeaderHTML = '<div style="display: flex; flex: 1; cursor: default; padding: 0; margin: 0 0 4px 0; font-size: 12px; color: #666; font-weight: 600;">';
-                beatHeaderHTML += '<span style="font-weight: bold; flex-shrink: 0; margin-right: 12px;">Beat:</span>';
-                beatHeaderHTML += '<div style="display: flex; gap: 1px; flex: 1;">';
+                // Create beat header with alignment
+                let beatTokens = [];
                 for (let b = 1; b <= metadata.beats; b++) {
-                    beatHeaderHTML += `<span style="flex: 1; text-align: center; min-width: 3em;">${b}</span>`;
+                    beatTokens.push(b.toString());
                 }
-                beatHeaderHTML += '</div></div>';
+                const beatHeaderText = formatTokensWithSeparators(beatTokens, metadata.beats, metadata.nadai, metadata.edam);
+                let beatHeaderHTML = '<div style="display: flex; flex: 1; cursor: default; padding: 0; margin: 0 0 4px 0; font-size: 11px; color: #999; font-weight: 600;">';
+                beatHeaderHTML += '<span style="font-weight: bold; flex-shrink: 0; margin-right: 12px; color: #667eea;">Beat:</span>';
+                beatHeaderHTML += `<div style="white-space: pre-wrap; word-break: break-word; flex: 1; font-family: 'Courier New', monospace;">${beatHeaderText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                beatHeaderHTML += '</div>';
                 patternsHTML += beatHeaderHTML;
                 
                 patterns.forEach((p, i) => {
