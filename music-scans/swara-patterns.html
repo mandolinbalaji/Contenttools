@@ -420,6 +420,32 @@
         }
 
         /* ============================================================================
+           DOT ACCENT BUTTONS
+           ============================================================================ */
+        .dot-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.2s;
+        }
+
+        .dot-btn:hover {
+            background: #e3f2fd;
+            border-color: #667eea;
+        }
+
+        .dot-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* ============================================================================
            RESPONSIVE
            ============================================================================ */
         @media (max-width: 768px) {
@@ -514,12 +540,14 @@
             <div class="input-section">
                 <h2>✍️ Enter Swara Patterns</h2>
                 <div class="input-info">
-                    💡 Enter notes separated by spaces (r g m p d n s). Use variants like r1, g2, d3 for raga-specific pitches.
+                    💡 Enter notes separated by spaces (r g m p d n s). Use variants like r1, g2, d3 for raga-specific pitches. Toggle 🔼/🔽 for dot accents.
                 </div>
                 <div class="input-wrapper">
                     <textarea id="notesInput" class="notes-input" placeholder="Type or paste notes: s r g m p d n" spellcheck="false"></textarea>
                 </div>
                 <div class="controls-section">
+                    <button id="dotAboveBtn" class="dot-btn" title="Toggle dot above mode">🔼 Dot Above</button>
+                    <button id="dotBelowBtn" class="dot-btn" title="Toggle dot below mode">🔽 Dot Below</button>
                     <button id="addLineBtn" class="btn">➕ Add Line</button>
                 </div>
             </div>
@@ -545,6 +573,8 @@
         // STATE
         // ========================================================================
         let patterns = []; // Array of pattern lines
+        let dotAboveMode = false;
+        let dotBelowMode = false;
         let metadata = {
             raga: 'Karaharapria',
             song: 'Pakkalanilabadi',
@@ -554,6 +584,17 @@
             edam: 1,
             scale: '',
             tags: ''
+        };
+
+        // Mapping notes to their dotted variants (above and below)
+        const dotAboveMap = {
+            's': 'ṡ', 'r': 'ṙ', 'g': 'ġ', 'm': 'ṁ', 'p': 'ṗ', 'd': 'ḋ', 'n': 'ṅ',
+            'S': 'Ṡ', 'R': 'Ṙ', 'G': 'Ġ', 'M': 'Ṁ', 'P': 'Ṗ', 'D': 'Ḋ', 'N': 'Ṅ'
+        };
+
+        const dotBelowMap = {
+            's': 'ṣ', 'r': 'ṛ', 'g': 'g̣', 'm': 'ṃ', 'p': 'p̣', 'd': 'ḍ', 'n': 'ṇ',
+            'S': 'Ṣ', 'R': 'Ṛ', 'G': 'G̣', 'M': 'Ṃ', 'P': 'P̣', 'D': 'Ḍ', 'N': 'Ṇ'
         };
 
         // ========================================================================
@@ -579,6 +620,8 @@
         const notesPerLineDisplay = document.getElementById('notesPerLine');
         const maxNotesDisplay = document.getElementById('maxNotes');
         const nadaiGroupsDisplay = document.getElementById('nadaiGroups');
+        const dotAboveBtn = document.getElementById('dotAboveBtn');
+        const dotBelowBtn = document.getElementById('dotBelowBtn');
 
         // ========================================================================
         // EVENT LISTENERS
@@ -604,6 +647,11 @@
         fileInput.addEventListener('change', handleImport);
         clearBtn.addEventListener('click', clearAll);
         copySwaramBtn.addEventListener('click', copySwaramToClipboard);
+        dotAboveBtn.addEventListener('click', () => toggleDotMode('above'));
+        dotBelowBtn.addEventListener('click', () => toggleDotMode('below'));
+
+        // Handle character insertion with dots when in dot mode
+        notesInput.addEventListener('mouseup', applyDotWhenInMode);
 
         // ========================================================================
         // METADATA & CALCULATIONS
@@ -640,6 +688,63 @@
         }
 
         /**
+         * Toggle dot above/below mode
+         */
+        function toggleDotMode(mode) {
+            if (mode === 'above') {
+                dotAboveMode = !dotAboveMode;
+                dotBelowMode = false; // Disable the other mode
+                updateDotButtonStates();
+            } else if (mode === 'below') {
+                dotBelowMode = !dotBelowMode;
+                dotAboveMode = false; // Disable the other mode
+                updateDotButtonStates();
+            }
+        }
+
+        /**
+         * Update visual state of dot buttons
+         */
+        function updateDotButtonStates() {
+            dotAboveBtn.classList.toggle('active', dotAboveMode);
+            dotBelowBtn.classList.toggle('active', dotBelowMode);
+        }
+
+        /**
+         * Apply dot to character when clicking in dot mode
+         */
+        function applyDotWhenInMode() {
+            if (!dotAboveMode && !dotBelowMode) {
+                return;
+            }
+
+            const pos = notesInput.selectionStart;
+            if (pos > 0 && pos <= notesInput.value.length) {
+                const char = notesInput.value.charAt(pos - 1);
+                
+                // Check if it's a valid note character (not already dotted)
+                const baseNotes = ['s', 'r', 'g', 'm', 'p', 'd', 'n', 'S', 'R', 'G', 'M', 'P', 'D', 'N'];
+                if (baseNotes.includes(char)) {
+                    let newChar = char;
+                    
+                    if (dotAboveMode && dotAboveMap[char]) {
+                        newChar = dotAboveMap[char];
+                    } else if (dotBelowMode && dotBelowMap[char]) {
+                        newChar = dotBelowMap[char];
+                    }
+                    
+                    if (newChar !== char) {
+                        const text = notesInput.value;
+                        const newText = text.substring(0, pos - 1) + newChar + text.substring(pos);
+                        notesInput.value = newText;
+                        notesInput.setSelectionRange(pos, pos);
+                        updateLivePreview();
+                    }
+                }
+            }
+        }
+
+        /**
          * Parse scale definition and return map of swara -> variant
          * E.g., "r2 g2 m1 d2 n2" returns {r: 'r2', g: 'g2', m: 'm1', d: 'd2', n: 'n2'}
          */
@@ -662,12 +767,24 @@
 
         /**
          * Tokenize notes string into array of notes
-         * Handles variants (r1, g2, etc.) and commas (rests)
+         * Handles variants (r1, g2, etc.), dotted notes (ṡ, ṙ, etc.), and commas (rests)
          */
         function tokenizeNotes(notesText) {
             const tokens = [];
             let i = 0;
-            notesText = notesText.toLowerCase().trim();
+            notesText = notesText.trim();
+
+            // Map of dotted notes to base notes for normalization
+            const dottedToBaseMap = {
+                // Dot above (lower case)
+                'ṡ': 's', 'ṙ': 'r', 'ġ': 'g', 'ṁ': 'm', 'ṗ': 'p', 'ḋ': 'd', 'ṅ': 'n',
+                // Dot above (upper case)
+                'Ṡ': 's', 'Ṙ': 'r', 'Ġ': 'g', 'Ṁ': 'm', 'Ṗ': 'p', 'Ḋ': 'd', 'Ṅ': 'n',
+                // Dot below (lower case)
+                'ṣ': 's', 'ṛ': 'r', 'g̣': 'g', 'ṃ': 'm', 'p̣': 'p', 'ḍ': 'd', 'ṇ': 'n',
+                // Dot below (upper case)
+                'Ṣ': 's', 'Ṛ': 'r', 'G̣': 'g', 'Ṃ': 'm', 'P̣': 'p', 'Ḍ': 'd', 'Ṇ': 'n'
+            };
 
             while (i < notesText.length) {
                 const char = notesText[i];
@@ -685,8 +802,17 @@
                     continue;
                 }
 
-                // Handle notes
-                if (['s', 'r', 'g', 'm', 'p', 'd', 'n'].includes(char)) {
+                // Check for dotted notes (check for 2-char combining sequences)
+                const twoCharSeq = notesText.substring(i, i + 2);
+                if (dottedToBaseMap[twoCharSeq]) {
+                    tokens.push(twoCharSeq);
+                    i += 2;
+                    continue;
+                }
+
+                // Handle notes (base notes and dotted single chars)
+                const baseNotes = ['s', 'r', 'g', 'm', 'p', 'd', 'n'];
+                if (baseNotes.includes(char.toLowerCase())) {
                     let token = char;
                     i++;
 
